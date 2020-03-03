@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ChatView">
+
+        <attr name="title_text" format="string" />
+        <attr name="title_color" format="color"/>
+        <attr name="title_size" format="dimension"/>
+        <attr name="main_color" format="color"/>
+        <attr name="text_message_size" format="dimension"></attr>
+
+    </declare-styleable>
+
+</resources>

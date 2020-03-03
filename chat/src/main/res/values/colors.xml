@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="default_color_title">#000</color>
+    <color name="default_main_color">#2e7d32</color>
+
+    <color name="default_color_bg_simple_user_message">@color/default_main_color</color>
+    <color name="default_color_bg_simple_server_message">#e0e0e0</color>
+
+    <color name="gray">#9e9e9e</color>
+    <color name="error">#d50000</color>
+</resources>
