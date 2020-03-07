@@ -89,13 +89,15 @@ object Repository {
             )
             Log.d("REPOSITORY", "margeMessages: messageCheckObj = $messageCheckObj")
 
-            if (!messagesFromDb.any { it.id == messageCheckObj.id } && messageCheckObj.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType)) {
+            if (!messagesFromDb.any { it.id == messageCheckObj.id } && messageCheckObj.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType) && (messageFromHistory.message ?: "").isNotEmpty()) {
                 dao.insertMessage(messageCheckObj)
                 Log.d("REPOSITORY", "insert message $messageCheckObj")
             }else {
-                Log.d("REPOSITORY", "update message id - ${messageCheckObj.parentMsgId}, type - ${messageCheckObj.messageType}")
-                messageCheckObj.parentMsgId?.let {parentId ->
-                    dao.updateMessage(parentId, messageCheckObj.messageType)
+                if (messageCheckObj.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType)) {
+                    Log.d("REPOSITORY", "update message id - ${messageCheckObj.parentMsgId}, type - ${messageCheckObj.messageType}")
+                    messageCheckObj.parentMsgId?.let { parentId ->
+                        dao.updateMessage(parentId, messageCheckObj.messageType)
+                    }
                 }
             }
         }

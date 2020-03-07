@@ -73,7 +73,6 @@ object SocketAPI {
         }
         else {
             SocketAPI.visitor = visitor
-            events.postValue(Events.USER_FAUND)
             Log.d(TAG_SOCKET, "setVisitor - visitor = ${visitor.getJsonObject()}")
             // инициализация сокета не должна происходить если сравниваем с null
             if (!socket!!.connected()) {
@@ -135,6 +134,7 @@ object SocketAPI {
         }
 
         socket.on(Socket.EVENT_CONNECT_ERROR) {
+            events.postValue(Events.NO_INTERNET)
             Log.d(TAG_SOCKET, "EVENT_CONNECT_ERROR")
         }
         socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
@@ -160,6 +160,7 @@ object SocketAPI {
         }
         socket.on(Socket.EVENT_RECONNECT_ERROR) {
             Log.d(TAG_SOCKET, "EVENT_RECONNECT_ERROR")
+            events.postValue(Events.NO_INTERNET)
         }
         socket.on(Socket.EVENT_RECONNECT_FAILED) {
             Log.d(TAG_SOCKET, "EVENT_RECONNECT_FAILED")
@@ -202,19 +203,29 @@ object SocketAPI {
                 socket!!.emit("visitor-action", actionId)
                 events.postValue(Events.ACTION_SELECT)
             } else {
-                events.postValue(Events.ACTION_SELECT_ERROR)
+                events.postValue(Events.NO_INTERNET)
             }
         }
     }
 
     private fun authenticationUser(socket: Socket) {
         visitor.let {
-            socket.emit("me", it.getJsonObject())
+            if (NetworkUtils.isOnline()) {
+                socket.emit("me", it.getJsonObject())
+            }
+            else {
+                events.postValue(Events.NO_INTERNET)
+            }
         }
     }
 
     fun sync(timestamp: Long) {
-        socket!!.emit("history-messages-requested", timestamp)
+        if (NetworkUtils.isOnline()) {
+            socket!!.emit("history-messages-requested", timestamp)
+        }
+        else {
+            events.postValue(Events.NO_INTERNET)
+        }
     }
 
 }

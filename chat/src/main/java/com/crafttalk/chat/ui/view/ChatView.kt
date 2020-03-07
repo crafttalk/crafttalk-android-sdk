@@ -104,22 +104,24 @@ class ChatView: RelativeLayout, View.OnClickListener {
                     entry_field.text.clear()
                 }
                 Events.MESSAGE_GET_SERVER -> {}
-                Events.USER_FAUND -> {
-                    stopProgressBar()
-                    form_place.visibility = View.GONE
-                    chat_place.visibility = View.VISIBLE
-                }
                 Events.USER_NOT_FAUND -> {
                     form_place.visibility = View.VISIBLE
                     chat_place.visibility = View.GONE
                 }
                 Events.USER_AUTHORIZAT -> {
+                    stopProgressBar()
+                    form_place.visibility = View.GONE
+                    chat_place.visibility = View.VISIBLE
                     viewModel.syncData()
+                }
+                Events.NO_INTERNET -> {
+                    stopProgressBar()
+                    Log.d("CHAT_VIEW", "NO_INTERNET_CONNECTION")
                 }
             }
         })
         viewModel.messages.observe(lifecycleOwner, Observer {
-            Log.d("CHAT_VIEW", "insert new message size = ${it.size}")
+            Log.d("CHAT_VIEW", "adding new message size = ${it.size}")
 //            обновление листа
             adapterListMessages.setData(it)
             val countMessages = list_with_message.adapter!!.itemCount - 1
