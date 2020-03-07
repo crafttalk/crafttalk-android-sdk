@@ -3,6 +3,7 @@ package com.crafttalk.chat.ui.view.adapters
 import android.annotation.SuppressLint
 import android.graphics.PorterDuff
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -10,8 +11,9 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.data.local.db.entity.Message
-import com.crafttalk.chat.ui.view.holders.SimpleServerMessageViewHolder
-import com.crafttalk.chat.ui.view.holders.SimpleUserMessageViewHolder
+import com.crafttalk.chat.data.model.MessageType
+import com.crafttalk.chat.ui.view.holders.HolderSimpleServerMessageView
+import com.crafttalk.chat.ui.view.holders.HolderSimpleUserMessageView
 import java.text.SimpleDateFormat
 
 
@@ -28,11 +30,11 @@ class AdapterListMessages(private val inflater: LayoutInflater, private var mDat
         return when (viewType) {
             -1 -> {
                 val view = inflater.inflate(R.layout.item_user_message, parent, false)
-                SimpleUserMessageViewHolder(view)
+                HolderSimpleUserMessageView(view)
             }
             0 -> {
                 val view = inflater.inflate(R.layout.item_server_message, parent, false)
-                SimpleServerMessageViewHolder(view)
+                HolderSimpleServerMessageView(view)
             }
             else -> null!!
         }
@@ -46,11 +48,12 @@ class AdapterListMessages(private val inflater: LayoutInflater, private var mDat
         return mData[position].isReply.compareTo(true)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
+        val messageObg = mData[position]
         when (viewHolder.itemViewType) {
             -1 -> {
-                val messageObg = mData[position]
-                val holder = viewHolder as SimpleUserMessageViewHolder
+                val holder = viewHolder as HolderSimpleUserMessageView
                 holder.message.text = messageObg.message
 
                 val newMainColor = mapAttr["color_main"] as Int
@@ -63,13 +66,25 @@ class AdapterListMessages(private val inflater: LayoutInflater, private var mDat
                     bgMessageUser.mutate().setColorFilter(newMainColor, PorterDuff.Mode.SRC_IN)
                 }
 
-                holder.time.text = "Вы ${formatTime.format(messageObg.timestamp)}"
+                holder.time.text = "${messageObg.operatorName} ${formatTime.format(messageObg.timestamp)}"
+
+                Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - ${messageObg.messageType}")
+                when (messageObg.messageType) {
+                    MessageType.VISITOR_MESSAGE.valueType -> {}
+                    MessageType.RECEIVED_BY_MEDIATO.valueType -> {
+                        Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - RECEIVED_BY_MEDIATO")
+                        holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_check, 0)
+                    }
+                    MessageType.RECEIVED_BY_OPERATOR.valueType -> {
+                        Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - RECEIVED_BY_OPERATOR")
+                        holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_like, 0)
+                    }
+                }
             }
             0 -> {
-                val messageObg = mData[position]
-                val holder = viewHolder as SimpleServerMessageViewHolder
+                val holder = viewHolder as HolderSimpleServerMessageView
                 holder.message.text = messageObg.message
-                holder.time.text = "Бот ${formatTime.format(messageObg.timestamp)}"
+                holder.time.text = "${messageObg.operatorName} ${formatTime.format(messageObg.timestamp)}"
                 messageObg.actions?.let {
                     holder.listActions.adapter = AdapterAction(inflater, it, mapAttr)
                 }

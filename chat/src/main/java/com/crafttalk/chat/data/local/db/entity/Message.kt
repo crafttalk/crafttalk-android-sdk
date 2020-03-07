@@ -5,32 +5,28 @@ import com.crafttalk.chat.data.remote.Action
 
 @Entity(tableName = "messages")
 data class Message(
-    var id: String?,
+    var id: String,
 //    @ColumnInfo(name = "user_id")
 //    val userId: Int,
 //    @ColumnInfo(name = "client_id")
 //    val clientId: Int,
-//    @ColumnInfo(name = "message_type")
+    @ColumnInfo(name = "message_type")
     val messageType: Int,
-//    @ColumnInfo(name = "parent_msg_id")
-//    val parentMsgId: String?,
+    @ColumnInfo(name = "parent_msg_id")
+    val parentMsgId: String?,
     val message: String?,
 //    @TypeConverters(ActionConverter::class)
     val actions: Array<Action>?,
-
-//    @TypeConverters(HobbiesConverter::class)
-//    val hobbies: List<String>,
-
     @ColumnInfo(name = "is_reply")
     val isReply: Boolean,
 //    @ColumnInfo(name = "id_from_channel")
 //    val idFromChannel: String?,
-    var timestamp: Long//,
+    var timestamp: Long,
 //    val score: Int?,
 //    @ColumnInfo(name = "dialog_id")
 //    val dialogId: String?,
-//    @ColumnInfo(name = "operator_name")
-//    val operatorName: String?,
+    @ColumnInfo(name = "operator_name")
+    val operatorName: String
 //    @ColumnInfo(name = "from_history")
 //    val fromHistory: Boolean
 ) {

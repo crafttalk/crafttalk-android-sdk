@@ -13,15 +13,14 @@ fun checkVisitorInPref(pref: SharedPreferences): Boolean {
 fun getVisitorFromPref(pref: SharedPreferences): Visitor {
     val gson = Gson()
     val json = pref.getString("Visitor", "")
-    Log.d("pref", "getVisitorFromPref - ${json}, obj = ${gson.fromJson<Visitor>(json, Visitor::class.java).toString()}")
+    Log.d("PREFERENCES", "getVisitorFromPref - ${json}, obj = ${gson.fromJson<Visitor>(json, Visitor::class.java).toString()}")
     return gson.fromJson<Visitor>(json, Visitor::class.java)
 }
 
 @SuppressLint("CommitPrefEdits")
-fun buildVisitorSaveToPref(pref: SharedPreferences, mapWithDataUser: Map<String, Any>): Visitor? {
-    val prefEditor = pref.edit()
-    try {
-        val visitorObject = Visitor(
+fun buildVisitorSaveToPref(mapWithDataUser: Map<String, Any>): Visitor? {
+    return try {
+        Visitor(
             generateUUID(),
             mapWithDataUser["firstName"] as String,
             mapWithDataUser["lastName"] as String,
@@ -30,22 +29,27 @@ fun buildVisitorSaveToPref(pref: SharedPreferences, mapWithDataUser: Map<String,
             mapWithDataUser["contract"] as? String,
             mapWithDataUser["birthday"] as? String
         )
-//        val gson = Gson()
-//        val json = gson.toJson(visitorObject)
-//        Log.d("pref", "buildVisitorSaveToPref_1 - $json")
-        Log.d("pref", "buildVisitorSaveToPref_2 - ${visitorObject.getJsonObject()}")
-        Log.d("pref", "buildVisitorSaveToPref_put - ${visitorObject.getJsonObject().toString()}")
-        prefEditor.putString("Visitor", visitorObject.getJsonObject().toString())
-        prefEditor.putBoolean("isVisitor", true)
-        prefEditor.apply()
-        return visitorObject
     }
     catch (e: Exception) {
-        prefEditor.putBoolean("isVisitor", false)
-        return null
+        null
     }
 }
 
+@SuppressLint("CommitPrefEdits")
+fun saveVisitorToPref(pref: SharedPreferences, visitor: Visitor) {
+    val prefEditor = pref.edit()
+    prefEditor.putString("Visitor", visitor.getJsonObject().toString())
+    prefEditor.putBoolean("isVisitor", true)
+    prefEditor.apply()
+}
+
+fun deleteVisitorFromPref(pref: SharedPreferences) {
+    val prefEditor = pref.edit()
+    prefEditor.remove("Visitor")
+    prefEditor.putBoolean("isVisitor", false)
+    prefEditor.apply()
+}
+
 fun generateUUID(): String {
-    return "stub"
+    return "stub53"
 }

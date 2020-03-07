@@ -11,6 +11,7 @@ import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
 import com.crafttalk.chat.data.remote.Message as MessageSocket
 import com.crafttalk.chat.data.model.MessageType
 import com.crafttalk.chat.data.model.Visitor
+import com.crafttalk.chat.data.remote.socket_service.SocketAPI
 
 object Repository {
 
@@ -22,67 +23,82 @@ object Repository {
 
     fun getVisitor(pref: SharedPreferences): Visitor? {
         return if (checkVisitorInPref(pref)) {
-            Log.d("LOGGER", "getVisitor return obj - ${getVisitorFromPref(pref)}")
+            Log.d("REPOSITORY", "getVisitor return obj - ${getVisitorFromPref(pref)}")
             getVisitorFromPref(pref)
         }
         else {
-            Log.d("LOGGER", "getVisitor return null")
+            Log.d("REPOSITORY", "getVisitor return null")
             null
         }
     }
 
-    fun buildVisitor(pref: SharedPreferences, args: Array<out String>): Visitor? {
+    fun buildVisitor(args: Array<out String>): Visitor? {
         val map: HashMap<String, Any> = HashMap()
         map["lastName"] = args[0]
         map["firstName"] = args[1]
         map["phone"] = args[2]
-        return buildVisitorSaveToPref(pref, map)
+        return buildVisitorSaveToPref(map)
     }
 
     fun getMessagesList(): LiveData<List<MessageDB>> {
-        return dao.getMessages()
+        return dao.getMessagesLiveData()
     }
 
-    fun addNewMessageFromTheUser(textMessage: String) {
-        dao.insertMessage(
-            MessageDB(
-                id = null,
-                messageType = MessageType.VISITOR_MESSAGE.valueType,
-                message = textMessage,
-                isReply = false,
-                timestamp = System.currentTimeMillis(),
-                actions = null
+    fun getMessageFromServer(messageSocket: MessageSocket) {
+        when(messageSocket.message_type) {
+            MessageType.VISITOR_MESSAGE.valueType -> {
+                dao.insertMessage(
+                    MessageDB(
+                        messageSocket.id,
+                        messageSocket.message_type,
+                        messageSocket.parentMessageId,
+                        messageSocket.message,
+                        messageSocket.actions,
+                        messageSocket.isReply,
+                        messageSocket.timestamp,
+                        messageSocket.operator_name ?: "Вы"
+                    )
+                )
+            }
+            MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
+                Log.d("REPOSITORY", "updateMessage: messageType: ${messageSocket.message_type}")
+                dao.updateMessage(messageSocket.parentMessageId, messageSocket.message_type)
+            }
+        }
+    }
+
+    fun syncData() {
+        val timeStamp = dao.getLastTime()
+        SocketAPI.sync(timeStamp)
+    }
+
+    fun margeMessages(arrayMessages: Array<MessageSocket>) {
+        Log.d("REPOSITORY", "margeMessages: size = ${arrayMessages.size}")
+        val messagesFromDb = dao.getMessagesList()
+        arrayMessages.sortWith(compareBy(MessageSocket::timestamp))
+        arrayMessages.forEach { messageFromHistory ->
+            val messageCheckObj = MessageDB(
+                messageFromHistory.id,
+                messageFromHistory.message_type,
+                messageFromHistory.parentMessageId,
+                messageFromHistory.message,
+                messageFromHistory.actions,
+                messageFromHistory.isReply,
+                messageFromHistory.timestamp,
+                messageFromHistory.operator_name ?: "Вы"
             )
-        )
-    }
+            Log.d("REPOSITORY", "margeMessages: messageCheckObj = $messageCheckObj")
 
-
-    // тут может быть и обновление обьекта и добавление нового
-    fun addNewDataAboutMessagesFromTheServer(messageSocket: MessageSocket) {
-        if (!messageSocket.isReply) {
-            // сообщение от юзера
-            val messages = dao.getLastMessages(5)
-            messages.forEach {
-                if (it.id == null && messageSocket.id != null && !it.isReply && it.message == messageSocket.message && Math.abs(it.timestamp - messageSocket.timestamp) <= 30 * 1000) {
-                    dao.updateMessage(it.idKey, messageSocket.id)
-                    return
+            if (!messagesFromDb.any { it.id == messageCheckObj.id } && messageCheckObj.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType)) {
+                dao.insertMessage(messageCheckObj)
+                Log.d("REPOSITORY", "insert message $messageCheckObj")
+            }else {
+                Log.d("REPOSITORY", "update message id - ${messageCheckObj.parentMsgId}, type - ${messageCheckObj.messageType}")
+                messageCheckObj.parentMsgId?.let {parentId ->
+                    dao.updateMessage(parentId, messageCheckObj.messageType)
                 }
             }
         }
-        else {
-            // сообщение от сервера
-            dao.insertMessage(
-                MessageDB(
-                    messageSocket.id,
-                    messageSocket.message_type,
-                    messageSocket.message,
-                    messageSocket.actions,
-                    messageSocket.isReply,
-                    messageSocket.timestamp
-                )
-            )
-        }
-
     }
 
 }

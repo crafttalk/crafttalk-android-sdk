@@ -98,46 +98,39 @@ class ChatView: RelativeLayout, View.OnClickListener {
     }
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
-
         viewModel.allEvents.observe(lifecycleOwner, Observer {
             when (it) {
                 Events.MESSAGE_SEND -> {
                     entry_field.text.clear()
                 }
+                Events.MESSAGE_GET_SERVER -> {}
+                Events.USER_FAUND -> {
+                    stopProgressBar()
+                    form_place.visibility = View.GONE
+                    chat_place.visibility = View.VISIBLE
+                }
+                Events.USER_NOT_FAUND -> {
+                    form_place.visibility = View.VISIBLE
+                    chat_place.visibility = View.GONE
+                }
+                Events.USER_AUTHORIZAT -> {
+                    viewModel.syncData()
+                }
             }
-            // реакция на потерю соединения и т.д.
         })
-        viewModel.stateUserIsAuth.observe(lifecycleOwner, Observer {
-            stopProgressBar()
-            Log.d("LOGGER", "stateUserIsAuth observ - ${it}")
-            // добавить user state потому что сейчас полная дичь, при повторном срабатывание произойдет что-то страшное с листом, е надо так...
-            if (it) {
-                Log.d("LOGGER", "stateUserIsAuth - true")
-                form_place.visibility = View.GONE
-                chat_place.visibility = View.VISIBLE
-                viewModel.messages.observe(lifecycleOwner, Observer {
-                    Log.d("MESSAGES", "insert new message size = ${it.size}")
-//                    обновление листа
-                    adapterListMessages.setData(it)
-                    val countMessages = list_with_message.adapter!!.itemCount - 1
-                    if (countMessages > 0) {
-                        list_with_message.smoothScrollToPosition(countMessages)
-                    }
-                    adapterListMessages.notifyDataSetChanged()
-                })
-//                listener.onAuth()
+        viewModel.messages.observe(lifecycleOwner, Observer {
+            Log.d("CHAT_VIEW", "insert new message size = ${it.size}")
+//            обновление листа
+            adapterListMessages.setData(it)
+            val countMessages = list_with_message.adapter!!.itemCount - 1
+            if (countMessages > 0) {
+                list_with_message.smoothScrollToPosition(countMessages)
             }
-            else {
-                Log.d("LOGGER", "stateUserIsAuth - false")
-                form_place.visibility = View.VISIBLE
-                chat_place.visibility = View.GONE
-            }
+            adapterListMessages.notifyDataSetChanged()
         })
     }
 
-    fun onDestroy() {
-
-    }
+    fun onDestroy() {}
 
     private fun checkerObligatoryFields(fields: List<EditText>): Boolean {
         var result = true
@@ -179,7 +172,7 @@ class ChatView: RelativeLayout, View.OnClickListener {
                     val firstName = first_name_user.text.toString()
                     val lastName = last_name_user.text.toString()
                     val phone = phone_user.text.toString()
-                    viewModel.registration(context, firstName, lastName, phone)
+                    viewModel.registration(firstName, lastName, phone)
                 }
             }
             R.id.send_message -> {

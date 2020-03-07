@@ -1,5 +1,6 @@
 package com.crafttalk.chat.data.remote.socket_service
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +9,8 @@ import com.github.nkzawa.socketio.client.Manager
 import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
 import com.crafttalk.chat.data.Repository
+import com.crafttalk.chat.data.local.pref.deleteVisitorFromPref
+import com.crafttalk.chat.data.local.pref.saveVisitorToPref
 import com.crafttalk.chat.data.model.MessageType
 import com.crafttalk.chat.data.model.Visitor
 import com.crafttalk.chat.data.remote.Message
@@ -28,8 +31,13 @@ object SocketAPI {
         Gson()
     }
 
+    private var pref: SharedPreferences? = null
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
+
+    fun setSharedPreferences(pref: SharedPreferences) {
+        this.pref = pref
+    }
 
     private val events: MutableLiveData<Events> by lazy {
         MutableLiveData<Events>()
@@ -37,11 +45,6 @@ object SocketAPI {
 
     fun getEventsFromSocket(): LiveData<Events> = events
 
-    private val stateAuth: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
-
-    fun getUserAuthorized(): LiveData<Boolean> = stateAuth
 
     private lateinit var visitor: Visitor
 
@@ -63,21 +66,21 @@ object SocketAPI {
     }
 
     fun setVisitor(visitor: Visitor?) {
-        Log.d("LOGGER", "setVisitor visitor - ${visitor?.getJsonObject()}")
+        Log.d(TAG_SOCKET, "setVisitor visitor - ${visitor?.getJsonObject()}")
         if (visitor == null) {
-            Log.d("LOGGER", "set new state stateAuth - ${false}")
-            stateAuth.value = false
+            Log.d(TAG_SOCKET, "set new state stateAuth - ${false}")
+            events.postValue(Events.USER_NOT_FAUND)
         }
         else {
             SocketAPI.visitor = visitor
-            Log.d("LOGGER", "setVisitor - visitor = ${visitor.getJsonObject()}")
+            events.postValue(Events.USER_FAUND)
+            Log.d(TAG_SOCKET, "setVisitor - visitor = ${visitor.getJsonObject()}")
             // инициализация сокета не должна происходить если сравниваем с null
-//            if (!socket!!.connected()) {
-            if (socket == null || !socket!!.connected()) {
-                Log.d("LOGGER", "setVisitor - socket connect}")
+            if (!socket!!.connected()) {
+                Log.d(TAG_SOCKET, "setVisitor - socket connect}")
                 socket!!.connect()
             }else {
-                Log.d("LOGGER", "setVisitor - socket auth}")
+                Log.d(TAG_SOCKET, "setVisitor - socket auth}")
                 // или реконнект да хрен его знает
                 authenticationUser(socket!!)
             }
@@ -96,12 +99,13 @@ object SocketAPI {
 
         socket.on("hide") {
             Log.d(TAG_SOCKET, "hide")
-            stateAuth.postValue( false)
+            deleteVisitorFromPref(pref!!)
         }
 
         socket.on("authorized") {
             Log.d(TAG_SOCKET, "authorized")
-            stateAuth.postValue( true)
+            events.postValue(Events.USER_AUTHORIZAT)
+            saveVisitorToPref(pref!!, visitor)
         }
 
 //        socket.on("authorization-required") {
@@ -114,51 +118,50 @@ object SocketAPI {
             val messageJson = it[0] as JSONObject
             Log.d("SOCKET_API", "json message___ methon message - ${messageJson}")
             val messageObj = gson.fromJson(messageJson.toString(), Message::class.java)
-
-            when (messageObj.message_type) {
-                MessageType.VISITOR_MESSAGE.valueType -> Repository.addNewDataAboutMessagesFromTheServer(messageObj)
-                MessageType.RECIEVED_BY_OPERATOR.valueType -> {}
-            }
+            Repository.getMessageFromServer(messageObj)
             events.postValue(Events.MESSAGE_GET)
         }
 
         socket.on("history-messages-loaded") {
-            Log.d(TAG_SOCKET, "history-messages-loaded")
-            //
+            Log.d(TAG_SOCKET, "history-messages-loaded, ${it.size}")
+            val listMessages = gson.fromJson(it[0].toString(), Array<Message>::class.java)
+            listMessages.forEach {
+                Log.d(TAG_SOCKET, "history: ${it.toString()}")
+            }
+            Repository.margeMessages(listMessages)
         }
 
 
         socket.on(Socket.EVENT_CONNECT_ERROR) {
-            Log.d("EVENT", "EVENT_CONNECT_ERROR")
+            Log.d(TAG_SOCKET, "EVENT_CONNECT_ERROR")
         }
         socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
-            Log.d("EVENT", "EVENT_CONNECT_TIMEOUT")
+            Log.d(TAG_SOCKET, "EVENT_CONNECT_TIMEOUT")
         }
         socket.on(Socket.EVENT_DISCONNECT) {
-            Log.d("EVENT", "EVENT_DISCONNECT")
+            Log.d(TAG_SOCKET, "EVENT_DISCONNECT")
         }
         socket.on(Socket.EVENT_ERROR) {
-            Log.d("EVENT", "EVENT_ERROR")
+            Log.d(TAG_SOCKET, "EVENT_ERROR")
         }
         socket.on(Socket.EVENT_MESSAGE) {
-            Log.d("EVENT", "EVENT_MESSAGE")
+            Log.d(TAG_SOCKET, "EVENT_MESSAGE")
         }
         socket.on(Socket.EVENT_RECONNECT) {
-            Log.d("EVENT", "EVENT_RECONNECT")
+            Log.d(TAG_SOCKET, "EVENT_RECONNECT")
         }
         socket.on(Socket.EVENT_RECONNECTING) {
-            Log.d("EVENT", "EVENT_RECONNECTING")
+            Log.d(TAG_SOCKET, "EVENT_RECONNECTING")
         }
         socket.on(Socket.EVENT_RECONNECT_ATTEMPT) {
-            Log.d("EVENT", "EVENT_RECONNECT_ATTEMPT")
+            Log.d(TAG_SOCKET, "EVENT_RECONNECT_ATTEMPT")
         }
         socket.on(Socket.EVENT_RECONNECT_ERROR) {
-            Log.d("EVENT", "EVENT_RECONNECT_ERROR")
+            Log.d(TAG_SOCKET, "EVENT_RECONNECT_ERROR")
         }
         socket.on(Socket.EVENT_RECONNECT_FAILED) {
-            Log.d("EVENT", "EVENT_RECONNECT_FAILED")
+            Log.d(TAG_SOCKET, "EVENT_RECONNECT_FAILED")
         }
-
 
     }
 
@@ -166,13 +169,13 @@ object SocketAPI {
     fun destroy() {
         socket?.disconnect()
         socket?.off()
+        pref = null
     }
 
     fun sendMessage(message: String) {
         viewModelScope.launch {
             if (NetworkUtils.isOnline()) {
                 socket!!.emit("visitor-message", message, MessageType.VISITOR_MESSAGE.valueType, null, 0, null, null, null)
-                Repository.addNewMessageFromTheUser(message)
                 events.postValue(Events.MESSAGE_SEND)
             } else {
                 events.postValue(Events.MESSAGE_SEND_ERROR)
@@ -189,7 +192,6 @@ object SocketAPI {
                 events.postValue(Events.ACTION_SELECT_ERROR)
             }
         }
-
     }
 
     private fun authenticationUser(socket: Socket) {
@@ -198,29 +200,8 @@ object SocketAPI {
         }
     }
 
-
-
-//    private fun authenticationUser(socket: Socket) {
-//        socket.emit("me",
-////            Visitor(
-////                "0bbd6047-d26f-4777-b516-be71ba41dafb",
-////                "test_fname",
-////                "test_lnam​",
-////                "test@gmail.com",
-////                "89534566787",
-////                "test_contact",
-////                "28.05.1975",
-////                "dc5b56a08dd9ba990d77416f806fc9a10ca7d66c681354beef20c58f0c883bc4"
-////            )
-////            , true)
-//
-//        visitor?.let {
-//            Log.d("authenticationUser", "visitorJson = ${visitor}")
-//            socket.emit("me", it.getJsonObjectVisitor())
-////            socket.emit("register", it.getJsonObjectVisitor())
-//        }
-//
-//    }
+    fun sync(timestamp: Long) {
+        socket!!.emit("history-messages-requested", timestamp)
+    }
 
 }
-

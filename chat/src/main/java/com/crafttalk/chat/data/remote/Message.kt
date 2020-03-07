@@ -1,10 +1,13 @@
 package com.crafttalk.chat.data.remote
 
+import com.google.gson.annotations.SerializedName
+
 class Message (
-    val id: String?,
+    val id: String,
     val message_type: Int,
     val isReply : Boolean,
-    val parent_message_id: String?,
+    @SerializedName (value = "parent_message_id", alternate = arrayOf("parent_msg_id"))
+    val parentMessageId: String,
     val timestamp: Long,
     val message: String?,
     val actions: Array<Action>?,
