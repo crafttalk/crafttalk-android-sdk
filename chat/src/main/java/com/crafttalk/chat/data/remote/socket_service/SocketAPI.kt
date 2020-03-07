@@ -108,29 +108,31 @@ object SocketAPI {
             saveVisitorToPref(pref!!, visitor)
         }
 
-//        socket.on("authorization-required") {
-//            Log.d(TAG_SOCKET, "authorization-required")
-//            //
-//        }
-
         socket.on("message") {
             Log.d(TAG_SOCKET, "message, size = ${it.size}; it = ${it}")
             val messageJson = it[0] as JSONObject
             Log.d("SOCKET_API", "json message___ methon message - ${messageJson}")
             val messageObj = gson.fromJson(messageJson.toString(), Message::class.java)
-            Repository.getMessageFromServer(messageObj)
-            events.postValue(Events.MESSAGE_GET)
+            if (!messageJson.toString().contains(""""message":"\/start"""")) {
+                Repository.getMessageFromServer(messageObj)
+                events.postValue(Events.MESSAGE_GET)
+            }
         }
 
         socket.on("history-messages-loaded") {
             Log.d(TAG_SOCKET, "history-messages-loaded, ${it.size}")
             val listMessages = gson.fromJson(it[0].toString(), Array<Message>::class.java)
+
             listMessages.forEach {
                 Log.d(TAG_SOCKET, "history: ${it.toString()}")
             }
-            Repository.margeMessages(listMessages)
-        }
 
+            if (listMessages.isEmpty()) {
+                greet()
+            } else {
+                Repository.margeMessages(listMessages)
+            }
+        }
 
         socket.on(Socket.EVENT_CONNECT_ERROR) {
             Log.d(TAG_SOCKET, "EVENT_CONNECT_ERROR")
@@ -172,13 +174,24 @@ object SocketAPI {
         pref = null
     }
 
+    private fun greet() {
+        viewModelScope.launch {
+            if (NetworkUtils.isOnline()) {
+                socket!!.emit("visitor-message", "/start", 1, null, 0, null, null, null)
+                events.postValue(Events.START_EVENT_SEND)
+            } else {
+                events.postValue(Events.NO_INTERNET)
+            }
+        }
+    }
+
     fun sendMessage(message: String) {
         viewModelScope.launch {
             if (NetworkUtils.isOnline()) {
                 socket!!.emit("visitor-message", message, MessageType.VISITOR_MESSAGE.valueType, null, 0, null, null, null)
                 events.postValue(Events.MESSAGE_SEND)
             } else {
-                events.postValue(Events.MESSAGE_SEND_ERROR)
+                events.postValue(Events.NO_INTERNET)
             }
         }
     }
