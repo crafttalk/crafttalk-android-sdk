@@ -15,9 +15,13 @@ import com.crafttalk.chat.data.model.MessageType
 import com.crafttalk.chat.ui.view.holders.HolderSimpleServerMessageView
 import com.crafttalk.chat.ui.view.holders.HolderSimpleUserMessageView
 import java.text.SimpleDateFormat
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import androidx.core.content.res.ResourcesCompat
 
 
-class AdapterListMessages(private val inflater: LayoutInflater, private var mData: List<Message>, val mapAttr: Map<String, Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AdapterListMessages(private val inflater: LayoutInflater, private var mData: List<Message>, private val mapAttr: Map<String, Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     @SuppressLint("SimpleDateFormat")
     val formatTime = SimpleDateFormat("dd.MM.yyyy HH:mm")
@@ -54,6 +58,19 @@ class AdapterListMessages(private val inflater: LayoutInflater, private var mDat
         when (viewHolder.itemViewType) {
             -1 -> {
                 val holder = viewHolder as HolderSimpleUserMessageView
+
+                when (messageObg.messageType) {
+                    MessageType.VISITOR_MESSAGE.valueType -> {}
+                    MessageType.RECEIVED_BY_MEDIATO.valueType -> {
+                        Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - RECEIVED_BY_MEDIATO, message - ${mData[position].message}")
+                        holder.time.setCompoundDrawablesWithIntrinsicBounds(null, null, transformSizeDrawable(R.drawable.ic_check, 20), null)
+                    }
+                    MessageType.RECEIVED_BY_OPERATOR.valueType -> {
+                        Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - RECEIVED_BY_OPERATOR, message - ${mData[position].message}")
+                        holder.time.setCompoundDrawablesWithIntrinsicBounds(null, null, transformSizeDrawable(R.drawable.ic_db_check, 24), null)
+                    }
+                }
+
                 holder.message.text = messageObg.message
 
                 val newMainColor = mapAttr["color_main"] as Int
@@ -67,19 +84,6 @@ class AdapterListMessages(private val inflater: LayoutInflater, private var mDat
                 }
 
                 holder.time.text = "${messageObg.operatorName} ${formatTime.format(messageObg.timestamp)}"
-
-                Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - ${messageObg.messageType}")
-                when (messageObg.messageType) {
-                    MessageType.VISITOR_MESSAGE.valueType -> {}
-                    MessageType.RECEIVED_BY_MEDIATO.valueType -> {
-                        Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - RECEIVED_BY_MEDIATO")
-                        holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_check, 0)
-                    }
-                    MessageType.RECEIVED_BY_OPERATOR.valueType -> {
-                        Log.d("ADAPTER_LIST_MESSAGE", "user message holder: type - RECEIVED_BY_OPERATOR")
-                        holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_like, 0)
-                    }
-                }
             }
             0 -> {
                 val holder = viewHolder as HolderSimpleServerMessageView
@@ -90,6 +94,12 @@ class AdapterListMessages(private val inflater: LayoutInflater, private var mDat
                 }
             }
         }
+    }
+
+    private fun transformSizeDrawable(idIcon: Int, newSize: Int): Drawable {
+        val dr = ResourcesCompat.getDrawable(inflater.context.resources, idIcon, null)
+        val bitmap = (dr as BitmapDrawable).bitmap
+        return BitmapDrawable(inflater.context.resources, Bitmap.createScaledBitmap(bitmap, newSize, newSize, true))
     }
 
 }
