@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.os.Build
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.crafttalk.chat.Events
@@ -52,8 +55,11 @@ class ChatView: RelativeLayout, View.OnClickListener {
     @SuppressLint("ResourceType")
     private fun customizationChat(attrArr: TypedArray): Map<String, Any> {
         val scaleRatio = resources.displayMetrics.density
+        // set content
+//        title.text = attrArr.getString(R.styleable.ChatView_title_text)
+        send_message.setColorFilter(attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main)), PorterDuff.Mode.SRC_IN)
 
-        val newTintColor = attrArr.getColor(R.styleable.ChatView_main_color, ContextCompat.getColor(context, R.color.default_main_color))
+        val newTintColor = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main))
         val bgSignInBtn = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.background_sign_in_auth_form)!!)
         sign_in.setBackgroundDrawable(bgSignInBtn)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -62,16 +68,32 @@ class ChatView: RelativeLayout, View.OnClickListener {
         else {
             bgSignInBtn.mutate().setColorFilter(newTintColor, PorterDuff.Mode.SRC_IN)
         }
+        // set color
+        warning.setTextColor(attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.default_color_text_warning)))
+        company_name.setTextColor(attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.default_color_company)))
+//        title.setTextColor(attrArr.getColor(R.styleable.ChatView_color_title, ContextCompat.getColor(context, R.color.default_color_title)))
+        // set dimension
+//        title.textSize = attrArr.getDimension(R.styleable.ChatView_size_title, 22f)/scaleRatio
+        warning.textSize = attrArr.getDimension(R.styleable.ChatView_size_warning, resources.getDimension(R.dimen.default_size_warning))/scaleRatio
+        company_name.textSize = attrArr.getDimension(R.styleable.ChatView_size_company, resources.getDimension(R.dimen.default_size_company))/scaleRatio
+        // set bg
+        upper_limiter.setBackgroundColor(attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main)))
+        lower_limit.setBackgroundColor(attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main)))
 
-        title.text = attrArr.getString(R.styleable.ChatView_title_text)
-        title.textSize = attrArr.getDimension(R.styleable.ChatView_title_size, 22f)/scaleRatio
-        title.setTextColor(attrArr.getColor(R.styleable.ChatView_title_color, ContextCompat.getColor(context, R.color.default_color_title)))
-        upper_limiter.setBackgroundColor(attrArr.getColor(R.styleable.ChatView_main_color, ContextCompat.getColor(context, R.color.default_main_color)))
-        lower_limit.setBackgroundColor(attrArr.getColor(R.styleable.ChatView_main_color, ContextCompat.getColor(context, R.color.default_main_color)))
-        send_message.setColorFilter(attrArr.getColor(R.styleable.ChatView_main_color, ContextCompat.getColor(context, R.color.default_main_color)), PorterDuff.Mode.SRC_IN)
 
         val mapAttr = HashMap<String, Any>()
-        mapAttr["color_main"] = attrArr.getColor(R.styleable.ChatView_main_color, ContextCompat.getColor(context, R.color.default_main_color))
+        mapAttr["color_bg_user_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
+        mapAttr["color_bg_server_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
+        mapAttr["color_bg_server_action"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
+        mapAttr["color_borders_server_action"] = attrArr.getColor(R.styleable.ChatView_color_borders_server_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
+        mapAttr["color_text_user_message"] = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
+        mapAttr["color_text_server_message"] = attrArr.getColor(R.styleable.ChatView_color_text_server_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
+        mapAttr["color_text_server_action"] = attrArr.getColor(R.styleable.ChatView_color_text_server_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
+        mapAttr["color_time_mark"] = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
+        mapAttr["size_user_message"] = attrArr.getDimension(R.styleable.ChatView_size_user_message, resources.getDimension(R.dimen.default_size_user_message))
+        mapAttr["size_server_message"] = attrArr.getDimension(R.styleable.ChatView_size_server_message, resources.getDimension(R.dimen.default_size_server_message))
+        mapAttr["size_server_action"] = attrArr.getDimension(R.styleable.ChatView_size_server_action, resources.getDimension(R.dimen.default_size_server_action))
+        mapAttr["size_time_mark"] = attrArr.getDimension(R.styleable.ChatView_size_time_mark, resources.getDimension(R.dimen.default_size_time_mark))
         return mapAttr
     }
 
@@ -80,6 +102,24 @@ class ChatView: RelativeLayout, View.OnClickListener {
         sign_in.setOnClickListener(this)
 //        like.setOnClickListener(this)
         send_message.setOnClickListener(this)
+
+        entry_field.addTextChangedListener(
+            object:TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    Log.d("ChatView", "afterTextChanged s - ${s}, check - ${((s?:"").isEmpty())}")
+                    if ((s?:"").isEmpty()) {
+                        send_message.setImageResource(R.drawable.ic_attach_file)
+                        send_message.rotation = 45f
+                    }
+                    else {
+                        send_message.setImageResource(R.drawable.ic_send)
+                        send_message.rotation = 0f
+                    }
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            }
+        )
     }
 
     private fun setListMessages(layoutInflater: LayoutInflater, mapAttr: Map<String, Any>) {
@@ -99,16 +139,26 @@ class ChatView: RelativeLayout, View.OnClickListener {
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
         viewModel.allEvents.observe(lifecycleOwner, Observer {
+            Log.d("CHAT_VIEW", "GET NEW EVENT")
             when (it) {
                 Events.MESSAGE_SEND -> {
                     entry_field.text.clear()
                 }
                 Events.MESSAGE_GET_SERVER -> {}
                 Events.USER_NOT_FAUND -> {
+                    Log.d("CHAT_VIEW", "USER_NOT_FAUND")
                     form_place.visibility = View.VISIBLE
                     chat_place.visibility = View.GONE
                 }
+                Events.USER_FAUND_WITHOUT_AUTH -> {
+                    Log.d("CHAT_VIEW", "USER_FAUND_WITHOUT_AUTH")
+                    stopProgressBar()
+                    form_place.visibility = View.GONE
+                    chat_place.visibility = View.VISIBLE
+                    // ограничения на ввод сообщений
+                }
                 Events.USER_AUTHORIZAT -> {
+                    Log.d("CHAT_VIEW", "USER_AUTHORIZAT")
                     stopProgressBar()
                     form_place.visibility = View.GONE
                     chat_place.visibility = View.VISIBLE
@@ -116,7 +166,11 @@ class ChatView: RelativeLayout, View.OnClickListener {
                 }
                 Events.NO_INTERNET -> {
                     stopProgressBar()
+                    warning.text = "Waiting for network..."
                     Log.d("CHAT_VIEW", "NO_INTERNET_CONNECTION")
+                }
+                Events.HAS_INTERNET -> {
+                    warning.text = ""
                 }
             }
         })

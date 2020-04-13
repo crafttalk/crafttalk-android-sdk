@@ -1,7 +1,7 @@
 package com.crafttalk.chat.data.local.db.entity
 
 import androidx.room.*
-import com.crafttalk.chat.data.remote.Action
+import com.crafttalk.chat.data.remote.pojo.Action
 
 @Entity(tableName = "messages")
 data class Message(

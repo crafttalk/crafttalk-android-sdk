@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="default_color_title">#000</color>
-    <color name="default_main_color">#2e7d32</color>
 
-    <color name="default_color_bg_simple_user_message">@color/default_main_color</color>
-    <color name="default_color_bg_simple_server_message">#e0e0e0</color>
+    <color name="default_color_main">#2e7d32</color>
 
-    <color name="gray">#9e9e9e</color>
+    <color name="default_color_bg_user_message">@color/default_color_main</color>
+    <color name="default_color_bg_server_message">#EBEBEB</color>
+    <color name="default_color_borders_server_action">#ddd</color>
+    <color name="default_color_bg_server_action">#fff</color>
+
+    <color name="default_color_text_user_message">#fff</color>
+    <color name="default_color_text_server_message">#000</color>
+    <color name="default_color_text_server_action">@color/default_color_main</color>
+    <color name="default_color_text_warning">#2C2C2C</color>
+
+    <color name="default_color_time_mark">#AEB0B0</color>
+    <color name="default_color_company">#AEB0B0</color>
+
+    <color name="gray">#ddd</color>
     <color name="error">#d50000</color>
+
 </resources>

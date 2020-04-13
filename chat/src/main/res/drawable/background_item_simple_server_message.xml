@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<shape
+    android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:top="5dp" android:end="5dp">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/default_color_bg_simple_server_message"/>
-        </shape>
-    </item>
-
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/default_color_bg_simple_server_message"/>
-            <corners android:radius="5dp"/>
-        </shape>
-    </item>
-</layer-list>
+    <solid android:color="@color/default_color_bg_server_message"/>
+    <corners android:topLeftRadius="5dp" android:topRightRadius="5dp" android:bottomRightRadius="5dp"/>
+</shape>

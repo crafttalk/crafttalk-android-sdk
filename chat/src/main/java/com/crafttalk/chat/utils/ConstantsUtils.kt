@@ -1,4 +1,4 @@
-package com.matchesgame.crafttalkchatsdk.utils
+package com.crafttalk.chat.utils
 
 object ConstantsUtils {
     const val SOCKET_URL =

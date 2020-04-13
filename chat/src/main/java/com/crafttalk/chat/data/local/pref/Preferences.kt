@@ -51,5 +51,5 @@ fun deleteVisitorFromPref(pref: SharedPreferences) {
 }
 
 fun generateUUID(): String {
-    return "stub73"
+    return "stub98"
 }

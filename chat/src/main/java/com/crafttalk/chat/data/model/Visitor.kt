@@ -1,5 +1,6 @@
 package com.crafttalk.chat.data.model
 
+import android.util.Log
 import com.crafttalk.chat.utils.HashUtils
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
@@ -23,13 +24,16 @@ class Visitor (
     ) {
 
     private val salt = "C~kW]cq76(a?m[UbJ)drw+Wh6>W[3Wsj"
-    private val source = uuid + firstName + lastName + contract + phone + email + birthday
-    private val hash = HashUtils.hashString("SHA-256", (salt + HashUtils.hashString("SHA-256", salt + source)))
+//    private val source = "${uuid}${firstName}${lastName}${contract}${phone}${email}${birthday}"
+    private val source = "${uuid}${firstName}${lastName}${contract?:"test_contract"}${phone?:""}${email?:"test@gmail.com"}${birthday?:"28.05.1975"}"
+    private val hash = HashUtils.getHash("SHA-256", "${salt}${HashUtils.getHash("SHA-256", "${salt}${source}")}")
 
     override fun toString(): String {
         return "${uuid}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"
     }
+
     fun getJsonObject(): JSONObject {
+        Log.d("VISITOR", "getJsonObject source - ${source}, hash - ${hash}")
         val visitorJson = JSONObject()
         visitorJson.put("uuid", uuid)
         visitorJson.put("first_name", firstName)

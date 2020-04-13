@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.crafttalk.chat.ui.view.ChatView
+        android:id="@+id/chat_view"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        app:color_title="#65499c"
+        app:title_text="Sample chat"
+        app:color_main="@color/color_main"
+        app:color_bg_user_message="@color/color_main"
+        app:color_text_server_action="@color/color_main"
+        />
+
+</LinearLayout>

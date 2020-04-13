@@ -13,10 +13,10 @@ import com.crafttalk.chat.data.local.pref.deleteVisitorFromPref
 import com.crafttalk.chat.data.local.pref.saveVisitorToPref
 import com.crafttalk.chat.data.model.MessageType
 import com.crafttalk.chat.data.model.Visitor
-import com.crafttalk.chat.data.remote.Message
+import com.crafttalk.chat.data.remote.pojo.Message
 import com.crafttalk.chat.utils.NetworkUtils
-import com.matchesgame.crafttalkchatsdk.utils.ConstantsUtils
-import com.matchesgame.crafttalkchatsdk.utils.ConstantsUtils.TAG_SOCKET
+import com.crafttalk.chat.utils.ConstantsUtils
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -66,6 +66,10 @@ object SocketAPI {
     }
 
     fun setVisitor(visitor: Visitor?) {
+
+
+
+        Log.d(TAG_SOCKET, "check has visitor - ${Repository.hasVisitor(pref!!)}; ${pref}; ${visitor}")
         Log.d(TAG_SOCKET, "setVisitor visitor - ${visitor?.getJsonObject()}")
         if (visitor == null) {
             Log.d(TAG_SOCKET, "set new state stateAuth - ${false}")
@@ -73,7 +77,11 @@ object SocketAPI {
         }
         else {
             SocketAPI.visitor = visitor
-            Log.d(TAG_SOCKET, "setVisitor - visitor = ${visitor.getJsonObject()}")
+            if (Repository.hasVisitor(pref!!)) {
+                Log.d(TAG_SOCKET, "sent USER_FAUND_WITHOUT_AUTH")
+                events.postValue(Events.USER_FAUND_WITHOUT_AUTH)
+            }
+            Log.d(TAG_SOCKET, "setVisitor - visitor = ${visitor.getJsonObject()} ")
             // инициализация сокета не должна происходить если сравниваем с null
             if (!socket!!.connected()) {
                 Log.d(TAG_SOCKET, "setVisitor - socket connect}")
@@ -133,14 +141,18 @@ object SocketAPI {
             }
         }
 
+        socket.on(Socket.EVENT_CONNECT) {
+            events.postValue(Events.HAS_INTERNET)
+        }
         socket.on(Socket.EVENT_CONNECT_ERROR) {
-            events.postValue(Events.NO_INTERNET)
+//            events.postValue(Events.NO_INTERNET)
             Log.d(TAG_SOCKET, "EVENT_CONNECT_ERROR")
         }
         socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
             Log.d(TAG_SOCKET, "EVENT_CONNECT_TIMEOUT")
         }
         socket.on(Socket.EVENT_DISCONNECT) {
+            events.postValue(Events.NO_INTERNET)
             Log.d(TAG_SOCKET, "EVENT_DISCONNECT")
         }
         socket.on(Socket.EVENT_ERROR) {
@@ -160,7 +172,7 @@ object SocketAPI {
         }
         socket.on(Socket.EVENT_RECONNECT_ERROR) {
             Log.d(TAG_SOCKET, "EVENT_RECONNECT_ERROR")
-            events.postValue(Events.NO_INTERNET)
+//            events.postValue(Events.NO_INTERNET)
         }
         socket.on(Socket.EVENT_RECONNECT_FAILED) {
             Log.d(TAG_SOCKET, "EVENT_RECONNECT_FAILED")
@@ -209,22 +221,24 @@ object SocketAPI {
     }
 
     private fun authenticationUser(socket: Socket) {
-        visitor.let {
-            if (NetworkUtils.isOnline()) {
-                socket.emit("me", it.getJsonObject())
-            }
-            else {
-                events.postValue(Events.NO_INTERNET)
+        viewModelScope.launch {
+            visitor.let {
+                if (NetworkUtils.isOnline()) {
+                    socket.emit("me", it.getJsonObject())
+                } else {
+                    events.postValue(Events.NO_INTERNET)
+                }
             }
         }
     }
 
     fun sync(timestamp: Long) {
-        if (NetworkUtils.isOnline()) {
-            socket!!.emit("history-messages-requested", timestamp)
-        }
-        else {
-            events.postValue(Events.NO_INTERNET)
+        viewModelScope.launch {
+            if (NetworkUtils.isOnline()) {
+                socket!!.emit("history-messages-requested", timestamp)
+            } else {
+                events.postValue(Events.NO_INTERNET)
+            }
         }
     }
 

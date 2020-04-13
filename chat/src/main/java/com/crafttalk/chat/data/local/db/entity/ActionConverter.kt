@@ -2,7 +2,7 @@ package com.crafttalk.chat.data.local.db.entity
 
 import android.util.Log
 import androidx.room.TypeConverter
-import com.crafttalk.chat.data.remote.Action
+import com.crafttalk.chat.data.remote.pojo.Action
 
 class ActionConverter {
 
@@ -35,7 +35,12 @@ class ActionConverter {
                 val nodes = actions.split(";")
                 nodes.forEach {
                     actionPart = it.split("~")
-                    resultList.add(Action(actionPart[0], actionPart[1]))
+                    resultList.add(
+                        Action(
+                            actionPart[0],
+                            actionPart[1]
+                        )
+                    )
                 }
                 resultList.toTypedArray()
             }

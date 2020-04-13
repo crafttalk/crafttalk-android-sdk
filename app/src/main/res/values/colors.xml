@@ -5,5 +5,5 @@
     <color name="colorAccent">@color/color_main</color>
 
     <color name="color_main">#ED3300</color>
-
+    <color name="white">#fff</color>
 </resources>

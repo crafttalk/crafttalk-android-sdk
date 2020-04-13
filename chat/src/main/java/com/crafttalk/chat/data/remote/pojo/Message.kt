@@ -1,8 +1,8 @@
-package com.crafttalk.chat.data.remote
+package com.crafttalk.chat.data.remote.pojo
 
 import com.google.gson.annotations.SerializedName
 
-class Message (
+data class Message (
     val id: String,
     val message_type: Int,
     val isReply : Boolean,

@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
     android:background="@drawable/background_item_action">
 
     <TextView
@@ -13,6 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
+        android:paddingTop="12dp"
+        android:paddingBottom="14dp"
+        android:fontFamily="@font/ubuntu_medium"
+        android:textFontWeight="600"
         />
 
 </LinearLayout>

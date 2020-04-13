@@ -8,7 +8,7 @@ import com.crafttalk.chat.data.local.pref.checkVisitorInPref
 import com.crafttalk.chat.data.local.pref.getVisitorFromPref
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
-import com.crafttalk.chat.data.remote.Message as MessageSocket
+import com.crafttalk.chat.data.remote.pojo.Message as MessageSocket
 import com.crafttalk.chat.data.model.MessageType
 import com.crafttalk.chat.data.model.Visitor
 import com.crafttalk.chat.data.remote.socket_service.SocketAPI
@@ -34,10 +34,14 @@ object Repository {
 
     fun buildVisitor(args: Array<out String>): Visitor? {
         val map: HashMap<String, Any> = HashMap()
-        map["lastName"] = args[0]
-        map["firstName"] = args[1]
+        map["firstName"] = args[0]
+        map["lastName"] = args[1]
         map["phone"] = args[2]
         return buildVisitorSaveToPref(map)
+    }
+
+    fun hasVisitor(pref: SharedPreferences): Boolean {
+        return checkVisitorInPref(pref)
     }
 
     fun getMessagesList(): LiveData<List<MessageDB>> {
