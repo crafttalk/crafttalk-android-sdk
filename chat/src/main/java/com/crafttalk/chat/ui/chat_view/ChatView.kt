@@ -1,4 +1,4 @@
-package com.crafttalk.chat.ui.view
+package com.crafttalk.chat.ui.chat_view
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -6,26 +6,28 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.os.Build
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.crafttalk.chat.Events
 import com.crafttalk.chat.R
-import com.crafttalk.chat.ui.view_model.ChatViewModel
+import com.crafttalk.chat.data.model.Visitor
+import com.crafttalk.chat.data.remote.socket_service.SocketAPI
+import com.crafttalk.chat.ui.chat_view.adapters.AdapterListMessages
+import com.crafttalk.chat.ui.chat_view.view_model.ChatViewModel
+import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
+import com.crafttalk.chat.utils.hideSoftKeyboard
+import kotlinx.android.synthetic.main.fragment_entry_field.view.*
 import kotlinx.android.synthetic.main.view_chat.view.*
-import com.crafttalk.chat.ui.ListenerChat
-import com.crafttalk.chat.ui.view.adapters.AdapterListMessages
 
 
 class ChatView: RelativeLayout, View.OnClickListener {
@@ -34,7 +36,6 @@ class ChatView: RelativeLayout, View.OnClickListener {
     private lateinit var adapterListMessages: AdapterListMessages
     private lateinit var listener: ListenerChat
 
-
     constructor(context: Context) : super(context) {}
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -42,18 +43,17 @@ class ChatView: RelativeLayout, View.OnClickListener {
         val layoutInflater = getContext().getSystemService(service) as LayoutInflater
         layoutInflater.inflate(R.layout.view_chat, this, true)
 
-
         setAllListeners()
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
-        val mapAttr = customizationChat(attrArr)
-        setListMessages(layoutInflater, mapAttr)
+        customizationChat(attrArr)
+        setListMessages(layoutInflater)
         attrArr.recycle()
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
 
     @SuppressLint("ResourceType")
-    private fun customizationChat(attrArr: TypedArray): Map<String, Any> {
+    private fun customizationChat(attrArr: TypedArray) {
         val scaleRatio = resources.displayMetrics.density
         // set content
 //        title.text = attrArr.getString(R.styleable.ChatView_title_text)
@@ -81,66 +81,53 @@ class ChatView: RelativeLayout, View.OnClickListener {
         lower_limit.setBackgroundColor(attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main)))
 
 
-        val mapAttr = HashMap<String, Any>()
-        mapAttr["color_bg_user_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
-        mapAttr["color_bg_server_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
-        mapAttr["color_bg_server_action"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
-        mapAttr["color_borders_server_action"] = attrArr.getColor(R.styleable.ChatView_color_borders_server_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
-        mapAttr["color_text_user_message"] = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
-        mapAttr["color_text_server_message"] = attrArr.getColor(R.styleable.ChatView_color_text_server_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
-        mapAttr["color_text_server_action"] = attrArr.getColor(R.styleable.ChatView_color_text_server_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
-        mapAttr["color_time_mark"] = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
-        mapAttr["size_user_message"] = attrArr.getDimension(R.styleable.ChatView_size_user_message, resources.getDimension(R.dimen.default_size_user_message))
-        mapAttr["size_server_message"] = attrArr.getDimension(R.styleable.ChatView_size_server_message, resources.getDimension(R.dimen.default_size_server_message))
-        mapAttr["size_server_action"] = attrArr.getDimension(R.styleable.ChatView_size_server_action, resources.getDimension(R.dimen.default_size_server_action))
-        mapAttr["size_time_mark"] = attrArr.getDimension(R.styleable.ChatView_size_time_mark, resources.getDimension(R.dimen.default_size_time_mark))
-        return mapAttr
+        ChatAttr.mapAttr["color_bg_user_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
+        ChatAttr.mapAttr["color_bg_server_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
+        ChatAttr.mapAttr["color_bg_server_action"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
+        ChatAttr.mapAttr["color_borders_server_action"] = attrArr.getColor(R.styleable.ChatView_color_borders_server_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
+        ChatAttr.mapAttr["color_text_user_message"] = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
+        ChatAttr.mapAttr["color_text_server_message"] = attrArr.getString(R.styleable.ChatView_color_text_server_message) ?: context.getString(R.string.default_color_text_server_message)
+        ChatAttr.mapAttr["color_text_server_action"] = attrArr.getColor(R.styleable.ChatView_color_text_server_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
+        ChatAttr.mapAttr["color_time_mark"] = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
+        ChatAttr.mapAttr["size_user_message"] = attrArr.getDimension(R.styleable.ChatView_size_user_message, resources.getDimension(R.dimen.default_size_user_message))
+        ChatAttr.mapAttr["size_server_message"] = attrArr.getDimension(R.styleable.ChatView_size_server_message, resources.getDimension(R.dimen.default_size_server_message))
+        ChatAttr.mapAttr["size_server_action"] = attrArr.getDimension(R.styleable.ChatView_size_server_action, resources.getDimension(R.dimen.default_size_server_action))
+        ChatAttr.mapAttr["size_time_mark"] = attrArr.getDimension(R.styleable.ChatView_size_time_mark, resources.getDimension(R.dimen.default_size_time_mark))
+        ChatAttr.mapAttr["auth_with_hash"] = attrArr.getBoolean(R.styleable.ChatView_auth_with_hash, false)
+        ChatAttr.mapAttr["auth_with_form"] = attrArr.getBoolean(R.styleable.ChatView_auth_with_form, true)
     }
 
     private fun setAllListeners() {
-//        attach_file.setOnClickListener(this)
         sign_in.setOnClickListener(this)
-//        like.setOnClickListener(this)
-        send_message.setOnClickListener(this)
-
-        entry_field.addTextChangedListener(
-            object:TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    Log.d("ChatView", "afterTextChanged s - ${s}, check - ${((s?:"").isEmpty())}")
-                    if ((s?:"").isEmpty()) {
-                        send_message.setImageResource(R.drawable.ic_attach_file)
-                        send_message.rotation = 45f
-                    }
-                    else {
-                        send_message.setImageResource(R.drawable.ic_send)
-                        send_message.rotation = 0f
-                    }
-                }
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            }
-        )
     }
 
-    private fun setListMessages(layoutInflater: LayoutInflater, mapAttr: Map<String, Any>) {
+    private fun setListMessages(layoutInflater: LayoutInflater) {
         adapterListMessages =
             AdapterListMessages(
                 layoutInflater,
-                listOf(),
-                mapAttr
+                listOf()
             )
-        list_with_message.adapter = adapterListMessages
     }
 
-    fun onCreate(app: Application, listener: ListenerChat/*viewModel: ViewModel*/) {
+    fun onCreate(app: Application, listener: ListenerChat, visitor: Visitor?){//}, viewModel: ChatViewModel) {
+        Log.d(TAG_SOCKET, "onCreate Chat View")
         this.listener = listener
-        this.viewModel = ChatViewModel(app)
+        this.viewModel = if (!(ChatAttr.mapAttr["auth_with_form"] as Boolean) && visitor != null) {
+            ChatViewModel(app, visitor)
+        }
+        else {
+            ChatViewModel(app, null)
+        }
+        ((context as FragmentActivity).supportFragmentManager.findFragmentById(R.id.fragment_entry_field) as EntryFieldFragment).setViewModel(viewModel)
     }
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
         viewModel.allEvents.observe(lifecycleOwner, Observer {
             Log.d("CHAT_VIEW", "GET NEW EVENT")
             when (it) {
+                Events.SOCKET_DESTROY -> {
+                    Log.d("CHAT_VIEW", "SOCKET_DESTROY")
+                }
                 Events.MESSAGE_SEND -> {
                     entry_field.text.clear()
                 }
@@ -155,6 +142,9 @@ class ChatView: RelativeLayout, View.OnClickListener {
                     stopProgressBar()
                     form_place.visibility = View.GONE
                     chat_place.visibility = View.VISIBLE
+                    if (list_with_message.adapter == null) {
+                        list_with_message.adapter = adapterListMessages
+                    }
                     // ограничения на ввод сообщений
                 }
                 Events.USER_AUTHORIZAT -> {
@@ -162,14 +152,18 @@ class ChatView: RelativeLayout, View.OnClickListener {
                     stopProgressBar()
                     form_place.visibility = View.GONE
                     chat_place.visibility = View.VISIBLE
+                    if (list_with_message.adapter == null) {
+                        list_with_message.adapter = adapterListMessages
+                    }
                     viewModel.syncData()
                 }
                 Events.NO_INTERNET -> {
-                    stopProgressBar()
                     warning.text = "Waiting for network..."
+                    sign_in.isClickable = true
                     Log.d("CHAT_VIEW", "NO_INTERNET_CONNECTION")
                 }
                 Events.HAS_INTERNET -> {
+                    Log.d(TAG_SOCKET, "Sicnk HAS_INTERNET")
                     warning.text = ""
                 }
             }
@@ -178,15 +172,28 @@ class ChatView: RelativeLayout, View.OnClickListener {
             Log.d("CHAT_VIEW", "adding new message size = ${it.size}")
 //            обновление листа
             adapterListMessages.setData(it)
-            val countMessages = list_with_message.adapter!!.itemCount - 1
-            if (countMessages > 0) {
-                list_with_message.smoothScrollToPosition(countMessages)
-            }
+//            list_with_message.adapter?.let {
+//                val countMessages = it.itemCount - 1
+//                if (countMessages > 0) {
+//                    list_with_message.scrollToPosition(countMessages)
+//                }
+//            }
             adapterListMessages.notifyDataSetChanged()
         })
     }
 
-    fun onDestroy() {}
+    fun onDestroy() {
+        val fm = (context as FragmentActivity).supportFragmentManager
+
+        val fragmentEntryField = fm.findFragmentById(R.id.fragment_entry_field) as? EntryFieldFragment
+
+        Log.d("ChatView", "onDestroy ${fm}; ${fragmentEntryField}")
+
+        if (fragmentEntryField != null)
+            fm.beginTransaction().remove(fragmentEntryField).commitAllowingStateLoss()
+        // Когда буду настраивать VM нужно убрать эту стр
+        SocketAPI.destroy()
+    }
 
     private fun checkerObligatoryFields(fields: List<EditText>): Boolean {
         var result = true
@@ -202,13 +209,6 @@ class ChatView: RelativeLayout, View.OnClickListener {
         return result
     }
 
-    private fun hideSoftKeyboard(view: View?) {
-        if (view != null) {
-            val inputManager = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-    }
-
     private fun startProgressBar() {
         loading.visibility = View.VISIBLE
     }
@@ -219,8 +219,6 @@ class ChatView: RelativeLayout, View.OnClickListener {
 
     override fun onClick(view: View) {
         when(view.id) {
-//            R.id.attach_file -> {}
-//            R.id.like -> {}
             R.id.sign_in -> {
                 if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)
@@ -229,13 +227,7 @@ class ChatView: RelativeLayout, View.OnClickListener {
                     val lastName = last_name_user.text.toString()
                     val phone = phone_user.text.toString()
                     viewModel.registration(firstName, lastName, phone)
-                }
-            }
-            R.id.send_message -> {
-                val message = entry_field.text.toString().trim()
-                if (message.isNotEmpty()) {
-                    hideSoftKeyboard(this)
-                    viewModel.sendMessage(message)
+                    sign_in.isClickable = false
                 }
             }
         }

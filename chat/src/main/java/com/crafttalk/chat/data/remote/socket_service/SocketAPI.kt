@@ -1,5 +1,6 @@
 package com.crafttalk.chat.data.remote.socket_service
 
+
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -14,6 +15,7 @@ import com.crafttalk.chat.data.local.pref.saveVisitorToPref
 import com.crafttalk.chat.data.model.MessageType
 import com.crafttalk.chat.data.model.Visitor
 import com.crafttalk.chat.data.remote.pojo.Message
+import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.NetworkUtils
 import com.crafttalk.chat.utils.ConstantsUtils
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
@@ -30,7 +32,6 @@ object SocketAPI {
     private val gson: Gson by lazy {
         Gson()
     }
-
     private var pref: SharedPreferences? = null
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
@@ -54,10 +55,8 @@ object SocketAPI {
 
     private val socket: Socket? by lazy {
         try {
-            val  manager = Manager(URI(ConstantsUtils.SOCKET_URL));
-            manager.socket(ConstantsUtils.NAMESPACE).apply {
-                setAllListeners(this)
-            }
+            val  manager = Manager(URI(ConstantsUtils.SOCKET_URL))
+            manager.socket(ConstantsUtils.NAMESPACE)
         } catch (e: URISyntaxException) {
             Log.e(TAG_SOCKET, "fail init socket")
             events.value = Events.NO_INTERNET
@@ -66,9 +65,6 @@ object SocketAPI {
     }
 
     fun setVisitor(visitor: Visitor?) {
-
-
-
         Log.d(TAG_SOCKET, "check has visitor - ${Repository.hasVisitor(pref!!)}; ${pref}; ${visitor}")
         Log.d(TAG_SOCKET, "setVisitor visitor - ${visitor?.getJsonObject()}")
         if (visitor == null) {
@@ -82,15 +78,9 @@ object SocketAPI {
                 events.postValue(Events.USER_FAUND_WITHOUT_AUTH)
             }
             Log.d(TAG_SOCKET, "setVisitor - visitor = ${visitor.getJsonObject()} ")
-            // инициализация сокета не должна происходить если сравниваем с null
-            if (!socket!!.connected()) {
-                Log.d(TAG_SOCKET, "setVisitor - socket connect}")
-                socket!!.connect()
-            }else {
-                Log.d(TAG_SOCKET, "setVisitor - socket auth}")
-                // или реконнект да хрен его знает
-                authenticationUser(socket!!)
-            }
+//            android.os.Handler().postDelayed({
+                connectUser(socket!!)
+//            }, 100)
         }
     }
 
@@ -102,6 +92,7 @@ object SocketAPI {
 
         socket.on("reconnect") {
             Log.d(TAG_SOCKET, "reconnect")
+            events.postValue(Events.RECONNECT)
         }
 
         socket.on("hide") {
@@ -121,7 +112,7 @@ object SocketAPI {
             Log.d("SOCKET_API", "json message___ methon message - ${messageJson}")
             val messageObj = gson.fromJson(messageJson.toString(), Message::class.java)
             if (!messageJson.toString().contains(""""message":"\/start"""")) {
-                Repository.getMessageFromServer(messageObj)
+                Repository.insertNewMessageFromServer(messageObj)
                 events.postValue(Events.MESSAGE_GET)
             }
         }
@@ -145,8 +136,8 @@ object SocketAPI {
             events.postValue(Events.HAS_INTERNET)
         }
         socket.on(Socket.EVENT_CONNECT_ERROR) {
-//            events.postValue(Events.NO_INTERNET)
             Log.d(TAG_SOCKET, "EVENT_CONNECT_ERROR")
+            //events.postValue(Events.NO_INTERNET)
         }
         socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
             Log.d(TAG_SOCKET, "EVENT_CONNECT_TIMEOUT")
@@ -158,12 +149,6 @@ object SocketAPI {
         socket.on(Socket.EVENT_ERROR) {
             Log.d(TAG_SOCKET, "EVENT_ERROR")
         }
-        socket.on(Socket.EVENT_MESSAGE) {
-            Log.d(TAG_SOCKET, "EVENT_MESSAGE")
-        }
-        socket.on(Socket.EVENT_RECONNECT) {
-            Log.d(TAG_SOCKET, "EVENT_RECONNECT")
-        }
         socket.on(Socket.EVENT_RECONNECTING) {
             Log.d(TAG_SOCKET, "EVENT_RECONNECTING")
         }
@@ -172,7 +157,6 @@ object SocketAPI {
         }
         socket.on(Socket.EVENT_RECONNECT_ERROR) {
             Log.d(TAG_SOCKET, "EVENT_RECONNECT_ERROR")
-//            events.postValue(Events.NO_INTERNET)
         }
         socket.on(Socket.EVENT_RECONNECT_FAILED) {
             Log.d(TAG_SOCKET, "EVENT_RECONNECT_FAILED")
@@ -182,6 +166,8 @@ object SocketAPI {
 
 
     fun destroy() {
+        events.value = Events.SOCKET_DESTROY
+        Log.d(TAG_SOCKET, "destroy")
         socket?.disconnect()
         socket?.off()
         pref = null
@@ -209,6 +195,24 @@ object SocketAPI {
         }
     }
 
+    private fun connectUser(socket: Socket) {
+//        viewModelScope.launch {
+//            инициализация сокета не должна происходить если сравниваем с null
+            if (!socket.connected()) {
+                setAllListeners(socket)
+                Log.d(TAG_SOCKET, "setVisitor - socket connect}")
+//                if (NetworkUtils.isOnline()) {
+                    socket.connect()
+//                } else {
+//                    events.postValue(Events.NO_INTERNET)
+//                }
+            } else {
+                Log.d(TAG_SOCKET, "setVisitor - socket auth}")
+                authenticationUser(socket)
+            }
+//        }
+    }
+
     fun selectAction(actionId: String) {
         viewModelScope.launch {
             if (NetworkUtils.isOnline()) {
@@ -221,10 +225,11 @@ object SocketAPI {
     }
 
     private fun authenticationUser(socket: Socket) {
+        Log.d(TAG_SOCKET, "authenticationUser")
         viewModelScope.launch {
             visitor.let {
                 if (NetworkUtils.isOnline()) {
-                    socket.emit("me", it.getJsonObject())
+                    socket.emit("me", it.getJsonObject(), (ChatAttr.mapAttr["auth_with_hash"] as Boolean))
                 } else {
                     events.postValue(Events.NO_INTERNET)
                 }

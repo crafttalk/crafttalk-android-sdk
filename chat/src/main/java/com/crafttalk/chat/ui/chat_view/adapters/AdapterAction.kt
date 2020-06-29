@@ -1,14 +1,15 @@
-package com.crafttalk.chat.ui.view.adapters
+package com.crafttalk.chat.ui.chat_view.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.data.remote.pojo.Action
-import com.crafttalk.chat.ui.view.holders.HolderAction
+import com.crafttalk.chat.ui.chat_view.holders.HolderAction
+import com.crafttalk.chat.utils.ChatAttr
 
 
-class AdapterAction(private val inflater: LayoutInflater, private var mData: Array<Action>, private val mapAttr: Map<String, Any>) : RecyclerView.Adapter<HolderAction>() {
+class AdapterAction(private val inflater: LayoutInflater, private var mData: Array<Action>) : RecyclerView.Adapter<HolderAction>() {
 
     private val scaleRatio = inflater.context.resources.displayMetrics.density
 
@@ -22,12 +23,12 @@ class AdapterAction(private val inflater: LayoutInflater, private var mData: Arr
 
     override fun onBindViewHolder(viewHolder: HolderAction, position: Int) {
         // set content
-        viewHolder.actionText.text = mData[position].action_text
-        viewHolder.actionText.tag = mData[position].action_id
+        viewHolder.actionText.text = mData[position].actionText
+        viewHolder.actionText.tag = mData[position].actionId
         // set color
-        viewHolder.actionText.setTextColor(mapAttr["color_text_server_action"] as Int)
+        viewHolder.actionText.setTextColor(ChatAttr.mapAttr["color_text_server_action"] as Int)
         // set dimension
-        viewHolder.actionText.textSize = (mapAttr["size_server_action"] as Float)/scaleRatio
+        viewHolder.actionText.textSize = (ChatAttr.mapAttr["size_server_action"] as Float)/scaleRatio
         // set bg
         if (mData.size == 1) {
             viewHolder.itemView.setBackgroundResource(R.drawable.background_single_item_action)

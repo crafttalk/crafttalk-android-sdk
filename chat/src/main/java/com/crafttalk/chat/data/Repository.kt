@@ -1,6 +1,7 @@
 package com.crafttalk.chat.data
 
 import android.content.SharedPreferences
+import android.text.Html
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.crafttalk.chat.data.local.pref.buildVisitorSaveToPref
@@ -12,6 +13,7 @@ import com.crafttalk.chat.data.remote.pojo.Message as MessageSocket
 import com.crafttalk.chat.data.model.MessageType
 import com.crafttalk.chat.data.model.Visitor
 import com.crafttalk.chat.data.remote.socket_service.SocketAPI
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 
 object Repository {
 
@@ -48,31 +50,39 @@ object Repository {
         return dao.getMessagesLiveData()
     }
 
-    fun getMessageFromServer(messageSocket: MessageSocket) {
-        when(messageSocket.message_type) {
+    fun insertNewMessageFromServer(messageSocket: MessageSocket) {
+        when(messageSocket.messageType) {
             MessageType.VISITOR_MESSAGE.valueType -> {
+                Log.d("REPOSITORY", "insertMessage ${messageSocket}")
+
+
                 dao.insertMessage(
                     MessageDB(
-                        messageSocket.id,
-                        messageSocket.message_type,
-                        messageSocket.parentMessageId,
-                        messageSocket.message,
-                        messageSocket.actions,
-                        messageSocket.isReply,
-                        messageSocket.timestamp,
-                        messageSocket.operator_name ?: "Вы"
+                        id = messageSocket.id,
+                        messageType = messageSocket.messageType,
+                        isReply = messageSocket.isReply,
+                        parentMsgId = messageSocket.parentMessageId,
+                        timestamp = messageSocket.timestamp,
+                        message = messageSocket.message,
+                        actions = messageSocket.actions,
+                        attachmentUrl = messageSocket.attachmentUrl,
+                        attachmentType = messageSocket.attachmentType,
+                        attachmentName = messageSocket.attachmentName,
+                        operatorName = if(messageSocket.operatorName == null || !messageSocket.isReply) "Вы" else messageSocket.operatorName
                     )
                 )
             }
             MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
-                Log.d("REPOSITORY", "updateMessage: messageType: ${messageSocket.message_type}")
-                dao.updateMessage(messageSocket.parentMessageId, messageSocket.message_type)
+                Log.d("REPOSITORY", "updateMessage: messageType: ${messageSocket.messageType}")
+                messageSocket.parentMessageId?.let {
+                    dao.updateMessage(it, messageSocket.messageType)
+                }
             }
         }
     }
 
     fun syncData() {
-        val timeStamp = dao.getLastTime()
+        val timeStamp = 0L//dao.getLastTime()
         SocketAPI.sync(timeStamp)
     }
 
@@ -82,28 +92,42 @@ object Repository {
         arrayMessages.sortWith(compareBy(MessageSocket::timestamp))
         arrayMessages.forEach { messageFromHistory ->
             val messageCheckObj = MessageDB(
-                messageFromHistory.id,
-                messageFromHistory.message_type,
-                messageFromHistory.parentMessageId,
-                messageFromHistory.message,
-                messageFromHistory.actions,
-                messageFromHistory.isReply,
-                messageFromHistory.timestamp,
-                messageFromHistory.operator_name ?: "Вы"
+                id = messageFromHistory.id,
+                messageType = messageFromHistory.messageType,
+                isReply = messageFromHistory.isReply,
+                parentMsgId = messageFromHistory.parentMessageId,
+                timestamp = messageFromHistory.timestamp,
+                message = messageFromHistory.message,
+                actions = messageFromHistory.actions,
+                attachmentUrl = messageFromHistory.attachmentUrl,
+                attachmentType = messageFromHistory.attachmentType,
+                attachmentName = messageFromHistory.attachmentName,
+                operatorName = if(messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName
             )
-            Log.d("REPOSITORY", "margeMessages: messageCheckObj = $messageCheckObj")
-
-            if (!messagesFromDb.any { it.id == messageCheckObj.id } && messageCheckObj.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType) && (messageFromHistory.message ?: "").isNotEmpty()) {
-                dao.insertMessage(messageCheckObj)
-                Log.d("REPOSITORY", "insert message $messageCheckObj")
-            }else {
-                if (messageCheckObj.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType)) {
+            when (messageCheckObj.messageType) {
+                MessageType.VISITOR_MESSAGE.valueType -> {
+                    if (messageCheckObj.isReply) {
+                        // serv
+                        if (!messagesFromDb.any { it.id == messageCheckObj.id }) {
+                            dao.insertMessage(messageCheckObj)
+                        }
+                    }
+                    else {
+                        // user
+                        if (messageCheckObj !in messagesFromDb) {
+                            Log.d("REPOSITORY", "insert message $messageCheckObj")
+                            dao.insertMessage(messageCheckObj)
+                        }
+                    }
+                }
+                MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
                     Log.d("REPOSITORY", "update message id - ${messageCheckObj.parentMsgId}, type - ${messageCheckObj.messageType}")
                     messageCheckObj.parentMsgId?.let { parentId ->
                         dao.updateMessage(parentId, messageCheckObj.messageType)
                     }
                 }
             }
+
         }
     }
 

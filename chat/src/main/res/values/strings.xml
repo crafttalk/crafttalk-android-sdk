@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Chat</string>
+    <string name="string_chooser_open_file_action_view">Выберите приложение для просмтора этого файла:</string>
 </resources>

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.crafttalk.chat.ui.view.ChatView
+    <com.crafttalk.chat.ui.chat_view.ChatView
         android:id="@+id/chat_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
@@ -14,6 +14,8 @@
         app:color_main="@color/color_main"
         app:color_bg_user_message="@color/color_main"
         app:color_text_server_action="@color/color_main"
+        app:auth_with_hash="true"
+        app:auth_with_form="true"
         />
 
 </LinearLayout>

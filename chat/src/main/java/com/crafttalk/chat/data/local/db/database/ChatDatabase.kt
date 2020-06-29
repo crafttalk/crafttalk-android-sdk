@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
-import com.crafttalk.chat.data.local.db.entity.ActionConverter
+import com.crafttalk.chat.data.local.db.entity.converters.ActionConverter
 import com.crafttalk.chat.data.local.db.entity.Message
 
 @Database(

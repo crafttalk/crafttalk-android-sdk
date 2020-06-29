@@ -6,7 +6,7 @@ import com.crafttalk.chat.data.local.db.entity.Message
 
 @Dao
 interface MessagesDao {
-    @Query("SELECT * FROM messages")
+    @Query("SELECT * FROM messages ORDER BY timestamp ASC")
     fun getMessagesLiveData(): LiveData<List<Message>>
 
     @Query("SELECT * FROM messages")

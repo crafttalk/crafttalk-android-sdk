@@ -13,15 +13,21 @@ fun checkVisitorInPref(pref: SharedPreferences): Boolean {
 fun getVisitorFromPref(pref: SharedPreferences): Visitor {
     val gson = Gson()
     val json = pref.getString("Visitor", "")
-    Log.d("PREFERENCES", "getVisitorFromPref - ${json}, obj = ${gson.fromJson<Visitor>(json, Visitor::class.java).toString()}")
-    return gson.fromJson<Visitor>(json, Visitor::class.java)
+    Log.d("PREFERENCES", "getVisitorFromPref - ${json}, obj = ${gson.fromJson<Visitor>(json, Visitor::class.java)}")
+    val visitor = gson.fromJson<Visitor>(json, Visitor::class.java)
+    Uuid.lastUUID = visitor.uuid
+    return visitor
 }
 
 @SuppressLint("CommitPrefEdits")
 fun buildVisitorSaveToPref(mapWithDataUser: Map<String, Any>): Visitor? {
     return try {
         Visitor(
-            generateUUID(),
+            Uuid.generateUUID(
+                true,
+                mapWithDataUser["firstName"] as String,
+                mapWithDataUser["lastName"] as String
+            ),
             mapWithDataUser["firstName"] as String,
             mapWithDataUser["lastName"] as String,
             mapWithDataUser["email"] as? String,
@@ -50,6 +56,24 @@ fun deleteVisitorFromPref(pref: SharedPreferences) {
     prefEditor.apply()
 }
 
-fun generateUUID(): String {
-    return "stub98"
+
+object Uuid {
+
+    var lastUUID: String = ""
+
+    fun generateUUID(isFirstAuth: Boolean, vararg loginParts: String): String {
+        return if (isFirstAuth) {
+            var resultUUID = ""
+            for (part in loginParts) {
+                resultUUID = "${resultUUID}${part}"
+            }
+            lastUUID = resultUUID
+            resultUUID
+        }
+        else {
+            lastUUID
+        }
+    }
+
 }
+

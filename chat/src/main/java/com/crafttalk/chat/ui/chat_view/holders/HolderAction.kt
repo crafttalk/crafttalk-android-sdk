@@ -1,4 +1,4 @@
-package com.crafttalk.chat.ui.view.holders
+package com.crafttalk.chat.ui.chat_view.holders
 
 import android.view.View
 import android.widget.TextView

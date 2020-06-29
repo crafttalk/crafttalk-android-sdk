@@ -1,38 +1,47 @@
-package com.crafttalk.chat.ui.view_model
+package com.crafttalk.chat.ui.chat_view.view_model
 
 import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.*
 import com.crafttalk.chat.Events
 import com.crafttalk.chat.data.Repository
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.database.ChatDatabase
 import com.crafttalk.chat.data.local.db.entity.Message
+import com.crafttalk.chat.data.model.Visitor
 import com.crafttalk.chat.data.remote.socket_service.SocketAPI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import com.crafttalk.chat.utils.ConstantsUtils
+import kotlinx.coroutines.*
 
 
-class ChatViewModel(application: Application) : AndroidViewModel(application) {
+class ChatViewModel(application: Application, visitor: Visitor?) : AndroidViewModel(application) {
 
     private var dao: MessagesDao? = null
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
 
     init {
+        Log.d("ChatViewModel", "const 1")
         SocketAPI.setSharedPreferences(getSharedPreferences(application))
         dao = ChatDatabase.getInstance(application).messageDao().apply {
             Repository.setDao(this)
-//            возможно сделать асинхронно тобы не блочить поток
+        }
+        //        возможно сделать асинхронно тобы не блочить поток
+        if (visitor == null) {
             Repository.getVisitor(getSharedPreferences(application)).apply {
+                Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel init")
                 SocketAPI.setVisitor(this)
             }
         }
+        else {
+            SocketAPI.setVisitor(visitor)
+        }
     }
+
+
 
     val messages: LiveData<List<Message>> by lazy {
         Repository.getMessagesList()
@@ -57,6 +66,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     // возможно сделать асинхронно тобы не блочить поток
     fun registration(vararg args: String) {
+        Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel registration")
         SocketAPI.setVisitor(
             Repository.buildVisitor(args)
         )
@@ -72,6 +82,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun syncData() {
         viewModelScope.launch {
+            Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel sync")
             Repository.syncData()
         }
     }

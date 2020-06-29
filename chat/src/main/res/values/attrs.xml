@@ -10,7 +10,7 @@
         <attr name="color_bg_server_action" format="color"/>
         <attr name="color_borders_server_action" format="color"/>
         <attr name="color_text_user_message" format="color"/>
-        <attr name="color_text_server_message" format="color"/>
+        <attr name="color_text_server_message" format="string"/>
         <attr name="color_text_server_action" format="color"/>
         <attr name="color_time_mark" format="color"/>
         <attr name="color_text_warning" format="color"/>
@@ -25,6 +25,9 @@
         <attr name="size_time_mark" format="dimension"/>
         <attr name="size_warning" format="dimension"/>
         <attr name="size_company" format="dimension"/>
+
+        <attr name="auth_with_hash" format="boolean"/>
+        <attr name="auth_with_form" format="boolean"/>
 
     </declare-styleable>
 

@@ -10,7 +10,7 @@
     <color name="default_color_bg_server_action">#fff</color>
 
     <color name="default_color_text_user_message">#fff</color>
-    <color name="default_color_text_server_message">#000</color>
+    <string name="default_color_text_server_message">#000</string>
     <color name="default_color_text_server_action">@color/default_color_main</color>
     <color name="default_color_text_warning">#2C2C2C</color>
 

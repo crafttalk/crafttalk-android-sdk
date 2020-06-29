@@ -1,6 +1,5 @@
-package com.crafttalk.chat.data.local.db.entity
+package com.crafttalk.chat.data.local.db.entity.converters
 
-import android.util.Log
 import androidx.room.TypeConverter
 import com.crafttalk.chat.data.remote.pojo.Action
 
@@ -12,11 +11,9 @@ class ActionConverter {
             actions == null -> null
             actions.isEmpty() -> ""
             else -> {
-                Log.d("CONVERTER","action = ${actions.toString()}")
                 val resultStringBuffer = StringBuffer()
                 actions.forEach {
-                    Log.d("CONVERTER","action it = ${it}, ${it.action_text}")
-                    resultStringBuffer.append(it.action_id).append("~").append(it.action_text).append(";")
+                    resultStringBuffer.append(it.actionId).append("~").append(it.actionText).append(";")
                 }
                 resultStringBuffer.deleteCharAt(resultStringBuffer.length - 1)
                 resultStringBuffer.toString()

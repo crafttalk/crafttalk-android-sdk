@@ -10,4 +10,5 @@
         android:layout_gravity="center_vertical|center_horizontal"
         android:text="@string/title_home"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </FrameLayout>
