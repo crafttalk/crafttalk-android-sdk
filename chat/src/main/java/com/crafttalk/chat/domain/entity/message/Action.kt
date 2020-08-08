@@ -1,4 +1,4 @@
-package com.crafttalk.chat.data.remote.pojo
+package com.crafttalk.chat.domain.entity.message
 
 import com.google.gson.annotations.SerializedName
 

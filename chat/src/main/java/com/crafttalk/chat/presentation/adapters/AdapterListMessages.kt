@@ -156,34 +156,6 @@ class AdapterListMessages(
                 setFile(viewHolder.fileIcon)
                 setTimeMessageWithCheck(viewHolder.time, fileMessage)
             }
-            /*
-                // set content + set color
-                val data = """
-                    <html>
-                    <head>
-                    <style type="text/css">
-                    @font-face {
-                        font-family: 'Ubuntu';
-                        src:url("file:///android_res/font/ubuntu_light.ttf")
-                    }
-                    body {
-                        font-family: 'Ubuntu';
-                        font-weight: 300;
-                        color:${ChatAttr.mapAttr["color_text_server_message"]}
-                    }
-                    </style>
-                    </head>
-                    <body>
-                        ${textMessage.message.replace("\n", "<br>")}
-                    </body>
-                    </html>
-                    """
-                viewHolder.message.loadDataWithBaseURL(null, data, "text/html", "utf-8", null)
-                // set dimension
-                viewHolder.message.settings.apply {
-                    this.defaultFontSize = ((ChatAttr.mapAttr["size_server_message"] as Float)/scaleRatio).toInt()
-                }
-            */
             is HolderUserGifMessage -> {
                 val gifMessage = mData[position] as GifMessage
                 viewHolder.gifUrl = gifMessage.gifUrl
