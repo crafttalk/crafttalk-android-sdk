@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -114,6 +115,7 @@ class AdapterListMessages(
                 val textMessage = mData[position] as TextMessage
                 setTimeMessageDefault(viewHolder.time, textMessage)
                 // set content
+                viewHolder.message.movementMethod = LinkMovementMethod.getInstance()
                 viewHolder.message.text = textMessage.message
                 // set color
 //                viewHolder.message.setTextColor(ChatAttr.mapAttr["color_text_server_message"] as Int)

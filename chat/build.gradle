@@ -5,10 +5,10 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -39,9 +39,7 @@ ext {
     lifecycleVersion = '2.2.0'
     archVersion = '2.1.0'
     androidXRecyclerViewVersion = '1.1.0'
-    swipeRefreshLayoutVersion = '1.1.0'
     materialVersion = '1.1.0'
-    viewPagerVersion = '1.0.0'
     fragmentKtxVersion = '1.3.0-alpha06'
     activityKtxVersion = '1.2.0-alpha06'
     socketVersion = '0.6.0'
@@ -50,31 +48,18 @@ ext {
     glideVersion = '4.11.0'
     roomVersion = '2.2.4'
     okHttpVersion = '4.6.0'
+    kotlin_version = '1.3.61'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "androidx.core:core-ktx:${coreVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:${appCompat}"
     implementation "androidx.recyclerview:recyclerview:${androidXRecyclerViewVersion}"
     implementation "com.google.android.material:material:${materialVersion}"
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
-
-
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-//    implementation "android.arch.lifecycle:extensions:1.1.1"
-
-
-
-//    implementation 'com.squareup.okhttp3:okhttp:4.6.0'
-
-
-//    //for android 4.4
-//    //noinspection GradleDependency
-//    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.2'
-
-
 
     // Room
     implementation "androidx.room:room-runtime:$roomVersion"
@@ -104,38 +89,3 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
-
-//dependencies {
-//    implementation fileTree(dir: 'libs', include: ['*.jar'])
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-//    implementation 'androidx.appcompat:appcompat:1.1.0'
-//    implementation 'androidx.core:core-ktx:1.2.0'
-//
-//    implementation 'com.google.android.material:material:1.1.0'
-//
-//    implementation "android.arch.lifecycle:extensions:1.1.1"
-//    implementation 'com.github.nkzawa:socket.io-client:0.6.0'
-//
-//    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5"
-//    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.5"
-//
-//    implementation "com.squareup.retrofit2:retrofit:2.5.0"
-//    implementation "com.squareup.retrofit2:converter-gson:2.5.0"
-//    implementation 'com.squareup.retrofit2:converter-scalars:2.5.0'
-////    implementation 'com.squareup.okhttp3:okhttp:4.6.0'
-//
-////    implementation 'io.coil-kt:coil:0.10.1'
-//    implementation 'com.squareup.picasso:picasso:2.5.2'
-//
-//
-//    //for android 4.4
-//    //noinspection GradleDependency
-//    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.2'
-//
-//    implementation "androidx.room:room-runtime:2.2.4"
-//    kapt "androidx.room:room-compiler:2.2.4"
-//
-//    testImplementation 'junit:junit:4.12'
-//    androidTestImplementation 'androidx.test:runner:1.2.0'
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-//}

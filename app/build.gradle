@@ -9,7 +9,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.crafttalk.sampleChat"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -36,8 +36,6 @@ dependencies {
 
     implementation 'com.google.android.material:material:+'
     implementation project(":chat")
-//    implementation "com.squareup.retrofit2:retrofit:2.5.0"
-//    implementation "com.squareup.okhttp3:okhttp:3.11.0"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
