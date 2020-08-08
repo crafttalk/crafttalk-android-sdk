@@ -1,8 +1,8 @@
 package com.crafttalk.chat.data.local.db.entity.converters
 
 import androidx.room.TypeConverter
-import com.crafttalk.chat.data.model.MessageType
-import com.crafttalk.chat.data.model.MessageType.Companion.getMessageTypeByValueType
+import com.crafttalk.chat.domain.entity.message.MessageType
+import com.crafttalk.chat.domain.entity.message.MessageType.Companion.getMessageTypeByValueType
 
 class MessageTypeConverter {
 

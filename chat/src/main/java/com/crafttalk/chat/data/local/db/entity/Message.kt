@@ -1,9 +1,13 @@
 package com.crafttalk.chat.data.local.db.entity
 
-import android.util.Log
-import androidx.room.*
-import com.crafttalk.chat.data.remote.pojo.Action
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.crafttalk.chat.data.helper.converters.text.convertFromHtmlToNormalString
+import com.crafttalk.chat.domain.entity.message.Action
+import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
+import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 @Entity(tableName = "messages")
 data class Message(
@@ -16,7 +20,9 @@ data class Message(
     val parentMsgId: String?,
     var timestamp: Long,
     val message: String?,
-    val actions: Array<Action>?,
+//    @ColumnInfo(name = "span_structure_list")
+    val spanStructureList: List<Tag>,
+    val actions: List<Action>?,
     @ColumnInfo(name = "attachment_url")
     val attachmentUrl: String?,
     @ColumnInfo(name = "attachment_type")
@@ -24,7 +30,11 @@ data class Message(
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String?,
     @ColumnInfo(name = "operator_name")
-    val operatorName: String?
+    val operatorName: String?,
+    @ColumnInfo(name = "height")
+    val height: Int?,
+    @ColumnInfo(name = "width")
+    val width: Int?
 ) {
     @PrimaryKey(autoGenerate = true)
     var idKey: Long = 0
@@ -35,18 +45,40 @@ data class Message(
                         this.isReply == other.isReply &&
                         this.parentMsgId == other.parentMsgId &&
                         this.message == other.message &&
-                        (this.actions.isNullOrEmpty() && other.actions.isNullOrEmpty()) || (!this.actions.isNullOrEmpty() && !other.actions.isNullOrEmpty() && this.actions.contentEquals(other.actions)) &&
+                        (this.actions.isNullOrEmpty() && other.actions.isNullOrEmpty()) || (!this.actions.isNullOrEmpty() && !other.actions.isNullOrEmpty() && this.actions == other.actions) &&
                         this.attachmentUrl == other.attachmentUrl &&
                         this.attachmentType == other.attachmentType &&
                         this.attachmentName == other.attachmentName &&
                         this.operatorName == other.operatorName &&
                         abs(this.timestamp - other.timestamp) <= 50
-
             }
             else -> false
         }
     }
 
+    companion object {
+        fun map(messageSocket: MessageSocket): Message {
+            val list = arrayListOf<Tag>()
+            val message = messageSocket.message?.convertFromHtmlToNormalString(list)
+
+            return Message(
+                id = messageSocket.id,
+                messageType = messageSocket.messageType,
+                isReply = messageSocket.isReply,
+                parentMsgId = messageSocket.parentMessageId,
+                timestamp = messageSocket.timestamp,
+                message = message,
+                spanStructureList = list,
+                actions = messageSocket.actions,
+                attachmentUrl = messageSocket.attachmentUrl,
+                attachmentType = messageSocket.attachmentType,
+                attachmentName = messageSocket.attachmentName,
+                operatorName = if (messageSocket.operatorName == null || !messageSocket.isReply) "Вы" else messageSocket.operatorName,
+                height = null,
+                width = null
+            )
+        }
+    }
 
 }
 

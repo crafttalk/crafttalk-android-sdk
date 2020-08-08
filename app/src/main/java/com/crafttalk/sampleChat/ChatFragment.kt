@@ -4,24 +4,24 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_chat.*
-import com.crafttalk.chat.data.model.Visitor
-import com.crafttalk.chat.ui.chat_view.ListenerChat
+import com.crafttalk.chat.domain.entity.auth.Visitor
+import com.crafttalk.chat.presentation.ChatView
 
 class ChatFragment: Fragment(R.layout.fragment_chat) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         chat_view.onCreate(
-            activity!!.application,
+            this,
             object:
-                ListenerChat {
+                ChatView.EventListener {
                     override fun onErrorAuth() {}
                     override fun onAuth() {}
                 },
             Visitor(
-                "1w37",
-                "last2",
-                "second2",
+                "test_101",
+                "user_1",
+                "user_1",
                 "test",
                 "243",
                 "wrrd",
@@ -49,7 +49,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        chat_view.onDestroy()
     }
 
 

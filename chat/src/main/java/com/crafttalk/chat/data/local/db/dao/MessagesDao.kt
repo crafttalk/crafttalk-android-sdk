@@ -24,6 +24,9 @@ interface MessagesDao {
     @Query("UPDATE messages SET message_type = :type WHERE id = :id")
     fun updateMessage(id: String, type: Int)
 
+    @Query("UPDATE messages SET height = :height, width = :width WHERE idKey = :idKey")
+    fun updateSizeMessage(idKey: Long, width: Int, height: Int)
+
     @Query("SELECT * FROM messages WHERE id = :id")
     fun getMessageById(id: String): Message?
 }

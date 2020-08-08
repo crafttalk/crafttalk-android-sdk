@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/upper_limiter"
+    android:layout_centerHorizontal="true">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_with_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_above="@id/company_name"
+        app:stackFromEnd="true"
+        />
+
+    <TextView
+        android:id="@+id/company_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="by CraftTalk"
+        android:gravity="right"
+        android:layout_above="@id/lower_limit"
+        android:paddingEnd="5dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/ubuntu_medium"
+        android:textFontWeight="700"
+        />
+
+    <View
+        android:id="@+id/lower_limit"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@id/entry_place"
+        />
+
+    <RelativeLayout
+        android:id="@+id/entry_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/entry_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите сообщение..."
+            android:inputType="textMultiLine"
+            android:maxHeight="@dimen/max_height_entry_field_message"
+            android:minHeight="38dp"
+            android:layout_toStartOf="@id/send_message"
+            android:paddingStart="15dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="2dp"
+            android:background="@null"
+            />
+
+        <ImageView
+            android:id="@+id/send_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_attach_file"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="12dp"
+            android:rotation="45"
+            />
+
+        <!--            <ImageView-->
+        <!--                android:id="@+id/like"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:src="@drawable/ic_like"-->
+        <!--                android:padding="4dp"-->
+        <!--                android:layout_toStartOf="@id/attach_file"-->
+        <!--                android:layout_centerVertical="true"-->
+        <!--                />-->
+
+        <!--            <ImageView-->
+        <!--                android:id="@+id/attach_file"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:src="@drawable/ic_attach_file"-->
+        <!--                android:padding="4dp"-->
+        <!--                android:rotation="45"-->
+        <!--                android:layout_alignParentEnd="true"-->
+        <!--                android:layout_centerVertical="true"-->
+        <!--                />-->
+
+    </RelativeLayout>
+
+</RelativeLayout>

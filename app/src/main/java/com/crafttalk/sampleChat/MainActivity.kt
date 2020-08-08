@@ -49,7 +49,9 @@ class MainActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        loadFragment(HomeFragment())
+        if (savedInstanceState == null) {
+            loadFragment(HomeFragment())
+        }
     }
 
 }

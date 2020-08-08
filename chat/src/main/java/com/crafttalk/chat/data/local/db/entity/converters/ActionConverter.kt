@@ -1,47 +1,27 @@
 package com.crafttalk.chat.data.local.db.entity.converters
 
 import androidx.room.TypeConverter
-import com.crafttalk.chat.data.remote.pojo.Action
+import com.crafttalk.chat.domain.entity.message.Action
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 class ActionConverter {
 
     @TypeConverter
-    fun fromActions(actions: Array<Action>?): String? {
-        return when {
-            actions == null -> null
-            actions.isEmpty() -> ""
-            else -> {
-                val resultStringBuffer = StringBuffer()
-                actions.forEach {
-                    resultStringBuffer.append(it.actionId).append("~").append(it.actionText).append(";")
-                }
-                resultStringBuffer.deleteCharAt(resultStringBuffer.length - 1)
-                resultStringBuffer.toString()
-            }
-        }
+    fun fromActions(actions: List<Action>?): String? {
+        actions ?: return null
+        val type: Type = object : TypeToken<List<Action>>() {}.type
+        val gson = Gson()
+        return gson.toJson(actions, type)
     }
 
     @TypeConverter
-    fun toActions(actions: String?): Array<Action>? {
-        return when {
-            actions == null -> null
-            actions.isEmpty() -> arrayOf()
-            else -> {
-                val resultList = arrayListOf<Action>()
-                var actionPart: List<String>
-                val nodes = actions.split(";")
-                nodes.forEach {
-                    actionPart = it.split("~")
-                    resultList.add(
-                        Action(
-                            actionPart[0],
-                            actionPart[1]
-                        )
-                    )
-                }
-                resultList.toTypedArray()
-            }
-        }
+    fun toActions(actions: String?): List<Action>? {
+        actions ?: return null
+        val type: Type = object : TypeToken<List<Action>>() {}.type
+        val gson = Gson()
+        return gson.fromJson(actions, type)
     }
 
 }
