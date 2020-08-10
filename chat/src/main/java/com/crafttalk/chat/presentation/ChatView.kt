@@ -179,7 +179,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
     }
 
-    fun onCreate(fragment: Fragment, listener: EventListener, visitor: Visitor?) {
+    fun onCreate(fragment: Fragment, listener: EventListener, visitor: Visitor? = null) {
         Log.d(ConstantsUtils.TAG_SOCKET, "onCreate Chat View")
         this.parentFragment = fragment
         this.listener = listener
