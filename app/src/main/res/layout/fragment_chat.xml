@@ -14,6 +14,7 @@
         app:color_main="@color/color_main"
         app:color_bg_user_message="@color/color_main"
         app:color_text_server_action="@color/color_main"
+        app:color_text_user_message="#fff"
         app:auth_with_hash="true"
         app:auth_with_form="true"
         />
