@@ -125,8 +125,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         ChatAttr.mapAttr["color_bg_server_action"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
         ChatAttr.mapAttr["color_borders_server_action"] = attrArr.getColor(R.styleable.ChatView_color_borders_server_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
         ChatAttr.mapAttr["color_text_user_message"] = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
-        ChatAttr.mapAttr["color_text_server_message"] = attrArr.getString(R.styleable.ChatView_color_text_server_message) ?: context.getString(
-            R.string.default_color_text_server_message)
+        ChatAttr.mapAttr["color_text_server_message"] = attrArr.getColor(R.styleable.ChatView_color_text_server_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
         ChatAttr.mapAttr["color_text_server_action"] = attrArr.getColor(R.styleable.ChatView_color_text_server_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
         ChatAttr.mapAttr["color_time_mark"] = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
         ChatAttr.mapAttr["size_user_message"] = attrArr.getDimension(
@@ -281,7 +280,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         })
         viewModel.messages.observe(lifecycleOwner, Observer {
             Log.d("CHAT_VIEW", "adding new message size = ${it.size}")
+            val countNewMessage = it.size - list_with_message.adapter!!.itemCount
             adapterListMessages.setData(messageModelMapper(it, context))
+            if (countNewMessage > 0) {
+                list_with_message.smoothScrollToPosition(it.size - 1)
+            }
             adapterListMessages.notifyDataSetChanged()
         })
     }

@@ -118,7 +118,7 @@ class AdapterListMessages(
                 viewHolder.message.movementMethod = LinkMovementMethod.getInstance()
                 viewHolder.message.text = textMessage.message
                 // set color
-//                viewHolder.message.setTextColor(ChatAttr.mapAttr["color_text_server_message"] as Int)
+                viewHolder.message.setTextColor(ChatAttr.mapAttr["color_text_server_message"] as Int)
 
                 // set bg
                 viewHolder.message.setBackgroundColor(0)
@@ -127,7 +127,7 @@ class AdapterListMessages(
                 textMessage.actions?.let {
                     viewHolder.listActions.adapter = AdapterAction(inflater, it, actionListener)
                 }
-                // set bg
+                // set bg color
                 ViewCompat.setBackgroundTintList(viewHolder.message, ColorStateList.valueOf(ChatAttr.mapAttr["color_bg_server_message"] as Int))
             }
             is HolderUserImageMessage -> {
