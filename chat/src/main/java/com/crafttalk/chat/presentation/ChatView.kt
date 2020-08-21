@@ -342,17 +342,22 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.send_message -> {
                 val message = entry_field.text.toString().trim()
-                if (message.isNotEmpty()) {
-                    hideSoftKeyboard(this)
-                    viewModel.sendMessage(message)
-                    entry_field.text.clear()
-                }
-                else {
-
-                    BottomSheetFileViewer.Builder()
-                        .add(R.menu.options)
-                        .setListener(this)
-                        .show(parentFragment.parentFragmentManager)
+                when {
+                    message.isNotEmpty() -> {
+                        hideSoftKeyboard(this)
+                        viewModel.sendMessage(message)
+                        entry_field.text.clear()
+                    }
+                    entry_field.text.toString().isEmpty() -> {
+                        BottomSheetFileViewer.Builder()
+                            .add(R.menu.options)
+                            .setListener(this)
+                            .show(parentFragment.parentFragmentManager)
+                    }
+                    else -> {
+                        hideSoftKeyboard(this)
+                        entry_field.text.clear()
+                    }
                 }
             }
         }
