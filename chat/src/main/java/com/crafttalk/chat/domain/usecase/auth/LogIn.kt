@@ -2,8 +2,10 @@ package com.crafttalk.chat.domain.usecase.auth
 
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IVisitorRepository
+import javax.inject.Inject
 
-class LogIn constructor(
+class LogIn
+@Inject constructor(
     private val visitorRepository: IVisitorRepository
 ) {
 

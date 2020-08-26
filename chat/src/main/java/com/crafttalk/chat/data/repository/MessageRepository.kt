@@ -2,11 +2,13 @@ package com.crafttalk.chat.data.repository
 
 import androidx.lifecycle.LiveData
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
-import com.crafttalk.chat.data.remote.socket_service.SocketApi
+import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.repository.IMessageRepository
+import javax.inject.Inject
 import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
 
-class MessageRepository constructor(
+class MessageRepository
+@Inject constructor(
     private val dao: MessagesDao,
     private val socketApi: SocketApi
 ) : IMessageRepository {

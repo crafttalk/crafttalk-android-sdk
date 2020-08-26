@@ -8,8 +8,10 @@ import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.tags.Tag
 import com.crafttalk.chat.domain.repository.IDataRepository
+import javax.inject.Inject
 
-class DataRepository constructor(
+class DataRepository
+@Inject constructor(
     private val dao: MessagesDao
 ): IDataRepository {
 

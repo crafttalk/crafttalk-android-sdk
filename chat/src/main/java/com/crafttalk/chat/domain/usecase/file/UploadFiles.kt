@@ -4,8 +4,10 @@ import android.graphics.Bitmap
 import com.crafttalk.chat.domain.entity.file.TypeUpload
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.repository.IFileRepository
+import javax.inject.Inject
 
-class UploadFiles constructor(
+class UploadFiles
+@Inject constructor(
     private val fileRepository: IFileRepository
 ) {
 

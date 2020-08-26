@@ -1,4 +1,4 @@
-package com.crafttalk.chat.data.api
+package com.crafttalk.chat.data.api.rest
 
 import com.crafttalk.chat.data.ApiParams
 import com.crafttalk.chat.data.ApiParams.CLIENT_ID

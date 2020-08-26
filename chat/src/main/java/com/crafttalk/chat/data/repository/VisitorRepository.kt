@@ -1,11 +1,13 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.SharedPreferences
-import com.crafttalk.chat.data.remote.socket_service.SocketApi
+import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IVisitorRepository
+import javax.inject.Inject
 
-class VisitorRepository constructor(
+class VisitorRepository
+@Inject constructor(
     private val pref: SharedPreferences,
     private val socketApi: SocketApi
 ) : IVisitorRepository {

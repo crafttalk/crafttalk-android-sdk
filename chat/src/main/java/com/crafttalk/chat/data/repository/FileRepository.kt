@@ -5,9 +5,10 @@ import android.util.Log
 import com.crafttalk.chat.data.ApiParams
 import com.crafttalk.chat.data.ContentTypeValue
 import com.crafttalk.chat.domain.entity.file.TypeUpload
-import com.crafttalk.chat.data.api.FileApi
+import com.crafttalk.chat.data.api.rest.FileApi
 import com.crafttalk.chat.data.helper.file.FileInfoHelper
 import com.crafttalk.chat.data.helper.file.RequestHelper
+import com.crafttalk.chat.di.Uuid
 import com.crafttalk.chat.domain.entity.file.BodyStructureUploadFile
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.repository.IFileRepository
@@ -17,10 +18,12 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Response
+import javax.inject.Inject
 
-class FileRepository constructor(
+class FileRepository
+@Inject constructor(
     private val fileApi: FileApi,
-    private val uuid: String, // Uuid.generateUUID(false)
+    @Uuid private val uuid: String,
     private val fileInfoHelper: FileInfoHelper,
     private val fileRequestHelper: RequestHelper
 ) : IFileRepository {
@@ -52,13 +55,11 @@ class FileRepository constructor(
         val uuidRequestBody = uuid.toRequestBody(
             contentType = ContentTypeValue.TEXT_PLAIN.value.toMediaType()
         )
-
         fileApi.uploadFile(
             fileNameRequestBody,
             uuidRequestBody,
             body
         )
-
     }
 
     override suspend fun uploadFile(file: File, type: TypeUpload) {
@@ -87,7 +88,6 @@ class FileRepository constructor(
                 uploadFile(fileName, fileRequestBody)
             }
         }
-
     }
 
 }

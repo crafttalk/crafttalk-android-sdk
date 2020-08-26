@@ -6,8 +6,10 @@ import android.provider.OpenableColumns
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.File
+import javax.inject.Inject
 
-class FileInfoHelper constructor(
+class FileInfoHelper
+@Inject constructor(
     private val context: Context
 ) {
 

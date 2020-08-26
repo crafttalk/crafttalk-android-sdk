@@ -1,8 +1,10 @@
 package com.crafttalk.chat.domain.usecase.message
 
 import com.crafttalk.chat.domain.repository.IMessageRepository
+import javax.inject.Inject
 
-class SyncMessages constructor(
+class SyncMessages
+@Inject constructor(
     private val messageRepository: IMessageRepository
 ) {
 

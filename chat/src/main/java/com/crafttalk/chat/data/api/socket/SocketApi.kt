@@ -1,4 +1,4 @@
-package com.crafttalk.chat.data.remote.socket_service
+package com.crafttalk.chat.data.api.socket
 
 
 import android.util.Log

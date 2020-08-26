@@ -2,7 +2,7 @@ package com.crafttalk.chat.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.crafttalk.chat.data.remote.socket_service.SocketApi
+import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.usecase.auth.LogIn
 import com.crafttalk.chat.domain.usecase.file.UploadFiles

@@ -2,7 +2,6 @@ package com.crafttalk.chat.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.os.Build
@@ -19,25 +18,14 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.crafttalk.chat.R
-import com.crafttalk.chat.data.api.FileApi
-import com.crafttalk.chat.data.helper.file.FileInfoHelper
-import com.crafttalk.chat.data.helper.file.RequestHelper
-import com.crafttalk.chat.data.local.db.database.ChatDatabase
-import com.crafttalk.chat.data.local.pref.Uuid
-import com.crafttalk.chat.data.local.pref.checkVisitorInPref
-import com.crafttalk.chat.data.local.pref.getVisitorFromPref
-import com.crafttalk.chat.data.remote.socket_service.SocketApi
-import com.crafttalk.chat.data.repository.*
+import com.crafttalk.chat.di.DaggerSdkComponent
+import com.crafttalk.chat.di.modules.NetworkModule
+import com.crafttalk.chat.di.modules.VisitorModule
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
-import com.crafttalk.chat.domain.usecase.auth.LogIn
-import com.crafttalk.chat.domain.usecase.file.UploadFiles
-import com.crafttalk.chat.domain.usecase.internet.SetInternetConnectionListener
-import com.crafttalk.chat.domain.usecase.message.*
 import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
@@ -50,8 +38,6 @@ import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ConstantsUtils
 import com.crafttalk.chat.utils.ConstantsUtils.URL_UPLOAD_HOST
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_entry_field.view.*
 import kotlinx.android.synthetic.main.view_chat.view.*
 import kotlinx.android.synthetic.main.view_chat.view.chat_place
@@ -59,13 +45,13 @@ import kotlinx.android.synthetic.main.view_chat.view.loading
 import kotlinx.android.synthetic.main.view_chat.view.upper_limiter
 import kotlinx.android.synthetic.main.view_chat.view.warning
 import kotlinx.android.synthetic.main.view_host.view.*
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 import kotlin.collections.set
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
-    private lateinit var viewModel: ChatViewModel
+    @Inject
+    lateinit var viewModel: ChatViewModel
     private lateinit var adapterListMessages: AdapterListMessages
     private lateinit var listener: EventListener
     private val fileViewerHelper = FileViewerHelper(PermissionHelper())
@@ -178,89 +164,21 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onCreate(fragment: Fragment, listener: EventListener, visitor: Visitor? = null) {
+        val sdkComponent = DaggerSdkComponent
+            .builder()
+            .context(context)
+            .chatView(this)
+            .parentFragment(fragment)
+            .networkModule(NetworkModule(URL_UPLOAD_HOST))
+            .visitorModule(VisitorModule(visitor))
+            .build()
+            .inject(this)
+
         Log.d(ConstantsUtils.TAG_SOCKET, "onCreate Chat View")
         this.parentFragment = fragment
         this.listener = listener
-        this.viewModel = if (!(ChatAttr.mapAttr["auth_with_form"] as Boolean) && visitor != null) {
-            deleteThisFun(visitor)
-        }
-        else {
-            val pref = context.getSharedPreferences("data_visitor", MODE_PRIVATE)
-            if (checkVisitorInPref(pref)) {
-                deleteThisFun(getVisitorFromPref(pref))
-            }
-            deleteThisFun(null)
-        }
         setListMessages()
     }
-
-
-    fun deleteThisFun(visitor: Visitor?): ChatViewModel {
-        val dao = ChatDatabase.getInstance(context.applicationContext).messageDao()
-        val socketApi = SocketApi(
-            DataRepository(
-                dao
-            ),
-            Gson()
-        )
-        val messsageRepository = MessageRepository(
-            dao,
-            socketApi
-        )
-
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
-
-        val factory = ChatViewModelFactory(
-            UploadFiles(
-                FileRepository(
-                    Retrofit.Builder()
-                        .baseUrl(URL_UPLOAD_HOST)
-                        .addConverterFactory(GsonConverterFactory.create(gson))
-//            .addConverterFactory(ScalarsConverterFactory.create())
-                        .build().create(FileApi::class.java),
-                    Uuid.generateUUID(false),
-                    FileInfoHelper(
-                        context
-                    ),
-                    RequestHelper(
-                        context
-                    )
-                )
-            ),
-            GetMessages(messsageRepository),
-            SendMessages(messsageRepository),
-            SyncMessages(
-                messsageRepository
-            ),
-            SelectAction(
-                messsageRepository
-            ),
-            LogIn(
-                VisitorRepository(
-                    context.getSharedPreferences("data_visitor", MODE_PRIVATE),
-                    socketApi
-                )
-            ),
-            SetInternetConnectionListener(
-                InternetConnectionRepository(
-                    socketApi
-                )
-            ),
-            visitor,
-            this,
-            socketApi,
-            UpdateSizeMessages(
-                MessageRepository(
-                    dao,
-                    socketApi
-                )
-            )
-        )
-        return ViewModelProvider(parentFragment, factory).get(ChatViewModel::class.java)
-    }
-
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
         viewModel.internetConnection.observe(lifecycleOwner, Observer {
@@ -419,7 +337,5 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         }
     }
-
-
 
 }

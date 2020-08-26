@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.crafttalk.chat.R
 import com.crafttalk.chat.data.local.db.entity.Message
-import com.crafttalk.chat.data.remote.socket_service.SocketApi
+import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -22,8 +22,10 @@ import com.crafttalk.chat.domain.usecase.message.*
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.utils.ConstantsUtils
+import javax.inject.Inject
 
-class ChatViewModel constructor(
+class ChatViewModel
+@Inject constructor(
     private val uploadFiles: UploadFiles,
     private val getMessages: GetMessages,
     private val sendMessages: SendMessages,
@@ -36,20 +38,6 @@ class ChatViewModel constructor(
     private val socketApi: SocketApi,
     private val updateSizeMessages: UpdateSizeMessages
 ) : BaseViewModel() {
-
-    fun updateData(idKey: Long, height: Int, width: Int) {
-        launchIO {
-            Log.d("DEBUGGER", "update start")
-            updateSizeMessages(
-                idKey,
-                height,
-                width,
-                {},
-                {}
-            )
-            Log.d("DEBUGGER", "update end")
-        }
-    }
 
     val messages: LiveData<List<Message>> by lazy {
         getMessages()
@@ -142,6 +130,20 @@ class ChatViewModel constructor(
                 {},
                 {}
             )
+        }
+    }
+
+    fun updateData(idKey: Long, height: Int, width: Int) {
+        launchIO {
+            Log.d("DEBUGGER", "update start")
+            updateSizeMessages(
+                idKey,
+                height,
+                width,
+                {},
+                {}
+            )
+            Log.d("DEBUGGER", "update end")
         }
     }
 
