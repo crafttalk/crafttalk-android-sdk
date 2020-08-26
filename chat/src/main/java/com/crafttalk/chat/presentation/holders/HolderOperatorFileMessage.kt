@@ -3,11 +3,24 @@ package com.crafttalk.chat.presentation.holders
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
+import com.crafttalk.chat.presentation.base.BaseViewHolder
+import com.crafttalk.chat.presentation.helper.extensions.setFileIcon
+import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageDefault
+import com.crafttalk.chat.presentation.model.FileMessageItem
 
+class HolderOperatorFileMessage(
+    val view: View,
+    private val scaleRatio: Float,
+    private val clickHandler: (fileUrl: String) -> Unit
+) : BaseViewHolder<FileMessageItem>(view), View.OnClickListener {
+    private val fileIcon: ImageView = view.findViewById(R.id.server_file)
+    private val time: TextView = view.findViewById(R.id.time)
+    private var fileUrl: String? = null
 
-class HolderOperatorFileMessage(view: View, val clickHandler: (fileUrl: String) -> Unit): RecyclerView.ViewHolder(view), View.OnClickListener {
+    init {
+        view.setOnClickListener(this)
+    }
 
     override fun onClick(view: View) {
         fileUrl?.let{
@@ -15,12 +28,10 @@ class HolderOperatorFileMessage(view: View, val clickHandler: (fileUrl: String) 
         }
     }
 
-    val fileIcon: ImageView = view.findViewById(R.id.server_file)
-    val time: TextView = view.findViewById(R.id.time)
-    var fileUrl: String? = null
-
-    init {
-        view.setOnClickListener(this)
+    override fun bindTo(item: FileMessageItem) {
+        fileUrl = item.fileUrl
+        fileIcon.setFileIcon()
+        time.setTimeMessageDefault(item, scaleRatio)
     }
 
 }

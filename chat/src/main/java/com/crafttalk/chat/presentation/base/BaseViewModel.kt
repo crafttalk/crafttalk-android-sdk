@@ -1,4 +1,4 @@
-package com.crafttalk.chat.presentation
+package com.crafttalk.chat.presentation.base
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

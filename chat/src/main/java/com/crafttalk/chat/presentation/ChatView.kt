@@ -163,16 +163,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         })
     }
 
-    private fun setListMessages(layoutInflater: LayoutInflater) {
+    private fun setListMessages() {
         adapterListMessages =
             AdapterListMessages(
-                layoutInflater,
-                listOf(),
-                viewModel.actionListener,
-                viewModel.updateSizeMessageListener,
+                resources.displayMetrics.density,
                 viewModel::openFile,
                 viewModel::openImage,
-                viewModel::openGif
+                viewModel::openGif,
+                viewModel::selectAction,
+                viewModel::updateData
             ).apply {
                 list_with_message.adapter = this
             }
@@ -192,7 +191,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             deleteThisFun(null)
         }
-        setListMessages(inflater)
+        setListMessages()
     }
 
 
@@ -279,13 +278,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         })
         viewModel.messages.observe(lifecycleOwner, Observer {
-            Log.d("CHAT_VIEW", "adding new message size = ${it.size}")
-            val countNewMessage = it.size - list_with_message.adapter!!.itemCount
-            adapterListMessages.setData(messageModelMapper(it, context))
+            val countNewMessage = it.size - adapterListMessages.itemCount
+            adapterListMessages.data = messageModelMapper(it, context)
             if (countNewMessage > 0) {
                 list_with_message.smoothScrollToPosition(it.size - 1)
             }
-            adapterListMessages.notifyDataSetChanged()
         })
     }
 

@@ -19,8 +19,7 @@ import com.crafttalk.chat.domain.usecase.auth.LogIn
 import com.crafttalk.chat.domain.usecase.file.UploadFiles
 import com.crafttalk.chat.domain.usecase.internet.SetInternetConnectionListener
 import com.crafttalk.chat.domain.usecase.message.*
-import com.crafttalk.chat.presentation.adapters.AdapterListMessages
-import com.crafttalk.chat.presentation.adapters.AdapterListMessages.UpdateSizeMessageListener
+import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.utils.ConstantsUtils
 
@@ -38,33 +37,18 @@ class ChatViewModel constructor(
     private val updateSizeMessages: UpdateSizeMessages
 ) : BaseViewModel() {
 
-    val actionListener = object : AdapterListMessages.ActionListener {
-        override fun actionSelect(actionId: String) {
-            launchIO {
-                selectAction(
-                    actionId,
-                    {},
-                    {}
-                )
-            }
+    fun updateData(idKey: Long, height: Int, width: Int) {
+        launchIO {
+            Log.d("DEBUGGER", "update start")
+            updateSizeMessages(
+                idKey,
+                height,
+                width,
+                {},
+                {}
+            )
+            Log.d("DEBUGGER", "update end")
         }
-    }
-
-    val updateSizeMessageListener = object : UpdateSizeMessageListener {
-        override fun updateData(idKey: Long, height: Int, width: Int) {
-            launchIO {
-                Log.d("DEBUGGER", "update start")
-                updateSizeMessages(
-                    idKey,
-                    height,
-                    width,
-                    {},
-                    {}
-                )
-                Log.d("DEBUGGER", "update end")
-            }
-        }
-
     }
 
     val messages: LiveData<List<Message>> by lazy {
@@ -149,6 +133,16 @@ class ChatViewModel constructor(
             .setType(TypeFile.GIF)
             .setSize(width, height)
             .show()
+    }
+
+    fun selectAction(actionId: String) {
+        launchIO {
+            selectAction(
+                actionId,
+                {},
+                {}
+            )
+        }
     }
 
     fun sendMessage(message: String) {
