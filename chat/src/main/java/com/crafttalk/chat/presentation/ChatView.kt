@@ -17,7 +17,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.crafttalk.chat.R
 import com.crafttalk.chat.di.DaggerSdkComponent
-import com.crafttalk.chat.di.modules.NetworkModule
 import com.crafttalk.chat.di.modules.VisitorModule
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
@@ -33,7 +32,6 @@ import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ConstantsUtils
-import com.crafttalk.chat.utils.ConstantsUtils.URL_UPLOAD_HOST
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_entry_field.view.*
 import kotlinx.android.synthetic.main.view_chat.view.*
@@ -124,7 +122,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             .context(context)
             .chatView(this)
             .parentFragment(fragment)
-            .networkModule(NetworkModule(URL_UPLOAD_HOST))
             .visitorModule(VisitorModule(visitor))
             .build()
             .inject(this)

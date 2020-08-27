@@ -3,6 +3,17 @@
 
     <declare-styleable name="ChatView">
 
+        <attr name="auth" format="enum">
+            <enum name="AUTH_WITH_FORM_WITHOUT_HASH" value="0"/>
+            <enum name="AUTH_WITHOUT_FORM_WITH_HASH" value="1"/>
+            <enum name="AUTH_WITHOUT_FORM_WITHOUT_HASH" value="2"/>
+        </attr>
+
+        <attr name="urlSocketNameSpace" format="string"/>
+        <attr name="urlSocketHost" format="string"/>
+        <attr name="urlUploadNameSpace" format="string"/>
+        <attr name="urlUploadHost" format="string"/>
+
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
         <attr name="color_bg_server_message" format="color"/>
@@ -21,12 +32,6 @@
         <attr name="size_time_mark" format="dimension"/>
         <attr name="size_warning" format="dimension"/>
         <attr name="size_company" format="dimension"/>
-
-        <attr name="auth" format="enum">
-            <enum name="AUTH_WITH_FORM_WITHOUT_HASH" value="0"/>
-            <enum name="AUTH_WITHOUT_FORM_WITH_HASH" value="1"/>
-            <enum name="AUTH_WITHOUT_FORM_WITHOUT_HASH" value="2"/>
-        </attr>
 
     </declare-styleable>
 

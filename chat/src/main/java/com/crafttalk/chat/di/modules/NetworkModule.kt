@@ -1,5 +1,6 @@
 package com.crafttalk.chat.di.modules
 
+import com.crafttalk.chat.data.ApiParams.HOST
 import com.crafttalk.chat.data.api.rest.FileApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.repository.DataRepository
@@ -11,14 +12,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class NetworkModule
-constructor(private val urlUploadHost: String) {
+class NetworkModule {
 
     @Singleton
     @Provides
     fun provideRetrofitClient(gson: Gson): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(urlUploadHost)
+            .baseUrl(HOST)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }

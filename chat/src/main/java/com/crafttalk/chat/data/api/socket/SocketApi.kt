@@ -1,6 +1,5 @@
 package com.crafttalk.chat.data.api.socket
 
-
 import android.util.Log
 import com.crafttalk.chat.data.repository.DataRepository
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -9,7 +8,6 @@ import com.crafttalk.chat.domain.entity.message.Message
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatAttr
-import com.crafttalk.chat.utils.ConstantsUtils
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.github.nkzawa.socketio.client.Manager
 import com.github.nkzawa.socketio.client.Socket
@@ -38,8 +36,8 @@ class SocketApi constructor(
 
     private fun initSocket() {
         socket = try {
-            val manager = Manager(URI(ConstantsUtils.SOCKET_URL))
-            manager.socket(ConstantsUtils.NAMESPACE)
+            val manager = Manager(URI(ChatAttr.getInstance().urlSocketHost))
+            manager.socket(ChatAttr.getInstance().urlSocketNameSpace)
         } catch (e: URISyntaxException) {
             Log.e(TAG_SOCKET, "fail init socket")
             changeInternetConnectionStateFun(TypeInternetConnection.NO_INTERNET)

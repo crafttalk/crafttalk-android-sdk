@@ -14,6 +14,10 @@
         app:color_text_server_action="@color/color_main"
         app:color_text_user_message="#fff"
         app:auth="AUTH_WITHOUT_FORM_WITH_HASH"
+        app:urlSocketHost="@string/urlSocketHost"
+        app:urlSocketNameSpace="@string/urlSocketNameSpace"
+        app:urlUploadHost="@string/urlUploadHost"
+        app:urlUploadNameSpace="@string/urlUploadNameSpace"
         />
 
 </LinearLayout>

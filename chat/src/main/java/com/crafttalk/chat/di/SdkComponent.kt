@@ -29,7 +29,6 @@ interface SdkComponent {
         @BindsInstance fun chatView(view: ChatView): Builder
         @BindsInstance fun parentFragment(parentFragment: Fragment): Builder
 
-        fun networkModule(networkModule: NetworkModule): Builder
         fun visitorModule(visitorModule: VisitorModule): Builder
 
         fun build(): SdkComponent

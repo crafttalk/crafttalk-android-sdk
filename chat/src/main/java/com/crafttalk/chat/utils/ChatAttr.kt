@@ -15,6 +15,14 @@ private constructor(
     context: Context
 ) {
 
+    // Logic part
+    val authType = AuthType.values()[attrArr.getInt(R.styleable.ChatView_auth, 0)]
+    val urlSocketNameSpace: String = attrArr.getString(R.styleable.ChatView_urlSocketNameSpace)!!
+    val urlSocketHost: String = attrArr.getString(R.styleable.ChatView_urlSocketHost)!!
+    val urlUploadNameSpace: String = attrArr.getString(R.styleable.ChatView_urlUploadNameSpace)!!
+    val urlUploadHost: String = attrArr.getString(R.styleable.ChatView_urlUploadHost)!!
+
+    // UI part
     private val scaleRatio = context.resources.displayMetrics.density
 
     val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
@@ -36,8 +44,6 @@ private constructor(
     val sizeTextOperatorMessage = attrArr.getDimension(R.styleable.ChatView_size_server_message, context.resources.getDimension(R.dimen.default_size_server_message)) / scaleRatio
     val sizeTextOperatorAction = attrArr.getDimension(R.styleable.ChatView_size_server_action, context.resources.getDimension(R.dimen.default_size_server_action)) / scaleRatio
     val sizeTextTimeMark = attrArr.getDimension(R.styleable.ChatView_size_time_mark, context.resources.getDimension(R.dimen.default_size_time_mark)) / scaleRatio
-
-    val authType = AuthType.values()[attrArr.getInt(R.styleable.ChatView_auth, 0)]
 
     val drawableBackgroundSignInButton: Drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.background_sign_in_auth_form)!!).apply {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
