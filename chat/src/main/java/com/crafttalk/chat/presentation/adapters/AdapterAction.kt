@@ -8,12 +8,11 @@ import com.crafttalk.chat.presentation.holders.HolderAction
 import com.crafttalk.chat.presentation.model.ActionModel
 
 class AdapterAction(
-    private val scaleRatio: Float,
     private val selectAction: (actionId: String) -> Unit
 ) : BaseAdapter<ActionModel>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<out ActionModel> {
-        return HolderAction(parent.inflate(viewType), scaleRatio) { actionId ->
+        return HolderAction(parent.inflate(viewType)) { actionId ->
             selectAction(actionId)
         }
     }

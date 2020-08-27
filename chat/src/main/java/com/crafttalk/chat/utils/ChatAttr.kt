@@ -1,7 +1,62 @@
 package com.crafttalk.chat.utils
 
-object ChatAttr {
+import android.content.Context
+import android.content.res.TypedArray
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
+import android.os.Build
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import com.crafttalk.chat.R
 
-    val mapAttr = HashMap<String, Any>()
+class ChatAttr
+private constructor(
+    attrArr: TypedArray,
+    context: Context
+) {
+
+    private val scaleRatio = context.resources.displayMetrics.density
+
+    val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
+    val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_server_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
+    val colorBackgroundOperatorAction = attrArr.getColor(R.styleable.ChatView_color_bg_server_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
+    val colorBordersOperatorAction = attrArr.getColor(R.styleable.ChatView_color_borders_server_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
+
+    val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main))
+    val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.default_color_text_warning))
+    val colorTextCompanyName = attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.default_color_company))
+    val colorTextUserMessage = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
+    val colorTextOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_text_server_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
+    val colorTextOperatorAction = attrArr.getColor(R.styleable.ChatView_color_text_server_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
+    val colorTextTimeMark = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
+
+    val sizeTextInternetConnectionWarning = attrArr.getDimension(R.styleable.ChatView_size_warning, context.resources.getDimension(R.dimen.default_size_warning)) / scaleRatio
+    val sizeTextCompanyName = attrArr.getDimension(R.styleable.ChatView_size_company, context.resources.getDimension(R.dimen.default_size_company)) / scaleRatio
+    val sizeTextUserMessage = attrArr.getDimension(R.styleable.ChatView_size_user_message, context.resources.getDimension(R.dimen.default_size_user_message)) / scaleRatio
+    val sizeTextOperatorMessage = attrArr.getDimension(R.styleable.ChatView_size_server_message, context.resources.getDimension(R.dimen.default_size_server_message)) / scaleRatio
+    val sizeTextOperatorAction = attrArr.getDimension(R.styleable.ChatView_size_server_action, context.resources.getDimension(R.dimen.default_size_server_action)) / scaleRatio
+    val sizeTextTimeMark = attrArr.getDimension(R.styleable.ChatView_size_time_mark, context.resources.getDimension(R.dimen.default_size_time_mark)) / scaleRatio
+
+    val authType = AuthType.values()[attrArr.getInt(R.styleable.ChatView_auth, 0)]
+
+    val drawableBackgroundSignInButton: Drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.background_sign_in_auth_form)!!).apply {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            DrawableCompat.setTint(this, colorMain)
+        } else {
+            this.mutate().setColorFilter(colorMain, PorterDuff.Mode.SRC_IN)
+        }
+    }
+
+    companion object {
+        @Volatile private var INSTANCE: ChatAttr? = null
+
+        fun getInstance(attrArr: TypedArray? = null, context: Context? = null): ChatAttr =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: ChatAttr(attrArr!!, context!!).also { INSTANCE = it }
+            }
+        fun createInstance(attrArr: TypedArray, context: Context) {
+            getInstance(attrArr, context)
+        }
+    }
 
 }

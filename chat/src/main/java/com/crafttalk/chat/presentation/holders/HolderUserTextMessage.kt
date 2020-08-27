@@ -11,21 +11,20 @@ import com.crafttalk.chat.presentation.model.TextMessageItem
 import com.crafttalk.chat.utils.ChatAttr
 
 class HolderUserTextMessage(
-    view: View,
-    private val scaleRatio: Float
+    view: View
 ) : BaseViewHolder<TextMessageItem>(view) {
     private val message: TextView = view.findViewById(R.id.user_message)
     private val time: TextView = view.findViewById(R.id.time)
 
     override fun bindTo(item: TextMessageItem) {
-        time.setTimeMessageWithCheck(item, scaleRatio)
+        time.setTimeMessageWithCheck(item)
         // set content
         message.text = item.message
         // set color
-        message.setTextColor(ChatAttr.mapAttr["color_text_user_message"] as Int)
+        message.setTextColor(ChatAttr.getInstance().colorTextUserMessage)
         // set dimension
-        message.textSize = (ChatAttr.mapAttr["size_user_message"] as Float) / scaleRatio
+        message.textSize = ChatAttr.getInstance().sizeTextUserMessage
         // set bg
-        ViewCompat.setBackgroundTintList(message, ColorStateList.valueOf(ChatAttr.mapAttr["color_bg_user_message"] as Int))
+        ViewCompat.setBackgroundTintList(message, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundUserMessage))
     }
 }

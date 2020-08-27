@@ -2,7 +2,6 @@ package com.crafttalk.chat.presentation.holders
 
 import android.content.res.ColorStateList
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.ViewCompat
@@ -16,7 +15,6 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderOperatorTextMessage(
     view: View,
-    private val scaleRatio: Float,
     private val selectAction: (actionId: String) -> Unit
 ) : BaseViewHolder<TextMessageItem>(view) {
     private val message: TextView = view.findViewById(R.id.server_message)
@@ -24,25 +22,25 @@ class HolderOperatorTextMessage(
     private val time: TextView = view.findViewById(R.id.time)
 
     override fun bindTo(item: TextMessageItem) {
-        time.setTimeMessageDefault(item, scaleRatio)
+        time.setTimeMessageDefault(item)
         // set content
         message.movementMethod = LinkMovementMethod.getInstance()
         message.text = item.message
-        Log.d("TEST", "actions - ${item.actions}")
         item.actions?.let {
             listActions.adapter = AdapterAction(
-                scaleRatio,
                 selectAction
             ).apply {
                 this.data = it
             }
         }
         // set color
-        message.setTextColor(ChatAttr.mapAttr["color_text_server_message"] as Int)
+        message.setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
+        // set dimension
+        message.textSize = ChatAttr.getInstance().sizeTextOperatorMessage
         // set bg
         message.setBackgroundColor(0)
         message.setBackgroundResource(R.drawable.background_item_simple_server_message)
         // set bg color
-        ViewCompat.setBackgroundTintList(message, ColorStateList.valueOf(ChatAttr.mapAttr["color_bg_server_message"] as Int))
+        ViewCompat.setBackgroundTintList(message, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
     }
 }

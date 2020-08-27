@@ -11,7 +11,6 @@ import com.crafttalk.chat.presentation.model.GifMessageItem
 
 class HolderUserGifMessage(
     view: View,
-    private val scaleRatio: Float,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickHandler: (gifUrl: String, width: Int, height: Int) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
@@ -30,7 +29,7 @@ class HolderUserGifMessage(
     override fun bindTo(item: GifMessageItem) {
         gifUrl = item.gifUrl
         gif.loadGif(item, updateData)
-        time.setTimeMessageWithCheck(item, scaleRatio)
+        time.setTimeMessageWithCheck(item)
     }
 
 }

@@ -11,7 +11,6 @@ import com.crafttalk.chat.presentation.model.ImageMessageItem
 
 class HolderUserImageMessage(
     view: View,
-    private val scaleRatio: Float,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickHandler: (imageUrl: String, width: Int, height: Int) -> Unit
 ) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
@@ -32,7 +31,7 @@ class HolderUserImageMessage(
     override fun bindTo(item: ImageMessageItem) {
         imageUrl = item.imageUrl
         img.loadImage(item, updateData)
-        time.setTimeMessageWithCheck(item, scaleRatio)
+        time.setTimeMessageWithCheck(item)
     }
 
 }

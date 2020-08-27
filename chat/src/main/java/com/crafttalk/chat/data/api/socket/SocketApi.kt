@@ -7,6 +7,7 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
 import com.crafttalk.chat.domain.entity.message.Message
 import com.crafttalk.chat.domain.entity.message.MessageType
+import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ConstantsUtils
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
@@ -161,7 +162,11 @@ class SocketApi constructor(
 
     private fun authenticationUser(socket: Socket) {
         Log.d(TAG_SOCKET, "authenticationUser - ${visitor.getJsonObject()};\n ${visitor}")
-        socket.emit("me", visitor.getJsonObject(), (ChatAttr.mapAttr["auth_with_hash"] as Boolean))
+        socket.emit(
+            "me",
+            visitor.getJsonObject(),
+            ChatAttr.getInstance().authType.name in listOf(AuthType.AUTH_WITHOUT_FORM_WITH_HASH.name)
+        )
     }
 
     private fun greet() {

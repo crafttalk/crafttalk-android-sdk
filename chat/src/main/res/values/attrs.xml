@@ -4,7 +4,6 @@
     <declare-styleable name="ChatView">
 
         <attr name="color_main" format="color"/>
-        <attr name="color_title" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
         <attr name="color_bg_server_message" format="color"/>
         <attr name="color_bg_server_action" format="color"/>
@@ -16,9 +15,6 @@
         <attr name="color_text_warning" format="color"/>
         <attr name="color_company" format="color"/>
 
-        <attr name="title_text" format="string" />
-
-        <attr name="size_title" format="dimension"/>
         <attr name="size_user_message" format="dimension"/>
         <attr name="size_server_message" format="dimension"/>
         <attr name="size_server_action" format="dimension"/>
@@ -26,8 +22,11 @@
         <attr name="size_warning" format="dimension"/>
         <attr name="size_company" format="dimension"/>
 
-        <attr name="auth_with_hash" format="boolean"/>
-        <attr name="auth_with_form" format="boolean"/>
+        <attr name="auth" format="enum">
+            <enum name="AUTH_WITH_FORM_WITHOUT_HASH" value="0"/>
+            <enum name="AUTH_WITHOUT_FORM_WITH_HASH" value="1"/>
+            <enum name="AUTH_WITHOUT_FORM_WITHOUT_HASH" value="2"/>
+        </attr>
 
     </declare-styleable>
 

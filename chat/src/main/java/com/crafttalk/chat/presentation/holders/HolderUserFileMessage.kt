@@ -11,7 +11,6 @@ import com.crafttalk.chat.presentation.model.FileMessageItem
 
 class HolderUserFileMessage(
     val view: View,
-    private val scaleRatio: Float,
     private val clickHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<FileMessageItem>(view), View.OnClickListener {
     private val fileIcon: ImageView = view.findViewById(R.id.user_file)
@@ -31,7 +30,7 @@ class HolderUserFileMessage(
     override fun bindTo(item: FileMessageItem) {
         fileUrl = item.fileUrl
         fileIcon.setFileIcon()
-        time.setTimeMessageWithCheck(item, scaleRatio)
+        time.setTimeMessageWithCheck(item)
     }
 
 }

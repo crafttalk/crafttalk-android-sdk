@@ -1,10 +1,8 @@
 package com.crafttalk.chat.domain.entity.auth
 
 import com.crafttalk.chat.data.local.pref.Uuid
-import com.crafttalk.chat.utils.HashUtils
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
-import java.lang.Exception
 
 class Visitor (
     val uuid: String,
@@ -15,17 +13,14 @@ class Visitor (
     val email: String?,
     val phone: String?,
     val contract: String?, // номер контракта клиента
-    val birthday: String?//, // дата рождения клиента
+    val birthday: String?, // дата рождения клиента
+    val hash: String? = null
 //    val fb: String?,
 //    val vk: String?,
 //    val subscription: Any?, // содержит данные о подписке клиента на push-уведомления
 //    val url:String?, // содержитадресстраницы,скоторойполученыданныеоподпискеклиента на push-уведомления
 //    val unread_msg: Int? // количество непрочитанных клиентом сообщений
     ) {
-
-    private val salt = "C~kW]cq76(a?m[UbJ)drw+Wh6>W[3Wsj"
-    private val source = "${uuid}${firstName}${lastName}${contract ?: DEFAULT_CONTRACT}${phone ?: DEFAULT_PHONE}${email ?: DEFAULT_MAIL}${birthday ?: DEFAULT_BIRTHDAY}"
-    private val hash = HashUtils.getHash("SHA-256", "${salt}${HashUtils.getHash("SHA-256", "${salt}${source}")}")
 
     override fun toString(): String {
         return "${uuid}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"

@@ -19,8 +19,8 @@ fun TextView.setDrawableColor(color: Int) {
 }
 
 @SuppressLint("SetTextI18n")
-fun TextView.setTimeMessageWithCheck(message: MessageModel, scaleRatio: Float) {
-    setTimeMessageDefault(message, scaleRatio)
+fun TextView.setTimeMessageWithCheck(message: MessageModel) {
+    setTimeMessageDefault(message)
 
     when (message.stateCheck) {
         MessageType.VISITOR_MESSAGE -> {}
@@ -50,18 +50,18 @@ fun TextView.setTimeMessageWithCheck(message: MessageModel, scaleRatio: Float) {
         }
     }
 
-    setDrawableColor(ChatAttr.mapAttr["color_time_mark"] as Int)
+    setDrawableColor(ChatAttr.getInstance().colorTextTimeMark)
 }
 
 @SuppressLint("SetTextI18n", "SimpleDateFormat")
-fun TextView.setTimeMessageDefault(message: MessageModel, scaleRatio: Float) {
+fun TextView.setTimeMessageDefault(message: MessageModel) {
     val formatTime = SimpleDateFormat("dd.MM.yyyy HH:mm")
     // set content
     text = "${message.authorName} ${formatTime.format(message.timestamp)}"
     setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
 
     // set color
-    setTextColor(ChatAttr.mapAttr["color_time_mark"] as Int)
+    setTextColor(ChatAttr.getInstance().colorTextTimeMark)
     // set dimension
-    textSize = (ChatAttr.mapAttr["size_time_mark"] as Float)/scaleRatio
+    textSize = ChatAttr.getInstance().sizeTextTimeMark
 }

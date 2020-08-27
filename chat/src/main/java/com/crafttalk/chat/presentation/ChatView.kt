@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
-import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -13,8 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.RelativeLayout
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -46,7 +43,6 @@ import kotlinx.android.synthetic.main.view_chat.view.upper_limiter
 import kotlinx.android.synthetic.main.view_chat.view.warning
 import kotlinx.android.synthetic.main.view_host.view.*
 import javax.inject.Inject
-import kotlin.collections.set
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
@@ -65,8 +61,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         inflater.inflate(R.layout.view_host, this, true)
 
-        setAllListeners()
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
+        ChatAttr.createInstance(attrArr, context)
         customizationChat(attrArr)
         attrArr.recycle()
     }
@@ -75,59 +71,19 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     @SuppressLint("ResourceType")
     private fun customizationChat(attrArr: TypedArray) {
-        val scaleRatio = resources.displayMetrics.density
-        // set content
-//        title.text = attrArr.getString(R.styleable.ChatView_title_text)
-        send_message.setColorFilter(attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main)), PorterDuff.Mode.SRC_IN)
-
-        val newTintColor = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main))
-        val bgSignInBtn = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.background_sign_in_auth_form)!!)
-        sign_in.setBackgroundDrawable(bgSignInBtn)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            DrawableCompat.setTint(bgSignInBtn, newTintColor)
-        }
-        else {
-            bgSignInBtn.mutate().setColorFilter(newTintColor, PorterDuff.Mode.SRC_IN)
-        }
+        val chatAttr = ChatAttr.getInstance(attrArr, context)
         // set color
-        warning.setTextColor(attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.default_color_text_warning)))
-        company_name.setTextColor(attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.default_color_company)))
-//        title.setTextColor(attrArr.getColor(R.styleable.ChatView_color_title, ContextCompat.getColor(context, R.color.default_color_title)))
+        send_message.setColorFilter(chatAttr.colorMain, PorterDuff.Mode.SRC_IN)
+        sign_in.setBackgroundDrawable(chatAttr.drawableBackgroundSignInButton)
+
+        warning.setTextColor(chatAttr.colorTextInternetConnectionWarning)
+        company_name.setTextColor(chatAttr.colorTextCompanyName)
         // set dimension
-//        title.textSize = attrArr.getDimension(R.styleable.ChatView_size_title, 22f)/scaleRatio
-        warning.textSize = attrArr.getDimension(
-            R.styleable.ChatView_size_warning, resources.getDimension(
-                R.dimen.default_size_warning))/scaleRatio
-        company_name.textSize = attrArr.getDimension(
-            R.styleable.ChatView_size_company, resources.getDimension(
-                R.dimen.default_size_company))/scaleRatio
+        warning.textSize = chatAttr.sizeTextInternetConnectionWarning
+        company_name.textSize = chatAttr.sizeTextCompanyName
         // set bg
-        upper_limiter.setBackgroundColor(attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main)))
-        lower_limit.setBackgroundColor(attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main)))
-
-
-        ChatAttr.mapAttr["color_bg_user_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
-        ChatAttr.mapAttr["color_bg_server_message"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
-        ChatAttr.mapAttr["color_bg_server_action"] = attrArr.getColor(R.styleable.ChatView_color_bg_server_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
-        ChatAttr.mapAttr["color_borders_server_action"] = attrArr.getColor(R.styleable.ChatView_color_borders_server_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
-        ChatAttr.mapAttr["color_text_user_message"] = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
-        ChatAttr.mapAttr["color_text_server_message"] = attrArr.getColor(R.styleable.ChatView_color_text_server_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
-        ChatAttr.mapAttr["color_text_server_action"] = attrArr.getColor(R.styleable.ChatView_color_text_server_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
-        ChatAttr.mapAttr["color_time_mark"] = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
-        ChatAttr.mapAttr["size_user_message"] = attrArr.getDimension(
-            R.styleable.ChatView_size_user_message, resources.getDimension(
-                R.dimen.default_size_user_message))
-        ChatAttr.mapAttr["size_server_message"] = attrArr.getDimension(
-            R.styleable.ChatView_size_server_message, resources.getDimension(
-                R.dimen.default_size_server_message))
-        ChatAttr.mapAttr["size_server_action"] = attrArr.getDimension(
-            R.styleable.ChatView_size_server_action, resources.getDimension(
-                R.dimen.default_size_server_action))
-        ChatAttr.mapAttr["size_time_mark"] = attrArr.getDimension(
-            R.styleable.ChatView_size_time_mark, resources.getDimension(
-                R.dimen.default_size_time_mark))
-        ChatAttr.mapAttr["auth_with_hash"] = attrArr.getBoolean(R.styleable.ChatView_auth_with_hash, false)
-        ChatAttr.mapAttr["auth_with_form"] = attrArr.getBoolean(R.styleable.ChatView_auth_with_form, true)
+        upper_limiter.setBackgroundColor(chatAttr.colorMain)
+        lower_limit.setBackgroundColor(chatAttr.colorMain)
     }
 
     private fun setAllListeners() {
@@ -152,7 +108,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private fun setListMessages() {
         adapterListMessages =
             AdapterListMessages(
-                resources.displayMetrics.density,
                 viewModel::openFile,
                 viewModel::openImage,
                 viewModel::openGif,
@@ -164,7 +119,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onCreate(fragment: Fragment, listener: EventListener, visitor: Visitor? = null) {
-        val sdkComponent = DaggerSdkComponent
+        DaggerSdkComponent
             .builder()
             .context(context)
             .chatView(this)
@@ -177,6 +132,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         Log.d(ConstantsUtils.TAG_SOCKET, "onCreate Chat View")
         this.parentFragment = fragment
         this.listener = listener
+        setAllListeners()
         setListMessages()
     }
 
