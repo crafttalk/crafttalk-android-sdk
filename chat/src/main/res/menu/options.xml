@@ -4,16 +4,16 @@
     <item
         android:id="@+id/image"
         android:icon="@drawable/ic_image"
-        android:title="Image" />
+        android:title="@string/bottom_sheet_file_viewer_image_from_gallery" />
 
     <item
         android:id="@+id/document"
         android:icon="@drawable/ic_document"
-        android:title="Document" />
+        android:title="@string/bottom_sheet_file_viewer_document_from_gallery" />
 
     <item
         android:id="@+id/camera"
         android:icon="@drawable/ic_camera"
-        android:title="Camera" />
+        android:title="@string/bottom_sheet_file_viewer_image_from_camera" />
 
 </menu>

@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Chat</string>
+
+    <!--    Auth-->
+    <string name="auth_user_introduction">Please, introduce yourself</string>
+    <string name="auth_user_first_name">Your name</string>
+    <string name="auth_user_surname_name">Your surname</string>
+    <string name="auth_user_phone">Your phone number</string>
+    <string name="auth_sign_in">Start chat</string>
+
+    <!--    Chat-->
+    <string name="chat_internet_connection_warning">Waiting for network…</string>
+    <string name="chat_name_company">by CraftTalk</string>
+    <string name="chat_entry_field_hint">Enter your message…</string>
+
+    <!--    Bottom sheet file viewer-->
+    <string name="bottom_sheet_file_viewer_image_from_gallery">Image</string>
+    <string name="bottom_sheet_file_viewer_image_from_camera">Camera</string>
+    <string name="bottom_sheet_file_viewer_document_from_gallery">Document</string>
+
+    <string name="string_chooser_open_file_action_view">Select an application to view this file:</string>
+
+</resources>

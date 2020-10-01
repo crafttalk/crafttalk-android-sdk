@@ -33,12 +33,8 @@ import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ConstantsUtils
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_entry_field.view.*
-import kotlinx.android.synthetic.main.view_chat.view.*
-import kotlinx.android.synthetic.main.view_chat.view.chat_place
-import kotlinx.android.synthetic.main.view_chat.view.loading
-import kotlinx.android.synthetic.main.view_chat.view.upper_limiter
-import kotlinx.android.synthetic.main.view_chat.view.warning
+import kotlinx.android.synthetic.main.auth_layout.view.*
+import kotlinx.android.synthetic.main.chat_layout.view.*
 import kotlinx.android.synthetic.main.view_host.view.*
 import javax.inject.Inject
 
@@ -138,13 +134,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             Log.d("CHAT_VIEW", "GET NEW EVENT")
             when (it) {
                 TypeInternetConnection.NO_INTERNET -> {
-                    warning.text = "Waiting for network..."
+                    warning.visibility = View.VISIBLE
                     sign_in.isClickable = true
                     Log.d("CHAT_VIEW", "NO_INTERNET_CONNECTION")
                 }
                 TypeInternetConnection.HAS_INTERNET -> {
                     Log.d(ConstantsUtils.TAG_SOCKET, "Sicnk HAS_INTERNET")
-                    warning.text = ""
+                    warning.visibility = View.GONE
                 }
             }
         })

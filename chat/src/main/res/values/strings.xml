@@ -1,4 +1,23 @@
 <resources>
-    <string name="app_name">Chat</string>
-    <string name="string_chooser_open_file_action_view">Выберите приложение для просмотора этого файла:</string>
+    <string name="app_name">Чат</string>
+
+<!--    Auth-->
+    <string name="auth_user_introduction">Пожалуйста, представьтесь</string>
+    <string name="auth_user_first_name">Ваше имя</string>
+    <string name="auth_user_surname_name">Ваша фамилия</string>
+    <string name="auth_user_phone">Ваш номер телефона</string>
+    <string name="auth_sign_in">Начать чат</string>
+
+<!--    Chat-->
+    <string name="chat_internet_connection_warning">Нет доступа к сети…</string>
+    <string name="chat_name_company">автор CraftTalk</string>
+    <string name="chat_entry_field_hint">Введите сообщение…</string>
+
+<!--    Bottom sheet file viewer-->
+    <string name="bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
+    <string name="bottom_sheet_file_viewer_image_from_camera">Камера</string>
+    <string name="bottom_sheet_file_viewer_document_from_gallery">Документ</string>
+
+    <string name="string_chooser_open_file_action_view">Выберите приложение для просмотра этого файла:</string>
+
 </resources>
