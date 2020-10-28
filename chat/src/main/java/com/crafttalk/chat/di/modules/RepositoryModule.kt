@@ -23,4 +23,7 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindVisitorRepository(visitorRepository: VisitorRepository): IVisitorRepository
 
+    @Binds
+    abstract fun bindNotificationRepository(notificationRepository: NotificationRepository): INotificationRepository
+
 }

@@ -9,12 +9,13 @@ import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.crafttalk.chat.R
-import com.crafttalk.chat.data.local.db.entity.Message
 import com.crafttalk.chat.data.api.socket.SocketApi
+import com.crafttalk.chat.data.local.db.entity.Message
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
+import com.crafttalk.chat.domain.interactor.NotificationInteractor
 import com.crafttalk.chat.domain.usecase.auth.LogIn
 import com.crafttalk.chat.domain.usecase.file.UploadFiles
 import com.crafttalk.chat.domain.usecase.internet.SetInternetConnectionListener
@@ -36,7 +37,8 @@ class ChatViewModel
     private val visitor: Visitor?,
     private val view: ChatView,
     private val socketApi: SocketApi,
-    private val updateSizeMessages: UpdateSizeMessages
+    private val updateSizeMessages: UpdateSizeMessages,
+    private val notificationInteractor: NotificationInteractor
 ) : BaseViewModel() {
 
     val messages: LiveData<List<Message>> by lazy {
@@ -55,6 +57,10 @@ class ChatViewModel
                     // auth success;
                     view.showChat()
                     syncData()
+                    launchIO {
+                        Log.d("TEST_NOTIFICATION", "subscribeNotification VM")
+                        notificationInteractor.subscribeNotification(visitor.uuid)
+                    }
                 },
                 {
                     // auth fail; maybe clear data from db; user ban

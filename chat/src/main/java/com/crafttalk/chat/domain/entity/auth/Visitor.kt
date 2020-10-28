@@ -20,7 +20,7 @@ class Visitor (
 //    val subscription: Any?, // содержит данные о подписке клиента на push-уведомления
 //    val url:String?, // содержитадресстраницы,скоторойполученыданныеоподпискеклиента на push-уведомления
 //    val unread_msg: Int? // количество непрочитанных клиентом сообщений
-    ) {
+) {
 
     override fun toString(): String {
         return "${uuid}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"

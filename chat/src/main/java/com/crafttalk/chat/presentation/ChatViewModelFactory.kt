@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.entity.auth.Visitor
+import com.crafttalk.chat.domain.interactor.NotificationInteractor
 import com.crafttalk.chat.domain.usecase.auth.LogIn
 import com.crafttalk.chat.domain.usecase.file.UploadFiles
 import com.crafttalk.chat.domain.usecase.internet.SetInternetConnectionListener
@@ -21,7 +22,8 @@ class ChatViewModelFactory constructor(
     private val visitor: Visitor?,
     private val view: ChatView,
     private val socketApi: SocketApi,
-    private val updateSizeMessages: UpdateSizeMessages
+    private val updateSizeMessages: UpdateSizeMessages,
+    private val notificationInteractor: NotificationInteractor
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -36,7 +38,8 @@ class ChatViewModelFactory constructor(
             visitor,
             view,
             socketApi,
-            updateSizeMessages
+            updateSizeMessages,
+            notificationInteractor
         ) as T
     }
 }

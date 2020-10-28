@@ -83,6 +83,7 @@ class SocketApi constructor(
         }
 
         socket.on("message") {
+            Log.d("TEST_NOTIFICATION", "GET_MESSAGE")
             viewModelScope.launch {
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
@@ -147,6 +148,7 @@ class SocketApi constructor(
         changeInternetConnectionStateFun(TypeInternetConnection.SOCKET_DESTROY)
         socket?.disconnect()
         socket?.off()
+        Log.d("TEST_NOTIFICATION", "destroy socket")
     }
 
     private fun connectUser(socket: Socket) {

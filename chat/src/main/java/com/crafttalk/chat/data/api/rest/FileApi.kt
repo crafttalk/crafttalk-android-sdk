@@ -1,7 +1,7 @@
 package com.crafttalk.chat.data.api.rest
 
 import com.crafttalk.chat.data.ApiParams
-import com.crafttalk.chat.data.ApiParams.CLIENT_ID
+import com.crafttalk.chat.data.ApiParams.UPLOAD_CLIENT_ID
 import com.crafttalk.chat.domain.entity.file.BodyStructureUploadFile
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -14,7 +14,7 @@ interface FileApi {
     @POST("webchat/{clientId}/upload-file")
     suspend fun uploadFile(
         @Body body: BodyStructureUploadFile,
-        @Path("clientId") clientId: String = CLIENT_ID
+        @Path("clientId") clientId: String = UPLOAD_CLIENT_ID
     ): Call<String>
 
     @Multipart
@@ -23,7 +23,7 @@ interface FileApi {
         @Part(ApiParams.FILE_NAME) fileName: RequestBody,
         @Part(ApiParams.UUID) uuid: RequestBody,
         @Part fileB64: MultipartBody.Part,
-        @Path("clientId") clientId: String = CLIENT_ID
+        @Path("clientId") clientId: String = UPLOAD_CLIENT_ID
     )
 
 }
