@@ -8,11 +8,11 @@ class NotificationInteractor
     private val notificationRepository: INotificationRepository
 ) {
 
-    suspend fun subscribeNotification(uuid: String) {
+    fun subscribeNotification(uuid: String) {
         notificationRepository.subscribe(uuid)
     }
 
-    suspend fun unsubscribeNotification(uuid: String) {
+    fun unsubscribeNotification(uuid: String) {
         notificationRepository.unSubscribe(uuid)
     }
 

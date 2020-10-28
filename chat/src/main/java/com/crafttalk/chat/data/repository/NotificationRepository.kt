@@ -2,11 +2,15 @@ package com.crafttalk.chat.data.repository
 
 import com.crafttalk.chat.data.api.rest.NotificationApi
 import com.crafttalk.chat.domain.entity.notification.CheckSubscription
+import com.crafttalk.chat.domain.entity.notification.ResultCheckSubscription
 import com.crafttalk.chat.domain.entity.notification.Subscription
 import com.crafttalk.chat.domain.entity.notification.Unsubscription
 import com.crafttalk.chat.domain.repository.INotificationRepository
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import javax.inject.Inject
 
 class NotificationRepository
@@ -14,21 +18,38 @@ class NotificationRepository
     private val notificationApi: NotificationApi
 ) : INotificationRepository {
 
-    override suspend fun subscribe(uuid: String) {
+    private fun checkSubscription(uuid: String, condition: Boolean, success: () -> Unit) {
+        notificationApi.checkSubscription(CheckSubscription(uuid)).enqueue(object : Callback<ResultCheckSubscription> {
+            override fun onResponse(call: Call<ResultCheckSubscription>, response: Response<ResultCheckSubscription>) {
+                if (response.isSuccessful && response.body()?.result == condition) {
+                    success()
+                }
+            }
+            override fun onFailure(call: Call<ResultCheckSubscription>, t: Throwable) {}
+        })
+    }
+
+    override fun subscribe(uuid: String) {
         getToken { token ->
-            if (notificationApi.checkSubscription(CheckSubscription(uuid)).result) {
-                notificationApi.subscribe(Subscription(token, uuid))
+            checkSubscription(uuid, true) {
+                notificationApi.subscribe(Subscription(token, uuid)).enqueue(object : Callback<Unit> {
+                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
+                    override fun onFailure(call: Call<Unit>, t: Throwable) {}
+                })
             }
         }
     }
 
-    override suspend fun unSubscribe(uuid: String) {
-        if (!notificationApi.checkSubscription(CheckSubscription(uuid)).result) {
-            notificationApi.unsubscribe(Unsubscription(uuid))
+    override fun unSubscribe(uuid: String) {
+        checkSubscription(uuid, false) {
+            notificationApi.unsubscribe(Unsubscription(uuid)).enqueue(object : Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
+                override fun onFailure(call: Call<Unit>, t: Throwable) {}
+            })
         }
     }
 
-    override suspend fun getToken(success: (token: String) -> Unit) {
+    override fun getToken(success: (token: String) -> Unit) {
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
