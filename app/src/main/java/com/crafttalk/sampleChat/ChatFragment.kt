@@ -41,9 +41,9 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     }
 
     companion object {
-        const val uuid = "test_104"
-        const val firstName = "Ivan"
-        const val lastName = "Ivanov"
+        const val uuid = "Karl23"
+        const val firstName = "Karl23"
+        const val lastName = "Testovich_Ivanovich"
         const val email = "email"
         const val phone = "000000000"
         const val contract = "contract_test"

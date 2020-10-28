@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "368961329931",
+    "firebase_url": "https://crafttalk-2d2f5.firebaseio.com",
+    "project_id": "crafttalk-2d2f5",
+    "storage_bucket": "crafttalk-2d2f5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:368961329931:android:0d9e43521693a05c93600e",
+        "android_client_info": {
+          "package_name": "com.crafttalk.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "368961329931-t981esq7devigorvrotmb2t8oc8sfabn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByuu_vGQlXPG2X1UkildmgjcTBrwl7A-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "368961329931-t981esq7devigorvrotmb2t8oc8sfabn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "368961329931-us7l44p4joollvpsj24upr9ed6reojgj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.crafttalk.chat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
