@@ -9,13 +9,10 @@ import dagger.Module
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindDataRepository(dataRepository: DataRepository): IDataRepository
-
-    @Binds
     abstract fun bindFileRepository(fileRepository: FileRepository): IFileRepository
 
     @Binds
-    abstract fun bindInternetConnectionRepository(internetConnectionRepository: InternetConnectionRepository): IInternetConnectionRepository
+    abstract fun bindChatBehaviorRepository(сhatBehaviorRepository: ChatBehaviorRepository): IChatBehaviorRepository
 
     @Binds
     abstract fun bindMessageRepository(messageRepository: MessageRepository): IMessageRepository

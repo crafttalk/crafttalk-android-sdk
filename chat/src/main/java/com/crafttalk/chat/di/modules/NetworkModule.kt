@@ -5,7 +5,7 @@ import com.crafttalk.chat.data.ApiParams.UPLOAD_HOST
 import com.crafttalk.chat.data.api.rest.FileApi
 import com.crafttalk.chat.data.api.rest.NotificationApi
 import com.crafttalk.chat.data.api.socket.SocketApi
-import com.crafttalk.chat.data.repository.DataRepository
+import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.di.Notification
 import com.crafttalk.chat.di.Upload
 import com.google.gson.Gson
@@ -48,8 +48,8 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSocketApi(dataRepository: DataRepository, gson: Gson) = SocketApi(
-        dataRepository,
+    fun provideSocketApi(messagesDao: MessagesDao, gson: Gson) = SocketApi(
+        messagesDao,
         gson
     )
 

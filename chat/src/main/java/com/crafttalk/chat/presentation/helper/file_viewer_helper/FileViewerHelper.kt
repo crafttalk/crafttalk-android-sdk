@@ -15,16 +15,25 @@ class FileViewerHelper constructor(
     private val permissionHelper: PermissionHelper
 ) {
 
-    fun pickFiles(pickSettings: Pair<TypeFile, TypeMultiple>, resultHandler: (List<Uri>) -> Unit, noPermission: () -> Unit, fragment: Fragment) {
+    fun pickFiles(
+        pickSettings: Pair<TypeFile, TypeMultiple>,
+        resultHandler: (List<Uri>) -> Unit,
+        noPermission: (permissions: Array<String>) -> Unit,
+        fragment: Fragment
+    ) {
         val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        permissionHelper.checkPermission(permissions, fragment.requireContext(),  noPermission) {
+        permissionHelper.checkPermission(permissions, fragment.requireContext(),  { noPermission(permissions) }) {
             pickFilesFromGallery(pickSettings, fragment, resultHandler)
         }
     }
 
-    fun pickImageFromCamera(resultHandler: (Bitmap) -> Unit, noPermission: () -> Unit, fragment: Fragment) {
+    fun pickImageFromCamera(
+        resultHandler: (Bitmap) -> Unit,
+        noPermission: (permissions: Array<String>) -> Unit,
+        fragment: Fragment
+    ) {
         val permissions = arrayOf(Manifest.permission.CAMERA)
-        permissionHelper.checkPermission(permissions, fragment.requireContext(), noPermission) {
+        permissionHelper.checkPermission(permissions, fragment.requireContext(), { noPermission(permissions) }) {
             val getContent = fragment.registerForActivityResult(
                 PickCameraContract()
             ) {
@@ -34,7 +43,11 @@ class FileViewerHelper constructor(
         }
     }
 
-    private fun pickFilesFromGallery(pickSettings: Pair<TypeFile, TypeMultiple>, fragment: Fragment, resultHandler: (List<Uri>) -> Unit) {
+    private fun pickFilesFromGallery(
+        pickSettings: Pair<TypeFile, TypeMultiple>,
+        fragment: Fragment,
+        resultHandler: (List<Uri>) -> Unit
+    ) {
         val getContent = fragment.registerForActivityResult(
             PickFileContract()
         ) {

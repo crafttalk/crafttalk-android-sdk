@@ -11,11 +11,12 @@ class VisitorRepository
     private val pref: SharedPreferences,
     private val socketApi: SocketApi
 ) : IVisitorRepository {
+
     override fun logIn(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit) {
         socketApi.setVisitor(visitor, successAuth, failAuth)
     }
 
-    override fun logOut() {
+    override fun logOut(visitor: Visitor) {
         TODO("Not yet implemented")
     }
 

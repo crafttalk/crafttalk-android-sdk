@@ -15,11 +15,8 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
-import com.crafttalk.chat.domain.interactor.NotificationInteractor
-import com.crafttalk.chat.domain.usecase.auth.LogIn
-import com.crafttalk.chat.domain.usecase.file.UploadFiles
-import com.crafttalk.chat.domain.usecase.internet.SetInternetConnectionListener
-import com.crafttalk.chat.domain.usecase.message.*
+import com.crafttalk.chat.domain.interactors.*
+import com.crafttalk.chat.initialization.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.utils.ConstantsUtils
@@ -27,31 +24,35 @@ import javax.inject.Inject
 
 class ChatViewModel
 @Inject constructor(
-    private val uploadFiles: UploadFiles,
-    private val getMessages: GetMessages,
-    private val sendMessages: SendMessages,
-    private val syncMessages: SyncMessages,
-    private val selectAction: SelectAction,
-    private val logIn: LogIn,
-    private val setInternetConnectionListener: SetInternetConnectionListener,
     private val visitor: Visitor?,
     private val view: ChatView,
     private val socketApi: SocketApi,
-    private val updateSizeMessages: UpdateSizeMessages,
-    private val notificationInteractor: NotificationInteractor
+    private val authInteractor: AuthInteractor,
+    private val chatMessageInteractor: ChatMessageInteractor,
+    private val notificationInteractor: NotificationInteractor,
+    private val fileInteractor: FileInteractor,
+    private val customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor
 ) : BaseViewModel() {
 
     val messages: LiveData<List<Message>> by lazy {
-        getMessages()
+        chatMessageInteractor.getAllMessages()
     }
     val internetConnection: MutableLiveData<TypeInternetConnection> = MutableLiveData()
 
+    private val internetConnectionListener = object : ChatInternetConnectionListener {
+        override fun connect() { internetConnection.postValue(TypeInternetConnection.HAS_INTERNET) }
+        override fun failConnect() { internetConnection.postValue(TypeInternetConnection.NO_INTERNET) }
+        override fun disconnect() { internetConnection.postValue(TypeInternetConnection.SOCKET_DESTROY) }
+        override fun lossConnection() { internetConnection.postValue(TypeInternetConnection.NO_INTERNET) }
+        override fun reconnect() { internetConnection.postValue(TypeInternetConnection.RECONNECT) }
+    }
+
     init {
-        setInternetConnectionListener(::changeInternetConnectionState)
+        customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
         if (visitor != null) {
             // продумать логику проверки нового юзера со старым, чтобы показать пользователь чат\ даже если нет инета и не получается пройти аутентификацию
             view.showChat()
-            logIn(
+            authInteractor.logIn(
                 visitor,
                 {
                     // auth success;
@@ -82,7 +83,7 @@ class ChatViewModel
     fun registration(vararg args: String) {
         launchUI {
             Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel registration")
-            logIn(
+            authInteractor.logIn(
                 Visitor.map(args),
                 {
                     // auth success; (save visitor into pref in VisitorRepository)
@@ -96,10 +97,6 @@ class ChatViewModel
                 }
             )
         }
-    }
-
-    private fun changeInternetConnectionState(type: TypeInternetConnection) {
-        internetConnection.postValue(type)
     }
 
     fun openFile(context: Context, fileUrl: String) {
@@ -131,7 +128,7 @@ class ChatViewModel
 
     fun selectAction(actionId: String) {
         launchIO {
-            selectAction(
+            chatMessageInteractor.selectActionInMessage(
                 actionId,
                 {},
                 {}
@@ -142,7 +139,7 @@ class ChatViewModel
     fun updateData(idKey: Long, height: Int, width: Int) {
         launchIO {
             Log.d("DEBUGGER", "update start")
-            updateSizeMessages(
+            chatMessageInteractor.updateSizeMessage(
                 idKey,
                 height,
                 width,
@@ -155,7 +152,7 @@ class ChatViewModel
 
     fun sendMessage(message: String) {
         launchIO {
-            sendMessages(
+            chatMessageInteractor.sendMessage(
                 message,
                 {},
                 {
@@ -167,19 +164,19 @@ class ChatViewModel
 
     fun sendFile(file: File) {
         launchIO {
-            uploadFiles(file, {}, {})
+            fileInteractor.uploadFile(file, {}, {})
         }
     }
 
     fun sendFiles(fileList: List<File>) {
         launchIO {
-            uploadFiles(fileList, {}, {})
+            fileInteractor.uploadFiles(fileList, {}, {})
         }
     }
 
     fun sendImage(bitmap: Bitmap) {
         launchIO {
-            uploadFiles(bitmap, {}, {})
+            fileInteractor.uploadImage(bitmap, {}, {})
         }
     }
 
@@ -187,7 +184,7 @@ class ChatViewModel
     private fun syncData(timestamp: Long = 0L) {
         launchIO {
             Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel sync")
-            syncMessages(
+            chatMessageInteractor.syncMessages(
                 timestamp,//dao.getLastTime()
                 {},
                 {

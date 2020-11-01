@@ -16,12 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.crafttalk.chat.R
-import com.crafttalk.chat.di.DaggerSdkComponent
+import com.crafttalk.chat.di.DaggerChatComponent
 import com.crafttalk.chat.di.modules.VisitorModule
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
+import com.crafttalk.chat.initialization.ChatPermissionListener
 import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
@@ -32,7 +33,7 @@ import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ConstantsUtils
-import com.google.android.material.snackbar.Snackbar
+import com.crafttalk.chat.utils.R_PERMISSIONS
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
 import kotlinx.android.synthetic.main.view_host.view.*
@@ -43,13 +44,17 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     @Inject
     lateinit var viewModel: ChatViewModel
     private lateinit var adapterListMessages: AdapterListMessages
-    private lateinit var listener: EventListener
     private val fileViewerHelper = FileViewerHelper(PermissionHelper())
     private lateinit var parentFragment: Fragment
     private val inflater: LayoutInflater by lazy {
          context.getSystemService(
             Context.LAYOUT_INFLATER_SERVICE
         ) as LayoutInflater
+    }
+    private lateinit var permissionListener: ChatPermissionListener
+
+    fun setOnPermissionListener(listener: ChatPermissionListener) {
+        this.permissionListener = listener
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -112,8 +117,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
     }
 
-    fun onCreate(fragment: Fragment, listener: EventListener, visitor: Visitor? = null) {
-        DaggerSdkComponent
+    fun onCreate(fragment: Fragment, visitor: Visitor? = null) {
+        DaggerChatComponent
             .builder()
             .context(context)
             .chatView(this)
@@ -124,7 +129,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
         Log.d(ConstantsUtils.TAG_SOCKET, "onCreate Chat View")
         this.parentFragment = fragment
-        this.listener = listener
         setAllListeners()
         setListMessages()
     }
@@ -227,14 +231,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
     }
 
-    interface EventListener {
-        fun onErrorAuth()
-        fun onAuth()
-    }
 
-    private fun showWarning(warningText: String) {
-        Snackbar.make(warning, warningText, Snackbar.LENGTH_LONG).show()
-    }
     override fun onModalOptionSelected(tag: String?, option: Option) {
         Log.d("EVENT_PICK", "EVENT")
         when (option.id) {
@@ -250,7 +247,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         )
                     },
                     {
-                        showWarning("У вас нет разрешения на доступ к ресурсам!")
+                        permissionListener.requestedPermissions(
+                            arrayOf(R_PERMISSIONS.STORAGE),
+                            arrayOf(context.getString(R.string.requested_permission_storage))
+                        )
                     },
                     parentFragment
                 )
@@ -267,7 +267,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         )
                     },
                     {
-                        showWarning("У вас нет разрешения на доступ к ресурсам!")
+                        permissionListener.requestedPermissions(
+                            arrayOf(R_PERMISSIONS.STORAGE),
+                            arrayOf(context.getString(R.string.requested_permission_storage))
+                        )
                     },
                     parentFragment
                 )
@@ -279,7 +282,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         viewModel.sendImage(it)
                     },
                     {
-                        showWarning("У вас нет разрешения на доступ к камере!")
+                        permissionListener.requestedPermissions(
+                            arrayOf(R_PERMISSIONS.CAMERA),
+                            arrayOf(context.getString(R.string.requested_permission_camera))
+                        )
                     },
                     parentFragment
                 )

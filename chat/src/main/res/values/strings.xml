@@ -20,4 +20,7 @@
 
     <string name="string_chooser_open_file_action_view">Выберите приложение для просмотра этого файла:</string>
 
+    <string name="requested_permission_storage">У вас нет разрешения на доступ к ресурсам!</string>
+    <string name="requested_permission_camera">У вас нет разрешения на доступ к камере!</string>
+
 </resources>

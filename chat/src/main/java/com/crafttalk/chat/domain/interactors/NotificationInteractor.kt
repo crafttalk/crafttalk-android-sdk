@@ -1,4 +1,4 @@
-package com.crafttalk.chat.domain.interactor
+package com.crafttalk.chat.domain.interactors
 
 import com.crafttalk.chat.domain.repository.INotificationRepository
 import javax.inject.Inject

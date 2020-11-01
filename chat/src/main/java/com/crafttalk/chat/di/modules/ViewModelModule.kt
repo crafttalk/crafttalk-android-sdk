@@ -4,11 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.domain.interactor.NotificationInteractor
-import com.crafttalk.chat.domain.usecase.auth.LogIn
-import com.crafttalk.chat.domain.usecase.file.UploadFiles
-import com.crafttalk.chat.domain.usecase.internet.SetInternetConnectionListener
-import com.crafttalk.chat.domain.usecase.message.*
+import com.crafttalk.chat.domain.interactors.*
 import com.crafttalk.chat.presentation.ChatView
 import com.crafttalk.chat.presentation.ChatViewModel
 import com.crafttalk.chat.presentation.ChatViewModelFactory
@@ -22,31 +18,23 @@ class ViewModelModule {
     @Provides
     @Singleton
     fun provideChatViewModelFactory(
-        uploadFiles: UploadFiles,
-        getMessages: GetMessages,
-        sendMessages: SendMessages,
-        syncMessages: SyncMessages,
-        selectAction: SelectAction,
-        logIn: LogIn,
-        setInternetConnectionListener: SetInternetConnectionListener,
         visitor: Visitor?,
         view: ChatView,
         socketApi: SocketApi,
-        updateSizeMessages: UpdateSizeMessages,
-        notificationInteractor: NotificationInteractor
+        authInteractor: AuthInteractor,
+        chatMessageInteractor: ChatMessageInteractor,
+        notificationInteractor: NotificationInteractor,
+        fileInteractor: FileInteractor,
+        customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor
     ): ChatViewModelFactory = ChatViewModelFactory(
-        uploadFiles,
-        getMessages,
-        sendMessages,
-        syncMessages,
-        selectAction,
-        logIn,
-        setInternetConnectionListener,
         visitor,
         view,
         socketApi,
-        updateSizeMessages,
-        notificationInteractor
+        authInteractor,
+        chatMessageInteractor,
+        notificationInteractor,
+        fileInteractor,
+        customizingChatBehaviorInteractor
     )
 
     @Provides

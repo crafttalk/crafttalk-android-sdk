@@ -1,11 +1,14 @@
 package com.crafttalk.chat.data.api.socket
 
 import android.util.Log
-import com.crafttalk.chat.data.repository.DataRepository
+import com.crafttalk.chat.data.helper.converters.text.convertFromHtmlToNormalString
+import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
 import com.crafttalk.chat.domain.entity.message.Message
 import com.crafttalk.chat.domain.entity.message.MessageType
+import com.crafttalk.chat.domain.entity.tags.Tag
+import com.crafttalk.chat.initialization.ChatInternetConnectionListener
+import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
@@ -21,15 +24,18 @@ import java.net.URI
 import java.net.URISyntaxException
 
 class SocketApi constructor(
-    private val dataRepository: DataRepository,
+    private val dao: MessagesDao,
     private val gson: Gson
 ) {
 
     private lateinit var visitor: Visitor
     private lateinit var successAuthFun: () -> Unit
     private lateinit var failAuthFun: (ex: Throwable) -> Unit
-    private lateinit var changeInternetConnectionStateFun: (TypeInternetConnection) -> Unit
     private var socket: Socket? = null
+
+    private lateinit var chatInternetConnectionListener: ChatInternetConnectionListener
+    private lateinit var chatMessageListener: ChatMessageListener
+
 
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
@@ -40,13 +46,17 @@ class SocketApi constructor(
             manager.socket(ChatAttr.getInstance().urlSocketNameSpace)
         } catch (e: URISyntaxException) {
             Log.e(TAG_SOCKET, "fail init socket")
-            changeInternetConnectionStateFun(TypeInternetConnection.NO_INTERNET)
+            chatInternetConnectionListener.failConnect()
             null
         }
     }
 
-    fun setInternetConnectionListener(function: (TypeInternetConnection) -> Unit) {
-        this.changeInternetConnectionStateFun = function
+    fun setInternetConnectionListener(listener: ChatInternetConnectionListener) {
+        this.chatInternetConnectionListener = listener
+    }
+
+    fun setMessageListener(listener: ChatMessageListener) {
+        this.chatMessageListener = listener
     }
 
     fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit) {
@@ -69,7 +79,7 @@ class SocketApi constructor(
 
         socket.on("reconnect") {
             Log.d(TAG_SOCKET, "reconnect")
-            changeInternetConnectionStateFun(TypeInternetConnection.RECONNECT)
+            chatInternetConnectionListener.reconnect()
         }
 
         socket.on("hide") {
@@ -90,7 +100,7 @@ class SocketApi constructor(
                 Log.d("SOCKET_API", "json message___ methon message - $messageJson")
                 val messageSocket = gson.fromJson(messageJson.toString(), Message::class.java)
                 if (!messageJson.toString().contains(""""message":"\/start"""")) {
-                    dataRepository.insert(messageSocket)
+                    insert(messageSocket)
                 }
             }
         }
@@ -107,20 +117,20 @@ class SocketApi constructor(
                 if (listMessages.isEmpty()) {
                     greet() // переделать, не ориентируясь на пустой лист сообщений
                 } else {
-                    dataRepository.marge(listMessages)
+                    marge(listMessages)
                 }
             }
         }
 
         socket.on(Socket.EVENT_CONNECT) {
-            changeInternetConnectionStateFun(TypeInternetConnection.HAS_INTERNET)
+            chatInternetConnectionListener.connect()
         }
         socket.on(Socket.EVENT_CONNECT_ERROR) {
-            changeInternetConnectionStateFun(TypeInternetConnection.NO_INTERNET)
+            chatInternetConnectionListener.lossConnection()
             Log.d(TAG_SOCKET, "EVENT_CONNECT_ERROR")
         }
         socket.on(Socket.EVENT_DISCONNECT) {
-            changeInternetConnectionStateFun(TypeInternetConnection.NO_INTERNET)
+            chatInternetConnectionListener.lossConnection()
             Log.d(TAG_SOCKET, "EVENT_DISCONNECT")
         }
         socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
@@ -145,7 +155,7 @@ class SocketApi constructor(
 
 
     fun destroy() {
-        changeInternetConnectionStateFun(TypeInternetConnection.SOCKET_DESTROY)
+        chatInternetConnectionListener.disconnect()
         socket?.disconnect()
         socket?.off()
         Log.d("TEST_NOTIFICATION", "destroy socket")
@@ -192,6 +202,72 @@ class SocketApi constructor(
 
     fun sync(timestamp: Long) {
         socket!!.emit("history-messages-requested", timestamp)
+    }
+
+
+    fun insert(messageSocket: Message) {
+        when(messageSocket.messageType) {
+            MessageType.VISITOR_MESSAGE.valueType -> {
+                Log.d("REPOSITORY", "insertMessage $messageSocket")
+                dao.insertMessage(com.crafttalk.chat.data.local.db.entity.Message.map(messageSocket))
+            }
+            MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
+                Log.d("REPOSITORY", "updateMessage: messageType: ${messageSocket.messageType}")
+                messageSocket.parentMessageId?.let {
+                    dao.updateMessage(it, messageSocket.messageType)
+                }
+            }
+        }
+    }
+
+    fun marge(arrayMessages: Array<Message>) {
+        val messagesFromDb = dao.getMessagesList()
+        arrayMessages.sortWith(compareBy(Message::timestamp))
+        arrayMessages.forEach { messageFromHistory ->
+            val list = arrayListOf<Tag>()
+            val message = messageFromHistory.message?.convertFromHtmlToNormalString(list)
+
+            val messageCheckObj = com.crafttalk.chat.data.local.db.entity.Message(
+                id = messageFromHistory.id,
+                messageType = messageFromHistory.messageType,
+                isReply = messageFromHistory.isReply,
+                parentMsgId = messageFromHistory.parentMessageId,
+                timestamp = messageFromHistory.timestamp,
+                message = message,
+                spanStructureList = list,
+                actions = messageFromHistory.actions,
+                attachmentUrl = messageFromHistory.attachmentUrl,
+                attachmentType = messageFromHistory.attachmentType,
+                attachmentName = messageFromHistory.attachmentName,
+                operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
+                height = 0,
+                width = 0
+            )
+            when (messageCheckObj.messageType) {
+                MessageType.VISITOR_MESSAGE.valueType -> {
+                    if (messageCheckObj.isReply) {
+                        // serv
+                        if (!messagesFromDb.any { it.id == messageCheckObj.id }) {
+                            dao.insertMessage(messageCheckObj)
+                        }
+                    }
+                    else {
+                        // user
+                        if (messageCheckObj !in messagesFromDb) {
+                            Log.d("REPOSITORY", "insert message $messageCheckObj")
+                            dao.insertMessage(messageCheckObj)
+                        }
+                    }
+                }
+                MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
+                    Log.d("REPOSITORY", "update message id - ${messageCheckObj.parentMsgId}, type - ${messageCheckObj.messageType}")
+                    messageCheckObj.parentMsgId?.let { parentId ->
+                        dao.updateMessage(parentId, messageCheckObj.messageType)
+                    }
+                }
+            }
+
+        }
     }
 
 }
