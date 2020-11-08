@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.DisplayMetrics
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.presentation.helper.ui.transformSizeDrawable
@@ -54,11 +55,18 @@ fun TextView.setTimeMessageWithCheck(message: MessageModel) {
 }
 
 @SuppressLint("SetTextI18n", "SimpleDateFormat")
-fun TextView.setTimeMessageDefault(message: MessageModel) {
+fun TextView.setTimeMessageDefault(message: MessageModel, hasAuthorIcon: Boolean = false) {
     val formatTime = SimpleDateFormat("dd.MM.yyyy HH:mm")
+    val authorIcon = if (hasAuthorIcon) {
+        ResourcesCompat.getDrawable(context.resources, R.drawable.ic_operator, null).apply {
+            this?.setColorFilter(ChatAttr.getInstance().colorMain, PorterDuff.Mode.MULTIPLY)
+        }
+    } else {
+        null
+    }
     // set content
     text = "${message.authorName} ${formatTime.format(message.timestamp)}"
-    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+    setCompoundDrawablesWithIntrinsicBounds(authorIcon, null, null, null)
 
     // set color
     setTextColor(ChatAttr.getInstance().colorTextTimeMark)

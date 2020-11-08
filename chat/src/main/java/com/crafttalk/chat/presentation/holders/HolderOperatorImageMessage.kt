@@ -31,7 +31,7 @@ class HolderOperatorImageMessage(
     override fun bindTo(item: ImageMessageItem) {
         imageUrl = item.imageUrl
         img.loadImage(item, updateData)
-        time.setTimeMessageDefault(item)
+        time.setTimeMessageDefault(item, true)
     }
 
 }

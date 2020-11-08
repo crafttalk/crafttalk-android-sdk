@@ -22,7 +22,7 @@ class HolderOperatorTextMessage(
     private val time: TextView = view.findViewById(R.id.time)
 
     override fun bindTo(item: TextMessageItem) {
-        time.setTimeMessageDefault(item)
+        time.setTimeMessageDefault(item, true)
         // set content
         message.movementMethod = LinkMovementMethod.getInstance()
         message.text = item.message

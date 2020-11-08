@@ -30,7 +30,7 @@ class HolderOperatorFileMessage(
     override fun bindTo(item: FileMessageItem) {
         fileUrl = item.fileUrl
         fileIcon.setFileIcon()
-        time.setTimeMessageDefault(item)
+        time.setTimeMessageDefault(item, true)
     }
 
 }

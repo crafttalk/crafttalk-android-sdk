@@ -29,7 +29,7 @@ class HolderOperatorGifMessage(
     override fun bindTo(item: GifMessageItem) {
         gifUrl = item.gifUrl
         gif.loadGif(item, updateData)
-        time.setTimeMessageDefault(item)
+        time.setTimeMessageDefault(item, true)
     }
 
 }
