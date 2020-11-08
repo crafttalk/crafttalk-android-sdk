@@ -1,24 +1,24 @@
-package com.crafttalk.chat.di.modules
+package com.crafttalk.chat.di.modules.chat
 
 import android.content.SharedPreferences
 import com.crafttalk.chat.data.local.pref.checkVisitorInPref
 import com.crafttalk.chat.data.local.pref.getVisitorFromPref
+import com.crafttalk.chat.di.ChatScope
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.utils.AuthType
-import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams.authType
 import dagger.Module
 import dagger.Provides
 import java.lang.Exception
-import javax.inject.Singleton
 
 @Module
 class VisitorModule
 constructor(private val visitor: Visitor?) {
 
     @Provides
-    @Singleton
+    @ChatScope
     fun provideVisitor(sharedPreferences: SharedPreferences) : Visitor? {
-        return when (ChatAttr.getInstance().authType) {
+        return when (authType) {
             AuthType.AUTH_WITH_FORM_WITHOUT_HASH -> {
                 if (checkVisitorInPref(sharedPreferences)) {
                     getVisitorFromPref(sharedPreferences)
@@ -35,6 +35,7 @@ constructor(private val visitor: Visitor?) {
                 if (visitor.hash == null) throw Exception("Visitor's hash must not be null!")
                 visitor
             }
+            else -> throw Exception("Not found type auth!")
         }
     }
 

@@ -1,12 +1,15 @@
 package com.crafttalk.sampleChat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.crafttalk.chat.initialization.Chat
+import com.crafttalk.chat.initialization.ChatMessageListener
+import com.crafttalk.chat.utils.AuthType
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 class MainActivity: AppCompatActivity() {
 
@@ -52,6 +55,25 @@ class MainActivity: AppCompatActivity() {
         if (savedInstanceState == null) {
             loadFragment(HomeFragment())
         }
+
+        Chat.init(
+            getVisitor(this),
+            this,
+            AuthType.AUTH_WITHOUT_FORM_WITH_HASH,
+            getString(R.string.urlSocketHost),
+            getString(R.string.urlSocketNameSpace)
+        )
+        Chat.setOnChatMessageListener(object: ChatMessageListener {
+            override fun getNewMessages(countMessages: Int) {
+                Log.d("TEST_GET_MSG", "get new messages count - ${countMessages};")
+            }
+        })
+
+    }
+
+    override fun onDestroy() {
+        Chat.destroy()
+        super.onDestroy()
     }
 
 }

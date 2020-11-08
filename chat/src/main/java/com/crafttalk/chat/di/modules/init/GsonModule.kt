@@ -1,4 +1,4 @@
-package com.crafttalk.chat.di.modules
+package com.crafttalk.chat.di.modules.init
 
 import com.google.gson.Gson
 import dagger.Module

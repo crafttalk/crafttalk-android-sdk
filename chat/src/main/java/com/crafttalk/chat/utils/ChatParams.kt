@@ -1,0 +1,9 @@
+package com.crafttalk.chat.utils
+
+object ChatParams {
+    internal var authType: AuthType? = null
+    internal var urlSocketNameSpace: String? = null
+    internal var urlSocketHost: String? = null
+    internal var urlUploadNameSpace: String? = null
+    internal var urlUploadHost: String? = null
+}

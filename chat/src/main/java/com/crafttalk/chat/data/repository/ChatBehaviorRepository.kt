@@ -2,8 +2,9 @@ package com.crafttalk.chat.data.repository
 
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.repository.IChatBehaviorRepository
-import com.crafttalk.chat.initialization.ChatInternetConnectionListener
 import com.crafttalk.chat.initialization.ChatMessageListener
+import com.crafttalk.chat.presentation.ChatInternetConnectionListener
+import com.crafttalk.chat.utils.ChatStatus
 import javax.inject.Inject
 
 class ChatBehaviorRepository
@@ -17,6 +18,17 @@ class ChatBehaviorRepository
 
     override fun setMessageListener(listener: ChatMessageListener) {
         socketApi.setMessageListener(listener)
+    }
+
+    override fun setStatusChat(newStatus: ChatStatus) {
+        if (newStatus == ChatStatus.ON_CHAT_SCREEN) {
+            socketApi.cleanBufferMessages()
+        }
+        socketApi.chatStatus = newStatus
+    }
+
+    override fun destroyChatSession() {
+        socketApi.destroy()
     }
 
 }

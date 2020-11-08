@@ -9,14 +9,12 @@ import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.crafttalk.chat.R
-import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.local.db.entity.Message
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
 import com.crafttalk.chat.domain.interactors.*
-import com.crafttalk.chat.initialization.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.utils.ConstantsUtils
@@ -25,9 +23,7 @@ import javax.inject.Inject
 class ChatViewModel
 @Inject constructor(
     private val visitor: Visitor?,
-    private val view: ChatView,
-    private val socketApi: SocketApi,
-    private val authInteractor: AuthInteractor,
+    private val authChatInteractor: AuthChatInteractor,
     private val chatMessageInteractor: ChatMessageInteractor,
     private val notificationInteractor: NotificationInteractor,
     private val fileInteractor: FileInteractor,
@@ -38,6 +34,7 @@ class ChatViewModel
         chatMessageInteractor.getAllMessages()
     }
     val internetConnection: MutableLiveData<TypeInternetConnection> = MutableLiveData()
+    val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
 
     private val internetConnectionListener = object : ChatInternetConnectionListener {
         override fun connect() { internetConnection.postValue(TypeInternetConnection.HAS_INTERNET) }
@@ -49,14 +46,15 @@ class ChatViewModel
 
     init {
         customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
+        customizingChatBehaviorInteractor.goToChatScreen()
         if (visitor != null) {
             // продумать логику проверки нового юзера со старым, чтобы показать пользователь чат\ даже если нет инета и не получается пройти аутентификацию
-            view.showChat()
-            authInteractor.logIn(
+            displayableUIObject.value = DisplayableUIObject.CHAT
+            authChatInteractor.logIn(
                 visitor,
                 {
                     // auth success;
-                    view.showChat()
+                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
                     syncData()
                     launchIO {
                         Log.d("TEST_NOTIFICATION", "subscribeNotification VM")
@@ -65,34 +63,34 @@ class ChatViewModel
                 },
                 {
                     // auth fail; maybe clear data from db; user ban
-                    view.showLogInForm()
+                    displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
                     handleError(it)
                 }
             )
         } else {
             // switch ui to FormAuth
-            view.showLogInForm()
+            displayableUIObject.value = DisplayableUIObject.FORM_AUTH
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        socketApi.destroy()
+        customizingChatBehaviorInteractor.leaveChatScreen()
     }
 
     fun registration(vararg args: String) {
         launchUI {
             Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel registration")
-            authInteractor.logIn(
+            authChatInteractor.logIn(
                 Visitor.map(args),
                 {
                     // auth success; (save visitor into pref in VisitorRepository)
-                    view.showChat()
+                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
                     syncData()
                 },
                 {
                     // auth fail; (delete visitor from pref in VisitorRepository); maybe clear data from db; user ban
-                    view.showLogInForm()
+                    displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
                     handleError(it)
                 }
             )

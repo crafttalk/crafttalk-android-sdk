@@ -1,17 +1,17 @@
-package com.crafttalk.chat.di.modules
+package com.crafttalk.chat.di.modules.chat
 
 import com.crafttalk.chat.data.local.pref.Uuid
+import com.crafttalk.chat.di.ChatScope
 import com.crafttalk.chat.di.Uuid as UuidAnnotation
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class UuidModule {
 
     @UuidAnnotation
     @Provides
-    @Singleton
+    @ChatScope
     fun provideUuid(): String = Uuid.generateUUID(false)
 
 }

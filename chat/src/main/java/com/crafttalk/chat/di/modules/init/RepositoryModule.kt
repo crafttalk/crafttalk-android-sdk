@@ -1,4 +1,4 @@
-package com.crafttalk.chat.di.modules
+package com.crafttalk.chat.di.modules.init
 
 import com.crafttalk.chat.data.repository.*
 import com.crafttalk.chat.domain.repository.*
@@ -9,13 +9,7 @@ import dagger.Module
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindFileRepository(fileRepository: FileRepository): IFileRepository
-
-    @Binds
     abstract fun bindChatBehaviorRepository(сhatBehaviorRepository: ChatBehaviorRepository): IChatBehaviorRepository
-
-    @Binds
-    abstract fun bindMessageRepository(messageRepository: MessageRepository): IMessageRepository
 
     @Binds
     abstract fun bindVisitorRepository(visitorRepository: VisitorRepository): IVisitorRepository

@@ -1,4 +1,4 @@
-package com.crafttalk.chat.di.modules
+package com.crafttalk.chat.di.modules.init
 
 import android.content.Context
 import androidx.room.Room

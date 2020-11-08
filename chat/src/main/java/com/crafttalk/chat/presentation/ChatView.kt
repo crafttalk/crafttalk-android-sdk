@@ -16,13 +16,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.crafttalk.chat.R
-import com.crafttalk.chat.di.DaggerChatComponent
-import com.crafttalk.chat.di.modules.VisitorModule
+import com.crafttalk.chat.di.modules.chat.VisitorModule
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
-import com.crafttalk.chat.initialization.ChatPermissionListener
+import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
@@ -32,7 +31,6 @@ import com.crafttalk.chat.presentation.helper.permission.PermissionHelper
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
-import com.crafttalk.chat.utils.ConstantsUtils
 import com.crafttalk.chat.utils.R_PERMISSIONS
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
@@ -118,33 +116,47 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onCreate(fragment: Fragment, visitor: Visitor? = null) {
-        DaggerChatComponent
-            .builder()
-            .context(context)
-            .chatView(this)
+        Chat.sdkComponent!!.createChatComponent()
             .parentFragment(fragment)
             .visitorModule(VisitorModule(visitor))
             .build()
             .inject(this)
-
-        Log.d(ConstantsUtils.TAG_SOCKET, "onCreate Chat View")
         this.parentFragment = fragment
         setAllListeners()
         setListMessages()
     }
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
+        viewModel.displayableUIObject.observe(lifecycleOwner, Observer {
+            when (it) {
+                DisplayableUIObject.NOTHING -> {
+                    chat_place.visibility = View.GONE
+                    auth_form.visibility = View.GONE
+                    startProgressBar()
+                }
+                DisplayableUIObject.CHAT -> {
+                    chat_place.post {
+                        auth_form.visibility = View.GONE
+                        chat_place.visibility = View.VISIBLE
+                        stopProgressBar()
+                    }
+                }
+                DisplayableUIObject.FORM_AUTH -> {
+                    chat_place.visibility = View.GONE
+                    auth_form.visibility = View.VISIBLE
+                    stopProgressBar()
+                }
+            }
+        })
         viewModel.internetConnection.observe(lifecycleOwner, Observer {
             Log.d("CHAT_VIEW", "GET NEW EVENT")
             when (it) {
-                TypeInternetConnection.NO_INTERNET -> {
+                TypeInternetConnection.NO_INTERNET, TypeInternetConnection.SOCKET_DESTROY -> {
                     warning.visibility = View.VISIBLE
                     sign_in.isClickable = true
-                    Log.d("CHAT_VIEW", "NO_INTERNET_CONNECTION")
                 }
-                TypeInternetConnection.HAS_INTERNET -> {
-                    Log.d(ConstantsUtils.TAG_SOCKET, "Sicnk HAS_INTERNET")
-                    warning.visibility = View.GONE
+                TypeInternetConnection.HAS_INTERNET, TypeInternetConnection.RECONNECT -> {
+                    warning.visibility = View.INVISIBLE
                 }
             }
         })
@@ -177,22 +189,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     private fun stopProgressBar() {
         loading.visibility = View.GONE
-    }
-
-    fun showChat() {
-        chat_place.post {
-            auth_form.visibility = View.GONE
-            chat_place.visibility = View.VISIBLE
-            stopProgressBar()
-        }
-    }
-
-    fun showLogInForm() {
-        chat_place.post {
-            chat_place.visibility = View.GONE
-            auth_form.visibility = View.VISIBLE
-            stopProgressBar()
-        }
     }
 
     override fun onClick(view: View) {

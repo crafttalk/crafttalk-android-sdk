@@ -15,12 +15,13 @@ private constructor(
     context: Context
 ) {
 
-    // Logic part
-    val authType = AuthType.values()[attrArr.getInt(R.styleable.ChatView_auth, 0)]
-    val urlSocketNameSpace: String = attrArr.getString(R.styleable.ChatView_urlSocketNameSpace)!!
-    val urlSocketHost: String = attrArr.getString(R.styleable.ChatView_urlSocketHost)!!
-    val urlUploadNameSpace: String = attrArr.getString(R.styleable.ChatView_urlUploadNameSpace)!!
-    val urlUploadHost: String = attrArr.getString(R.styleable.ChatView_urlUploadHost)!!
+    init {
+        attrArr.getInt(R.styleable.ChatView_auth, -1).let { if (it != -1) ChatParams.authType = AuthType.values()[it] }
+        attrArr.getString(R.styleable.ChatView_urlSocketNameSpace)?.let { ChatParams.urlSocketNameSpace = it }
+        attrArr.getString(R.styleable.ChatView_urlSocketHost)?.let { ChatParams.urlSocketHost = it }
+        attrArr.getString(R.styleable.ChatView_urlUploadNameSpace)?.let { ChatParams.urlUploadNameSpace = it }
+        attrArr.getString(R.styleable.ChatView_urlUploadHost)?.let { ChatParams.urlUploadHost = it }
+    }
 
     // UI part
     private val scaleRatio = context.resources.displayMetrics.density

@@ -1,9 +1,13 @@
 package com.crafttalk.chat.di
 
 import android.content.Context
-import androidx.fragment.app.Fragment
-import com.crafttalk.chat.di.modules.*
-import com.crafttalk.chat.presentation.ChatView
+import com.crafttalk.chat.di.modules.init.DBModule
+import com.crafttalk.chat.di.modules.init.GsonModule
+import com.crafttalk.chat.di.modules.init.NetworkModule
+import com.crafttalk.chat.di.modules.init.RepositoryModule
+import com.crafttalk.chat.domain.repository.IChatBehaviorRepository
+import com.crafttalk.chat.domain.repository.INotificationRepository
+import com.crafttalk.chat.domain.repository.IVisitorRepository
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -14,11 +18,7 @@ import javax.inject.Singleton
         NetworkModule::class,
         RepositoryModule::class,
         GsonModule::class,
-        VisitorModule::class,
-        UuidModule::class,
-        SharedPreferencesModule::class,
-        DBModule::class,
-        ViewModelModule::class
+        DBModule::class
     ]
 )
 interface SdkComponent {
@@ -26,13 +26,11 @@ interface SdkComponent {
     @Component.Builder
     interface Builder {
         @BindsInstance fun context(context: Context): Builder
-        @BindsInstance fun chatView(view: ChatView): Builder
-        @BindsInstance fun parentFragment(parentFragment: Fragment): Builder
-
-        fun visitorModule(visitorModule: VisitorModule): Builder
-
         fun build(): SdkComponent
     }
+    fun getChatBehaviorRepository(): IChatBehaviorRepository
+    fun getVisitorRepository(): IVisitorRepository
+    fun getNotificationRepository(): INotificationRepository
 
-    fun inject(chatView: ChatView)
+    fun createChatComponent(): ChatComponent.Builder
 }

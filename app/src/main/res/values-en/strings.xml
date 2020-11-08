@@ -7,10 +7,10 @@
     <string name="menu_item_2">Chat</string>
     <string name="menu_item_3">Settings</string>
 
-    <!--    <string name="urlSocketHost">https://presale.craft-talk.com</string>-->
-    <!--    <string name="urlSocketNameSpace">/webchat_presale</string>-->
-    <string name="urlSocketHost">https://rshb-test2-c.crafttalk.ru</string>
-    <string name="urlSocketNameSpace">/webchat_mobile</string>
+        <string name="urlSocketHost">https://presale.craft-talk.com</string>
+        <string name="urlSocketNameSpace">/webchat_presale</string>
+<!--    <string name="urlSocketHost">https://rshb-test2-c.crafttalk.ru</string>-->
+<!--    <string name="urlSocketNameSpace">/webchat_mobile</string>-->
 
     <string name="urlUploadHost">https://presale.craft-talk.com/</string>
     <string name="urlUploadNameSpace">webchat_presale</string>
