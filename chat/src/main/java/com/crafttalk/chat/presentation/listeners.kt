@@ -17,3 +17,8 @@ interface ChatInternetConnectionListener {
 interface NavigationListener {
     fun navigate(targetName: String)
 }
+
+interface ChatEventListener {
+    fun operatorStartWriteMessage()
+    fun operatorStopWriteMessage()
+}

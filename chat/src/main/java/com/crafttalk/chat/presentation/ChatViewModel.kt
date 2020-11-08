@@ -43,6 +43,10 @@ class ChatViewModel
         override fun lossConnection() { internetConnection.postValue(TypeInternetConnection.NO_INTERNET) }
         override fun reconnect() { internetConnection.postValue(TypeInternetConnection.RECONNECT) }
     }
+    private val chatEventListener = object : ChatEventListener {
+        override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
+        override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
+    }
 
     init {
         customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
@@ -65,7 +69,8 @@ class ChatViewModel
                     // auth fail; maybe clear data from db; user ban
                     displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
                     handleError(it)
-                }
+                },
+                chatEventListener
             )
         } else {
             // switch ui to FormAuth
@@ -92,7 +97,8 @@ class ChatViewModel
                     // auth fail; (delete visitor from pref in VisitorRepository); maybe clear data from db; user ban
                     displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
                     handleError(it)
-                }
+                },
+                chatEventListener
             )
         }
     }

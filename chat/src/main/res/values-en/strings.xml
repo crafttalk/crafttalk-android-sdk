@@ -12,6 +12,7 @@
     <!--    Chat-->
     <string name="chat_internet_connection_warning">Waiting for network…</string>
     <string name="chat_name_company">by CraftTalk</string>
+    <string name="chat_state_action_operator">Operator write message…</string>
     <string name="chat_entry_field_hint">Enter your message…</string>
 
     <!--    Bottom sheet file viewer-->

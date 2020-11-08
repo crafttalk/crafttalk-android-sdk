@@ -3,6 +3,7 @@ package com.crafttalk.chat.domain.interactors
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.ICacheRepository
 import com.crafttalk.chat.domain.repository.IVisitorRepository
+import com.crafttalk.chat.presentation.ChatEventListener
 import javax.inject.Inject
 
 class AuthChatInteractor
@@ -11,9 +12,9 @@ class AuthChatInteractor
     private val casheRepository: ICacheRepository
 ) {
 
-    fun logIn(visitor: Visitor, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun logIn(visitor: Visitor, success: () -> Unit, fail: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener) {
         try {
-            visitorRepository.logIn(visitor, success, fail)
+            visitorRepository.logIn(visitor, success, fail, chatEventListener)
 //            if (usedFormAuth) {
             casheRepository.saveVisitor(visitor)
 //            }

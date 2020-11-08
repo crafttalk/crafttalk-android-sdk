@@ -9,6 +9,7 @@ import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.tags.Tag
 import com.crafttalk.chat.initialization.ChatMessageListener
+import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams.authType
@@ -41,6 +42,7 @@ class SocketApi constructor(
 
     private var chatInternetConnectionListener: ChatInternetConnectionListener? = null
     private var chatMessageListener: ChatMessageListener? = null
+    private var chatEventListener: ChatEventListener? = null
 
     var chatStatus = ChatStatus.NOT_ON_CHAT_SCREEN
     private val bufferMessages = mutableListOf<MessageSocket>()
@@ -79,9 +81,10 @@ class SocketApi constructor(
         bufferMessages.clear()
     }
 
-    fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit) {
+    fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?) {
         this.successAuthFun = successAuth
         this.failAuthFun = failAuth
+        this.chatEventListener = chatEventListener
         this.visitor = visitor
         initSocket()
         connectUser(socket!!)
@@ -124,6 +127,13 @@ class SocketApi constructor(
                 val messageJson = it[0] as JSONObject
                 Log.d("SOCKET_API", "json message___ methon message - $messageJson")
                 val messageSocket = gson.fromJson(messageJson.toString(), MessageSocket::class.java)
+                when (messageSocket.messageType) {
+                    MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
+                    MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
+                    MessageType.VISITOR_MESSAGE.valueType -> {
+                        chatEventListener?.operatorStopWriteMessage()
+                    }
+                }
                 if (!messageJson.toString().contains(""""message":"\/start"""")) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {

@@ -74,10 +74,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         sign_in.setBackgroundDrawable(chatAttr.drawableBackgroundSignInButton)
 
         warning.setTextColor(chatAttr.colorTextInternetConnectionWarning)
+        state_action_operator.setTextColor(chatAttr.colorTextCompanyName)
         company_name.setTextColor(chatAttr.colorTextCompanyName)
         // set dimension
         warning.textSize = chatAttr.sizeTextInternetConnectionWarning
-        company_name.textSize = chatAttr.sizeTextCompanyName
+        state_action_operator.textSize = chatAttr.sizeTextInfoText
+        company_name.textSize = chatAttr.sizeTextInfoText
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
@@ -145,6 +147,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     chat_place.visibility = View.GONE
                     auth_form.visibility = View.VISIBLE
                     stopProgressBar()
+                }
+                DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE -> {
+                    state_action_operator.visibility = View.VISIBLE
+                }
+                DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE -> {
+                    state_action_operator.visibility = View.GONE
                 }
             }
         })

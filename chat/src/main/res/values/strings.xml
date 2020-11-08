@@ -11,6 +11,7 @@
 <!--    Chat-->
     <string name="chat_internet_connection_warning">Нет доступа к сети…</string>
     <string name="chat_name_company">автор CraftTalk</string>
+    <string name="chat_state_action_operator">Оператор печатает сообщение…</string>
     <string name="chat_entry_field_hint">Введите сообщение…</string>
 
 <!--    Bottom sheet file viewer-->

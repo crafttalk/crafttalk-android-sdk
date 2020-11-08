@@ -40,7 +40,7 @@ private constructor(
     val colorTextTimeMark = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
 
     val sizeTextInternetConnectionWarning = attrArr.getDimension(R.styleable.ChatView_size_warning, context.resources.getDimension(R.dimen.default_size_warning)) / scaleRatio
-    val sizeTextCompanyName = attrArr.getDimension(R.styleable.ChatView_size_company, context.resources.getDimension(R.dimen.default_size_company)) / scaleRatio
+    val sizeTextInfoText = attrArr.getDimension(R.styleable.ChatView_size_company, context.resources.getDimension(R.dimen.default_size_company)) / scaleRatio
     val sizeTextUserMessage = attrArr.getDimension(R.styleable.ChatView_size_user_message, context.resources.getDimension(R.dimen.default_size_user_message)) / scaleRatio
     val sizeTextOperatorMessage = attrArr.getDimension(R.styleable.ChatView_size_server_message, context.resources.getDimension(R.dimen.default_size_server_message)) / scaleRatio
     val sizeTextOperatorAction = attrArr.getDimension(R.styleable.ChatView_size_server_action, context.resources.getDimension(R.dimen.default_size_server_action)) / scaleRatio
