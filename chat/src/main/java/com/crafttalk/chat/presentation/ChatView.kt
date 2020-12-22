@@ -129,6 +129,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
+        viewModel.syncData()
         viewModel.displayableUIObject.observe(lifecycleOwner, Observer {
             when (it) {
                 DisplayableUIObject.NOTHING -> {

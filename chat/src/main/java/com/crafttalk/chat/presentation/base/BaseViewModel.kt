@@ -11,6 +11,7 @@ abstract class BaseViewModel: ViewModel() {
 
     val exceptionType = MutableLiveData<String>()
 
+    // используется для отправки на сервер информации о том, что конкретно пошло не так и в каком запросе.
     open fun handleError(throwable: Throwable) {
         when (throwable) {
 

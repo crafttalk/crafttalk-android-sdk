@@ -66,6 +66,17 @@ object Chat {
         )
     }
 
+    fun wakeUp(visitor: Visitor) {
+        authInteractor.logIn(
+            visitor,
+            {
+                customizingChatBehaviorInteractor.leaveChatScreen()
+                notificationInteractor.subscribeNotification(visitor.uuid)
+            },
+            {}
+        )
+    }
+
     fun destroy() {
 //        authInteractor.logOut()
         customizingChatBehaviorInteractor.destroyHostChat()

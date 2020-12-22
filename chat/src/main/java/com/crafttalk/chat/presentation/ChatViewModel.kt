@@ -185,7 +185,7 @@ class ChatViewModel
     }
 
     // мб синхронизировать при включении экрана: пользователь выключил экран\ зашел\ обновил гдето\ и открыл прилку
-    private fun syncData(timestamp: Long = 0L) {
+    fun syncData(timestamp: Long = 0L) {
         launchIO {
             Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel sync")
             chatMessageInteractor.syncMessages(

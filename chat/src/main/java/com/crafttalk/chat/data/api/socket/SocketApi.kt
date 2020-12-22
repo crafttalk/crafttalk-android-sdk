@@ -51,7 +51,6 @@ class SocketApi constructor(
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
 
     private fun initSocket() {
-        Log.d(TAG_SOCKET_EVENT, "initSocket")
         if (socket == null) {
             socket = try {
                 val manager = Manager(URI(urlSocketHost))
@@ -212,6 +211,7 @@ class SocketApi constructor(
         chatInternetConnectionListener?.disconnect()
         socket?.disconnect()
         socket?.off()
+        socket = null
         Log.d("TAG_SOCKET_EVENT", "destroy socket")
     }
 

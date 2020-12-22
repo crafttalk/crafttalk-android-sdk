@@ -24,8 +24,8 @@ fun getVisitor(context: Context): Visitor = Visitor(
 )
 
 object DataVisitor {
-    const val uuid = "Karl25"
-    const val firstName = "Karl25"
+    const val uuid = "Karl_31"
+    const val firstName = "Karl_31"
     const val lastName = "Testovich_Ivanovich"
     const val email = "email"
     const val phone = "000000000"

@@ -71,9 +71,14 @@ class MainActivity: AppCompatActivity() {
 
     }
 
-    override fun onDestroy() {
+    override fun onResume() {
+        super.onResume()
+        Chat.wakeUp(getVisitor(this))
+    }
+
+    override fun onStop() {
+        super.onStop()
         Chat.destroy()
-        super.onDestroy()
     }
 
 }
