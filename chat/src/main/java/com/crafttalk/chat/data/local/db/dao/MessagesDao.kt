@@ -1,16 +1,13 @@
 package com.crafttalk.chat.data.local.db.dao
 
-import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.*
 import com.crafttalk.chat.data.local.db.entity.Message
 
 @Dao
 interface MessagesDao {
-    @Query("SELECT * FROM messages ORDER BY timestamp ASC")
-    fun getMessagesLiveData(): LiveData<List<Message>>
-
-    @Query("SELECT * FROM messages")
-    fun getMessagesList(): List<Message>
+    @Query("SELECT * FROM messages ORDER BY timestamp DESC")
+    fun getMessages(): DataSource.Factory<Int, Message>
 
     @Query("SELECT timestamp FROM messages ORDER BY idKey DESC LIMIT 1")
     fun getLastTime(): Long
@@ -29,4 +26,8 @@ interface MessagesDao {
 
     @Query("SELECT * FROM messages WHERE id = :id")
     fun getMessageById(id: String): Message?
+
+    @Query("SELECT * FROM messages WHERE message = :content")
+    fun getMessageByContent(content: String): List<Message>
+
 }

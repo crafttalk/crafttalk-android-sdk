@@ -15,7 +15,8 @@
         android:layout_centerHorizontal="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_above="@id/info_layout"
-        app:stackFromEnd="true"
+        app:stackFromEnd="false"
+        app:reverseLayout="true"
         />
 
     <RelativeLayout
@@ -91,27 +92,26 @@
             android:rotation="45"
             />
 
-        <!--            <ImageView-->
-        <!--                android:id="@+id/like"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:src="@drawable/ic_like"-->
-        <!--                android:padding="4dp"-->
-        <!--                android:layout_toStartOf="@id/attach_file"-->
-        <!--                android:layout_centerVertical="true"-->
-        <!--                />-->
+<!--        <ImageView-->
+<!--            android:id="@+id/like"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_like"-->
+<!--            android:padding="4dp"-->
+<!--            android:layout_toStartOf="@id/attach_file"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            />-->
 
-        <!--            <ImageView-->
-        <!--                android:id="@+id/attach_file"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:src="@drawable/ic_attach_file"-->
-        <!--                android:padding="4dp"-->
-        <!--                android:rotation="45"-->
-        <!--                android:layout_alignParentEnd="true"-->
-        <!--                android:layout_centerVertical="true"-->
-        <!--                />-->
+<!--        <ImageView-->
+<!--            android:id="@+id/attach_file"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_attach_file"-->
+<!--            android:padding="4dp"-->
+<!--            android:rotation="45"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            />-->
 
     </RelativeLayout>
-
 </RelativeLayout>

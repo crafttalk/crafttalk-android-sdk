@@ -49,6 +49,7 @@ ext {
     daggerVersion = '2.27'
     firebaseMessagingServiceVersion = '20.2.4'
     firebaseAnalyticsVersion = '17.5.0'
+    paginationVersion = '2.1.2'
 }
 
 dependencies {
@@ -89,6 +90,9 @@ dependencies {
     // Push
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingServiceVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
+
+    // Pagination
+    implementation "android.arch.paging:runtime:$paginationVersion"
 
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:rules:1.3.0'

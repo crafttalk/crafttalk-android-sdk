@@ -1,6 +1,6 @@
 package com.crafttalk.chat.data.repository
 
-import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.domain.repository.IMessageRepository
@@ -13,8 +13,8 @@ class MessageRepository
     private val socketApi: SocketApi
 ) : IMessageRepository {
 
-    override fun getMessagesList(): LiveData<List<MessageDB>> {
-        return dao.getMessagesLiveData()
+    override fun getMessages(): DataSource.Factory<Int, MessageDB> {
+        return dao.getMessages()
     }
 
     override suspend fun sendMessages(message: String) {

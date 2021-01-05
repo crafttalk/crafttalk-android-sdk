@@ -26,7 +26,6 @@ import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
-import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.helper.permission.PermissionHelper
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.TypeMultiple
@@ -170,11 +169,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         })
         viewModel.messages.observe(lifecycleOwner, Observer {
-            val countNewMessage = it.size - adapterListMessages.itemCount
-            adapterListMessages.data = messageModelMapper(it, context)
-            if (countNewMessage > 0) {
-                list_with_message.smoothScrollToPosition(it.size - 1)
-            }
+            it ?: return@Observer
+            adapterListMessages.submitList(it)
+            list_with_message.smoothScrollToPosition(0)
         })
     }
 

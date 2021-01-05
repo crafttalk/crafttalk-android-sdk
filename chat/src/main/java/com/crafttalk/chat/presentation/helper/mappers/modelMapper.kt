@@ -8,53 +8,54 @@ import com.crafttalk.chat.domain.entity.message.MessageType.Companion.getMessage
 import com.crafttalk.chat.presentation.helper.converters.convertToSpannableString
 import com.crafttalk.chat.presentation.model.*
 
-fun messageModelMapper(listLocalMessage: List<Message>, context: Context): List<MessageModel> {
-    return listLocalMessage.mapNotNull {
-        when (true) {
-            (it.message != null && it.message.isNotEmpty()) && (it.attachmentUrl == null) -> TextMessageItem(
-                it.id,
-                if (it.isReply) Role.OPERATOR else Role.USER,
-                it.timestamp,
-                it.message.convertToSpannableString(it.spanStructureList, context),
-                it.actions?.let { listAction -> actionModelMapper(listAction) },
-                if (it.isReply) it.operatorName ?: "Бот" else "Вы",
-                getMessageTypeByValueType(it.messageType)
-            )
-            (it.message == null || it.message.isEmpty()) && (it.attachmentUrl != null && it.attachmentName != null) && (it.attachmentType == "IMAGE") && (it.attachmentName.contains(".GIF", true)) -> GifMessageItem(
-                it.id,
-                it.idKey,
-                if (it.isReply) Role.OPERATOR else Role.USER,
-                it.attachmentUrl,
-                it.attachmentName,
-                it.timestamp,
-                if (it.isReply) it.operatorName ?: "Бот" else "Вы",
-                getMessageTypeByValueType(it.messageType),
-                it.height ?: 0,
-                it.width ?: 0
-            )
-            (it.message == null || it.message.isEmpty()) && (it.attachmentUrl != null && it.attachmentName != null) && (it.attachmentType == "IMAGE") -> ImageMessageItem(
-                it.id,
-                it.idKey,
-                if (it.isReply) Role.OPERATOR else Role.USER,
-                it.attachmentUrl,
-                it.attachmentName,
-                it.timestamp,
-                if (it.isReply) it.operatorName ?: "Бот" else "Вы",
-                getMessageTypeByValueType(it.messageType),
-                it.height ?: 0,
-                it.width ?: 0
-            )
-            (it.message == null || it.message.isEmpty()) && (it.attachmentUrl != null && it.attachmentName != null) && (it.attachmentType == "FILE") -> FileMessageItem(
-                it.id,
-                if (it.isReply) Role.OPERATOR else Role.USER,
-                it.attachmentUrl,
-                it.attachmentName,
-                it.timestamp,
-                if (it.isReply) it.operatorName ?: "Бот" else "Вы",
-                getMessageTypeByValueType(it.messageType)
-            )
-            else -> null
-        }
+fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
+    return when (true) {
+        (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
+            localMessage.id,
+            if (localMessage.isReply) Role.OPERATOR else Role.USER,
+            localMessage.timestamp,
+            localMessage.message.convertToSpannableString(localMessage.spanStructureList, context),
+            localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
+            if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            getMessageTypeByValueType(localMessage.messageType)
+        )
+        (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "IMAGE") && (localMessage.attachmentName.contains(".GIF", true)) -> GifMessageItem(
+            localMessage.id,
+            localMessage.idKey,
+            if (localMessage.isReply) Role.OPERATOR else Role.USER,
+            localMessage.attachmentUrl,
+            localMessage.attachmentName,
+            localMessage.timestamp,
+            if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            getMessageTypeByValueType(localMessage.messageType),
+            localMessage.height ?: 0,
+            localMessage.width ?: 0
+        )
+        (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "IMAGE") -> ImageMessageItem(
+            localMessage.id,
+            localMessage.idKey,
+            if (localMessage.isReply) Role.OPERATOR else Role.USER,
+            localMessage.attachmentUrl,
+            localMessage.attachmentName,
+            localMessage.timestamp,
+            if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            getMessageTypeByValueType(localMessage.messageType),
+            localMessage.height ?: 0,
+            localMessage.width ?: 0
+        )
+        (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "FILE") -> FileMessageItem(
+            localMessage.id,
+            if (localMessage.isReply) Role.OPERATOR else Role.USER,
+            localMessage.attachmentUrl,
+            localMessage.attachmentName,
+            localMessage.timestamp,
+            if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            getMessageTypeByValueType(localMessage.messageType)
+        )
+        else -> DefaultMessageItem(
+            localMessage.id,
+            localMessage.timestamp
+        )
     }
 }
 

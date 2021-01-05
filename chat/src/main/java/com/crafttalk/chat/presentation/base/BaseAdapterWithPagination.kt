@@ -1,13 +1,13 @@
 package com.crafttalk.chat.presentation.base
 
 import android.annotation.SuppressLint
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class BaseAdapter <T : BaseItem>(
+abstract class BaseAdapterWithPagination <T : BaseItem>(
     private val differCallback: DiffUtil.ItemCallback<T>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : PagedListAdapter<T, RecyclerView.ViewHolder>(differCallback) {
 
     constructor() : this(
         object : DiffUtil.ItemCallback<T>() {
@@ -22,24 +22,17 @@ abstract class BaseAdapter <T : BaseItem>(
         }
     )
 
-    private val differ: AsyncListDiffer<T> = AsyncListDiffer(this, differCallback)
-
-    open var data: List<T>
-        get() = differ.currentList
-        set(value) {
-            differ.submitList(value.toList())
-        }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as BaseViewHolder<T>).let {
-            it.bindTo(getItem(it, position))
+            val messageItem = getItem(position)
+            if (messageItem == null) {
+//            holder.clear()
+            } else {
+                holder.bindTo(messageItem)
+            }
         }
     }
 
-    override fun getItemCount() = data.size
-
-    open fun getItem(holder: BaseViewHolder<T>, position: Int) = data[position]
-
-    override fun getItemViewType(position: Int) = data[position].getLayout()
+    override fun getItemViewType(position: Int) = getItem(position)?.getLayout() ?: -1
 
 }

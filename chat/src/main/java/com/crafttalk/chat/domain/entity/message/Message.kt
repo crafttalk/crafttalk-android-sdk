@@ -1,6 +1,7 @@
 package com.crafttalk.chat.domain.entity.message
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Message (
     val id: String,
@@ -22,7 +23,7 @@ data class Message (
     val operatorName: String?,
     @SerializedName (value = "reply_to_message")
     val replyToMessage: Message?
-)
+) : Serializable
 
 
 

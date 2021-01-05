@@ -1,5 +1,6 @@
 package com.crafttalk.chat.presentation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -12,7 +13,8 @@ class ChatViewModelFactory constructor(
     private val chatMessageInteractor: ChatMessageInteractor,
     private val notificationInteractor: NotificationInteractor,
     private val fileInteractor: FileInteractor,
-    private val customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor
+    private val customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor,
+    private val context: Context
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -22,7 +24,8 @@ class ChatViewModelFactory constructor(
             chatMessageInteractor,
             notificationInteractor,
             fileInteractor,
-            customizingChatBehaviorInteractor
+            customizingChatBehaviorInteractor,
+            context
         ) as T
     }
 }

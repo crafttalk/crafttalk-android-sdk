@@ -1,7 +1,5 @@
 package com.crafttalk.chat.domain.entity.message
 
-import java.lang.Exception
-
 enum class MessageType(val valueType: Int) {
     VISITOR_MESSAGE(1), //сообщение клиента
     OPERATOR_IS_TYPING(13), // оператор набирает сообщение
@@ -13,7 +11,8 @@ enum class MessageType(val valueType: Int) {
     CLOSE_DIALOG_INTENTION(17), // уведомление о намерении клиента завершить диалог
     FINISH_DIALOG(16), // завершение диалога
     UPDATE_NEGATIVE_REASON(19), // обновление негативной причины завершения диалога
-    CLIENT_HOLD(23); // оператор отправил сообщение удержания (hold)   - ?
+    CLIENT_HOLD(23), // оператор отправил сообщение удержания (hold)   - ?
+    DEFAULT(-1);
 
     companion object {
         fun getMessageTypeByValueType(valueType: Int): MessageType {
@@ -29,7 +28,7 @@ enum class MessageType(val valueType: Int) {
                 16 -> FINISH_DIALOG
                 19 -> UPDATE_NEGATIVE_REASON
                 23 -> CLIENT_HOLD
-                else -> throw Exception("Fail getMessageTypeByValueType; MessageType not faund by value!")
+                else -> DEFAULT
             }
         }
     }

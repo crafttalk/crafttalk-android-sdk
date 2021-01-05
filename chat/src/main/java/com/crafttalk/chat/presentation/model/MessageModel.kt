@@ -3,6 +3,7 @@ package com.crafttalk.chat.presentation.model
 import android.text.SpannableString
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseItem
+import com.crafttalk.chat.presentation.model.Role.*
 import com.crafttalk.chat.domain.entity.message.MessageType as StateMessage
 
 sealed class MessageModel(
@@ -12,6 +13,17 @@ sealed class MessageModel(
     open val authorName: String,
     open val stateCheck: StateMessage
 ) : BaseItem()
+
+data class DefaultMessageItem(
+    override val id: String,
+    override val timestamp: Long
+) : MessageModel(id, NEUTRAL, timestamp, "", StateMessage.DEFAULT) {
+    override fun getLayout(): Int = R.layout.item_default_message
+
+    override fun <T : BaseItem> isSame(item: T): Boolean {
+        return item is TextMessageItem && item.id == id
+    }
+}
 
 data class TextMessageItem(
     override val id: String,
@@ -24,8 +36,9 @@ data class TextMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
-            Role.USER -> R.layout.item_user_text_message
-            Role.OPERATOR -> R.layout.item_server_text_message
+            USER -> R.layout.item_user_text_message
+            OPERATOR -> R.layout.item_server_text_message
+            NEUTRAL -> R.layout.item_default_message
         }
     }
     override fun <T : BaseItem> isSame(item: T): Boolean {
@@ -47,8 +60,9 @@ data class ImageMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
-            Role.USER -> R.layout.item_user_image_message
-            Role.OPERATOR -> R.layout.item_server_image_message
+            USER -> R.layout.item_user_image_message
+            OPERATOR -> R.layout.item_server_image_message
+            NEUTRAL -> R.layout.item_default_message
         }
     }
     override fun <T : BaseItem> isSame(item: T): Boolean {
@@ -70,8 +84,9 @@ data class GifMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
-            Role.USER -> R.layout.item_user_gif_message
-            Role.OPERATOR -> R.layout.item_server_gif_message
+            USER -> R.layout.item_user_gif_message
+            OPERATOR -> R.layout.item_server_gif_message
+            NEUTRAL -> R.layout.item_default_message
         }
     }
     override fun <T : BaseItem> isSame(item: T): Boolean {
@@ -90,8 +105,9 @@ data class FileMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, stateCheck) {
     override fun getLayout() : Int {
         return when(role) {
-            Role.USER -> R.layout.item_user_file_message
-            Role.OPERATOR -> R.layout.item_server_file_message
+            USER -> R.layout.item_user_file_message
+            OPERATOR -> R.layout.item_server_file_message
+            NEUTRAL -> R.layout.item_default_message
         }
     }
     override fun <T : BaseItem> isSame(item: T): Boolean {

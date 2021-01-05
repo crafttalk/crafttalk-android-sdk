@@ -8,8 +8,9 @@ import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.crafttalk.chat.R
-import com.crafttalk.chat.data.local.db.entity.Message
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -17,6 +18,8 @@ import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
 import com.crafttalk.chat.domain.interactors.*
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
+import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
+import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ConstantsUtils
 import javax.inject.Inject
 
@@ -27,12 +30,18 @@ class ChatViewModel
     private val chatMessageInteractor: ChatMessageInteractor,
     private val notificationInteractor: NotificationInteractor,
     private val fileInteractor: FileInteractor,
-    private val customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor
+    private val customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor,
+    private val context: Context
 ) : BaseViewModel() {
 
-    val messages: LiveData<List<Message>> by lazy {
-        chatMessageInteractor.getAllMessages()
+    val messages: LiveData<PagedList<MessageModel>> by lazy {
+        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder<Int, MessageModel>(
+            chatMessageInteractor.getAllMessages().map<MessageModel> { (messageModelMapper(it, context)) },
+            PAGE_SIZE
+        )
+        pagedListBuilder.build()
     }
+
     val internetConnection: MutableLiveData<TypeInternetConnection> = MutableLiveData()
     val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
 
@@ -196,6 +205,10 @@ class ChatViewModel
                 }
             )
         }
+    }
+
+    companion object {
+        const val PAGE_SIZE = 20
     }
 
 }

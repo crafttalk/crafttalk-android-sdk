@@ -1,6 +1,6 @@
 package com.crafttalk.chat.domain.interactors
 
-import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.Message
 import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
@@ -10,7 +10,7 @@ class ChatMessageInteractor
     private val messageRepository: IMessageRepository
 ) {
 
-    fun getAllMessages(): LiveData<List<Message>> = messageRepository.getMessagesList()
+    fun getAllMessages(): DataSource.Factory<Int, Message> = messageRepository.getMessages()
 
     suspend fun sendMessage(message: String, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
         try {

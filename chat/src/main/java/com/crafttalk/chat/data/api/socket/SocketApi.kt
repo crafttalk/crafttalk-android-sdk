@@ -140,7 +140,7 @@ class SocketApi constructor(
                             chatMessageListener?.getNewMessages(bufferMessages.size)
                         }
                     }
-                    insert(messageSocket)
+                    updateDataInDatabase(messageSocket)
                 }
             }
         }
@@ -267,65 +267,62 @@ class SocketApi constructor(
     }
 
 
-    private fun insert(messageSocket: MessageSocket) {
-        when(messageSocket.messageType) {
-            MessageType.VISITOR_MESSAGE.valueType -> {
+    private fun updateDataInDatabase(messageSocket: MessageSocket) {
+        when {
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
                 Log.d("REPOSITORY", "insertMessage $messageSocket")
                 dao.insertMessage(MessageDB.map(messageSocket))
             }
-            MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
+            (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 Log.d("REPOSITORY", "updateMessage: messageType: ${messageSocket.messageType}")
-                messageSocket.parentMessageId?.let {
-                    dao.updateMessage(it, messageSocket.messageType)
+                messageSocket.parentMessageId?.let { parentId ->
+                    dao.updateMessage(parentId, messageSocket.messageType)
                 }
             }
         }
     }
 
     private fun marge(arrayMessages: Array<MessageSocket>) {
-        val messagesFromDb = dao.getMessagesList()
         arrayMessages.sortWith(compareBy(MessageSocket::timestamp))
         arrayMessages.forEach { messageFromHistory ->
             val list = arrayListOf<Tag>()
             val message = messageFromHistory.message?.convertFromHtmlToNormalString(list)
 
-            val messageCheckObj = MessageDB(
-                id = messageFromHistory.id,
-                messageType = messageFromHistory.messageType,
-                isReply = messageFromHistory.isReply,
-                parentMsgId = messageFromHistory.parentMessageId,
-                timestamp = messageFromHistory.timestamp,
-                message = message,
-                spanStructureList = list,
-                actions = messageFromHistory.actions,
-                attachmentUrl = messageFromHistory.attachmentUrl,
-                attachmentType = messageFromHistory.attachmentType,
-                attachmentName = messageFromHistory.attachmentName,
-                operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
-                height = 0,
-                width = 0
-            )
-            when (messageCheckObj.messageType) {
+            when (messageFromHistory.messageType) {
                 MessageType.VISITOR_MESSAGE.valueType -> {
-                    if (messageCheckObj.isReply) {
-                        // serv
-                        if (!messagesFromDb.any { it.id == messageCheckObj.id }) {
-                            dao.insertMessage(messageCheckObj)
+                    if (messageFromHistory.isReply) {
+                        // operator
+                        val messagesFromDb = dao.getMessageById(messageFromHistory.id)
+                        if (messagesFromDb == null) {
+                            updateDataInDatabase(messageFromHistory)
                         }
                     }
                     else {
                         // user
+                        val messagesFromDb = dao.getMessageByContent(message ?: "")
+                        val messageCheckObj = MessageDB(
+                            id = messageFromHistory.id,
+                            messageType = messageFromHistory.messageType,
+                            isReply = messageFromHistory.isReply,
+                            parentMsgId = messageFromHistory.parentMessageId,
+                            timestamp = messageFromHistory.timestamp,
+                            message = message,
+                            spanStructureList = list,
+                            actions = messageFromHistory.actions,
+                            attachmentUrl = messageFromHistory.attachmentUrl,
+                            attachmentType = messageFromHistory.attachmentType,
+                            attachmentName = messageFromHistory.attachmentName,
+                            operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
+                            height = 0,
+                            width = 0
+                        )
                         if (messageCheckObj !in messagesFromDb) {
-                            Log.d("REPOSITORY", "insert message $messageCheckObj")
-                            dao.insertMessage(messageCheckObj)
+                            updateDataInDatabase(messageFromHistory)
                         }
                     }
                 }
                 MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
-                    Log.d("REPOSITORY", "update message id - ${messageCheckObj.parentMsgId}, type - ${messageCheckObj.messageType}")
-                    messageCheckObj.parentMsgId?.let { parentId ->
-                        dao.updateMessage(parentId, messageCheckObj.messageType)
-                    }
+                    updateDataInDatabase(messageFromHistory)
                 }
             }
 

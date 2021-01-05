@@ -1,5 +1,6 @@
 package com.crafttalk.chat.di.modules.chat
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crafttalk.chat.di.ChatScope
@@ -21,14 +22,16 @@ class ViewModelModule {
         chatMessageInteractor: ChatMessageInteractor,
         notificationInteractor: NotificationInteractor,
         fileInteractor: FileInteractor,
-        customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor
+        customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor,
+        context: Context
     ): ChatViewModelFactory = ChatViewModelFactory(
         visitor,
         authChatInteractor,
         chatMessageInteractor,
         notificationInteractor,
         fileInteractor,
-        customizingChatBehaviorInteractor
+        customizingChatBehaviorInteractor,
+        context
     )
 
     @Provides

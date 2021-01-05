@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.ViewGroup
 import com.crafttalk.chat.R
-import com.crafttalk.chat.presentation.base.BaseAdapter
+import com.crafttalk.chat.presentation.base.BaseAdapterWithPagination
 import com.crafttalk.chat.presentation.base.BaseViewHolder
 import com.crafttalk.chat.presentation.helper.extensions.inflate
 import com.crafttalk.chat.presentation.holders.*
@@ -16,7 +16,7 @@ class AdapterListMessages(
     private val openGif: (activity: Activity, gifUrl: String, width: Int, height: Int) -> Unit,
     private val selectAction: (actionId: String) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit
-) : BaseAdapter<MessageModel>() {
+) : BaseAdapterWithPagination<MessageModel>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<out MessageModel> {
         return when (viewType) {
@@ -34,7 +34,7 @@ class AdapterListMessages(
             { gifUrl, width, height -> openGif(parent.context as Activity, gifUrl, width, height) }
             R.layout.item_server_gif_message -> HolderOperatorGifMessage(parent.inflate(viewType), updateData)
             { gifUrl, width, height -> openGif(parent.context as Activity, gifUrl, width, height) }
-            else -> throw Exception("Fail in AdapterListMessages with MessageViewType")
+            else -> HolderDefaultMessage(parent.inflate(R.layout.item_default_message))
         }
     }
 
