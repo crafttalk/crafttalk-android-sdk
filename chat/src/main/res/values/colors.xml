@@ -18,6 +18,8 @@
     <color name="default_color_company">#AEB0B0</color>
 
     <color name="gray">#ddd</color>
+    <color name="black">#000</color>
+    <color name="black_translucent">#7F000000</color>
     <color name="error">#d50000</color>
 
 </resources>

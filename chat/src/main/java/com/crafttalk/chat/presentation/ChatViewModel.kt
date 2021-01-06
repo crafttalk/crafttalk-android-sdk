@@ -123,19 +123,17 @@ class ChatViewModel
         }
     }
 
-    fun openImage(activity: Activity, imageUrl: String, width: Int, height: Int) {
+    fun openImage(activity: Activity, imageUrl: String) {
         ShowImageDialog.Builder(activity)
             .setUrl(imageUrl)
             .setType(TypeFile.IMAGE)
-            .setSize(width, height)
             .show()
     }
 
-    fun openGif(activity: Activity, gifUrl: String, width: Int, height: Int) {
+    fun openGif(activity: Activity, gifUrl: String) {
         ShowImageDialog.Builder(activity)
             .setUrl(gifUrl)
             .setType(TypeFile.GIF)
-            .setSize(width, height)
             .show()
     }
 
