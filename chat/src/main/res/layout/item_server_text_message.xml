@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -13,14 +14,13 @@
         android:id="@+id/server_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="left"
-        android:layout_gravity="left"
+        android:gravity="start"
+        android:layout_gravity="start"
         android:paddingStart="15dp"
         android:paddingTop="13dp"
         android:paddingEnd="13dp"
         android:paddingBottom="13dp"
-        android:textColor="#000"
-        />
+        android:textColor="#000" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/actions_list"
@@ -28,19 +28,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:nestedScrollingEnabled="true"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
         android:gravity="center_vertical"
         android:layout_marginTop="10dp"
         android:drawablePadding="8dp"
         android:fontFamily="@font/ubuntu_regular"
-        android:textFontWeight="600"
-        />
+        android:textFontWeight="600" />
 
 </LinearLayout>

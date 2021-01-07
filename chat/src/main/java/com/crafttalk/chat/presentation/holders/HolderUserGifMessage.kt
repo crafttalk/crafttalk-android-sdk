@@ -12,23 +12,25 @@ import com.crafttalk.chat.presentation.model.GifMessageItem
 class HolderUserGifMessage(
     view: View,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
-    private val clickHandler: (gifUrl: String, width: Int, height: Int) -> Unit
+    private val clickHandler: (gifUrl: String) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
     private val gif: ImageView = view.findViewById(R.id.server_image)
     private val time: TextView = view.findViewById(R.id.time)
-    private lateinit var gifUrl: String
+    private var gifUrl: String? = null
 
     init {
         view.setOnClickListener(this)
     }
 
     override fun onClick(view: View) {
-        clickHandler(gifUrl, gif.width, gif.height)
+        gifUrl?.let{
+            clickHandler(it)
+        }
     }
 
     override fun bindTo(item: GifMessageItem) {
-        gifUrl = item.gifUrl
-        gif.loadGif(item, updateData)
+        gifUrl = item.gif.url
+        gif.loadGif(item.idKey, item.gif, updateData)
         time.setTimeMessageWithCheck(item)
     }
 

@@ -12,18 +12,17 @@
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/background_item_simple_user_message"
         android:paddingStart="15dp"
         android:paddingTop="13dp"
         android:paddingEnd="13dp"
         android:paddingBottom="13dp"
-        android:background="@drawable/background_item_simple_user_message"
-        android:layout_gravity="right">
+        android:layout_gravity="end">
 
         <ImageView
             android:id="@+id/user_image"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
     </FrameLayout>
 
@@ -31,11 +30,11 @@
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
+        android:gravity="center_vertical"
         android:layout_marginTop="10dp"
         android:drawablePadding="8dp"
         android:fontFamily="@font/ubuntu_regular"
-        android:textFontWeight="600"
-        />
+        android:textFontWeight="600" />
 
 </LinearLayout>

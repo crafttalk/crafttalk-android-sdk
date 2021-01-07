@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="start"
+        android:background="@drawable/background_item_simple_server_message"
+        android:paddingStart="15dp"
+        android:paddingTop="13dp"
+        android:paddingEnd="13dp"
+        android:paddingBottom="13dp">
+
+        <TextView
+            android:id="@+id/server_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:fontFamily="@font/ubuntu_light"
+            android:textFontWeight="300" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/actions_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:nestedScrollingEnabled="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"
+            android:layout_marginTop="8dp" />
+
+        <ImageView
+            android:id="@+id/server_media"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="8dp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/server_file"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ic_file"
+            android:layout_gravity="start"
+            android:layout_marginTop="8dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:gravity="center_vertical"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/ubuntu_regular"
+        android:textFontWeight="600" />
+
+</LinearLayout>

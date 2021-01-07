@@ -23,8 +23,8 @@ class ShowImageDialog(
         }
     }
 
-    private lateinit var url: String
-    private lateinit var type: TypeFile
+    private var url: String? = null
+    private var type: TypeFile? = null
 
     companion object {
         private fun newInstance(builder: Builder): ShowImageDialog {
@@ -78,7 +78,7 @@ class ShowImageDialog(
                     .error(R.color.default_color_company)
                     .into(gif_show)
             }
-            FILE -> {}
+            else -> {}
         }
 
     }

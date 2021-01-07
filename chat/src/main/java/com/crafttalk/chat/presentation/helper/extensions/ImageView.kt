@@ -10,19 +10,19 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
-import com.crafttalk.chat.presentation.model.GifMessageItem
-import com.crafttalk.chat.presentation.model.ImageMessageItem
+import com.crafttalk.chat.presentation.model.FileModel
 
 @SuppressLint("ResourceAsColor")
 fun ImageView.loadImage(
-    imageMessage: ImageMessageItem,
+    idKey: Long,
+    imageFile: FileModel,
     updateData: (idKey: Long, height: Int, width: Int) -> Unit
 ) {
     val (widthInPx, heightInPx) = getSizeScreenInPx(context)
-    if (imageMessage.height == 0 && imageMessage.width == 0) {
+    if (imageFile.height == 0 && imageFile.width == 0) {
         Glide.with(context)
             .asBitmap()
-            .load(imageMessage.imageUrl)
+            .load(imageFile.url)
             .error(R.color.default_color_company)
             .into(object : CustomTarget<Bitmap>() {
                 override fun onLoadCleared(placeholder: Drawable?) {
@@ -45,17 +45,17 @@ fun ImageView.loadImage(
                         )
                     )
 
-                    updateData(imageMessage.idKey, resource.height, resource.width)
+                    updateData(idKey, resource.height, resource.width)
 
                 }
             })
     } else {
         Glide.with(context)
-            .load(imageMessage.imageUrl)
+            .load(imageFile.url)
             .apply(
                 RequestOptions().override(
-                if (imageMessage.height > imageMessage.width) (heightInPx * 0.4 * imageMessage.width / imageMessage.height).toInt() else (widthInPx * 0.7).toInt(),
-                if (imageMessage.height > imageMessage.width) (heightInPx * 0.4).toInt() else (widthInPx * 0.7 * imageMessage.height / imageMessage.width).toInt()
+                if (imageFile.height > imageFile.width) (heightInPx * 0.4 * imageFile.width / imageFile.height).toInt() else (widthInPx * 0.7).toInt(),
+                if (imageFile.height > imageFile.width) (heightInPx * 0.4).toInt() else (widthInPx * 0.7 * imageFile.height / imageFile.width).toInt()
             ))
             .error(R.color.default_color_company)
             .into(this)
@@ -63,15 +63,16 @@ fun ImageView.loadImage(
 }
 
 fun ImageView.loadGif(
-    gifMessage: GifMessageItem,
+    idKey: Long,
+    gifFile: FileModel,
     updateData: (idKey: Long, height: Int, width: Int) -> Unit
 ) {
     val context = this.context
     val (widthInPx, heightInPx) = getSizeScreenInPx(context)
-    if (gifMessage.height == 0 && gifMessage.width == 0) {
+    if (gifFile.height == 0 && gifFile.width == 0) {
         Glide.with(context)
             .asBitmap()
-            .load(gifMessage.gifUrl)
+            .load(gifFile.url)
             .error(R.color.default_color_company)
             .into(object : CustomTarget<Bitmap>() {
                 override fun onLoadCleared(placeholder: Drawable?) {
@@ -87,23 +88,23 @@ fun ImageView.loadGif(
 
                     Glide.with(context)
                         .asGif()
-                        .load(gifMessage.gifUrl)
+                        .load(gifFile.url)
                         .apply(RequestOptions().override(newWidthInPx, newHeightInPx))
                         .error(R.color.default_color_company)
                         .into(this@loadGif)
 
-                    updateData(gifMessage.idKey, resource.height, resource.width)
+                    updateData(idKey, resource.height, resource.width)
 
                 }
             })
     } else {
         Glide.with(context)
             .asGif()
-            .load(gifMessage.gifUrl)
+            .load(gifFile.url)
             .apply(
                 RequestOptions().override(
-                if (gifMessage.height > gifMessage.width) (heightInPx * 0.4 * gifMessage.width / gifMessage.height).toInt() else (widthInPx * 0.7).toInt(),
-                if (gifMessage.height > gifMessage.width) (heightInPx * 0.4).toInt() else (widthInPx * 0.7 * gifMessage.height / gifMessage.width).toInt()
+                if (gifFile.height > gifFile.width) (heightInPx * 0.4 * gifFile.width / gifFile.height).toInt() else (widthInPx * 0.7).toInt(),
+                if (gifFile.height > gifFile.width) (heightInPx * 0.4).toInt() else (widthInPx * 0.7 * gifFile.height / gifFile.width).toInt()
             ))
             .error(R.color.default_color_company)
             .into(this)

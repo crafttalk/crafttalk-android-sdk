@@ -28,7 +28,7 @@ class HolderOperatorFileMessage(
     }
 
     override fun bindTo(item: FileMessageItem) {
-        fileUrl = item.fileUrl
+        fileUrl = item.document.url
         fileIcon.setFileIcon()
         time.setTimeMessageDefault(item, true)
     }

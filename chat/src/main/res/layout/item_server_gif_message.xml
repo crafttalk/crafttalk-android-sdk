@@ -17,26 +17,24 @@
         android:paddingTop="13dp"
         android:paddingEnd="13dp"
         android:paddingBottom="13dp"
-        android:layout_gravity="left">
+        android:layout_gravity="start">
 
         <ImageView
             android:id="@+id/server_image"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
     </FrameLayout>
-
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
+        android:gravity="center_vertical"
         android:layout_marginTop="10dp"
         android:drawablePadding="8dp"
         android:fontFamily="@font/ubuntu_regular"
-        android:textFontWeight="600"
-        />
+        android:textFontWeight="600" />
 
 </LinearLayout>

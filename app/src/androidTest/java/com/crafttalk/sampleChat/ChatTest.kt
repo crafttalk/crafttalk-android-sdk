@@ -15,7 +15,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
 class ChatTest {
 
@@ -116,40 +115,40 @@ class ChatTest {
     fun openTextFromMessage() {
         onView(anyOf(withId(R.id.navigation_chat))).perform(click())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(doesNotExist())
+        onView(withId(R.id.image_show)).check(doesNotExist())
         onView(withId(R.id.list_with_message)).perform(ClickTextMessageViewAction())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(doesNotExist())
+        onView(withId(R.id.image_show)).check(doesNotExist())
     }
 
     @Test
     fun openImageFromMessage() {
         onView(anyOf(withId(R.id.navigation_chat))).perform(click())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(doesNotExist())
+        onView(withId(R.id.image_show)).check(doesNotExist())
         onView(withId(R.id.list_with_message)).perform(ClickImageMessageViewAction())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(matches(isDisplayed()))
+        onView(withId(R.id.image_show)).check(matches(isDisplayed()))
     }
 
     @Test
     fun openGifFromMessage() {
         onView(anyOf(withId(R.id.navigation_chat))).perform(click())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(doesNotExist())
+        onView(withId(R.id.image_show)).check(doesNotExist())
         onView(withId(R.id.list_with_message)).perform(ClickGifMessageViewAction())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(matches(isDisplayed()))
+        onView(withId(R.id.image_show)).check(matches(isDisplayed()))
     }
 
     @Test
     fun openFileFromMessage() {
         onView(anyOf(withId(R.id.navigation_chat))).perform(click())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(doesNotExist())
+        onView(withId(R.id.image_show)).check(doesNotExist())
         onView(withId(R.id.list_with_message)).perform(ClickFileMessageViewAction())
         onView(isRoot()).perform(waitFor(5000))
-        onView(withId(R.id.show_image)).check(doesNotExist())
+        onView(withId(R.id.image_show)).check(doesNotExist())
     }
 
 }

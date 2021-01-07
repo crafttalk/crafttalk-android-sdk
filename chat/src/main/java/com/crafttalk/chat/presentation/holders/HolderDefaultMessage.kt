@@ -2,10 +2,10 @@ package com.crafttalk.chat.presentation.holders
 
 import android.view.View
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.model.TextMessageItem
+import com.crafttalk.chat.presentation.model.DefaultMessageItem
 
 class HolderDefaultMessage(
     view: View
-) : BaseViewHolder<TextMessageItem>(view) {
-    override fun bindTo(item: TextMessageItem) {}
+) : BaseViewHolder<DefaultMessageItem>(view) {
+    override fun bindTo(item: DefaultMessageItem) {}
 }

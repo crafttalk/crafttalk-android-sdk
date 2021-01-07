@@ -12,25 +12,25 @@ sealed class MessageModel(
     open val timestamp: Long,
     open val authorName: String,
     open val stateCheck: StateMessage
-) : BaseItem()
+) : BaseItem() {
+    override fun <T : BaseItem> isSame(item: T): Boolean {
+        return item is MessageModel && item.id == id
+    }
+}
 
 data class DefaultMessageItem(
     override val id: String,
     override val timestamp: Long
 ) : MessageModel(id, NEUTRAL, timestamp, "", StateMessage.DEFAULT) {
     override fun getLayout(): Int = R.layout.item_default_message
-
-    override fun <T : BaseItem> isSame(item: T): Boolean {
-        return item is TextMessageItem && item.id == id
-    }
 }
 
 data class TextMessageItem(
     override val id: String,
     override val role: Role,
-    override val timestamp: Long,
     val message: SpannableString,
     val actions: List<ActionItem>?,
+    override val timestamp: Long,
     override val authorName: String,
     override val stateCheck: StateMessage
 ) : MessageModel(id, role, timestamp, authorName, stateCheck) {
@@ -41,22 +41,16 @@ data class TextMessageItem(
             NEUTRAL -> R.layout.item_default_message
         }
     }
-    override fun <T : BaseItem> isSame(item: T): Boolean {
-        return item is TextMessageItem && item.id == id
-    }
 }
 
 data class ImageMessageItem(
     override val id: String,
     val idKey: Long,
     override val role: Role,
-    val imageUrl: String,
-    val imageName: String,
+    val image: FileModel,
     override val timestamp: Long,
     override val authorName: String,
-    override val stateCheck: StateMessage,
-    val height: Int,
-    val width: Int
+    override val stateCheck: StateMessage
 ) : MessageModel(id, role, timestamp, authorName, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
@@ -65,22 +59,16 @@ data class ImageMessageItem(
             NEUTRAL -> R.layout.item_default_message
         }
     }
-    override fun <T : BaseItem> isSame(item: T): Boolean {
-        return item is ImageMessageItem && item.id == id
-    }
 }
 
 data class GifMessageItem(
     override val id: String,
     val idKey: Long,
     override val role: Role,
-    val gifUrl: String,
-    val gifName: String,
+    val gif: FileModel,
     override val timestamp: Long,
     override val authorName: String,
-    override val stateCheck: StateMessage,
-    val height: Int,
-    val width: Int
+    override val stateCheck: StateMessage
 ) : MessageModel(id, role, timestamp, authorName, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
@@ -89,16 +77,12 @@ data class GifMessageItem(
             NEUTRAL -> R.layout.item_default_message
         }
     }
-    override fun <T : BaseItem> isSame(item: T): Boolean {
-        return item is GifMessageItem && item.id == id
-    }
 }
 
 data class FileMessageItem(
     override val id: String,
     override val role: Role,
-    val fileUrl: String,
-    val fileName: String,
+    val document: FileModel,
     override val timestamp: Long,
     override val authorName: String,
     override val stateCheck: StateMessage
@@ -110,7 +94,24 @@ data class FileMessageItem(
             NEUTRAL -> R.layout.item_default_message
         }
     }
-    override fun <T : BaseItem> isSame(item: T): Boolean {
-        return item is FileMessageItem && item.id == id
+}
+
+data class UnionMessageItem(
+    override val id: String,
+    val idKey: Long,
+    override val role: Role,
+    val message: SpannableString,
+    val actions: List<ActionItem>?,
+    val file: FileModel,
+    override val timestamp: Long,
+    override val authorName: String,
+    override val stateCheck: StateMessage
+) : MessageModel(id, role, timestamp, authorName, stateCheck) {
+    override fun getLayout() : Int {
+        return when(role) {
+            USER -> R.layout.item_user_union_message
+            OPERATOR -> R.layout.item_server_union_message
+            NEUTRAL -> R.layout.item_default_message
+        }
     }
 }
