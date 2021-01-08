@@ -17,7 +17,6 @@
         app:urlSocketHost="@string/urlSocketHost"
         app:urlSocketNameSpace="@string/urlSocketNameSpace"
         app:urlUploadHost="@string/urlUploadHost"
-        app:urlUploadNameSpace="@string/urlUploadNameSpace"
-        />
+        app:urlUploadNameSpace="@string/urlUploadNameSpace" />
 
 </LinearLayout>

@@ -31,6 +31,7 @@ import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.R_PERMISSIONS
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
 import kotlinx.android.synthetic.main.view_host.view.*
@@ -48,7 +49,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             Context.LAYOUT_INFLATER_SERVICE
         ) as LayoutInflater
     }
-    private lateinit var permissionListener: ChatPermissionListener
+    private var permissionListener: ChatPermissionListener = object : ChatPermissionListener {
+        private fun showWarning(warningText: String) {
+            Snackbar.make(chat_place, warningText, Snackbar.LENGTH_LONG).show()
+        }
+        override fun requestedPermissions(permissions: Array<R_PERMISSIONS>, message: Array<String>) {
+            permissions.forEachIndexed { index, permission ->
+                showWarning(message[index])
+            }
+        }
+    }
 
     fun setOnPermissionListener(listener: ChatPermissionListener) {
         this.permissionListener = listener
@@ -234,10 +244,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
 
     override fun onModalOptionSelected(tag: String?, option: Option) {
-        Log.d("EVENT_PICK", "EVENT")
         when (option.id) {
             R.id.document -> {
-                Log.d("EVENT_PICK", "DOC")
                 fileViewerHelper.pickFiles(
                     Pair(TypeFile.FILE, TypeMultiple.SINGLE),
                     {
@@ -257,7 +265,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 )
             }
             R.id.image -> {
-                Log.d("EVENT_PICK", "IMAGE")
                 fileViewerHelper.pickFiles(
                     Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
                     {
@@ -277,7 +284,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 )
             }
             R.id.camera -> {
-                Log.d("EVENT_PICK", "CAMERA")
                 fileViewerHelper.pickImageFromCamera(
                     {
                         viewModel.sendImage(it)
