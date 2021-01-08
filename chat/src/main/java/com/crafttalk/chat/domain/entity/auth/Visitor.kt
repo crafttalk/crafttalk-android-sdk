@@ -3,6 +3,7 @@ package com.crafttalk.chat.domain.entity.auth
 import com.crafttalk.chat.data.local.pref.Uuid
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
+import java.io.Serializable
 
 class Visitor (
     val uuid: String,
@@ -20,7 +21,7 @@ class Visitor (
 //    val subscription: Any?, // содержит данные о подписке клиента на push-уведомления
 //    val url:String?, // содержитадресстраницы,скоторойполученыданныеоподпискеклиента на push-уведомления
 //    val unread_msg: Int? // количество непрочитанных клиентом сообщений
-) {
+) : Serializable {
 
     override fun toString(): String {
         return "${uuid}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"

@@ -48,7 +48,7 @@ object Chat {
     }
 
     fun init(
-        visitor: Visitor,
+        visitor: Visitor?,
         context: Context,
         authType: AuthType,
         urlSocketHost: String,
@@ -56,14 +56,16 @@ object Chat {
     ) {
         initParams(authType, urlSocketHost, urlSocketNameSpace)
         initDI(context)
-        authInteractor.logIn(
-            visitor,
-            {
-                customizingChatBehaviorInteractor.leaveChatScreen()
-                notificationInteractor.subscribeNotification(visitor.uuid)
-            },
-            {}
-        )
+        visitor?.let {
+            authInteractor.logIn(
+                it,
+                {
+                    customizingChatBehaviorInteractor.leaveChatScreen()
+                    notificationInteractor.subscribeNotification(visitor.uuid)
+                },
+                {}
+            )
+        }
     }
 
     fun wakeUp(visitor: Visitor) {
