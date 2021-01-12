@@ -63,7 +63,7 @@ class MainActivity: AppCompatActivity() {
             getString(R.string.urlSocketHost),
             getString(R.string.urlSocketNameSpace)
         )
-        Chat.setOnChatMessageListener(object: ChatMessageListener {
+        Chat.setOnChatMessageListener(object : ChatMessageListener {
             override fun getNewMessages(countMessages: Int) {
                 Log.d("TEST_GET_MSG", "get new messages count - ${countMessages};")
             }

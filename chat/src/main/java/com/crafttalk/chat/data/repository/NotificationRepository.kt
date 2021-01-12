@@ -18,10 +18,10 @@ class NotificationRepository
     private val notificationApi: NotificationApi
 ) : INotificationRepository {
 
-    private fun checkSubscription(uuid: String, condition: Boolean, success: () -> Unit) {
+    private fun checkSubscription(uuid: String, hasSubscription: Boolean, success: () -> Unit) {
         notificationApi.checkSubscription(CheckSubscription(uuid)).enqueue(object : Callback<ResultCheckSubscription> {
             override fun onResponse(call: Call<ResultCheckSubscription>, response: Response<ResultCheckSubscription>) {
-                if (response.isSuccessful && response.body()?.result == condition) {
+                if (response.isSuccessful && response.body()?.result == hasSubscription) {
                     success()
                 }
             }
@@ -31,7 +31,7 @@ class NotificationRepository
 
     override fun subscribe(uuid: String) {
         getToken { token ->
-            checkSubscription(uuid, true) {
+            checkSubscription(uuid, false) {
                 notificationApi.subscribe(Subscription(token, uuid)).enqueue(object : Callback<Unit> {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
                     override fun onFailure(call: Call<Unit>, t: Throwable) {}
@@ -41,7 +41,7 @@ class NotificationRepository
     }
 
     override fun unSubscribe(uuid: String) {
-        checkSubscription(uuid, false) {
+        checkSubscription(uuid, true) {
             notificationApi.unsubscribe(Unsubscription(uuid)).enqueue(object : Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
                 override fun onFailure(call: Call<Unit>, t: Throwable) {}
