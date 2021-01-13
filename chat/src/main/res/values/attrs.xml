@@ -4,9 +4,8 @@
     <declare-styleable name="ChatView">
 
         <attr name="auth" format="enum">
-            <enum name="AUTH_WITH_FORM_WITHOUT_HASH" value="0"/>
-            <enum name="AUTH_WITHOUT_FORM_WITH_HASH" value="1"/>
-            <enum name="AUTH_WITHOUT_FORM_WITHOUT_HASH" value="2"/>
+            <enum name="AUTH_WITH_FORM" value="0"/>
+            <enum name="AUTH_WITHOUT_FORM" value="1"/>
         </attr>
 
         <attr name="urlSocketNameSpace" format="string"/>

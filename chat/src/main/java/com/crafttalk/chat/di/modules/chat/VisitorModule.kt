@@ -19,20 +19,15 @@ constructor(private val visitor: Visitor?) {
     @ChatScope
     fun provideVisitor(sharedPreferences: SharedPreferences) : Visitor? {
         return when (authType) {
-            AuthType.AUTH_WITH_FORM_WITHOUT_HASH -> {
+            AuthType.AUTH_WITH_FORM -> {
                 if (checkVisitorInPref(sharedPreferences)) {
                     getVisitorFromPref(sharedPreferences)
                 } else {
                     null
                 }
             }
-            AuthType.AUTH_WITHOUT_FORM_WITHOUT_HASH -> {
+            AuthType.AUTH_WITHOUT_FORM -> {
                 if (visitor == null) throw Exception("Visitor must not be null!")
-                visitor
-            }
-            AuthType.AUTH_WITHOUT_FORM_WITH_HASH -> {
-                if (visitor == null) throw Exception("Visitor must not be null!")
-                if (visitor.hash == null) throw Exception("Visitor's hash must not be null!")
                 visitor
             }
             else -> throw Exception("Not found type auth!")

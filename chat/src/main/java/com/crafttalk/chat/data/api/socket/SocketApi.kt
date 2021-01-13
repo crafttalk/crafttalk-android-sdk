@@ -119,6 +119,18 @@ class SocketApi constructor(
             successAuthFun()
         }
 
+        socket.on("authorization-required") {
+            isOnline = true
+            Log.d(TAG_SOCKET, "authorization-required")
+            if (it[0] as Boolean) {
+                socket.emit(
+                    "authorize",
+                    visitor.getJsonObject(),
+                    visitor.phone?.length ?: 0
+                )
+            }
+        }
+
         socket.on("message") {
             isOnline = true
             Log.d("TEST_NOTIFICATION", "GET_MESSAGE")
@@ -234,11 +246,11 @@ class SocketApi constructor(
         socket.emit(
             "me",
             visitor.getJsonObject(),
-            authType!!.name in listOf(AuthType.AUTH_WITHOUT_FORM_WITH_HASH.name)
-        )
-        socket.emit(
-            "authorize",
-            visitor.getJsonObject()
+            when {
+                authType == null || authType!!.name == AuthType.AUTH_WITH_FORM.name -> false
+                authType!!.name == AuthType.AUTH_WITHOUT_FORM.name -> true
+                else -> false
+            }
         )
     }
 
