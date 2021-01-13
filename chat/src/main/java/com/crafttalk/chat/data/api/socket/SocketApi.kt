@@ -49,6 +49,7 @@ class SocketApi constructor(
 
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
+    private var isMessageSent = false
 
     private fun initSocket() {
         if (socket == null) {
@@ -155,7 +156,7 @@ class SocketApi constructor(
 //                    Log.d(TAG_SOCKET, "history: $it")
 //                }
 
-                if (listMessages.isEmpty()) {
+                if (listMessages.isEmpty() && !isMessageSent) {
                     greet() // переделать, не ориентируясь на пустой лист сообщений
                 } else {
                     marge(listMessages)
@@ -235,9 +236,14 @@ class SocketApi constructor(
             visitor.getJsonObject(),
             authType!!.name in listOf(AuthType.AUTH_WITHOUT_FORM_WITH_HASH.name)
         )
+        socket.emit(
+            "authorize",
+            visitor.getJsonObject()
+        )
     }
 
     private fun greet() {
+        isMessageSent = true
         socket!!.emit("visitor-message", "/start", 1, null, 0, null, null, null)
     }
 

@@ -7,6 +7,7 @@ import java.io.Serializable
 
 class Visitor (
     val uuid: String,
+    val token: String,
     @SerializedName(value = "first_name")
     val firstName: String,
     @SerializedName(value = "last_name")
@@ -30,6 +31,7 @@ class Visitor (
     fun getJsonObject(): JSONObject {
         val visitorJson = JSONObject()
         visitorJson.put("uuid", uuid)
+        visitorJson.put("token", token)
         visitorJson.put("first_name", firstName)
         visitorJson.put("last_name", lastName)
         visitorJson.put("email", email)
@@ -64,12 +66,15 @@ class Visitor (
                 phone = DEFAULT_PHONE
             }
 
+            val uuid = Uuid.generateUUID(
+                true,
+                firstName,
+                lastName
+            )
+
             return Visitor(
-                Uuid.generateUUID(
-                    true,
-                    firstName,
-                    lastName
-                ),
+                uuid,
+                "${uuid}default",
                 firstName,
                 lastName,
                 DEFAULT_MAIL,

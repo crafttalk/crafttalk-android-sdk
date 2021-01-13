@@ -10,10 +10,12 @@ import com.crafttalk.sampleChat.DataVisitor.firstName
 import com.crafttalk.sampleChat.DataVisitor.lastName
 import com.crafttalk.sampleChat.DataVisitor.phone
 import com.crafttalk.sampleChat.DataVisitor.source
+import com.crafttalk.sampleChat.DataVisitor.token
 import com.crafttalk.sampleChat.DataVisitor.uuid
 
 fun getVisitor(context: Context): Visitor = Visitor(
     uuid,
+    token,
     firstName,
     lastName,
     email,
@@ -24,7 +26,8 @@ fun getVisitor(context: Context): Visitor = Visitor(
 )
 
 object DataVisitor {
-    const val uuid = "Karl_131"
+    const val uuid = "test_uuid"
+    const val token = "test_token"
     const val firstName = "Karl_131"
     const val lastName = "Testovich_Ivanovich"
     const val email = "email"
