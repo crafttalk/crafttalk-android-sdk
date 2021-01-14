@@ -4,7 +4,7 @@ import com.crafttalk.chat.data.api.rest.FileApi
 import com.crafttalk.chat.di.ChatScope
 import com.crafttalk.chat.di.Upload
 import com.crafttalk.chat.utils.ChatParams
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -16,7 +16,10 @@ class NetworkModule {
     @Upload
     @ChatScope
     @Provides
-    fun provideRetrofitClientUpload(gson: Gson): Retrofit {
+    fun provideRetrofitClientUpload(): Retrofit {
+        val gson = GsonBuilder()
+            .setLenient()
+            .create()
         return Retrofit.Builder()
             .baseUrl(ChatParams.urlUploadHost!!)
             .addConverterFactory(GsonConverterFactory.create(gson))

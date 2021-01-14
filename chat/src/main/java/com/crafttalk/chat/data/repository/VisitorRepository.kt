@@ -11,8 +11,8 @@ class VisitorRepository
     private val socketApi: SocketApi
 ) : IVisitorRepository {
 
-    override fun logIn(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?) {
-        socketApi.setVisitor(visitor, successAuth, failAuth, chatEventListener)
+    override fun logIn(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?, useSync: Boolean) {
+        socketApi.setVisitor(visitor, successAuth, failAuth, chatEventListener, useSync)
     }
 
     override fun logOut(visitor: Visitor) {

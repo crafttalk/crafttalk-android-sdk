@@ -12,9 +12,9 @@ class AuthChatInteractor
     private val casheRepository: ICacheRepository
 ) {
 
-    fun logIn(visitor: Visitor, success: () -> Unit, fail: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener) {
+    fun logIn(visitor: Visitor, success: () -> Unit, fail: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener, useSync: Boolean = true) {
         try {
-            visitorRepository.logIn(visitor, success, fail, chatEventListener)
+            visitorRepository.logIn(visitor, success, fail, chatEventListener, useSync)
 //            if (usedFormAuth) {
             casheRepository.saveVisitor(visitor)
 //            }

@@ -59,27 +59,24 @@ object Chat {
         visitor?.let {
             authInteractor.logIn(
                 it,
-                {
-                    customizingChatBehaviorInteractor.leaveChatScreen()
-                    notificationInteractor.subscribeNotification(visitor.uuid)
-                },
+                { notificationInteractor.subscribeNotification(visitor.uuid) },
                 {}
             )
         }
     }
 
     fun wakeUp(visitor: Visitor) {
+        customizingChatBehaviorInteractor.openApp()
         authInteractor.logIn(
             visitor,
-            {
-                customizingChatBehaviorInteractor.leaveChatScreen()
-                notificationInteractor.subscribeNotification(visitor.uuid)
-            },
-            {}
+            { notificationInteractor.subscribeNotification(visitor.uuid) },
+            {},
+            true
         )
     }
 
     fun destroy() {
+        customizingChatBehaviorInteractor.closeApp()
 //        authInteractor.logOut()
         customizingChatBehaviorInteractor.destroyHostChat()
     }

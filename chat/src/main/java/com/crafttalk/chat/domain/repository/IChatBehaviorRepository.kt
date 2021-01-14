@@ -8,5 +8,6 @@ interface IChatBehaviorRepository {
     fun setInternetConnectionListener(listener: ChatInternetConnectionListener)
     fun setMessageListener(listener: ChatMessageListener)
     fun setStatusChat(newStatus: ChatStatus)
+    fun getStatusChat(): ChatStatus
     fun destroyChatSession()
 }

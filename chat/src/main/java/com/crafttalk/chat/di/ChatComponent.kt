@@ -12,7 +12,6 @@ import dagger.Subcomponent
         NetworkModule::class,
         RepositoryModule::class,
         VisitorModule::class,
-        UuidModule::class,
         SharedPreferencesModule::class,
         ViewModelModule::class
     ]

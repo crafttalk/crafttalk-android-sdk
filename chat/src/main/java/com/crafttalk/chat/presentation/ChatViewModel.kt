@@ -68,7 +68,6 @@ class ChatViewModel
                 {
                     // auth success;
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
-                    syncData()
                     launchIO {
                         Log.d("TEST_NOTIFICATION", "subscribeNotification VM")
                         notificationInteractor.subscribeNotification(visitor.uuid)
@@ -100,7 +99,6 @@ class ChatViewModel
                 {
                     // auth success; (save visitor into pref in VisitorRepository)
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
-                    syncData()
                 },
                 {
                     // auth fail; (delete visitor from pref in VisitorRepository); maybe clear data from db; user ban
@@ -188,20 +186,6 @@ class ChatViewModel
     fun sendImage(bitmap: Bitmap) {
         launchIO {
             fileInteractor.uploadImage(bitmap, {}, {})
-        }
-    }
-
-    // мб синхронизировать при включении экрана: пользователь выключил экран\ зашел\ обновил гдето\ и открыл прилку
-    fun syncData(timestamp: Long = 0L) {
-        launchIO {
-            Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel sync")
-            chatMessageInteractor.syncMessages(
-                timestamp,//dao.getLastTime()
-                {},
-                {
-                    handleError(it)
-                }
-            )
         }
     }
 

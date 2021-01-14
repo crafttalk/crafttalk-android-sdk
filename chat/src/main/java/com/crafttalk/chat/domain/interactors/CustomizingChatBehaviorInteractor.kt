@@ -20,11 +20,29 @@ class CustomizingChatBehaviorInteractor
     }
 
     fun leaveChatScreen() {
-        сhatBehaviorRepository.setStatusChat(ChatStatus.NOT_ON_CHAT_SCREEN)
+        сhatBehaviorRepository.setStatusChat(ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP)
     }
 
     fun goToChatScreen() {
-        сhatBehaviorRepository.setStatusChat(ChatStatus.ON_CHAT_SCREEN)
+        сhatBehaviorRepository.setStatusChat(ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
+    }
+
+    fun openApp() {
+        сhatBehaviorRepository.setStatusChat(
+            when (сhatBehaviorRepository.getStatusChat()) {
+                ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP
+                ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP
+            }
+        )
+    }
+
+    fun closeApp() {
+        сhatBehaviorRepository.setStatusChat(
+            when (сhatBehaviorRepository.getStatusChat()) {
+                ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP
+                ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP
+            }
+        )
     }
 
     fun destroyHostChat() {

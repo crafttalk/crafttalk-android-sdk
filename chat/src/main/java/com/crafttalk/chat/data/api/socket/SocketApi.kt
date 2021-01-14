@@ -1,6 +1,7 @@
 package com.crafttalk.chat.data.api.socket
 
 import android.util.Log
+import com.crafttalk.chat.data.helper.converters.file.convertForFileAccess
 import com.crafttalk.chat.data.helper.converters.text.convertFromHtmlToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -36,15 +37,16 @@ class SocketApi constructor(
 
     private var socket: Socket? = null
     private lateinit var visitor: Visitor
-    private lateinit var successAuthFun: () -> Unit
-    private lateinit var failAuthFun: (ex: Throwable) -> Unit
+    private var useSync: Boolean = false
+    private var successAuthFun: () -> Unit = {}
+    private var failAuthFun: (ex: Throwable) -> Unit = {}
     private var isOnline = false
 
     private var chatInternetConnectionListener: ChatInternetConnectionListener? = null
     private var chatMessageListener: ChatMessageListener? = null
     private var chatEventListener: ChatEventListener? = null
 
-    var chatStatus = ChatStatus.NOT_ON_CHAT_SCREEN
+    var chatStatus = ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP
     private val bufferMessages = mutableListOf<MessageSocket>()
 
     private val viewModelJob = Job()
@@ -81,10 +83,11 @@ class SocketApi constructor(
         bufferMessages.clear()
     }
 
-    fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?) {
+    fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?, useSync: Boolean) {
+        this.useSync = useSync
         this.successAuthFun = successAuth
         this.failAuthFun = failAuth
-        this.chatEventListener = chatEventListener
+        chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
         initSocket()
         connectUser(socket!!)
@@ -117,6 +120,11 @@ class SocketApi constructor(
             isOnline = true
             Log.d(TAG_SOCKET_EVENT, "authorized")
             successAuthFun()
+            if (useSync && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                viewModelScope.launch {
+                    sync(0)
+                }
+            }
         }
 
         socket.on("authorization-required") {
@@ -148,7 +156,7 @@ class SocketApi constructor(
                 }
                 if (!messageJson.toString().contains(""""message":"\/start"""")) {
                     when {
-                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
+                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
                             bufferMessages.add(messageSocket)
                             chatMessageListener?.getNewMessages(bufferMessages.size)
                         }
@@ -281,6 +289,7 @@ class SocketApi constructor(
     }
 
     fun sync(timestamp: Long) {
+        //dao.getLastTime()
         socket!!.emit("history-messages-requested", timestamp)
     }
 
@@ -305,6 +314,7 @@ class SocketApi constructor(
         arrayMessages.forEach { messageFromHistory ->
             val list = arrayListOf<Tag>()
             val message = messageFromHistory.message?.convertFromHtmlToNormalString(list)
+            val attachmentUrl = messageFromHistory.attachmentUrl?.convertForFileAccess(visitor.token)
 
             when (messageFromHistory.messageType) {
                 MessageType.VISITOR_MESSAGE.valueType -> {
@@ -317,7 +327,7 @@ class SocketApi constructor(
                     }
                     else {
                         // user
-                        val messagesFromDb = dao.getMessageByContent(message ?: "")
+                        val messagesFromDb = dao.getMessageByContent(message, attachmentUrl)
                         val messageCheckObj = MessageDB(
                             id = messageFromHistory.id,
                             messageType = messageFromHistory.messageType,
@@ -327,7 +337,7 @@ class SocketApi constructor(
                             message = message,
                             spanStructureList = list,
                             actions = messageFromHistory.actions,
-                            attachmentUrl = messageFromHistory.attachmentUrl,
+                            attachmentUrl = attachmentUrl,
                             attachmentType = messageFromHistory.attachmentType,
                             attachmentName = messageFromHistory.attachmentName,
                             operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
@@ -335,7 +345,10 @@ class SocketApi constructor(
                             width = 0
                         )
                         if (messageCheckObj !in messagesFromDb) {
-                            updateDataInDatabase(messageFromHistory)
+                            updateDataInDatabase(messageFromHistory.apply {
+                                this.message = message
+                                this.attachmentUrl = attachmentUrl
+                            })
                         }
                     }
                 }

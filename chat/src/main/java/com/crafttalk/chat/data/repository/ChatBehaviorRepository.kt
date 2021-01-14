@@ -21,11 +21,13 @@ class ChatBehaviorRepository
     }
 
     override fun setStatusChat(newStatus: ChatStatus) {
-        if (newStatus == ChatStatus.ON_CHAT_SCREEN) {
+        if (newStatus in listOf(ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP)) {
             socketApi.cleanBufferMessages()
         }
         socketApi.chatStatus = newStatus
     }
+
+    override fun getStatusChat(): ChatStatus = socketApi.chatStatus
 
     override fun destroyChatSession() {
         socketApi.destroy()

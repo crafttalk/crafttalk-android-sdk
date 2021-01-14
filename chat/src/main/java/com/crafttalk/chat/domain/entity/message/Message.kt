@@ -11,10 +11,10 @@ data class Message (
     @SerializedName (value = "parent_message_id", alternate = arrayOf("parent_msg_id"))
     val parentMessageId: String?,
     val timestamp: Long,
-    val message: String?,
+    var message: String?,
     val actions: List<Action>?,
     @SerializedName (value = "attachment_url")
-    val attachmentUrl: String?,
+    var attachmentUrl: String?,
     @SerializedName (value = "attachment_type")
     val attachmentType: String?,
     @SerializedName (value = "attachment_name")

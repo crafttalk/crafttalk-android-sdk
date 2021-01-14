@@ -9,9 +9,9 @@ class AuthInitInteractor
     private val visitorRepository: IVisitorRepository
 ) {
 
-    fun logIn(visitor: Visitor, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun logIn(visitor: Visitor, success: () -> Unit, fail: (ex: Throwable) -> Unit, useSync: Boolean = false) {
         try {
-            visitorRepository.logIn(visitor, success, fail)
+            visitorRepository.logIn(visitor, success, fail, null, useSync)
         }
         catch (ex: Throwable) {
             fail(ex)

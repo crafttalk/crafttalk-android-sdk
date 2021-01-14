@@ -11,7 +11,7 @@ class FileInteractor
     private val fileRepository: IFileRepository
 ) {
 
-    suspend fun uploadFile(file: File, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun uploadFile(file: File, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
         try {
             fileRepository.uploadFile(file, TypeUpload.MULTIPART)
             success()
@@ -20,7 +20,7 @@ class FileInteractor
         }
     }
 
-    suspend fun uploadImage(bitmap: Bitmap, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun uploadImage(bitmap: Bitmap, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
         try {
             fileRepository.uploadFile(bitmap, TypeUpload.MULTIPART)
             success()
@@ -29,7 +29,7 @@ class FileInteractor
         }
     }
 
-    suspend fun uploadFiles(listFile: List<File>, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun uploadFiles(listFile: List<File>, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
         listFile.forEach {
             uploadFile(it, success, fail)
         }

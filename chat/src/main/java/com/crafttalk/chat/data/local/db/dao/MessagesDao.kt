@@ -27,7 +27,7 @@ interface MessagesDao {
     @Query("SELECT * FROM messages WHERE id = :id")
     fun getMessageById(id: String): Message?
 
-    @Query("SELECT * FROM messages WHERE message = :content")
-    fun getMessageByContent(content: String): List<Message>
+    @Query("SELECT * FROM messages WHERE message = :textMessage OR attachment_url = :attachmentUrl")
+    fun getMessageByContent(textMessage: String?, attachmentUrl: String?): List<Message>
 
 }

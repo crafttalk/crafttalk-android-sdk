@@ -13,7 +13,7 @@ class PickCameraContract : ActivityResultContract<Int, Bitmap?>() {
 
     override fun parseResult(resultCode: Int, intent: Intent?): Bitmap? {
         return if (resultCode == Activity.RESULT_OK) {
-            intent?.data as? Bitmap
+            intent?.extras?.get("data") as? Bitmap
         } else {
             null
         }
