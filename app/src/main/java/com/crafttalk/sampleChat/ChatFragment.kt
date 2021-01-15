@@ -13,10 +13,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        chat_view.onCreate(
-            this,
-            getVisitor(requireContext())
-        )
+        chat_view.onCreate(this)
         chat_view.setOnPermissionListener(object : ChatPermissionListener {
             override fun requestedPermissions(permissions: Array<R_PERMISSIONS>, messages: Array<String>) {
                 permissions.forEachIndexed { index, permission ->

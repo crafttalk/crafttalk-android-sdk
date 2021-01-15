@@ -25,8 +25,7 @@ import javax.inject.Inject
 
 class ChatViewModel
 @Inject constructor(
-    private val visitor: Visitor?,
-    private val authChatInteractor: AuthChatInteractor,
+    private val authChatInteractor: AuthInteractor,
     private val chatMessageInteractor: ChatMessageInteractor,
     private val notificationInteractor: NotificationInteractor,
     private val fileInteractor: FileInteractor,
@@ -60,30 +59,26 @@ class ChatViewModel
     init {
         customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
         customizingChatBehaviorInteractor.goToChatScreen()
-        if (visitor != null) {
-            // продумать логику проверки нового юзера со старым, чтобы показать пользователь чат\ даже если нет инета и не получается пройти аутентификацию
-            displayableUIObject.value = DisplayableUIObject.CHAT
-            authChatInteractor.logIn(
-                visitor,
-                {
-                    // auth success;
-                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
-                    launchIO {
-                        Log.d("TEST_NOTIFICATION", "subscribeNotification VM")
-                        notificationInteractor.subscribeNotification(visitor.uuid)
-                    }
-                },
-                {
-                    // auth fail; maybe clear data from db; user ban
-                    displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
-                    handleError(it)
-                },
-                chatEventListener
-            )
-        } else {
-            // switch ui to FormAuth
-            displayableUIObject.value = DisplayableUIObject.FORM_AUTH
-        }
+
+        authChatInteractor.logIn(
+            successAuth = {
+                // auth success;
+                displayableUIObject.postValue(DisplayableUIObject.CHAT)
+                launchIO {
+                    notificationInteractor.subscribeNotification()
+                }
+            },
+            failAuth = {
+                // auth fail; maybe clear data from db; user ban
+                displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
+                handleError(it)
+            },
+            firstLogInWithForm = {
+                // switch ui to FormAuth
+                displayableUIObject.value = DisplayableUIObject.FORM_AUTH
+            },
+            chatEventListener = chatEventListener
+        )
     }
 
     override fun onCleared() {
@@ -92,22 +87,20 @@ class ChatViewModel
     }
 
     fun registration(vararg args: String) {
-        launchUI {
-            Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel registration")
-            authChatInteractor.logIn(
-                Visitor.map(args),
-                {
-                    // auth success; (save visitor into pref in VisitorRepository)
-                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
-                },
-                {
-                    // auth fail; (delete visitor from pref in VisitorRepository); maybe clear data from db; user ban
-                    displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
-                    handleError(it)
-                },
-                chatEventListener
-            )
-        }
+        Log.d(ConstantsUtils.TAG_SOCKET, "ViewModel registration")
+        authChatInteractor.logIn(
+            Visitor.map(args),
+            {
+                // auth success; (save visitor into pref in VisitorRepository)
+                displayableUIObject.postValue(DisplayableUIObject.CHAT)
+            },
+            {
+                // auth fail; (delete visitor from pref in VisitorRepository); maybe clear data from db; user ban
+                displayableUIObject.postValue(DisplayableUIObject.FORM_AUTH)
+                handleError(it)
+            },
+            chatEventListener = chatEventListener
+        )
     }
 
     fun openFile(context: Context, fileUrl: String) {

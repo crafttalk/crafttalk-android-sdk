@@ -24,7 +24,6 @@ import javax.inject.Inject
 class FileRepository
 @Inject constructor(
     private val fileApi: FileApi,
-    private val visitor: Visitor?,
     private val fileInfoHelper: FileInfoHelper,
     private val fileRequestHelper: RequestHelper
 ) : IFileRepository {
@@ -76,8 +75,7 @@ class FileRepository
         })
     }
 
-    override fun uploadFile(file: File, type: TypeUpload) {
-        visitor ?: return
+    override fun uploadFile(visitor: Visitor, file: File, type: TypeUpload) {
         val fileName = fileInfoHelper.getFileName(file.uri) ?: return
         when (type) {
             TypeUpload.JSON -> {
@@ -91,8 +89,7 @@ class FileRepository
         }
     }
 
-    override fun uploadFile(bitmap: Bitmap, type: TypeUpload) {
-        visitor ?: return
+    override fun uploadFile(visitor: Visitor, bitmap: Bitmap, type: TypeUpload) {
         val fileName = "createPhoto${System.currentTimeMillis()}.jpg"
         when (type) {
             TypeUpload.JSON -> {

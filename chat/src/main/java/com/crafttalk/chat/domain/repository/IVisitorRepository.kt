@@ -1,9 +1,11 @@
 package com.crafttalk.chat.domain.repository
 
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.presentation.ChatEventListener
 
 interface IVisitorRepository {
-    fun logIn(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener? = null, useSync: Boolean)
-    fun logOut(visitor: Visitor)
+    fun getVisitorFromClient(): Visitor?
+    fun getVisitorFromSharedPreferences(): Visitor?
+    fun setVisitorFromClient(visitor: Visitor)
+    fun saveVisitor(visitor: Visitor)
+    fun deleteVisitor(visitor: Visitor)
 }

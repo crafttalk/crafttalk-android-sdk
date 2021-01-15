@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.crafttalk.chat.R
-import com.crafttalk.chat.di.modules.chat.VisitorModule
-import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
@@ -126,10 +124,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
     }
 
-    fun onCreate(fragment: Fragment, visitor: Visitor? = null) {
+    fun onCreate(fragment: Fragment) {
         Chat.sdkComponent!!.createChatComponent()
             .parentFragment(fragment)
-            .visitorModule(VisitorModule(visitor))
             .build()
             .inject(this)
         this.parentFragment = fragment

@@ -11,8 +11,6 @@ import dagger.Subcomponent
     modules = [
         NetworkModule::class,
         RepositoryModule::class,
-        VisitorModule::class,
-        SharedPreferencesModule::class,
         ViewModelModule::class
     ]
 )
@@ -20,8 +18,6 @@ interface ChatComponent {
     @Subcomponent.Builder
     interface Builder {
         @BindsInstance fun parentFragment(parentFragment: Fragment): Builder
-        fun visitorModule(visitorModule: VisitorModule): Builder
-
         fun build(): ChatComponent
     }
     fun inject(chatView: ChatView)

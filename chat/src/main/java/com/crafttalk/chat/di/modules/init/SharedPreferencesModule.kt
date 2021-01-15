@@ -1,18 +1,18 @@
-package com.crafttalk.chat.di.modules.chat
+package com.crafttalk.chat.di.modules.init
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.crafttalk.chat.di.ChatScope
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class SharedPreferencesModule {
 
     @Provides
-    @ChatScope
+    @Singleton
     fun provideSharedPreferences(
         context: Context
     ): SharedPreferences {

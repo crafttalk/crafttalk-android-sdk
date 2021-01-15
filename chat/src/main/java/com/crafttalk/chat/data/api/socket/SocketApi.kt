@@ -37,7 +37,6 @@ class SocketApi constructor(
 
     private var socket: Socket? = null
     private lateinit var visitor: Visitor
-    private var useSync: Boolean = false
     private var successAuthFun: () -> Unit = {}
     private var failAuthFun: (ex: Throwable) -> Unit = {}
     private var isOnline = false
@@ -83,8 +82,7 @@ class SocketApi constructor(
         bufferMessages.clear()
     }
 
-    fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?, useSync: Boolean) {
-        this.useSync = useSync
+    fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?) {
         this.successAuthFun = successAuth
         this.failAuthFun = failAuth
         chatEventListener?.let { this.chatEventListener = it }
@@ -120,7 +118,7 @@ class SocketApi constructor(
             isOnline = true
             Log.d(TAG_SOCKET_EVENT, "authorized")
             successAuthFun()
-            if (useSync && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+            if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 viewModelScope.launch {
                     sync(0)
                 }
@@ -188,8 +186,6 @@ class SocketApi constructor(
             isOnline = true
             chatInternetConnectionListener?.connect()
         }
-        
-        
         socket.on(Socket.EVENT_CONNECT_ERROR) {
             isOnline = false
             chatInternetConnectionListener?.lossConnection()
@@ -203,10 +199,6 @@ class SocketApi constructor(
         socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
             isOnline = false
             Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_TIMEOUT")
-        }
-        socket.on(Socket.EVENT_ERROR) {
-            isOnline = false
-            Log.d(TAG_SOCKET_EVENT, "EVENT_ERROR")
         }
         socket.on(Socket.EVENT_RECONNECTING) {
             isOnline = false

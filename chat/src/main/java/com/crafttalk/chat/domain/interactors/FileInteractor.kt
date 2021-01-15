@@ -8,12 +8,14 @@ import javax.inject.Inject
 
 class FileInteractor
 @Inject constructor(
-    private val fileRepository: IFileRepository
+    private val fileRepository: IFileRepository,
+    private val visitorInteractor: VisitorInteractor
 ) {
 
     fun uploadFile(file: File, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+        val visitor = visitorInteractor.getVisitor() ?: return
         try {
-            fileRepository.uploadFile(file, TypeUpload.MULTIPART)
+            fileRepository.uploadFile(visitor, file, TypeUpload.MULTIPART)
             success()
         } catch (ex: Throwable) {
             fail(ex)
@@ -21,8 +23,9 @@ class FileInteractor
     }
 
     fun uploadImage(bitmap: Bitmap, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+        val visitor = visitorInteractor.getVisitor() ?: return
         try {
-            fileRepository.uploadFile(bitmap, TypeUpload.MULTIPART)
+            fileRepository.uploadFile(visitor, bitmap, TypeUpload.MULTIPART)
             success()
         } catch (ex: Throwable) {
             fail(ex)

@@ -57,7 +57,6 @@ class MainActivity: AppCompatActivity() {
         }
 
         Chat.init(
-            getVisitor(this),
             this,
             AuthType.AUTH_WITHOUT_FORM,
             getString(R.string.urlSocketHost),

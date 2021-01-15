@@ -4,9 +4,10 @@ import android.content.Context
 import com.crafttalk.chat.di.DaggerSdkComponent
 import com.crafttalk.chat.di.SdkComponent
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.domain.interactors.AuthInitInteractor
+import com.crafttalk.chat.domain.interactors.AuthInteractor
 import com.crafttalk.chat.domain.interactors.CustomizingChatBehaviorInteractor
 import com.crafttalk.chat.domain.interactors.NotificationInteractor
+import com.crafttalk.chat.domain.interactors.VisitorInteractor
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams
@@ -14,7 +15,8 @@ import com.crafttalk.chat.utils.ChatParams
 object Chat {
 
     private lateinit var customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor
-    private lateinit var authInteractor: AuthInitInteractor
+    private lateinit var visitorInteractor: VisitorInteractor
+    private lateinit var authInteractor: AuthInteractor
     private lateinit var notificationInteractor: NotificationInteractor
     var sdkComponent: SdkComponent? = null
 
@@ -33,8 +35,9 @@ object Chat {
                 .build()
         }
         customizingChatBehaviorInteractor = CustomizingChatBehaviorInteractor(sdkComponent!!.getChatBehaviorRepository())
-        authInteractor = AuthInitInteractor(sdkComponent!!.getVisitorRepository())
-        notificationInteractor = NotificationInteractor(sdkComponent!!.getNotificationRepository())
+        visitorInteractor = VisitorInteractor(sdkComponent!!.getVisitorRepository())
+        authInteractor = AuthInteractor(sdkComponent!!.getAuthRepository(), visitorInteractor)
+        notificationInteractor = NotificationInteractor(sdkComponent!!.getNotificationRepository(), visitorInteractor)
     }
 
     private fun initParams(
@@ -48,7 +51,6 @@ object Chat {
     }
 
     fun init(
-        visitor: Visitor?,
         context: Context,
         authType: AuthType,
         urlSocketHost: String,
@@ -56,22 +58,14 @@ object Chat {
     ) {
         initParams(authType, urlSocketHost, urlSocketNameSpace)
         initDI(context)
-        visitor?.let {
-            authInteractor.logIn(
-                it,
-                { notificationInteractor.subscribeNotification(visitor.uuid) },
-                {}
-            )
-        }
     }
 
-    fun wakeUp(visitor: Visitor) {
+    fun wakeUp(visitor: Visitor?) {
         customizingChatBehaviorInteractor.openApp()
         authInteractor.logIn(
             visitor,
-            { notificationInteractor.subscribeNotification(visitor.uuid) },
-            {},
-            true
+            { notificationInteractor.subscribeNotification() },
+            {}
         )
     }
 

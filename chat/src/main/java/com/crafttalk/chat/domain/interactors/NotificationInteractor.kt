@@ -5,15 +5,20 @@ import javax.inject.Inject
 
 class NotificationInteractor
 @Inject constructor(
-    private val notificationRepository: INotificationRepository
+    private val notificationRepository: INotificationRepository,
+    private val visitorInteractor: VisitorInteractor
 ) {
 
-    fun subscribeNotification(uuid: String) {
-        notificationRepository.subscribe(uuid)
+    fun subscribeNotification() {
+        visitorInteractor.getVisitor()?.let {
+            notificationRepository.subscribe(it.uuid)
+        }
     }
 
-    fun unsubscribeNotification(uuid: String) {
-        notificationRepository.unSubscribe(uuid)
+    fun unsubscribeNotification() {
+        visitorInteractor.getVisitor()?.let {
+            notificationRepository.unSubscribe(it.uuid)
+        }
     }
 
 }

@@ -1,10 +1,12 @@
 package com.crafttalk.chat.di
 
 import android.content.Context
+import com.crafttalk.chat.di.modules.init.SharedPreferencesModule
 import com.crafttalk.chat.di.modules.init.DBModule
 import com.crafttalk.chat.di.modules.init.GsonModule
 import com.crafttalk.chat.di.modules.init.NetworkModule
 import com.crafttalk.chat.di.modules.init.RepositoryModule
+import com.crafttalk.chat.domain.repository.IAuthRepository
 import com.crafttalk.chat.domain.repository.IChatBehaviorRepository
 import com.crafttalk.chat.domain.repository.INotificationRepository
 import com.crafttalk.chat.domain.repository.IVisitorRepository
@@ -17,18 +19,19 @@ import javax.inject.Singleton
     modules = [
         NetworkModule::class,
         RepositoryModule::class,
+        SharedPreferencesModule::class,
         GsonModule::class,
         DBModule::class
     ]
 )
 interface SdkComponent {
-
     @Component.Builder
     interface Builder {
         @BindsInstance fun context(context: Context): Builder
         fun build(): SdkComponent
     }
     fun getChatBehaviorRepository(): IChatBehaviorRepository
+    fun getAuthRepository(): IAuthRepository
     fun getVisitorRepository(): IVisitorRepository
     fun getNotificationRepository(): INotificationRepository
 
