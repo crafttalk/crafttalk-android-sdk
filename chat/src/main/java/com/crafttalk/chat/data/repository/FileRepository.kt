@@ -44,7 +44,6 @@ class FileRepository
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Log.d("UPLOAD_TEST", "Fail upload! - ${t.message};")
-                throw t
             }
         })
     }
