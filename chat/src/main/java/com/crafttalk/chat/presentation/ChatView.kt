@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -33,6 +34,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
 import kotlinx.android.synthetic.main.view_host.view.*
+import kotlinx.android.synthetic.main.warning_layout.view.*
 import javax.inject.Inject
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
@@ -71,7 +73,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         attrArr.recycle()
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     @SuppressLint("ResourceType")
     private fun customizationChat(attrArr: TypedArray) {
@@ -80,21 +82,27 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         send_message.setColorFilter(chatAttr.colorMain, PorterDuff.Mode.SRC_IN)
         sign_in.setBackgroundDrawable(chatAttr.drawableBackgroundSignInButton)
 
-        warning.setTextColor(chatAttr.colorTextInternetConnectionWarning)
+        warningConnection.setTextColor(chatAttr.colorTextInternetConnectionWarning)
         state_action_operator.setTextColor(chatAttr.colorTextCompanyName)
         company_name.setTextColor(chatAttr.colorTextCompanyName)
         // set dimension
-        warning.textSize = chatAttr.sizeTextInternetConnectionWarning
+        warningConnection.textSize = chatAttr.sizeTextInternetConnectionWarning
         state_action_operator.textSize = chatAttr.sizeTextInfoText
         company_name.textSize = chatAttr.sizeTextInfoText
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
+
+        chatAttr.progressIndeterminateDrawable?.let {
+            loading.setIndeterminateDrawableTiled(it)
+            warning_loading.setIndeterminateDrawableTiled(it.constantState?.newDrawable()?.mutate())
+        }
     }
 
     private fun setAllListeners() {
         sign_in.setOnClickListener(this)
         send_message.setOnClickListener(this)
+        warning_refresh.setOnClickListener(this)
         entry_field.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if ((s?:"").isEmpty()) {
@@ -136,23 +144,40 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
         viewModel.displayableUIObject.observe(lifecycleOwner, Observer {
+            Log.d("CHAT_VIEW", "displayableUIObject - ${it};")
             when (it) {
                 DisplayableUIObject.NOTHING -> {
                     chat_place.visibility = View.GONE
                     auth_form.visibility = View.GONE
-                    startProgressBar()
+                    warning.visibility = View.GONE
+                    warningConnection.visibility = View.INVISIBLE
+                    stopProgressBar(warning_loading)
+                    startProgressBar(loading)
                 }
                 DisplayableUIObject.CHAT -> {
                     chat_place.post {
                         auth_form.visibility = View.GONE
+                        warning.visibility = View.GONE
                         chat_place.visibility = View.VISIBLE
-                        stopProgressBar()
+                        stopProgressBar(loading)
+                        stopProgressBar(warning_loading)
                     }
                 }
                 DisplayableUIObject.FORM_AUTH -> {
                     chat_place.visibility = View.GONE
+                    warning.visibility = View.GONE
                     auth_form.visibility = View.VISIBLE
-                    stopProgressBar()
+                    stopProgressBar(loading)
+                    stopProgressBar(warning_loading)
+                }
+                DisplayableUIObject.WARNING -> {
+                    chat_place.visibility = View.GONE
+                    auth_form.visibility = View.GONE
+                    warningConnection.visibility = View.INVISIBLE
+                    warning.visibility = View.VISIBLE
+                    warning_refresh.visibility = View.VISIBLE
+                    stopProgressBar(loading)
+                    stopProgressBar(warning_loading)
                 }
                 DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE -> {
                     state_action_operator.visibility = View.VISIBLE
@@ -165,12 +190,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.internetConnection.observe(lifecycleOwner, Observer {
             Log.d("CHAT_VIEW", "GET NEW EVENT")
             when (it) {
-                TypeInternetConnection.NO_INTERNET, TypeInternetConnection.SOCKET_DESTROY -> {
-                    warning.visibility = View.VISIBLE
+                TypeInternetConnection.NO_INTERNET -> {
+                    warningConnection.visibility = View.VISIBLE
                     sign_in.isClickable = true
                 }
                 TypeInternetConnection.HAS_INTERNET, TypeInternetConnection.RECONNECT -> {
-                    warning.visibility = View.INVISIBLE
+                    warningConnection.visibility = View.INVISIBLE
                 }
             }
         })
@@ -195,12 +220,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         return result
     }
 
-    private fun startProgressBar() {
-        loading.visibility = View.VISIBLE
+    private fun startProgressBar(progressBar: ProgressBar) {
+        progressBar.visibility = View.VISIBLE
     }
 
-    private fun stopProgressBar() {
-        loading.visibility = View.GONE
+    private fun stopProgressBar(progressBar: ProgressBar) {
+        progressBar.visibility = View.GONE
     }
 
     override fun onClick(view: View) {
@@ -208,7 +233,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             R.id.sign_in -> {
                 if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)
-                    startProgressBar()
+                    startProgressBar(loading)
                     val firstName = first_name_user.text.toString()
                     val lastName = last_name_user.text.toString()
                     val phone = phone_user.text.toString()
@@ -235,6 +260,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         entry_field.text.clear()
                     }
                 }
+            }
+            R.id.warning_refresh -> {
+                startProgressBar(warning_loading)
+                warning_refresh.visibility = View.GONE
+                viewModel.reload()
             }
         }
     }

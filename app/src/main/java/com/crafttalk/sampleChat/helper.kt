@@ -28,8 +28,8 @@ fun getVisitor(context: Context): Visitor = Visitor(
 object DataVisitor {
     const val uuid = "test_uuid"
     const val token = "test_token"
-    const val firstName = "Karl_131"
-    const val lastName = "Testovich_Ivanovich"
+    const val firstName = "Karl"
+    const val lastName = "Testovich"
     const val email = "email"
     const val phone = "000000000"
     const val contract = "contract_test"

@@ -14,6 +14,10 @@
     <string name="chat_state_action_operator">Оператор печатает сообщение…</string>
     <string name="chat_entry_field_hint">Введите сообщение…</string>
 
+<!--    Warning-->
+    <string name="warning_title">Произошла ошибка</string>
+    <string name="warning_reload">Пожалуйста, перезагрузите страницу или повторите попытку позже</string>
+
 <!--    Bottom sheet file viewer-->
     <string name="bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
     <string name="bottom_sheet_file_viewer_image_from_camera">Камера</string>

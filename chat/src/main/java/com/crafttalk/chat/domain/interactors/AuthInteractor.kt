@@ -10,7 +10,8 @@ import javax.inject.Inject
 class AuthInteractor
 @Inject constructor(
     private val authRepository: IAuthRepository,
-    private val visitorInteractor: VisitorInteractor
+    private val visitorInteractor: VisitorInteractor,
+    private val notificationInteractor: NotificationInteractor
 ) {
 
     private fun dataPreparation(visitor: Visitor?): Visitor? {
@@ -27,33 +28,63 @@ class AuthInteractor
 
     fun logIn(
         visitor: Visitor? = null,
-        successAuth: () -> Unit,
-        failAuth: (ex: Throwable) -> Unit,
+        successAuthUi: (() -> Unit)? = null,
+        failAuthUi: (() -> Unit)? = null,
+        successAuthUx: () -> Unit = {},
+        failAuthUx: () -> Unit = {},
         firstLogInWithForm: () -> Unit = {},
         chatEventListener: ChatEventListener? = null
     ) {
         val currentVisitor = dataPreparation(visitor)
+
+        val successAuthUxWrapper = {
+            successAuthUx()
+            notificationInteractor.subscribeNotification()
+        }
+
+        val failAuthUxWrapper = {
+            failAuthUx()
+            notificationInteractor.unsubscribeNotification()
+        }
 
         when (ChatParams.authType) {
             AuthType.AUTH_WITH_FORM -> {
                 if (currentVisitor == null) {
                     firstLogInWithForm()
                 } else {
-                    try {
-                        authRepository.logIn(currentVisitor, successAuth, failAuth, chatEventListener)
-                    } catch (ex: Throwable) {
-                        visitorInteractor.deleteVisitor(currentVisitor)
-                    }
+                    authRepository.logIn(
+                        currentVisitor,
+                        successAuthUi,
+                        failAuthUi,
+                        successAuthUxWrapper,
+                        failAuthUxWrapper,
+                        chatEventListener
+                    )
                 }
             }
             AuthType.AUTH_WITHOUT_FORM -> {
-                authRepository.logIn(currentVisitor!!, successAuth, failAuth, chatEventListener)
+                authRepository.logIn(
+                    currentVisitor!!,
+                    successAuthUi,
+                    failAuthUi,
+                    successAuthUxWrapper,
+                    failAuthUxWrapper,
+                    chatEventListener
+                )
             }
         }
     }
 
-    fun logOut(visitor: Visitor) {
-        authRepository.logOut(visitor)
+    fun logOut(visitor: Visitor?) {
+        notificationInteractor.unsubscribeNotification()
+        when (ChatParams.authType) {
+            AuthType.AUTH_WITH_FORM -> {
+                visitor?.let {  visitorInteractor.deleteVisitor(it) }
+            }
+            AuthType.AUTH_WITHOUT_FORM -> {
+                visitorInteractor.setVisitor(null)
+            }
+        }
     }
 
 }

@@ -14,8 +14,7 @@
         android:text="@string/auth_user_introduction"
         android:textSize="18sp"
         android:gravity="center"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/first_name_user"
@@ -29,8 +28,7 @@
         android:background="@drawable/background_normal_field_auth_form"
         android:padding="8dp"
         android:layout_marginTop="16dp"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/last_name_user"
@@ -44,8 +42,7 @@
         android:background="@drawable/background_normal_field_auth_form"
         android:padding="8dp"
         android:layout_marginTop="16dp"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/phone_user"
@@ -59,8 +56,7 @@
         android:background="@drawable/background_normal_field_auth_form"
         android:padding="8dp"
         android:layout_marginTop="16dp"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/sign_in"
@@ -73,7 +69,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
         android:background="@drawable/background_sign_in_auth_form"
-        android:padding="8dp"
-        />
+        android:padding="8dp" />
 
 </LinearLayout>

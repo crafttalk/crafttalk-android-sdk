@@ -18,14 +18,12 @@ class ViewModelModule {
     fun provideChatViewModelFactory(
         authChatInteractor: AuthInteractor,
         chatMessageInteractor: ChatMessageInteractor,
-        notificationInteractor: NotificationInteractor,
         fileInteractor: FileInteractor,
         customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor,
         context: Context
     ): ChatViewModelFactory = ChatViewModelFactory(
         authChatInteractor,
         chatMessageInteractor,
-        notificationInteractor,
         fileInteractor,
         customizingChatBehaviorInteractor,
         context

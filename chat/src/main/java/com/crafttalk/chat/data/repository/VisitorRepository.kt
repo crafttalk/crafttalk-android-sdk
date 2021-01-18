@@ -24,7 +24,7 @@ class VisitorRepository
         }
     }
 
-    override fun setVisitorFromClient(visitor: Visitor) {
+    override fun setVisitorFromClient(visitor: Visitor?) {
         this.visitor = visitor
     }
 

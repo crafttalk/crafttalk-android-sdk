@@ -22,7 +22,7 @@ class VisitorInteractor
             else -> throw Exception("Not found type auth!")
         }
     }
-    fun setVisitor(visitor: Visitor) = visitorRepository.setVisitorFromClient(visitor)
+    fun setVisitor(visitor: Visitor?) = visitorRepository.setVisitorFromClient(visitor)
     fun saveVisitor(visitor: Visitor) = visitorRepository.saveVisitor(visitor)
     fun deleteVisitor(visitor: Visitor) = visitorRepository.deleteVisitor(visitor)
 }

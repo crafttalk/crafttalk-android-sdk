@@ -6,9 +6,10 @@ import com.crafttalk.chat.presentation.ChatEventListener
 interface IAuthRepository {
     fun logIn(
         visitor: Visitor,
-        successAuth: () -> Unit,
-        failAuth: (ex: Throwable) -> Unit,
-        chatEventListener: ChatEventListener? = null
+        successAuthUi: (() -> Unit)?,
+        failAuthUi: (() -> Unit)?,
+        successAuthUx: () -> Unit,
+        failAuthUx: () -> Unit,
+        chatEventListener: ChatEventListener?
     )
-    fun logOut(visitor: Visitor)
 }

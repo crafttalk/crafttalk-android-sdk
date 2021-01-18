@@ -9,7 +9,6 @@ interface ChatPermissionListener {
 interface ChatInternetConnectionListener {
     fun connect() // has internet
     fun failConnect() // hasn't internet
-    fun disconnect()
     fun lossConnection() // hasn't internet
     fun reconnect() // has internet
 }

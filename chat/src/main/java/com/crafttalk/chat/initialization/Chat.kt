@@ -8,7 +8,6 @@ import com.crafttalk.chat.domain.interactors.AuthInteractor
 import com.crafttalk.chat.domain.interactors.CustomizingChatBehaviorInteractor
 import com.crafttalk.chat.domain.interactors.NotificationInteractor
 import com.crafttalk.chat.domain.interactors.VisitorInteractor
-import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams
 
@@ -24,11 +23,7 @@ object Chat {
         customizingChatBehaviorInteractor.setMessageListener(listener)
     }
 
-    fun setOnInternetConnectionListener(listener: ChatInternetConnectionListener) {
-        customizingChatBehaviorInteractor.setInternetConnectionListener(listener)
-    }
-
-    internal fun initDI(context: Context) {
+    private fun initDI(context: Context) {
         if (sdkComponent == null) {
             sdkComponent = DaggerSdkComponent.builder()
                 .context(context)
@@ -36,8 +31,8 @@ object Chat {
         }
         customizingChatBehaviorInteractor = CustomizingChatBehaviorInteractor(sdkComponent!!.getChatBehaviorRepository())
         visitorInteractor = VisitorInteractor(sdkComponent!!.getVisitorRepository())
-        authInteractor = AuthInteractor(sdkComponent!!.getAuthRepository(), visitorInteractor)
         notificationInteractor = NotificationInteractor(sdkComponent!!.getNotificationRepository(), visitorInteractor)
+        authInteractor = AuthInteractor(sdkComponent!!.getAuthRepository(), visitorInteractor, notificationInteractor)
     }
 
     private fun initParams(
@@ -63,16 +58,17 @@ object Chat {
     fun wakeUp(visitor: Visitor?) {
         customizingChatBehaviorInteractor.openApp()
         authInteractor.logIn(
-            visitor,
-            { notificationInteractor.subscribeNotification() },
-            {}
+            visitor = visitor
         )
     }
 
     fun destroy() {
         customizingChatBehaviorInteractor.closeApp()
-//        authInteractor.logOut()
         customizingChatBehaviorInteractor.destroyHostChat()
     }
+
+//    fun logOut(visitor: Visitor?) {
+//        authInteractor.logOut(visitor)
+//    }
 
 }

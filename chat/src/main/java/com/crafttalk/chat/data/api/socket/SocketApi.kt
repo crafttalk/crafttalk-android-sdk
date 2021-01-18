@@ -37,8 +37,10 @@ class SocketApi constructor(
 
     private var socket: Socket? = null
     private lateinit var visitor: Visitor
-    private var successAuthFun: () -> Unit = {}
-    private var failAuthFun: (ex: Throwable) -> Unit = {}
+    private var successAuthUiFun: () -> Unit = {}
+    private var failAuthUiFun: () -> Unit = {}
+    private var successAuthUxFun: () -> Unit = {}
+    private var failAuthUxFun: () -> Unit = {}
     private var isOnline = false
 
     private var chatInternetConnectionListener: ChatInternetConnectionListener? = null
@@ -57,14 +59,15 @@ class SocketApi constructor(
             socket = try {
                 val manager = Manager(URI(urlSocketHost))
                 manager.socket(urlSocketNameSpace).apply {
-                    Log.d(TAG_SOCKET_EVENT, "setAllListeners")
                     isOnline = true
                     setAllListeners(this)
                 }
             } catch (e: URISyntaxException) {
-                Log.e(TAG_SOCKET, "fail init socket")
+                failAuthUiFun()
+                viewModelScope.launch {
+                    failAuthUxFun()
+                }
                 isOnline = false
-                chatInternetConnectionListener?.failConnect()
                 null
             }
         }
@@ -82,42 +85,56 @@ class SocketApi constructor(
         bufferMessages.clear()
     }
 
-    fun setVisitor(visitor: Visitor, successAuth: () -> Unit, failAuth: (ex: Throwable) -> Unit, chatEventListener: ChatEventListener?) {
-        this.successAuthFun = successAuth
-        this.failAuthFun = failAuth
+    fun setVisitor(
+        visitor: Visitor,
+        successAuthUi: (() -> Unit)?,
+        failAuthUi: (() -> Unit)?,
+        successAuthUx: () -> Unit,
+        failAuthUx: () -> Unit,
+        chatEventListener: ChatEventListener?
+    ) {
+        successAuthUi?.let { this.successAuthUiFun = it }
+        this.successAuthUxFun = successAuthUx
+        failAuthUi?.let { this.failAuthUiFun = it }
+        this.failAuthUxFun = failAuthUx
         chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
         initSocket()
-        connectUser(socket!!)
+        socket?.let {
+            connectUser(it)
+        }
     }
 
     private fun setAllListeners(socket: Socket) {
+
         socket.on("connect") {
+            Log.d(TAG_SOCKET_EVENT, "connect connecting - ${socket.connected()}")
             isOnline = true
-            Log.d(TAG_SOCKET_EVENT, "connecting: ${socket.connected()}")
-            try {
-                authenticationUser(socket)
-            } catch (ex: Throwable) { // add normal three exception
-                failAuthFun(ex)
-            }
+            authenticationUser(socket)
         }
 
         socket.on("reconnect") {
-            isOnline = true
             Log.d(TAG_SOCKET_EVENT, "reconnect")
+            isOnline = true
             chatInternetConnectionListener?.reconnect()
         }
 
         socket.on("hide") {
+            Log.d(TAG_SOCKET_EVENT, "hide")
             isOnline = true
-            Log.d(TAG_SOCKET, "hide")
-//            failAuthFun() // add tree exception
+            failAuthUiFun()
+            viewModelScope.launch {
+                failAuthUxFun()
+            }
         }
 
         socket.on("authorized") {
-            isOnline = true
             Log.d(TAG_SOCKET_EVENT, "authorized")
-            successAuthFun()
+            isOnline = true
+            successAuthUiFun()
+            viewModelScope.launch {
+                successAuthUxFun()
+            }
             if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 viewModelScope.launch {
                     sync(0)
@@ -126,8 +143,8 @@ class SocketApi constructor(
         }
 
         socket.on("authorization-required") {
+            Log.d(TAG_SOCKET_EVENT, "authorization-required")
             isOnline = true
-            Log.d(TAG_SOCKET, "authorization-required")
             if (it[0] as Boolean) {
                 socket.emit(
                     "authorize",
@@ -165,9 +182,9 @@ class SocketApi constructor(
         }
 
         socket.on("history-messages-loaded") {
+            Log.d(TAG_SOCKET_EVENT, "history-messages-loaded, ${it.size}")
             isOnline = true
             viewModelScope.launch {
-                Log.d(TAG_SOCKET, "history-messages-loaded, ${it.size}")
                 val listMessages = gson.fromJson(it[0].toString(), Array<MessageSocket>::class.java)
 
 //                listMessages.forEach {
@@ -181,57 +198,52 @@ class SocketApi constructor(
                 }
             }
         }
-        
+
+
         socket.on(Socket.EVENT_CONNECT) {
+            Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT")
             isOnline = true
             chatInternetConnectionListener?.connect()
         }
-        socket.on(Socket.EVENT_CONNECT_ERROR) {
-            isOnline = false
-            chatInternetConnectionListener?.lossConnection()
-            Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_ERROR")
-        }
         socket.on(Socket.EVENT_DISCONNECT) {
+            Log.d(TAG_SOCKET_EVENT, "EVENT_DISCONNECT")
             isOnline = false
             chatInternetConnectionListener?.lossConnection()
-            Log.d(TAG_SOCKET_EVENT, "EVENT_DISCONNECT")
         }
-        socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
+        socket.on(Socket.EVENT_CONNECT_ERROR) {
+            Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_ERROR")
             isOnline = false
-            Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_TIMEOUT")
-        }
-        socket.on(Socket.EVENT_RECONNECTING) {
-            isOnline = false
-            Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECTING")
-        }
-        socket.on(Socket.EVENT_RECONNECT_ATTEMPT) {
-            isOnline = false
-            Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECT_ATTEMPT")
+            chatInternetConnectionListener?.failConnect()
         }
         socket.on(Socket.EVENT_RECONNECT_ERROR) {
-            isOnline = false
             Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECT_ERROR")
+            isOnline = false
         }
         socket.on(Socket.EVENT_RECONNECT_FAILED) {
-            isOnline = false
             Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECT_FAILED")
+            isOnline = false
         }
+
+        socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
+            Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_TIMEOUT")
+            isOnline = false
+            failAuthUiFun()
+            viewModelScope.launch {
+                failAuthUxFun()
+            }
+        }
+
     }
 
 
     fun destroy() {
         isOnline = false
-        chatInternetConnectionListener?.disconnect()
         socket?.disconnect()
         socket?.off()
         socket = null
-        Log.d("TAG_SOCKET_EVENT", "destroy socket")
     }
 
-
-
     private fun connectUser(socket: Socket) {
-        Log.d(TAG_SOCKET_EVENT, "Connect User isConnect - ${isOnline};")
         if (isOnline) {
             if (!socket.connected()) {
                 socket.connect()
@@ -242,16 +254,22 @@ class SocketApi constructor(
     }
 
     private fun authenticationUser(socket: Socket) {
-        Log.d(TAG_SOCKET_EVENT, "authenticationUser - ${visitor.getJsonObject()};\n ${visitor}")
-        socket.emit(
-            "me",
-            visitor.getJsonObject(),
-            when {
-                authType == null || authType!!.name == AuthType.AUTH_WITH_FORM.name -> false
-                authType!!.name == AuthType.AUTH_WITHOUT_FORM.name -> true
-                else -> false
+        try {
+            socket.emit(
+                "me",
+                visitor.getJsonObject(),
+                when {
+                    authType == null || authType!!.name == AuthType.AUTH_WITH_FORM.name -> false
+                    authType!!.name == AuthType.AUTH_WITHOUT_FORM.name -> true
+                    else -> false
+                }
+            )
+        } catch (ex: Throwable) {
+            failAuthUiFun()
+            viewModelScope.launch {
+                failAuthUxFun()
             }
-        )
+        }
     }
 
     private fun greet() {
@@ -289,11 +307,9 @@ class SocketApi constructor(
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                Log.d("REPOSITORY", "insertMessage $messageSocket")
                 dao.insertMessage(MessageDB.map(messageSocket))
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
-                Log.d("REPOSITORY", "updateMessage: messageType: ${messageSocket.messageType}")
                 messageSocket.parentMessageId?.let { parentId ->
                     dao.updateMessage(parentId, messageSocket.messageType)
                 }

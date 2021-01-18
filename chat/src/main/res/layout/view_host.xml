@@ -19,7 +19,7 @@
 <!--        />-->
 
     <TextView
-        android:id="@+id/warning"
+        android:id="@+id/warningConnection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -29,38 +29,38 @@
         android:text="@string/chat_internet_connection_warning"
         android:fontFamily="@font/ubuntu_regular"
         android:textFontWeight="400"
-        android:visibility="invisible"
-        />
+        android:visibility="invisible" />
 
     <View
         android:id="@+id/upper_limiter"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_below="@+id/warning"
-        />
+        android:layout_below="@+id/warningConnection" />
 
     <include
         android:id="@+id/chat_place"
         layout="@layout/chat_layout"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <include
         android:id="@+id/auth_form"
         layout="@layout/auth_layout"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/warning"
+        layout="@layout/warning_layout"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="280dp"
         android:indeterminateDrawable="@drawable/spinner_ring"
         android:indeterminateOnly="true"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:paddingTop="200dp"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -13,15 +13,20 @@ class AuthRepository
 
     override fun logIn(
         visitor: Visitor,
-        successAuth: () -> Unit,
-        failAuth: (ex: Throwable) -> Unit,
+        successAuthUi: (() -> Unit)?,
+        failAuthUi: (() -> Unit)?,
+        successAuthUx: () -> Unit,
+        failAuthUx: () -> Unit,
         chatEventListener: ChatEventListener?
     ) {
-        socketApi.setVisitor(visitor, successAuth, failAuth, chatEventListener)
-    }
-
-    override fun logOut(visitor: Visitor) {
-        TODO("Not yet implemented")
+        socketApi.setVisitor(
+            visitor,
+            successAuthUi,
+            failAuthUi,
+            successAuthUx,
+            failAuthUx,
+            chatEventListener
+        )
     }
 
 }

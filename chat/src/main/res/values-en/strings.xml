@@ -15,6 +15,10 @@
     <string name="chat_state_action_operator">Operator write message…</string>
     <string name="chat_entry_field_hint">Enter your message…</string>
 
+    <!--    Warning-->
+    <string name="warning_title">Error has occurred</string>
+    <string name="warning_reload">Please reload the page or try again later</string>
+
     <!--    Bottom sheet file viewer-->
     <string name="bottom_sheet_file_viewer_image_from_gallery">Image</string>
     <string name="bottom_sheet_file_viewer_image_from_camera">Camera</string>

@@ -4,6 +4,7 @@ enum class DisplayableUIObject {
     NOTHING,
     CHAT,
     FORM_AUTH,
+    WARNING,
     OPERATOR_START_WRITE_MESSAGE,
     OPERATOR_STOP_WRITE_MESSAGE
 }
