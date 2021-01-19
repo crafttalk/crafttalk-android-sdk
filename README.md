@@ -54,26 +54,26 @@ When using the first option (AUTH_WITHOUT_FORM)
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        
-        Chat.init(
-            this,
-            AuthType.AUTH_WITHOUT_FORM,
-            getString(R.string.urlSocketHost),
-            getString(R.string.urlSocketNameSpace)
-        )      
-    }
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+    
+    Chat.init(
+    	this,
+	AuthType.AUTH_WITHOUT_FORM,
+	getString(R.string.urlSocketHost),
+	getString(R.string.urlSocketNameSpace)
+    )      
+}
 
-    override fun onResume() {
-        super.onResume()
-        Chat.wakeUp(getVisitor(this))
-    }
+override fun onResume() {
+    super.onResume()
+    Chat.wakeUp(getVisitor(this))
+}
 
-    override fun onStop() {
-        super.onStop()
-        Chat.destroy()
-    }
+override fun onStop() {
+    super.onStop()
+    Chat.destroy()
+}
 ```
 
 When using the second option (AUTH_WITH_FORM)
