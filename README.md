@@ -79,40 +79,69 @@ override fun onCreate(savedInstanceState: Bundle?) {
 When using the second option (AUTH_WITH_FORM)
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
         
-        Chat.init(
-            this,
-            AuthType.AUTH_WITH_FORM,
-            getString(R.string.urlSocketHost),
-            getString(R.string.urlSocketNameSpace)
-        )      
-    }
+    Chat.init(
+    	this,
+	AuthType.AUTH_WITH_FORM,
+	getString(R.string.urlSocketHost),
+	getString(R.string.urlSocketNameSpace)
+    )      
+}
 
-    override fun onResume() {
-        super.onResume()
-        Chat.wakeUp(null)
-    }
+override fun onResume() {
+    super.onResume()
+    Chat.wakeUp(null)
+}
 
-    override fun onStop() {
-        super.onStop()
-        Chat.destroy()
-    }
+override fun onStop() {
+    super.onStop()
+    Chat.destroy()
+}
 ```
 
 The code to add to the fragment with the ChatView (for all types)
 ```kotlin
 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    super.onViewCreated(view, savedInstanceState)
+    chat_view.onCreate(this)      
+}
 
-        chat_view.onCreate(this)      
-    }
+override fun onResume() {
+    super.onResume()
+    chat_view.onResume(this)
+}
+```
 
-    override fun onResume() {
-        super.onResume()
-        chat_view.onResume(this)
-    }
+AndroidManifest (for all types)
+```
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.CAMERA"/>
+
+<application
+    ...>
+    <meta-data
+    	android:name="com.google.firebase.messaging.default_notification_channel_id"
+	android:value="@string/default_notification_channel_id" />
+    <activity
+    	android:screenOrientation="portrait"
+	android:name=".MainActivity"
+	android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
+        <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+    </activity>
+    <service
+        android:name="com.crafttalk.chat.data.push.ChatPushService"
+	android:exported="false">
+        <intent-filter>
+	    <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
+</application> 
 ```
 
 License
