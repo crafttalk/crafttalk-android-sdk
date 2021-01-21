@@ -136,7 +136,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onCreate(fragment: Fragment) {
-        Chat.sdkComponent!!.createChatComponent()
+        Chat.getSdkComponent().createChatComponent()
             .parentFragment(fragment)
             .build()
             .inject(this)

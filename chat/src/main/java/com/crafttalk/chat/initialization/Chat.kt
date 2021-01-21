@@ -17,7 +17,9 @@ object Chat {
     private lateinit var visitorInteractor: VisitorInteractor
     private lateinit var authInteractor: AuthInteractor
     private lateinit var notificationInteractor: NotificationInteractor
-    var sdkComponent: SdkComponent? = null
+    private var sdkComponent: SdkComponent? = null
+
+    internal fun getSdkComponent(): SdkComponent = sdkComponent ?: throw IllegalStateException("You must call the init method before going to the chat.")
 
     fun setOnChatMessageListener(listener: ChatMessageListener) {
         customizingChatBehaviorInteractor.setMessageListener(listener)
