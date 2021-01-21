@@ -49,6 +49,9 @@ private constructor(
     val sizeTextOperatorAction = attrArr.getDimension(R.styleable.ChatView_size_server_action, context.resources.getDimension(R.dimen.default_size_server_action)) / scaleRatio
     val sizeTextTimeMark = attrArr.getDimension(R.styleable.ChatView_size_time_mark, context.resources.getDimension(R.dimen.default_size_time_mark)) / scaleRatio
 
+    val companyName = attrArr.getString(R.styleable.ChatView_company_name) ?: context.getString(R.string.chat_name_company)
+    val showCompanyName = attrArr.getBoolean(R.styleable.ChatView_show_company_name, false)
+
     val drawableBackgroundSignInButton: Drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.background_sign_in_auth_form)!!).apply {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             DrawableCompat.setTint(this, colorMain)
