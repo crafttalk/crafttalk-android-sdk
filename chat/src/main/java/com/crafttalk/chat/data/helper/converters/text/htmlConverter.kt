@@ -4,7 +4,6 @@ import android.os.Build
 import android.text.Html
 import com.crafttalk.chat.domain.entity.tags.*
 
-
 fun String.convertFromHtmlToNormalString(listTag: ArrayList<Tag>): String {
     // атрибуты должны удовлетворять формату: <attrName>="<value>"
     fun String.getAttrTag(startIndex: Int, isSingleTag: Boolean): AttrTag? {

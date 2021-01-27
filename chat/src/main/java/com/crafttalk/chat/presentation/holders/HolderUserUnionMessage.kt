@@ -8,10 +8,7 @@ import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.helper.extensions.loadGif
-import com.crafttalk.chat.presentation.helper.extensions.loadImage
-import com.crafttalk.chat.presentation.helper.extensions.setFileIcon
-import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageWithCheck
+import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.model.UnionMessageItem
 import com.crafttalk.chat.utils.ChatAttr
 
@@ -52,11 +49,7 @@ class HolderUserUnionMessage(
     }
 
     override fun bindTo(item: UnionMessageItem) {
-        fileUrl = item.file.url
-        fileType = item.file.type
-
         time.setTimeMessageWithCheck(item)
-
         // set content
         message.text = item.message
         // set color
@@ -74,16 +67,17 @@ class HolderUserUnionMessage(
             }
             TypeFile.IMAGE -> {
                 fileIcon.visibility = View.GONE
-                media.visibility = View.VISIBLE
-                media.loadImage(item.idKey, item.file, updateData)
+                media.settingMediaFile(item.file, fileUrl)
+                media.loadMediaFile(item.idKey, item.file, updateData)
             }
             TypeFile.GIF -> {
                 fileIcon.visibility = View.GONE
-                media.visibility = View.VISIBLE
-                media.loadGif(item.idKey, item.file, updateData)
+                media.settingMediaFile(item.file, fileUrl)
+                media.loadMediaFile(item.idKey, item.file, updateData, true)
             }
         }
-
+        fileUrl = item.file.url
+        fileType = item.file.type
     }
 
 }

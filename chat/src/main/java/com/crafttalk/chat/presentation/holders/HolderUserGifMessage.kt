@@ -5,8 +5,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.helper.extensions.loadGif
+import com.crafttalk.chat.presentation.helper.extensions.loadMediaFile
 import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageWithCheck
+import com.crafttalk.chat.presentation.helper.extensions.settingMediaFile
 import com.crafttalk.chat.presentation.model.GifMessageItem
 
 class HolderUserGifMessage(
@@ -14,7 +15,7 @@ class HolderUserGifMessage(
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickHandler: (gifUrl: String) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
-    private val gif: ImageView = view.findViewById(R.id.server_image)
+    private val gif: ImageView = view.findViewById(R.id.user_image)
     private val time: TextView = view.findViewById(R.id.time)
     private var gifUrl: String? = null
 
@@ -29,8 +30,9 @@ class HolderUserGifMessage(
     }
 
     override fun bindTo(item: GifMessageItem) {
+        gif.settingMediaFile(item.gif, gifUrl, time)
         gifUrl = item.gif.url
-        gif.loadGif(item.idKey, item.gif, updateData)
+        gif.loadMediaFile(item.idKey, item.gif, updateData, true)
         time.setTimeMessageWithCheck(item)
     }
 
