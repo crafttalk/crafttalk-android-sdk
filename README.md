@@ -22,25 +22,73 @@ dependencies {
 ```
 
 ## Usage
-There is a [sample](https://github.com/crafttalk/crafttalk-android-sdk/tree/master/app) provided which shows how to use the library. 
-Order of steps:
-```xml
+В [примере](https://github.com/crafttalk/crafttalk-android-sdk/tree/master/app) продемонстрировано, как нужно использовать библиотеку. 
+
+#### Шаг 1.
+
+В AndroidManifest необходимо добавить следующие зависимости:
+```
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.CAMERA"/>
+```
+
+При использовании пушей в AndroidManifest необходимо добавить ChatPushService и дефолтный channel id
+
+```
+<application
+    ...>
+    <meta-data
+    	android:name="com.google.firebase.messaging.default_notification_channel_id"
+	android:value="@string/default_notification_channel_id" />
+    ...
+    <service
+        android:name="com.crafttalk.chat.data.push.ChatPushService"
+	android:exported="false">
+        <intent-filter>
+	    <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
+</application> 
+```
+
+#### Шаг 2.
+
+В xml файл, где будет располагаться чат, необходимо добавить ChatView c 5 обязательными атрибутами
+
+```
 <com.crafttalk.chat.presentation.ChatView
         android:id="@+id/chat_view"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        app:color_main="@color/color_main"
-        app:color_bg_user_message="@color/color_main"
-        app:color_text_server_action="@color/color_main"
-        app:color_text_user_message="@color/color_user_message"
-        app:progressIndeterminateDrawable="@drawable/spinner"
+        android:layout_width="match_parent"       
         app:auth="AUTH_WITHOUT_FORM"
-        app:timeDelayed="1000"
         app:urlSocketHost="@string/urlSocketHost"
         app:urlSocketNameSpace="@string/urlSocketNameSpace"
         app:urlUploadHost="@string/urlUploadHost"
         app:urlUploadNameSpace="@string/urlUploadNameSpace"/>
 ```
+
+
+#### Шаг 3.
+
+Необходимо инициализировать библиотеку, сделать это нужно как можно раньше (до любого другого вызова из библиотеки).
+
+```
+Chat.init(
+    this,
+    AuthType.AUTH_WITHOUT_FORM,
+    getString(R.string.urlSocketHost),
+    getString(R.string.urlSocketNameSpace)
+) 
+```
+
+#### Шаг 4.
+
+Создания и уничтожения сокета, одна из самых важных шагов при интеграции ChatView.
+
+Создать сокет можно с помощью вызова wakeUp, при повторных вызовах сокет пересозвдаваться не будет. 
+
+
 
 There are two modes of operation:
 - AUTH_WITHOUT_FORM
@@ -52,18 +100,7 @@ The init and wakeUp methods should be called as early as possible
 
 When using the first option (AUTH_WITHOUT_FORM)
 
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-    
-    Chat.init(
-    	this,
-	AuthType.AUTH_WITHOUT_FORM,
-	getString(R.string.urlSocketHost),
-	getString(R.string.urlSocketNameSpace)
-    )      
-}
+
 
 override fun onResume() {
     super.onResume()
@@ -112,36 +149,6 @@ override fun onResume() {
     super.onResume()
     chat_view.onResume(this)
 }
-```
-
-AndroidManifest (for all types)
-```
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.CAMERA"/>
-
-<application
-    ...>
-    <meta-data
-    	android:name="com.google.firebase.messaging.default_notification_channel_id"
-	android:value="@string/default_notification_channel_id" />
-    <activity
-    	android:screenOrientation="portrait"
-	android:name=".MainActivity"
-	android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
-        <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-    </activity>
-    <service
-        android:name="com.crafttalk.chat.data.push.ChatPushService"
-	android:exported="false">
-        <intent-filter>
-	    <action android:name="com.google.firebase.MESSAGING_EVENT" />
-        </intent-filter>
-    </service>
-</application> 
 ```
 
 ## Кастомизация
