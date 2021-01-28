@@ -1,6 +1,6 @@
 package com.crafttalk.chat.domain.entity.internet
 
-enum class TypeInternetConnection {
+enum class InternetConnectionState {
     NO_INTERNET,
     HAS_INTERNET,
     RECONNECT

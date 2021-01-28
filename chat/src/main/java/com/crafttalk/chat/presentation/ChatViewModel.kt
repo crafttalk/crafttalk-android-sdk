@@ -14,7 +14,7 @@ import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
+import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.domain.interactors.AuthInteractor
 import com.crafttalk.chat.domain.interactors.ChatMessageInteractor
 import com.crafttalk.chat.domain.interactors.CustomizingChatBehaviorInteractor
@@ -43,14 +43,14 @@ class ChatViewModel
         pagedListBuilder.build()
     }
 
-    val internetConnection: MutableLiveData<TypeInternetConnection> = MutableLiveData()
+    val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
     val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
 
     private val internetConnectionListener = object : ChatInternetConnectionListener {
-        override fun connect() { internetConnection.postValue(TypeInternetConnection.HAS_INTERNET) }
-        override fun failConnect() { internetConnection.postValue(TypeInternetConnection.NO_INTERNET) }
-        override fun lossConnection() { internetConnection.postValue(TypeInternetConnection.NO_INTERNET) }
-        override fun reconnect() { internetConnection.postValue(TypeInternetConnection.RECONNECT) }
+        override fun connect() { internetConnectionState.postValue(InternetConnectionState.HAS_INTERNET) }
+        override fun failConnect() { internetConnectionState.postValue(InternetConnectionState.NO_INTERNET) }
+        override fun lossConnection() { internetConnectionState.postValue(InternetConnectionState.NO_INTERNET) }
+        override fun reconnect() { internetConnectionState.postValue(InternetConnectionState.RECONNECT) }
     }
     private val chatEventListener = object : ChatEventListener {
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }

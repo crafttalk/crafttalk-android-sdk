@@ -19,7 +19,7 @@ import androidx.lifecycle.Observer
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import com.crafttalk.chat.domain.entity.internet.TypeInternetConnection
+import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
@@ -97,8 +97,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
 
         chatAttr.progressIndeterminateDrawable?.let {
-            loading.setIndeterminateDrawableTiled(it)
-            warning_loading.setIndeterminateDrawableTiled(it.constantState?.newDrawable()?.mutate())
+            loading.indeterminateDrawable = it
+            warning_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
         }
     }
 
@@ -190,14 +190,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             }
         })
-        viewModel.internetConnection.observe(lifecycleOwner, Observer {
+        viewModel.internetConnectionState.observe(lifecycleOwner, Observer {
             Log.d("CHAT_VIEW", "GET NEW EVENT")
             when (it) {
-                TypeInternetConnection.NO_INTERNET -> {
+                InternetConnectionState.NO_INTERNET -> {
                     warningConnection.visibility = View.VISIBLE
                     sign_in.isClickable = true
                 }
-                TypeInternetConnection.HAS_INTERNET, TypeInternetConnection.RECONNECT -> {
+                InternetConnectionState.HAS_INTERNET, InternetConnectionState.RECONNECT -> {
                     warningConnection.visibility = View.INVISIBLE
                 }
             }

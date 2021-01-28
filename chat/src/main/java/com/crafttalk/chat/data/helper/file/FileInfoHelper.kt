@@ -3,8 +3,6 @@ package com.crafttalk.chat.data.helper.file
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.File
 import javax.inject.Inject
 
@@ -33,7 +31,5 @@ class FileInfoHelper
     fun getFileName(uri: Uri, file: File? = getFile(uri)): String? = file?.name
 
     fun getFileType(uri: Uri): String? = context.contentResolver.getType(uri)
-
-    fun getContentType(uri: Uri): MediaType? = getFileType(uri)?.toMediaTypeOrNull()
 
 }

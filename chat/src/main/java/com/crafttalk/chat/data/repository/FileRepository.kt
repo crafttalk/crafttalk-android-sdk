@@ -12,10 +12,9 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.BodyStructureUploadFile
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.repository.IFileRepository
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +26,7 @@ class FileRepository
     private val fileInfoHelper: FileInfoHelper,
     private val fileRequestHelper: RequestHelper
 ) : IFileRepository {
+
     private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: String){
         val request = fileApi.uploadFile(
             visitorToken = token,
@@ -40,7 +40,7 @@ class FileRepository
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 // обработка кодов и проброс оштбок (throw ...)
-                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
+                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Log.d("UPLOAD_TEST", "Fail upload! - ${t.message};")
@@ -50,11 +50,13 @@ class FileRepository
 
     private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: RequestBody) {
         val body: MultipartBody.Part = MultipartBody.Part.createFormData(ApiParams.FILE_FIELD_NAME, fileName, fileRequestBody)
-        val fileNameRequestBody = fileName.toRequestBody(
-            contentType = ContentTypeValue.TEXT_PLAIN.value.toMediaType()
+        val fileNameRequestBody = RequestBody.create(
+            MediaType.get(ContentTypeValue.TEXT_PLAIN.value),
+            fileName
         )
-        val uuidRequestBody = uuid.toRequestBody(
-            contentType = ContentTypeValue.TEXT_PLAIN.value.toMediaType()
+        val uuidRequestBody = RequestBody.create(
+            MediaType.get(ContentTypeValue.TEXT_PLAIN.value),
+            uuid
         )
 
         val request = fileApi.uploadFile(
@@ -66,7 +68,7 @@ class FileRepository
 
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
+                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Log.d("UPLOAD_TEST", "Fail upload! - ${t.message};")
