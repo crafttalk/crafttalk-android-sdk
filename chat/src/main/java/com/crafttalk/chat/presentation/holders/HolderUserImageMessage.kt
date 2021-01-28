@@ -5,8 +5,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.helper.extensions.loadImage
+import com.crafttalk.chat.presentation.helper.extensions.loadMediaFile
 import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageWithCheck
+import com.crafttalk.chat.presentation.helper.extensions.settingMediaFile
 import com.crafttalk.chat.presentation.model.ImageMessageItem
 
 class HolderUserImageMessage(
@@ -29,8 +30,9 @@ class HolderUserImageMessage(
     }
 
     override fun bindTo(item: ImageMessageItem) {
+        img.settingMediaFile(item.image, imageUrl, time)
         imageUrl = item.image.url
-        img.loadImage(item.idKey, item.image, updateData)
+        img.loadMediaFile(item.idKey, item.image, updateData)
         time.setTimeMessageWithCheck(item)
     }
 

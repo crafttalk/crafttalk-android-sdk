@@ -17,11 +17,6 @@ class Visitor (
     val contract: String?, // номер контракта клиента
     val birthday: String?, // дата рождения клиента
     val hash: String? = null
-//    val fb: String?,
-//    val vk: String?,
-//    val subscription: Any?, // содержит данные о подписке клиента на push-уведомления
-//    val url:String?, // содержитадресстраницы,скоторойполученыданныеоподпискеклиента на push-уведомления
-//    val unread_msg: Int? // количество непрочитанных клиентом сообщений
 ) : Serializable {
 
     override fun toString(): String {
@@ -36,7 +31,7 @@ class Visitor (
         visitorJson.put("last_name", lastName)
         visitorJson.put("email", email)
         visitorJson.put("phone", phone)
-        visitorJson.put("contract", contract ?: DEFAULT_CONTRACT)
+        visitorJson.put("contract", contract)
         visitorJson.put("birthday", birthday)
         visitorJson.put("hash", hash)
         return visitorJson
@@ -51,7 +46,6 @@ class Visitor (
         private const val DEFAULT_CONTRACT = "test_contract"
         private const val DEFAULT_BIRTHDAY = "28.05.1975"
 
-        // это же массив причем тут null; мб может упасть...
         fun map(args: Array<out String>): Visitor {
             var firstName: String
             var lastName: String

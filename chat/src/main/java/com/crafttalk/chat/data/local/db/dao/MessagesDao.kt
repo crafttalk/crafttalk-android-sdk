@@ -6,6 +6,7 @@ import com.crafttalk.chat.data.local.db.entity.Message
 
 @Dao
 interface MessagesDao {
+
     @Query("SELECT * FROM messages ORDER BY timestamp DESC")
     fun getMessages(): DataSource.Factory<Int, Message>
 
@@ -22,7 +23,7 @@ interface MessagesDao {
     fun updateMessage(id: String, type: Int)
 
     @Query("UPDATE messages SET height = :height, width = :width WHERE idKey = :idKey")
-    fun updateSizeMessage(idKey: Long, width: Int, height: Int)
+    fun updateSizeMessage(idKey: Long, height: Int, width: Int)
 
     @Query("SELECT * FROM messages WHERE id = :id")
     fun getMessageById(id: String): Message?

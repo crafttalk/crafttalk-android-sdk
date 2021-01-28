@@ -16,8 +16,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_above="@id/info_layout"
         app:stackFromEnd="false"
-        app:reverseLayout="true"
-        />
+        app:reverseLayout="true" />
 
     <RelativeLayout
         android:id="@+id/info_layout"
@@ -35,8 +34,7 @@
             android:fontFamily="@font/ubuntu_medium"
             android:textFontWeight="700"
             android:layout_alignParentStart="true"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/company_name"
@@ -49,7 +47,7 @@
             android:fontFamily="@font/ubuntu_medium"
             android:textFontWeight="700"
             android:layout_alignParentEnd="true"
-            />
+            android:visibility="gone" />
 
     </RelativeLayout>
 
@@ -57,8 +55,7 @@
         android:id="@+id/lower_limit"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_above="@id/entry_place"
-        />
+        android:layout_above="@id/entry_place" />
 
     <RelativeLayout
         android:id="@+id/entry_place"
@@ -78,8 +75,7 @@
             android:paddingStart="15dp"
             android:paddingTop="12dp"
             android:paddingBottom="2dp"
-            android:background="@null"
-            />
+            android:background="@null" />
 
         <ImageView
             android:id="@+id/send_message"
@@ -89,8 +85,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:padding="12dp"
-            android:rotation="45"
-            />
+            android:rotation="45" />
 
 <!--        <ImageView-->
 <!--            android:id="@+id/like"-->

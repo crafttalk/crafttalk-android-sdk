@@ -11,10 +11,7 @@ import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.adapters.AdapterAction
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.helper.extensions.loadGif
-import com.crafttalk.chat.presentation.helper.extensions.loadImage
-import com.crafttalk.chat.presentation.helper.extensions.setFileIcon
-import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageDefault
+import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.model.UnionMessageItem
 import com.crafttalk.chat.utils.ChatAttr
 
@@ -57,11 +54,7 @@ class HolderOperatorUnionMessage(
     }
 
     override fun bindTo(item: UnionMessageItem) {
-        fileUrl = item.file.url
-        fileType = item.file.type
-
         time.setTimeMessageDefault(item, true)
-
         // set content
         message.movementMethod = LinkMovementMethod.getInstance()
         message.text = item.message
@@ -90,16 +83,17 @@ class HolderOperatorUnionMessage(
             }
             TypeFile.IMAGE -> {
                 fileIcon.visibility = View.GONE
-                media.visibility = View.VISIBLE
-                media.loadImage(item.idKey, item.file, updateData)
+                media.settingMediaFile(item.file, fileUrl)
+                media.loadMediaFile(item.idKey, item.file, updateData)
             }
             TypeFile.GIF -> {
                 fileIcon.visibility = View.GONE
-                media.visibility = View.VISIBLE
-                media.loadGif(item.idKey, item.file, updateData)
+                media.settingMediaFile(item.file, fileUrl)
+                media.loadMediaFile(item.idKey, item.file, updateData, true)
             }
         }
-
+        fileUrl = item.file.url
+        fileType = item.file.type
     }
 
 }

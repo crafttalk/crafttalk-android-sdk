@@ -5,8 +5,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.helper.extensions.loadGif
+import com.crafttalk.chat.presentation.helper.extensions.loadMediaFile
 import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageDefault
+import com.crafttalk.chat.presentation.helper.extensions.settingMediaFile
 import com.crafttalk.chat.presentation.model.GifMessageItem
 
 class HolderOperatorGifMessage(
@@ -29,8 +30,9 @@ class HolderOperatorGifMessage(
     }
 
     override fun bindTo(item: GifMessageItem) {
+        gif.settingMediaFile(item.gif, gifUrl, time)
         gifUrl = item.gif.url
-        gif.loadGif(item.idKey, item.gif, updateData)
+        gif.loadMediaFile(item.idKey, item.gif, updateData, true)
         time.setTimeMessageDefault(item, true)
     }
 

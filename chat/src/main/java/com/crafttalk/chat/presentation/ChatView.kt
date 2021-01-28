@@ -92,6 +92,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
+        // set company name
+        company_name.text = chatAttr.companyName
+        company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
 
         chatAttr.progressIndeterminateDrawable?.let {
             loading.setIndeterminateDrawableTiled(it)
@@ -133,7 +136,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onCreate(fragment: Fragment) {
-        Chat.sdkComponent!!.createChatComponent()
+        Chat.getSdkComponent().createChatComponent()
             .parentFragment(fragment)
             .build()
             .inject(this)
