@@ -26,7 +26,7 @@ dependencies {
 
 #### Шаг 1.
 
-В AndroidManifest необходимо добавить следующие зависимости:
+В AndroidManifest необходимо добавить следующие permissions:
 ```
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -54,7 +54,7 @@ dependencies {
 
 #### Шаг 2.
 
-В xml файл, где будет располагаться чат, необходимо добавить ChatView c 5 обязательными атрибутами
+В xml файл, где будет располагаться чат, необходимо добавить ChatView c 5 обязательными атрибутами (auth, urlSocketHost, urlSocketNameSpace, urlUploadHost, urlUploadNameSpace)
 
 ```
 <com.crafttalk.chat.presentation.ChatView
@@ -84,70 +84,55 @@ Chat.init(
 
 #### Шаг 4.
 
+##### Аутентификация пользователя
+
+Аутентификация может осуществляться двумя способами: явно (AUTH_WITH_FORM) и неявно (AUTH_WITHOUT_FORM) для пользователя. Отличие заключается в том, что при AUTH_WITH_FORM пользователю необходимо самому ввести данные о себе через форму, а при AUTH_WITHOUT_FORM за формирование объекта Visitor, необходимого для аутентификации, отвечает тот, кто использует библиотеку.
+
+##### Push
+
+Если аутентификация была успешной, то производится подписка пользователя на push уведомления, если тот ранее не был подписан. В противном случае пользователя отписывают от получение push уведомлений.
+
+##### Сокет
+
 Создания и уничтожения сокета, одна из самых важных шагов при интеграции ChatView.
 
-Создать сокет можно с помощью вызова wakeUp, при повторных вызовах сокет пересозвдаваться не будет. 
+Создать сокет можно с помощью вызова метода wakeUp, при повторных вызовах сокет пересоздаваться не будет. При вызове метода wakeUp происходит аутентификация пользователя.
 
+Уничтожить сокет можно с помощью вызова метода destroy. Пока сокет 'живет' (между вызовами wakeUp и destroy) уведомления приходить не будут, так как пользователь находится в приложении и в этом нет смысла. Когда сокет 'мертв' (между вызовами destroy и wakeUp) уведомления приходить будут, так как пользователь закрывает приложение.
 
-
-There are two modes of operation:
-- AUTH_WITHOUT_FORM
-- AUTH_WITH_FORM
-
-As the name suggests, the first type allows authentication implicitly for the user, the second type, on the contrary, explicitly.
-
-The init and wakeUp methods should be called as early as possible
-
-When using the first option (AUTH_WITHOUT_FORM)
-
-
-
+```
+// для AUTH_WITHOUT_FORM
 override fun onResume() {
     super.onResume()
     Chat.wakeUp(getVisitor(this))
 }
 
-override fun onStop() {
-    super.onStop()
-    Chat.destroy()
-}
-```
-
-When using the second option (AUTH_WITH_FORM)
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-        
-    Chat.init(
-    	this,
-	AuthType.AUTH_WITH_FORM,
-	getString(R.string.urlSocketHost),
-	getString(R.string.urlSocketNameSpace)
-    )      
-}
-
+// для AUTH_WITH_FORM
 override fun onResume() {
     super.onResume()
     Chat.wakeUp(null)
 }
 
+// как для AUTH_WITHOUT_FORM, так и для AUTH_WITH_FORM
 override fun onStop() {
     super.onStop()
     Chat.destroy()
 }
 ```
 
-The code to add to the fragment with the ChatView (for all types)
-```kotlin
+#### Шаг 5.
+
+Необходимо оповестить ChatView о том, что приложение находится в определенном состоянии (onViewCreated, onResume).
+
+```
 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    chat_view.onCreate(this)      
+    chatView.onCreate(this)      
 }
 
 override fun onResume() {
     super.onResume()
-    chat_view.onResume(this)
+    chatView.onResume(this)
 }
 ```
 
