@@ -1,9 +1,9 @@
 package com.crafttalk.chat.presentation
 
-import com.crafttalk.chat.utils.R_PERMISSIONS
+import com.crafttalk.chat.utils.Permission
 
 interface ChatPermissionListener {
-    fun requestedPermissions(permissions: Array<R_PERMISSIONS>, message: Array<String>)
+    fun requestedPermissions(permissions: Array<Permission>, message: Array<String>)
 }
 
 interface ChatInternetConnectionListener {

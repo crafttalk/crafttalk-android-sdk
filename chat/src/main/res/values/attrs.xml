@@ -32,7 +32,7 @@
         <attr name="size_server_action" format="dimension"/>
         <attr name="size_time_mark" format="dimension"/>
         <attr name="size_warning" format="dimension"/>
-        <attr name="size_company" format="dimension"/>
+        <attr name="size_info" format="dimension"/>
 
         <attr name="company_name" format="string"/>
         <attr name="show_company_name" format="boolean"/>

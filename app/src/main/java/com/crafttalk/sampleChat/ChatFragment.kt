@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.presentation.ChatPermissionListener
-import com.crafttalk.chat.utils.R_PERMISSIONS
+import com.crafttalk.chat.utils.Permission
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_chat.*
 
@@ -15,7 +15,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 
         chat_view.onCreate(this)
         chat_view.setOnPermissionListener(object : ChatPermissionListener {
-            override fun requestedPermissions(permissions: Array<R_PERMISSIONS>, messages: Array<String>) {
+            override fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>) {
                 permissions.forEachIndexed { index, permission ->
                     showWarning(messages[index])
                 }

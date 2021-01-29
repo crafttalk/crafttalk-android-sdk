@@ -29,7 +29,7 @@ import com.crafttalk.chat.presentation.helper.permission.PermissionHelper
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
-import com.crafttalk.chat.utils.R_PERMISSIONS
+import com.crafttalk.chat.utils.Permission
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
@@ -53,7 +53,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         private fun showWarning(warningText: String) {
             Snackbar.make(chat_place, warningText, Snackbar.LENGTH_LONG).show()
         }
-        override fun requestedPermissions(permissions: Array<R_PERMISSIONS>, message: Array<String>) {
+        override fun requestedPermissions(permissions: Array<Permission>, message: Array<String>) {
             permissions.forEachIndexed { index, permission ->
                 showWarning(message[index])
             }
@@ -287,7 +287,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     },
                     {
                         permissionListener.requestedPermissions(
-                            arrayOf(R_PERMISSIONS.STORAGE),
+                            arrayOf(Permission.STORAGE),
                             arrayOf(context.getString(R.string.requested_permission_storage))
                         )
                     },
@@ -306,7 +306,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     },
                     {
                         permissionListener.requestedPermissions(
-                            arrayOf(R_PERMISSIONS.STORAGE),
+                            arrayOf(Permission.STORAGE),
                             arrayOf(context.getString(R.string.requested_permission_storage))
                         )
                     },
@@ -320,7 +320,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     },
                     {
                         permissionListener.requestedPermissions(
-                            arrayOf(R_PERMISSIONS.CAMERA),
+                            arrayOf(Permission.CAMERA),
                             arrayOf(context.getString(R.string.requested_permission_camera))
                         )
                     },

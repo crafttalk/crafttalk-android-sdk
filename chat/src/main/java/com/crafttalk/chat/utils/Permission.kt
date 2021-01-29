@@ -1,6 +1,6 @@
 package com.crafttalk.chat.utils
 
-enum class R_PERMISSIONS {
+enum class Permission {
     CAMERA,
     STORAGE
 }
