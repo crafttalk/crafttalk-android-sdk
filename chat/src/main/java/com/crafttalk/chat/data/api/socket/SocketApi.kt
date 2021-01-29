@@ -1,7 +1,6 @@
 package com.crafttalk.chat.data.api.socket
 
 import android.util.Log
-import com.crafttalk.chat.data.helper.converters.file.convertForFileAccess
 import com.crafttalk.chat.data.helper.converters.text.convertFromHtmlToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -300,7 +299,7 @@ class SocketApi constructor(
 
     fun sync(timestamp: Long) {
         //dao.getLastTime()
-        socket!!.emit("history-messages-requested", timestamp)
+        socket!!.emit("history-messages-requested", timestamp, visitor.token)
     }
 
 
@@ -322,7 +321,6 @@ class SocketApi constructor(
         arrayMessages.forEach { messageFromHistory ->
             val list = arrayListOf<Tag>()
             val message = messageFromHistory.message?.convertFromHtmlToNormalString(list)
-            val attachmentUrl = messageFromHistory.attachmentUrl?.convertForFileAccess(visitor.token)
 
             when (messageFromHistory.messageType) {
                 MessageType.VISITOR_MESSAGE.valueType -> {
@@ -345,7 +343,7 @@ class SocketApi constructor(
                             message = message,
                             spanStructureList = list,
                             actions = messageFromHistory.actions,
-                            attachmentUrl = attachmentUrl,
+                            attachmentUrl = messageFromHistory.attachmentUrl,
                             attachmentType = messageFromHistory.attachmentType,
                             attachmentName = messageFromHistory.attachmentName,
                             operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
