@@ -29,7 +29,3 @@ fun convertToFile(bitmap: Bitmap, context: Context, fileName: String): File {
     }
     return file
 }
-
-fun String?.convertForFileAccess(token: String): String? {
-    return this?.replace("undefined", token)
-}
