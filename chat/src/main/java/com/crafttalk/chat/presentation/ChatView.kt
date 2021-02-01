@@ -64,6 +64,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         this.permissionListener = listener
     }
 
+    fun setOnInternetConnectionListener(listener: ChatInternetConnectionListener) {
+        viewModel.clientInternetConnectionListener = listener
+    }
+
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         inflater.inflate(R.layout.view_host, this, true)
 
@@ -95,6 +99,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         // set company name
         company_name.text = chatAttr.companyName
         company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
+        warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
+        upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
 
         chatAttr.progressIndeterminateDrawable?.let {
             loading.indeterminateDrawable = it
@@ -153,7 +159,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     chat_place.visibility = View.GONE
                     auth_form.visibility = View.GONE
                     warning.visibility = View.GONE
-                    warningConnection.visibility = View.INVISIBLE
+                    if (ChatAttr.getInstance().showInternetConnectionState) {
+                        warningConnection.visibility = View.INVISIBLE
+                    }
                     stopProgressBar(warning_loading)
                     startProgressBar(loading)
                 }
@@ -176,7 +184,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 DisplayableUIObject.WARNING -> {
                     chat_place.visibility = View.GONE
                     auth_form.visibility = View.GONE
-                    warningConnection.visibility = View.INVISIBLE
+                    if (ChatAttr.getInstance().showInternetConnectionState) {
+                        warningConnection.visibility = View.INVISIBLE
+                    }
                     warning.visibility = View.VISIBLE
                     warning_refresh.visibility = View.VISIBLE
                     stopProgressBar(loading)
@@ -194,11 +204,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             Log.d("CHAT_VIEW", "GET NEW EVENT")
             when (it) {
                 InternetConnectionState.NO_INTERNET -> {
-                    warningConnection.visibility = View.VISIBLE
+                    if (ChatAttr.getInstance().showInternetConnectionState) {
+                        warningConnection.visibility = View.VISIBLE
+                    }
                     sign_in.isClickable = true
                 }
                 InternetConnectionState.HAS_INTERNET, InternetConnectionState.RECONNECT -> {
-                    warningConnection.visibility = View.INVISIBLE
+                    if (ChatAttr.getInstance().showInternetConnectionState) {
+                        warningConnection.visibility = View.INVISIBLE
+                    }
                 }
             }
         })

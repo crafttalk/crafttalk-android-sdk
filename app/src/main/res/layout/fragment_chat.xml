@@ -3,7 +3,33 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@color/color_main" />
+
+            <TextView
+                android:id="@+id/status_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/internet_connection_warning"
+                android:paddingStart="16dp"
+                android:visibility="gone" />
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.crafttalk.chat.presentation.ChatView
         android:id="@+id/chat_view"
@@ -14,6 +40,8 @@
         app:color_text_server_action="@color/color_main"
         app:color_text_user_message="#fff"
         app:progressIndeterminateDrawable="@drawable/spinner"
+        app:show_internet_connection_state="false"
+        app:show_upper_limiter="false"
         app:auth="AUTH_WITHOUT_FORM"
         app:timeDelayed="1000"
         app:urlSocketHost="@string/urlSocketHost"

@@ -3,6 +3,7 @@ package com.crafttalk.sampleChat
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.chat.utils.Permission
 import com.google.android.material.snackbar.Snackbar
@@ -20,6 +21,12 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                     showWarning(messages[index])
                 }
             }
+        })
+        chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
+            override fun connect() { status_connection.visibility = View.GONE }
+            override fun failConnect() { status_connection.visibility = View.VISIBLE }
+            override fun lossConnection() { status_connection.visibility = View.VISIBLE }
+            override fun reconnect() { status_connection.visibility = View.GONE }
         })
     }
 

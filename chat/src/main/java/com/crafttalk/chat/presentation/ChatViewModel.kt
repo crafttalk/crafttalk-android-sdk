@@ -45,12 +45,24 @@ class ChatViewModel
 
     val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
     val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
-
+    var clientInternetConnectionListener: ChatInternetConnectionListener? = null
     private val internetConnectionListener = object : ChatInternetConnectionListener {
-        override fun connect() { internetConnectionState.postValue(InternetConnectionState.HAS_INTERNET) }
-        override fun failConnect() { internetConnectionState.postValue(InternetConnectionState.NO_INTERNET) }
-        override fun lossConnection() { internetConnectionState.postValue(InternetConnectionState.NO_INTERNET) }
-        override fun reconnect() { internetConnectionState.postValue(InternetConnectionState.RECONNECT) }
+        override fun connect() {
+            launchUI { clientInternetConnectionListener?.connect() }
+            internetConnectionState.postValue(InternetConnectionState.HAS_INTERNET)
+        }
+        override fun failConnect() {
+            launchUI { clientInternetConnectionListener?.failConnect() }
+            internetConnectionState.postValue(InternetConnectionState.NO_INTERNET)
+        }
+        override fun lossConnection() {
+            launchUI { clientInternetConnectionListener?.lossConnection() }
+            internetConnectionState.postValue(InternetConnectionState.NO_INTERNET)
+        }
+        override fun reconnect() {
+            launchUI { clientInternetConnectionListener?.reconnect() }
+            internetConnectionState.postValue(InternetConnectionState.RECONNECT)
+        }
     }
     private val chatEventListener = object : ChatEventListener {
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }

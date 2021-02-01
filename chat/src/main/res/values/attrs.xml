@@ -36,6 +36,8 @@
 
         <attr name="company_name" format="string"/>
         <attr name="show_company_name" format="boolean"/>
+        <attr name="show_internet_connection_state" format="boolean"/>
+        <attr name="show_upper_limiter" format="boolean"/>
         
     </declare-styleable>
 
