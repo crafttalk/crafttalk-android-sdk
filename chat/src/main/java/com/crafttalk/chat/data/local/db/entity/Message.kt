@@ -11,6 +11,7 @@ import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 @Entity(tableName = "messages")
 data class Message(
+    val uuid: String,
     var id: String,
     @ColumnInfo(name = "is_reply")
     val isReply: Boolean,
@@ -42,6 +43,7 @@ data class Message(
     override fun equals(other: Any?): Boolean {
         return when (other) {
             is Message -> {
+                        this.uuid == other.uuid &&
                         this.isReply == other.isReply &&
                         this.parentMsgId == other.parentMsgId &&
                         this.message == other.message &&
@@ -57,11 +59,12 @@ data class Message(
     }
 
     companion object {
-        fun map(messageSocket: MessageSocket): Message {
+        fun map(uuid: String, messageSocket: MessageSocket): Message {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertFromHtmlToNormalString(list)
 
             return Message(
+                uuid = uuid,
                 id = messageSocket.id,
                 messageType = messageSocket.messageType,
                 isReply = messageSocket.isReply,
@@ -81,5 +84,3 @@ data class Message(
     }
 
 }
-
-

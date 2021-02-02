@@ -4,7 +4,7 @@ import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
 
 interface IMessageRepository {
-    fun getMessages(): DataSource.Factory<Int, MessageDB>
+    fun getMessages(uuid: String): DataSource.Factory<Int, MessageDB>
     suspend fun sendMessages(message: String)
     suspend fun syncMessages(timestamp: Long)
     suspend fun selectAction(actionId: String)

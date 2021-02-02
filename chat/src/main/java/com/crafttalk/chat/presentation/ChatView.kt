@@ -15,7 +15,9 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.paging.PagedList
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -27,6 +29,7 @@ import com.crafttalk.chat.presentation.feature.file_viewer.Option
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
 import com.crafttalk.chat.presentation.helper.permission.PermissionHelper
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
+import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.Permission
@@ -41,6 +44,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     @Inject
     lateinit var viewModel: ChatViewModel
+    private var liveDataMessages: LiveData<PagedList<MessageModel>>? = null
     private lateinit var adapterListMessages: AdapterListMessages
     private val fileViewerHelper = FileViewerHelper(PermissionHelper())
     private lateinit var parentFragment: Fragment
@@ -166,13 +170,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     startProgressBar(loading)
                 }
                 DisplayableUIObject.CHAT -> {
-                    chat_place.post {
-                        auth_form.visibility = View.GONE
-                        warning.visibility = View.GONE
-                        chat_place.visibility = View.VISIBLE
-                        stopProgressBar(loading)
-                        stopProgressBar(warning_loading)
-                    }
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.GONE
                 }
                 DisplayableUIObject.FORM_AUTH -> {
                     chat_place.visibility = View.GONE
@@ -216,10 +215,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             }
         })
-        viewModel.messages.observe(lifecycleOwner, Observer {
-            it ?: return@Observer
-            adapterListMessages.submitList(it)
-            list_with_message.smoothScrollToPosition(0)
+        viewModel.uploadMessagesForUser.observe(lifecycleOwner, Observer { liveDataPagedList ->
+            liveDataPagedList ?: return@Observer
+            liveDataMessages?.removeObservers(lifecycleOwner)
+            liveDataMessages = liveDataPagedList
+            liveDataMessages?.observe(lifecycleOwner, Observer { pagedList ->
+                pagedList ?: return@Observer
+
+                chat_place.visibility = View.VISIBLE
+                stopProgressBar(loading)
+                stopProgressBar(warning_loading)
+
+                adapterListMessages.submitList(pagedList)
+                list_with_message.smoothScrollToPosition(0)
+            })
         })
     }
 

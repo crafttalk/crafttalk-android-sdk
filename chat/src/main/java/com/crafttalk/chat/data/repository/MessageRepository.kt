@@ -1,8 +1,8 @@
 package com.crafttalk.chat.data.repository
 
 import androidx.paging.DataSource
-import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.api.socket.SocketApi
+import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
 import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
@@ -13,8 +13,8 @@ class MessageRepository
     private val socketApi: SocketApi
 ) : IMessageRepository {
 
-    override fun getMessages(): DataSource.Factory<Int, MessageDB> {
-        return dao.getMessages()
+    override fun getMessages(uuid: String): DataSource.Factory<Int, MessageDB> {
+        return dao.getMessages(uuid)
     }
 
     override suspend fun sendMessages(message: String) {

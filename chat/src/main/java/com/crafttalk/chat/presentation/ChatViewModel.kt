@@ -36,12 +36,16 @@ class ChatViewModel
     private val context: Context
 ) : BaseViewModel() {
 
-    val messages: LiveData<PagedList<MessageModel>> by lazy {
+    val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
+    private fun uploadMessages() {
+        val dataSource = chatMessageInteractor.getAllMessages()
+            ?.map<MessageModel> { (messageModelMapper(it, context)) }
+            ?.mapByPage { groupPageByDate(it) } ?: return
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder<Int, MessageModel>(
-            chatMessageInteractor.getAllMessages().map<MessageModel> { (messageModelMapper(it, context)) }.mapByPage { groupPageByDate(it) },
+            dataSource,
             PAGE_SIZE
         )
-        pagedListBuilder.build()
+        uploadMessagesForUser.postValue(pagedListBuilder.build())
     }
 
     val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
@@ -76,7 +80,10 @@ class ChatViewModel
 
         Handler().postDelayed({
             authChatInteractor.logIn(
-                successAuthUi = { displayableUIObject.postValue(DisplayableUIObject.CHAT) },
+                successAuthUi = {
+                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
+                    uploadMessages()
+                },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
                 chatEventListener = chatEventListener
@@ -93,7 +100,10 @@ class ChatViewModel
         Handler().postDelayed({
             authChatInteractor.logIn(
                 visitor = Visitor.map(args),
-                successAuthUi = { displayableUIObject.postValue(DisplayableUIObject.CHAT) },
+                successAuthUi = {
+                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
+                    uploadMessages()
+                },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
             )
@@ -103,7 +113,10 @@ class ChatViewModel
     fun reload() {
         Handler().postDelayed({
             authChatInteractor.logIn(
-                successAuthUi = { displayableUIObject.postValue(DisplayableUIObject.CHAT) },
+                successAuthUi = {
+                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
+                    uploadMessages()
+                },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
             )

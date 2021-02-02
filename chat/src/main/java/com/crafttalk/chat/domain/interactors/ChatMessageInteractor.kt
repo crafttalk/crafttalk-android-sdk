@@ -7,10 +7,19 @@ import javax.inject.Inject
 
 class ChatMessageInteractor
 @Inject constructor(
-    private val messageRepository: IMessageRepository
+    private val messageRepository: IMessageRepository,
+    private val visitorInteractor: VisitorInteractor
 ) {
+    private var visitorUid: String? = null
 
-    fun getAllMessages(): DataSource.Factory<Int, Message> = messageRepository.getMessages()
+    fun getAllMessages(): DataSource.Factory<Int, Message>? {
+        val currentVisitorUid = visitorInteractor.getVisitor()?.uuid
+        if (visitorUid == currentVisitorUid) return null
+        visitorUid = currentVisitorUid
+        return visitorUid?.let { uuid ->
+            messageRepository.getMessages(uuid)
+        }
+    }
 
     suspend fun sendMessage(message: String, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
         try {

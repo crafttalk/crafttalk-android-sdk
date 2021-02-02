@@ -306,11 +306,11 @@ class SocketApi constructor(
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                dao.insertMessage(MessageDB.map(messageSocket))
+                dao.insertMessage(MessageDB.map(visitor.uuid, messageSocket))
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
-                    dao.updateMessage(parentId, messageSocket.messageType)
+                    dao.updateMessage(visitor.uuid, parentId, messageSocket.messageType)
                 }
             }
         }
@@ -326,15 +326,16 @@ class SocketApi constructor(
                 MessageType.VISITOR_MESSAGE.valueType -> {
                     if (messageFromHistory.isReply) {
                         // operator
-                        val messagesFromDb = dao.getMessageById(messageFromHistory.id)
+                        val messagesFromDb = dao.getMessageById(visitor.uuid, messageFromHistory.id)
                         if (messagesFromDb == null) {
                             updateDataInDatabase(messageFromHistory)
                         }
                     }
                     else {
                         // user
-                        val messagesFromDb = dao.getMessageByContent(message, messageFromHistory.attachmentUrl)
+                        val messagesFromDb = dao.getMessageByContent(visitor.uuid, message, messageFromHistory.attachmentUrl)
                         val messageCheckObj = MessageDB(
+                            uuid = visitor.uuid,
                             id = messageFromHistory.id,
                             messageType = messageFromHistory.messageType,
                             isReply = messageFromHistory.isReply,
@@ -353,7 +354,6 @@ class SocketApi constructor(
                         if (messageCheckObj !in messagesFromDb) {
                             updateDataInDatabase(messageFromHistory.apply {
                                 this.message = message
-                                this.attachmentUrl = attachmentUrl
                             })
                         }
                     }
