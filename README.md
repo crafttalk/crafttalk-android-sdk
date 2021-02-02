@@ -1,103 +1,227 @@
-**Как начать работу с чат-ботом CraftTalk для Android:**
+# ChatView
 
-**Поддерживаемая минимальная версия**
+[![](https://jitpack.io/v/crafttalk/crafttalk-android-sdk.svg)](https://jitpack.io/#crafttalk/crafttalk-android-sdk)
 
-minSdkVersion - 21 (Android 5.0)
+## Dependency
 
-**Шаг 1. Установление зависимости**
+Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
 
-SDK вынесена в отдельный модуль. На данный момент его необходимо затягивать в проект "ручками".
-	
-**Шаг 2. Использование**
-1. Добавьте чат в layout:
-
-	```
-	<com.crafttalk.chat.presentation.ChatView
-  		android:id="@+id/chat_view"
-  		android:layout_height="match_parent"
-   		android:layout_width="match_parent"
-   		app:color_title="@color/color_main"
-   		app:title_text="Sample chat"
-   		app:color_main="@color/color_main"
-   		app:color_bg_user_message="@color/color_main"
-   		app:color_text_server_action="@color/color_main"
-   		app:auth_with_hash="true"
-   		app:auth_with_form="true" />
-	
-2. Настройка во Fragment:
-	
-	Если используется атрибут auth_with_form=”true”, то в chat_view.onCreate не передается Visitor.
-
-	```
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-	    super.onViewCreated(view, savedInstanceState)
-	    chat_view.onCreate(
-	        this,
-	        object:
-	            ChatView.EventListener {
-	                override fun onErrorAuth() {}
-	                override fun onAuth() {}
-	            },
-	        Visitor(
-	            "test_uuid",
-	            "Ivan",
-	            "Ivanov",
-	            "ivan@mail.ru",
-	            "89119864972",
-	            "contract_test",
-	            "17.09.1982"
-	        )
-	    )
+```gradle
+allprojects {
+	repositories {
+        maven { url "https://jitpack.io" }
     }
+}
+```
+
+Then, add the library to your module `build.gradle`
+```gradle
+dependencies {
+    implementation 'com.github.crafttalk:crafttalk-android-sdk:latest.release.version'
+}
+```
+
+## Usage
+В [примере](https://github.com/crafttalk/crafttalk-android-sdk/tree/master/app) продемонстрировано, как нужно использовать библиотеку. 
+
+#### Шаг 1.
+
+В AndroidManifest необходимо добавить следующие permissions:
+```
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.CAMERA"/>
+```
+
+При использовании пушей в AndroidManifest необходимо добавить ChatPushService и дефолтный channel id
+
+```
+<application
+    ...>
+    <meta-data
+    	android:name="com.google.firebase.messaging.default_notification_channel_id"
+	android:value="@string/default_notification_channel_id" />
+    ...
+    <service
+        android:name="com.crafttalk.chat.data.push.ChatPushService"
+	android:exported="false">
+        <intent-filter>
+	    <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
+</application> 
+```
+
+#### Шаг 2.
+
+В xml файл, где будет располагаться чат, необходимо добавить ChatView c 5 обязательными атрибутами (auth, urlSocketHost, urlSocketNameSpace, urlUploadHost, urlUploadNameSpace)
+
+```
+<com.crafttalk.chat.presentation.ChatView
+        android:id="@+id/chat_view"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"       
+        app:auth="AUTH_WITHOUT_FORM"
+        app:urlSocketHost="@string/urlSocketHost"
+        app:urlSocketNameSpace="@string/urlSocketNameSpace"
+        app:urlUploadHost="@string/urlUploadHost"
+        app:urlUploadNameSpace="@string/urlUploadNameSpace"/>
+```
 
 
-	override fun onResume() {
-	    super.onResume()
-	    chat_view.onResume(this)
-    } 
+#### Шаг 3.
+
+Необходимо инициализировать библиотеку, сделать это нужно как можно раньше (до любого другого вызова из библиотеки).
+
+```
+Chat.init(
+    this,
+    AuthType.AUTH_WITHOUT_FORM,
+    getString(R.string.urlSocketHost),
+    getString(R.string.urlSocketNameSpace)
+) 
+```
+
+#### Шаг 4.
+
+##### Аутентификация пользователя
+
+Аутентификация может осуществляться двумя способами: явно (AUTH_WITH_FORM) и неявно (AUTH_WITHOUT_FORM) для пользователя. Отличие заключается в том, что при AUTH_WITH_FORM пользователю необходимо самому ввести данные о себе через форму, а при AUTH_WITHOUT_FORM за формирование объекта Visitor, необходимого для аутентификации, отвечает тот, кто использует библиотеку.
+
+##### Push
+
+Если аутентификация была успешной, то производится подписка пользователя на push уведомления, если тот ранее не был подписан. В противном случае пользователя отписывают от получение push уведомлений.
+
+##### Сокет
+
+Создания и уничтожения сокета, одна из самых важных шагов при интеграции ChatView.
+
+Создать сокет можно с помощью вызова метода wakeUp, при повторных вызовах сокет пересоздаваться не будет. При вызове метода wakeUp происходит аутентификация пользователя.
+
+Уничтожить сокет можно с помощью вызова метода destroy. Пока сокет 'живет' (между вызовами wakeUp и destroy) уведомления приходить не будут, так как пользователь находится в приложении и в этом нет смысла. Когда сокет 'мертв' (между вызовами destroy и wakeUp) уведомления приходить будут, так как пользователь закрывает приложение.
+
+```
+// для AUTH_WITHOUT_FORM
+override fun onResume() {
+    super.onResume()
+    Chat.wakeUp(getVisitor(this))
+}
+
+// для AUTH_WITH_FORM
+override fun onResume() {
+    super.onResume()
+    Chat.wakeUp(null)
+}
+
+// как для AUTH_WITHOUT_FORM, так и для AUTH_WITH_FORM
+override fun onStop() {
+    super.onStop()
+    Chat.destroy()
+}
+```
+
+#### Шаг 5.
+
+Необходимо оповестить ChatView о том, что приложение находится в определенном состоянии (onViewCreated, onResume).
+
+```
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    chatView.onCreate(this)      
+}
+
+override fun onResume() {
+    super.onResume()
+    chatView.onResume(this)
+}
+```
+
+## Кастомизация
+
+Настройка ChatView осуществляется в файле xml.
+Для кастомизации используются атрибуты. Атрибуты делятся на две группы. Одни задают поведение чата, другие определяют визуальную составляющую.
 
 
-**Пример приложения**
-
-Пример находится в пакете com.crafttalk.sampleChat
-
-
-**Настройка внешнего вида чата**
-
-Настройка внешнего вида осуществляется в ChatView в layout через атрибуты.
-
-- `color_main` = задает общий цвет для чата
-- `color_bg_user_message` - задает цвет заднего фона пользовательского сообщения
-- `color_bg_server_message` - задает цвет заднего фона сообщения бота/оператора
-- `color_text_user_message` - задает цвет пользовательского сообщения
-- `color_text_server_message` - задает цвет сообщения бота/оператора
-- `color_text_server_action` - задает цвет кнопок-события бота/оператора
-- `color_text_warning` - задает цвет сообщения о дисконекте
+Атрибуты, настраивающие поведение:
+- auth - может принимать AUTH_WITH_FORM или AUTH_WITHOUT_FORM. Этот атрибут определяет, как будет проходить аутентификация для пользователя
+- timeDelayed - выставляет минимальное время отображения троббера
+- urlSocketNameSpace - указывает, по какому nameSpace подключать сокет
+- urlSocketHost - указывает, по какому host подключать сокет
+- urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
+- urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
 
 
-**Настройка поведения чата**
+Атрибуты, настраивающие внешний вид:
 
-Настройка поведения чата осуществляется в ChatView в layout через атрибуты.
+Цвета:
+- color_main - 
+- color_bg_user_message - устанавливает цвет фона пользовательского сообщения
+- color_bg_server_message - устанавливает цвет фона сообщения бота/оператора
+- color_text_user_message - устанавливает цвет текста пользовательского сообщения
+- color_text_server_message - устанавливает цвет текста сообщения бота/оператора
+- color_text_server_action - устанавливает цвет текста подсказки бота
+- color_time_mark - устанавливает цвет текста под сообщением (дата + автор + статус сообщения)
+- color_text_warning - устанавливает цвет текста, сообщающего о состоянии соединения
+- color_company - устанавливает цвет текста названия компании (имеет смысл, есть атрибут show_company_name выставлен в true)
 
-- `auth_with_form` - Если установлено значение true, тогда используется форма аутентификации, если информации о пользователе нет в локальных данных приложения.
-                   Если установлено значение false, тогда аутентификация происходит не явно для пользователя. Однако в таком случае необходимо передать объект Visitor в методе onCreate.
-- `auth_with_hash` - Если установлено значение true, `auth_with_form = false` и hash указывается в объекте Visitor(который передается через метод onCreate), тогда при аутентификации пользователя используется hash-функция, в противном случае аутентификация происходит без hash.
+Ресурсы:
+- progressIndeterminateDrawable - устанавливает цвет всех тробберов в чате
+        
+Размеры:
+- size_user_message - устанавливает размер текста пользовательского сообщения
+- size_server_message - устанавливает размер текста сообщения бота/оператора
+- size_server_action - устанавливает размер текста подсказки бота
+- size_time_mark - устанавливает размер текста под сообщением (дата + автор + статус сообщения)
+- size_warning - устанавливает размер текста, сообщающего о состоянии соединения
+- size_info - устанавливает размер текста информационного сообщения (название компании/сообщение, сообщающие о том, что оператор набирает сообщение)
+        
+Элементы UI:
+- company_name - указывает название компании (имеет смысл, есть атрибут show_company_name выставлен в true)
+- show_company_name - указывает о необходимости отобразить название компании
 
+## Listeners
 
-**Локальное хранение данных**
+Имеется набор listeners, позволяющих более гибко работать с ChatView.
 
-Для хранения сообщений чата используется Room, данные хранятся локально на устройстве пользователя. Если аутентификация пользователя вынесена за пределы SDK(`auth_with_form`=false), то данные о пользователе не сохраняются нигде. В обратном случае(`auth_with_form`=true) - для хранения информации о пользователе используются EncryptedSharedPreferences.
+#### ChatMessageListener
 
+Этот listener устанавливается через объект Chat с помощью метода setOnChatMessageListener. При уходе с экрана чата необходимо оповещать пользователя о том, что появилось новое сообщение в чате. Соответственно для этих нужд можно использовать ChatMessageListener. Необходимо переопределить метод getNewMessages, он возвращает количество новых сообщений при условии, что пользователь ушел с экрана чата, но при этом все еще находится в приложении.
 
-**Аутентификация**
+```
+Chat.setOnChatMessageListener(object : ChatMessageListener {
+    override fun getNewMessages(countMessages: Int) {
+    	Log.d("TEST", "Сount new messages = ${countMessages};")
+    }
+})
+```
 
-Поддерживается аутентификация только одного пользователя.
+#### ChatPermissionListener
 
-Значение соли должно храниться на клиентском сервере, там же происходит генерация hash. Это необходимо для обеспечения безопасности. Sdk не хранит соль и не отвечает за создание hash для аутентификации пользователя. Если `auth_with_form` имеет значение true, то аутентификация пользователя происходит без хэша. В противном случае аутентификация по хэшу определяется этим параметром - `auth_with_hash`.
+Этот listener устанавливается через ChatView с помощью метода setOnPermissionListener. При работе с чатом пользователь может отправить файлы. Для доступа к хранилищу или камере необходимо запросить соответствующее разрешение, если ранее такой разрешение не было получено, то необходимо его запросить в чате. В самом чате реализован запрос необходимого разрешения, однако для оповещения пользователя используется Snackbar. Если Snackbar не удовлетворяет дизайну, можно установить свое решение с помощью ChatPermissionListener.
 
-**Permission**
+```
+chatView.setOnPermissionListener(object : ChatPermissionListener {
+    override fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>) {
+    	permissions.forEachIndexed { index, permission ->
+	    showWarning(messages[index])
+	}
+    }
+})
+```
 
-Для работы с файлами необходимо приложению-хосту установить следующие разрешения и запросить соответствующие:
+License
+--------
 
-- READ_EXTERNAL_STORAGE
-- CAMERA
+    Copyright 2018 Chris Banes
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
