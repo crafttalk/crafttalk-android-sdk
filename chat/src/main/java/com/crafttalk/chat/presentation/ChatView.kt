@@ -87,8 +87,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         sign_in.setBackgroundDrawable(chatAttr.drawableBackgroundSignInButton)
 
         warningConnection.setTextColor(chatAttr.colorTextInternetConnectionWarning)
-        state_action_operator.setTextColor(chatAttr.colorTextCompanyName)
-        company_name.setTextColor(chatAttr.colorTextCompanyName)
+        state_action_operator.setTextColor(chatAttr.colorTextInfo)
+        company_name.setTextColor(chatAttr.colorTextInfo)
         // set dimension
         warningConnection.textSize = chatAttr.sizeTextInternetConnectionWarning
         state_action_operator.textSize = chatAttr.sizeTextInfoText

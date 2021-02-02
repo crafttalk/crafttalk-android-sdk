@@ -28,6 +28,7 @@ class HolderOperatorUnionMessage(
     private val time: TextView = view.findViewById(R.id.time)
     private val fileIcon: ImageView = view.findViewById(R.id.server_file)
     private val media: ImageView = view.findViewById(R.id.server_media)
+    private val date: TextView = view.findViewById(R.id.date)
 
     private var fileUrl: String? = null
     private var fileType: TypeFile? = null
@@ -54,6 +55,7 @@ class HolderOperatorUnionMessage(
     }
 
     override fun bindTo(item: UnionMessageItem) {
+        date.setDate(item)
         time.setTimeMessageDefault(item, true)
         // set content
         message.movementMethod = LinkMovementMethod.getInstance()

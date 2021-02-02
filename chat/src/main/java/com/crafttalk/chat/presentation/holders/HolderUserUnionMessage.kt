@@ -23,6 +23,7 @@ class HolderUserUnionMessage(
     private val time: TextView = view.findViewById(R.id.time)
     private val fileIcon: ImageView = view.findViewById(R.id.user_file)
     private val media: ImageView = view.findViewById(R.id.user_media)
+    private val date: TextView = view.findViewById(R.id.date)
 
     private var fileUrl: String? = null
     private var fileType: TypeFile? = null
@@ -49,6 +50,7 @@ class HolderUserUnionMessage(
     }
 
     override fun bindTo(item: UnionMessageItem) {
+        date.setDate(item)
         time.setTimeMessageWithCheck(item)
         // set content
         message.text = item.message

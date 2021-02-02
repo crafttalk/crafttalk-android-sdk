@@ -6,6 +6,7 @@ import android.widget.TextView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
 import com.crafttalk.chat.presentation.helper.extensions.loadMediaFile
+import com.crafttalk.chat.presentation.helper.extensions.setDate
 import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageDefault
 import com.crafttalk.chat.presentation.helper.extensions.settingMediaFile
 import com.crafttalk.chat.presentation.model.ImageMessageItem
@@ -18,6 +19,7 @@ class HolderOperatorImageMessage(
     private val img: ImageView = view.findViewById(R.id.server_image)
     private val time: TextView = view.findViewById(R.id.time)
     private var imageUrl: String? = null
+    private val date: TextView = view.findViewById(R.id.date)
 
     init {
         view.setOnClickListener(this)
@@ -30,6 +32,7 @@ class HolderOperatorImageMessage(
     }
 
     override fun bindTo(item: ImageMessageItem) {
+        date.setDate(item)
         img.settingMediaFile(item.image, imageUrl, time)
         imageUrl = item.image.url
         img.loadMediaFile(item.idKey, item.image, updateData)

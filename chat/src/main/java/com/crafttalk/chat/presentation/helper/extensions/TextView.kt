@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.DisplayMetrics
+import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.crafttalk.chat.R
@@ -72,4 +73,20 @@ fun TextView.setTimeMessageDefault(message: MessageModel, hasAuthorIcon: Boolean
     setTextColor(ChatAttr.getInstance().colorTextTimeMark)
     // set dimension
     textSize = ChatAttr.getInstance().sizeTextTimeMark
+}
+
+@SuppressLint("SimpleDateFormat")
+fun TextView.setDate(message: MessageModel) {
+    if (message.isFirstMessageInDay) {
+        // set content
+        val formatTime = SimpleDateFormat("dd.MM.yyyy")
+        text = formatTime.format(message.timestamp)
+        // set color
+        setTextColor(ChatAttr.getInstance().colorTextDateGrouping)
+        // set dimension
+        textSize = ChatAttr.getInstance().sizeTextDateGrouping
+        visibility = View.VISIBLE
+    } else {
+        visibility = View.GONE
+    }
 }

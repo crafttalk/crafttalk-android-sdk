@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
+import com.crafttalk.chat.presentation.helper.extensions.setDate
 import com.crafttalk.chat.presentation.helper.extensions.setFileIcon
 import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageDefault
 import com.crafttalk.chat.presentation.model.FileMessageItem
@@ -16,6 +17,7 @@ class HolderOperatorFileMessage(
     private val fileIcon: ImageView = view.findViewById(R.id.server_file)
     private val time: TextView = view.findViewById(R.id.time)
     private var fileUrl: String? = null
+    private val date: TextView = view.findViewById(R.id.date)
 
     init {
         view.setOnClickListener(this)
@@ -28,6 +30,7 @@ class HolderOperatorFileMessage(
     }
 
     override fun bindTo(item: FileMessageItem) {
+        date.setDate(item)
         fileUrl = item.document.url
         fileIcon.setFileIcon()
         time.setTimeMessageDefault(item, true)

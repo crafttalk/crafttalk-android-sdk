@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
+import com.crafttalk.chat.presentation.helper.extensions.setDate
 import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageWithCheck
 import com.crafttalk.chat.presentation.model.TextMessageItem
 import com.crafttalk.chat.utils.ChatAttr
@@ -15,8 +16,10 @@ class HolderUserTextMessage(
 ) : BaseViewHolder<TextMessageItem>(view) {
     private val message: TextView = view.findViewById(R.id.user_message)
     private val time: TextView = view.findViewById(R.id.time)
+    private val date: TextView = view.findViewById(R.id.date)
 
     override fun bindTo(item: TextMessageItem) {
+        date.setDate(item)
         time.setTimeMessageWithCheck(item)
         // set content
         message.text = item.message

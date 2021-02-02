@@ -11,7 +11,8 @@ sealed class MessageModel(
     open val role: Role,
     open val timestamp: Long,
     open val authorName: String,
-    open val stateCheck: StateMessage
+    open val stateCheck: StateMessage,
+    var isFirstMessageInDay: Boolean = false
 ) : BaseItem() {
     override fun <T : BaseItem> isSame(item: T): Boolean {
         return item is MessageModel && item.id == id

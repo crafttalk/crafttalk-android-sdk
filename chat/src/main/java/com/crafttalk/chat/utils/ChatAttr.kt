@@ -34,20 +34,22 @@ private constructor(
 
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main))
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.default_color_text_warning))
-    val colorTextCompanyName = attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.default_color_company))
+    val colorTextInfo = attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.default_color_info))
     val colorTextUserMessage = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
     val colorTextOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_text_server_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
     val colorTextOperatorAction = attrArr.getColor(R.styleable.ChatView_color_text_server_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
     val colorTextTimeMark = attrArr.getColor(R.styleable.ChatView_color_time_mark, ContextCompat.getColor(context, R.color.default_color_time_mark))
+    val colorTextDateGrouping = attrArr.getColor(R.styleable.ChatView_color_text_date_grouping, ContextCompat.getColor(context, R.color.default_color_info))
 
     val progressIndeterminateDrawable = attrArr.getDrawable(R.styleable.ChatView_progressIndeterminateDrawable)
 
     val sizeTextInternetConnectionWarning = attrArr.getDimension(R.styleable.ChatView_size_warning, context.resources.getDimension(R.dimen.default_size_warning)) / scaleRatio
-    val sizeTextInfoText = attrArr.getDimension(R.styleable.ChatView_size_info, context.resources.getDimension(R.dimen.default_size_company)) / scaleRatio
+    val sizeTextInfoText = attrArr.getDimension(R.styleable.ChatView_size_info, context.resources.getDimension(R.dimen.default_size_info)) / scaleRatio
     val sizeTextUserMessage = attrArr.getDimension(R.styleable.ChatView_size_user_message, context.resources.getDimension(R.dimen.default_size_user_message)) / scaleRatio
     val sizeTextOperatorMessage = attrArr.getDimension(R.styleable.ChatView_size_server_message, context.resources.getDimension(R.dimen.default_size_server_message)) / scaleRatio
     val sizeTextOperatorAction = attrArr.getDimension(R.styleable.ChatView_size_server_action, context.resources.getDimension(R.dimen.default_size_server_action)) / scaleRatio
     val sizeTextTimeMark = attrArr.getDimension(R.styleable.ChatView_size_time_mark, context.resources.getDimension(R.dimen.default_size_time_mark)) / scaleRatio
+    val sizeTextDateGrouping = attrArr.getDimension(R.styleable.ChatView_size_text_date_grouping, context.resources.getDimension(R.dimen.default_size_info)) / scaleRatio
 
     val companyName = attrArr.getString(R.styleable.ChatView_company_name) ?: context.getString(R.string.chat_name_company)
     val showCompanyName = attrArr.getBoolean(R.styleable.ChatView_show_company_name, false)

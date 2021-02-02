@@ -9,6 +9,6 @@
     <dimen name="default_size_server_action">14sp</dimen>
     <dimen name="default_size_time_mark">12sp</dimen>
     <dimen name="default_size_warning">18sp</dimen>
-    <dimen name="default_size_company">12sp</dimen>
+    <dimen name="default_size_info">12sp</dimen>
 
 </resources>

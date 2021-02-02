@@ -24,6 +24,7 @@
         <attr name="color_time_mark" format="color"/>
         <attr name="color_text_warning" format="color"/>
         <attr name="color_company" format="color"/>
+        <attr name="color_text_date_grouping" format="color"/>
 
         <attr name="progressIndeterminateDrawable" format="reference"/>
 
@@ -33,6 +34,7 @@
         <attr name="size_time_mark" format="dimension"/>
         <attr name="size_warning" format="dimension"/>
         <attr name="size_info" format="dimension"/>
+        <attr name="size_text_date_grouping" format="dimension"/>
 
         <attr name="company_name" format="string"/>
         <attr name="show_company_name" format="boolean"/>

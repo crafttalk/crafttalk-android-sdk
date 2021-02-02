@@ -333,7 +333,7 @@ class SocketApi constructor(
                     }
                     else {
                         // user
-                        val messagesFromDb = dao.getMessageByContent(message, attachmentUrl)
+                        val messagesFromDb = dao.getMessageByContent(message, messageFromHistory.attachmentUrl)
                         val messageCheckObj = MessageDB(
                             id = messageFromHistory.id,
                             messageType = messageFromHistory.messageType,

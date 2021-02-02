@@ -21,6 +21,7 @@ import com.crafttalk.chat.domain.interactors.CustomizingChatBehaviorInteractor
 import com.crafttalk.chat.domain.interactors.FileInteractor
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
+import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
 import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatParams.timeDelayed
@@ -37,7 +38,7 @@ class ChatViewModel
 
     val messages: LiveData<PagedList<MessageModel>> by lazy {
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder<Int, MessageModel>(
-            chatMessageInteractor.getAllMessages().map<MessageModel> { (messageModelMapper(it, context)) },
+            chatMessageInteractor.getAllMessages().map<MessageModel> { (messageModelMapper(it, context)) }.mapByPage { groupPageByDate(it) },
             PAGE_SIZE
         )
         pagedListBuilder.build()

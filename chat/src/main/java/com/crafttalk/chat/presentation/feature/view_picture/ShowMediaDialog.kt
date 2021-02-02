@@ -66,7 +66,7 @@ class ShowImageDialog(
                 image_navigate_back.setOnClickListener(this)
                 Glide.with(context)
                     .load(url)
-                    .error(R.color.default_color_company)
+                    .error(R.drawable.background_item_media_message_placeholder)
                     .into(image_show)
             }
             GIF -> {
@@ -75,7 +75,7 @@ class ShowImageDialog(
                 Glide.with(context)
                     .asGif()
                     .load(url)
-                    .error(R.color.default_color_company)
+                    .error(R.drawable.background_item_media_message_placeholder)
                     .into(gif_show)
             }
             else -> {}
