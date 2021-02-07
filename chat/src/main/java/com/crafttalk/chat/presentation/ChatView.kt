@@ -24,6 +24,7 @@ import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.adapters.AdapterListMessages
+import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnackbar
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
@@ -33,7 +34,7 @@ import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.Permission
-import com.google.android.material.snackbar.Snackbar
+import com.crafttalk.chat.utils.TypeFailUpload
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
 import kotlinx.android.synthetic.main.view_host.view.*
@@ -54,12 +55,17 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         ) as LayoutInflater
     }
     private var permissionListener: ChatPermissionListener = object : ChatPermissionListener {
-        private fun showWarning(warningText: String) {
-            Snackbar.make(chat_place, warningText, Snackbar.LENGTH_LONG).show()
-        }
         override fun requestedPermissions(permissions: Array<Permission>, message: Array<String>) {
             permissions.forEachIndexed { index, permission ->
-                showWarning(message[index])
+                WarningSnackbar.make(chat_place, null, message[index], null).show()
+            }
+        }
+    }
+    private val defaultUploadFileListener: UploadFileListener by lazy {
+        object : UploadFileListener {
+            override fun successUpload() {}
+            override fun failUpload(message: String, type: TypeFailUpload) {
+                WarningSnackbar.make(chat_place, type).show()
             }
         }
     }
@@ -70,6 +76,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     fun setOnInternetConnectionListener(listener: ChatInternetConnectionListener) {
         viewModel.clientInternetConnectionListener = listener
+    }
+
+    fun setOnUploadFileListener(listener: UploadFileListener) {
+        viewModel.uploadFileListener = listener
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -151,6 +161,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             .build()
             .inject(this)
         this.parentFragment = fragment
+        if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         setAllListeners()
         setListMessages()
     }

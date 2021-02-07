@@ -12,29 +12,19 @@ class FileInteractor
     private val visitorInteractor: VisitorInteractor
 ) {
 
-    fun uploadFile(file: File, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun uploadFile(file: File, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val visitor = visitorInteractor.getVisitor() ?: return
-        try {
-            fileRepository.uploadFile(visitor, file, TypeUpload.MULTIPART)
-            success()
-        } catch (ex: Throwable) {
-            fail(ex)
-        }
+        fileRepository.uploadFile(visitor, file, TypeUpload.MULTIPART, handleUploadFile)
     }
 
-    fun uploadImage(bitmap: Bitmap, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun uploadImage(bitmap: Bitmap, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val visitor = visitorInteractor.getVisitor() ?: return
-        try {
-            fileRepository.uploadFile(visitor, bitmap, TypeUpload.MULTIPART)
-            success()
-        } catch (ex: Throwable) {
-            fail(ex)
-        }
+        fileRepository.uploadMediaFile(visitor, bitmap, TypeUpload.MULTIPART, handleUploadFile)
     }
 
-    fun uploadFiles(listFile: List<File>, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    fun uploadFiles(listFile: List<File>, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         listFile.forEach {
-            uploadFile(it, success, fail)
+            uploadFile(it, handleUploadFile)
         }
     }
 

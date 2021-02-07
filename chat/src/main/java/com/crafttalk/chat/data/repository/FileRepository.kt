@@ -27,7 +27,7 @@ class FileRepository
     private val fileRequestHelper: RequestHelper
 ) : IFileRepository {
 
-    private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: String){
+    private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: String, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val request = fileApi.uploadFile(
             visitorToken = token,
             body = BodyStructureUploadFile(
@@ -39,7 +39,7 @@ class FileRepository
 
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                // обработка кодов и проброс оштбок (throw ...)
+                handleUploadFile(response.code(), response.message())
                 Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
@@ -48,7 +48,7 @@ class FileRepository
         })
     }
 
-    private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: RequestBody) {
+    private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: RequestBody, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val body: MultipartBody.Part = MultipartBody.Part.createFormData(ApiParams.FILE_FIELD_NAME, fileName, fileRequestBody)
         val fileNameRequestBody = RequestBody.create(
             MediaType.get(ContentTypeValue.TEXT_PLAIN.value),
@@ -68,6 +68,7 @@ class FileRepository
 
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
+                handleUploadFile(response.code(), response.message())
                 Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
@@ -76,30 +77,30 @@ class FileRepository
         })
     }
 
-    override fun uploadFile(visitor: Visitor, file: File, type: TypeUpload) {
+    override fun uploadFile(visitor: Visitor, file: File, type: TypeUpload, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val fileName = fileInfoHelper.getFileName(file.uri) ?: return
         when (type) {
             TypeUpload.JSON -> {
                 val fileRequestBody = fileRequestHelper.generateJsonRequestBody(file.uri, file.type) ?: return
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody)
+                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {
                 val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(file.uri) ?: return
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody)
+                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
         }
     }
 
-    override fun uploadFile(visitor: Visitor, bitmap: Bitmap, type: TypeUpload) {
+    override fun uploadMediaFile(visitor: Visitor, bitmap: Bitmap, type: TypeUpload, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val fileName = "createPhoto${System.currentTimeMillis()}.jpg"
         when (type) {
             TypeUpload.JSON -> {
                 val fileRequestBody = fileRequestHelper.generateJsonRequestBody(bitmap) ?: return
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody)
+                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {
                 val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(bitmap, fileName) ?: return
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody)
+                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
         }
     }

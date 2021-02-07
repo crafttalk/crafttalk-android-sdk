@@ -73,6 +73,7 @@ class ChatViewModel
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
     }
+    var uploadFileListener: UploadFileListener? = null
 
     init {
         customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
@@ -150,54 +151,38 @@ class ChatViewModel
 
     fun selectAction(actionId: String) {
         launchIO {
-            chatMessageInteractor.selectActionInMessage(
-                actionId,
-                {},
-                {}
-            )
+            chatMessageInteractor.selectActionInMessage(actionId, {}, {})
         }
     }
 
     fun updateData(idKey: Long, height: Int, width: Int) {
         launchIO {
-            chatMessageInteractor.updateSizeMessage(
-                idKey,
-                height,
-                width,
-                {},
-                {}
-            )
+            chatMessageInteractor.updateSizeMessage(idKey, height, width, {}, {})
         }
     }
 
     fun sendMessage(message: String) {
         launchIO {
-            chatMessageInteractor.sendMessage(
-                message,
-                {},
-                {
-                    handleError(it)
-                }
-            )
+            chatMessageInteractor.sendMessage(message, {}, {})
         }
     }
 
     fun sendFile(file: File) {
-        launchIO {
-            fileInteractor.uploadFile(file, {}, {})
-        }
+        launchIO { fileInteractor.uploadFile(file) { responseCode, responseMessage ->
+            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
+        }}
     }
 
     fun sendFiles(fileList: List<File>) {
-        launchIO {
-            fileInteractor.uploadFiles(fileList, {}, {})
-        }
+        launchIO { fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
+            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
+        }}
     }
 
     fun sendImage(bitmap: Bitmap) {
-        launchIO {
-            fileInteractor.uploadImage(bitmap, {}, {})
-        }
+        launchIO { fileInteractor.uploadImage(bitmap) { responseCode, responseMessage ->
+            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
+        }}
     }
 
     companion object {
