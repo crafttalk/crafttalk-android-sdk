@@ -287,6 +287,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         entry_field.text.clear()
                     }
                     entry_field.text.toString().isEmpty() -> {
+                        send_message.isClickable = false
                         BottomSheetFileViewer.Builder()
                             .add(R.menu.options)
                             .setListener(this)
@@ -362,6 +363,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 )
             }
         }
+    }
+
+    override fun onCloseBottomSheet() {
+        send_message.isClickable = true
     }
 
 }

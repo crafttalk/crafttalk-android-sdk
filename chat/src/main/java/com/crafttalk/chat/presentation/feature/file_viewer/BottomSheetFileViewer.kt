@@ -58,6 +58,11 @@ class BottomSheetFileViewer : BottomSheetDialogFragment() {
         listener = bindHost()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        listener?.onCloseBottomSheet()
+    }
+
     private fun inflate(menuRes: Int, options: MutableList<Option>) {
         val menu = MenuBuilder(context)
         menuInflater.inflate(menuRes, menu)
@@ -107,6 +112,7 @@ class BottomSheetFileViewer : BottomSheetDialogFragment() {
 
     interface Listener {
         fun onModalOptionSelected(tag: String?, option: Option)
+        fun onCloseBottomSheet()
     }
 
 }
