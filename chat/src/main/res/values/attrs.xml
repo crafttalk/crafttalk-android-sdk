@@ -12,6 +12,7 @@
         <attr name="urlSocketHost" format="string"/>
         <attr name="urlUploadNameSpace" format="string"/>
         <attr name="urlUploadHost" format="string"/>
+        <attr name="fileProviderAuthorities" format="string"/>
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>

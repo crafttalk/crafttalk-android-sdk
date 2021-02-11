@@ -16,4 +16,6 @@
     <string name="default_notification_channel_id">0</string>
     <string name="internet_connection_warning">Waiting for network…</string>
 
+    <string name="chat_file_provider_authorities">com.crafttalk.chat.fileprovider</string>
+
 </resources>

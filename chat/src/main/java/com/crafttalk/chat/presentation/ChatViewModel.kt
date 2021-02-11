@@ -3,7 +3,6 @@ package com.crafttalk.chat.presentation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Handler
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -175,12 +174,6 @@ class ChatViewModel
 
     fun sendFiles(fileList: List<File>) {
         launchIO { fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
-            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
-        }}
-    }
-
-    fun sendImage(bitmap: Bitmap) {
-        launchIO { fileInteractor.uploadImage(bitmap) { responseCode, responseMessage ->
             uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
         }}
     }

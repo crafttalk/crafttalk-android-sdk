@@ -313,13 +313,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             R.id.document -> {
                 fileViewerHelper.pickFiles(
                     Pair(TypeFile.FILE, TypeMultiple.SINGLE),
-                    {
-                        viewModel.sendFiles(
-                            it.map {
-                                File(it, TypeFile.FILE)
-                            }
-                        )
-                    },
+                    { viewModel.sendFiles(it.map { File(it, TypeFile.FILE) }) },
                     {
                         permissionListener.requestedPermissions(
                             arrayOf(Permission.STORAGE),
@@ -332,13 +326,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             R.id.image -> {
                 fileViewerHelper.pickFiles(
                     Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
-                    {
-                        viewModel.sendFiles(
-                            it.map {
-                                File(it, TypeFile.IMAGE)
-                            }
-                        )
-                    },
+                    { viewModel.sendFiles(it.map { File(it, TypeFile.IMAGE) }) },
                     {
                         permissionListener.requestedPermissions(
                             arrayOf(Permission.STORAGE),
@@ -350,9 +338,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.camera -> {
                 fileViewerHelper.pickImageFromCamera(
-                    {
-                        viewModel.sendImage(it)
-                    },
+                    { uri -> viewModel.sendFile(File(uri, TypeFile.IMAGE)) },
                     {
                         permissionListener.requestedPermissions(
                             arrayOf(Permission.CAMERA),
