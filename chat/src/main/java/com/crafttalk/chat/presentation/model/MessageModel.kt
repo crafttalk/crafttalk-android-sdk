@@ -11,6 +11,7 @@ sealed class MessageModel(
     open val role: Role,
     open val timestamp: Long,
     open val authorName: String,
+    open val authorPreview: String? = null,
     open val stateCheck: StateMessage,
     var isFirstMessageInDay: Boolean = false
 ) : BaseItem() {
@@ -22,7 +23,7 @@ sealed class MessageModel(
 data class DefaultMessageItem(
     override val id: String,
     override val timestamp: Long
-) : MessageModel(id, NEUTRAL, timestamp, "", StateMessage.DEFAULT) {
+) : MessageModel(id, NEUTRAL, timestamp, "", null, StateMessage.DEFAULT) {
     override fun getLayout(): Int = R.layout.item_default_message
 }
 
@@ -33,8 +34,9 @@ data class TextMessageItem(
     val actions: List<ActionItem>?,
     override val timestamp: Long,
     override val authorName: String,
+    override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, stateCheck) {
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.item_user_text_message
@@ -51,8 +53,9 @@ data class ImageMessageItem(
     val image: FileModel,
     override val timestamp: Long,
     override val authorName: String,
+    override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, stateCheck) {
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.item_user_image_message
@@ -69,8 +72,9 @@ data class GifMessageItem(
     val gif: FileModel,
     override val timestamp: Long,
     override val authorName: String,
+    override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, stateCheck) {
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.item_user_gif_message
@@ -86,8 +90,9 @@ data class FileMessageItem(
     val document: FileModel,
     override val timestamp: Long,
     override val authorName: String,
+    override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, stateCheck) {
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout() : Int {
         return when(role) {
             USER -> R.layout.item_user_file_message
@@ -106,8 +111,9 @@ data class UnionMessageItem(
     val file: FileModel,
     override val timestamp: Long,
     override val authorName: String,
+    override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, stateCheck) {
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout() : Int {
         return when(role) {
             USER -> R.layout.item_user_union_message

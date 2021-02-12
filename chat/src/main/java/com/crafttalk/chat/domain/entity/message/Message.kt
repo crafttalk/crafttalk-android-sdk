@@ -19,13 +19,10 @@ data class Message (
     val attachmentType: String?,
     @SerializedName (value = "attachment_name")
     val attachmentName: String?,
+    @SerializedName (value = "operator_id")
+    val operatorId: String?,
     @SerializedName (value = "operator_name")
     val operatorName: String?,
     @SerializedName (value = "reply_to_message")
     val replyToMessage: Message?
 ) : Serializable
-
-
-
-
-

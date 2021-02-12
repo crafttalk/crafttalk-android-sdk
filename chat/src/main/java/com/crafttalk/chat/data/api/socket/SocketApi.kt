@@ -4,8 +4,6 @@ import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.convertFromHtmlToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
-import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.tags.Tag
 import com.crafttalk.chat.initialization.ChatMessageListener
@@ -28,6 +26,8 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
+import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
+import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 class SocketApi constructor(
     private val dao: MessagesDao,
@@ -40,6 +40,7 @@ class SocketApi constructor(
     private var failAuthUiFun: () -> Unit = {}
     private var successAuthUxFun: () -> Unit = {}
     private var failAuthUxFun: () -> Unit = {}
+    private var getPersonPreview: (personId: String) -> String? = { null }
     private var isOnline = false
 
     private var chatInternetConnectionListener: ChatInternetConnectionListener? = null
@@ -90,12 +91,14 @@ class SocketApi constructor(
         failAuthUi: (() -> Unit)?,
         successAuthUx: () -> Unit,
         failAuthUx: () -> Unit,
+        getPersonPreview: (personId: String) -> String?,
         chatEventListener: ChatEventListener?
     ) {
         successAuthUi?.let { this.successAuthUiFun = it }
         this.successAuthUxFun = successAuthUx
         failAuthUi?.let { this.failAuthUiFun = it }
         this.failAuthUxFun = failAuthUx
+        this.getPersonPreview = getPersonPreview
         chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
         initSocket()
@@ -306,7 +309,7 @@ class SocketApi constructor(
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                dao.insertMessage(MessageDB.map(visitor.uuid, messageSocket))
+                dao.insertMessage(MessageDB.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
@@ -348,13 +351,12 @@ class SocketApi constructor(
                             attachmentType = messageFromHistory.attachmentType,
                             attachmentName = messageFromHistory.attachmentName,
                             operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
+                            operatorPreview = null,
                             height = 0,
                             width = 0
                         )
                         if (messageCheckObj !in messagesFromDb) {
-                            updateDataInDatabase(messageFromHistory.apply {
-                                this.message = message
-                            })
+                            updateDataInDatabase(messageFromHistory)
                         }
                     }
                 }

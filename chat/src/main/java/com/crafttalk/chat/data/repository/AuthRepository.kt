@@ -17,6 +17,7 @@ class AuthRepository
         failAuthUi: (() -> Unit)?,
         successAuthUx: () -> Unit,
         failAuthUx: () -> Unit,
+        getPersonPreview: (personId: String) -> String?,
         chatEventListener: ChatEventListener?
     ) {
         socketApi.setVisitor(
@@ -25,6 +26,7 @@ class AuthRepository
             failAuthUi,
             successAuthUx,
             failAuthUx,
+            getPersonPreview,
             chatEventListener
         )
     }

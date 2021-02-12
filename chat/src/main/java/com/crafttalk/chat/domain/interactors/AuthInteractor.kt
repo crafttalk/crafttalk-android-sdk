@@ -11,6 +11,7 @@ class AuthInteractor
 @Inject constructor(
     private val authRepository: IAuthRepository,
     private val visitorInteractor: VisitorInteractor,
+    private val personInteractor: PersonInteractor,
     private val notificationInteractor: NotificationInteractor
 ) {
 
@@ -47,6 +48,12 @@ class AuthInteractor
             notificationInteractor.unsubscribeNotification()
         }
 
+        val getPersonPreview: (personId: String) -> String? =  { personId ->
+            currentVisitor?.token?.let { token ->
+                personInteractor.getPersonPreview(personId, token)
+            }
+        }
+
         when (ChatParams.authType) {
             AuthType.AUTH_WITH_FORM -> {
                 if (currentVisitor == null) {
@@ -58,6 +65,7 @@ class AuthInteractor
                         failAuthUi,
                         successAuthUxWrapper,
                         failAuthUxWrapper,
+                        getPersonPreview,
                         chatEventListener
                     )
                 }
@@ -69,6 +77,7 @@ class AuthInteractor
                     failAuthUi,
                     successAuthUxWrapper,
                     failAuthUxWrapper,
+                    getPersonPreview,
                     chatEventListener
                 )
             }

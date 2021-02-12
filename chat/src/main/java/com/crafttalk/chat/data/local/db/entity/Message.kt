@@ -30,6 +30,8 @@ data class Message(
     val attachmentType: String?,
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String?,
+    @ColumnInfo(name = "operator_preview")
+    val operatorPreview: String?,
     @ColumnInfo(name = "operator_name")
     val operatorName: String?,
     @ColumnInfo(name = "height")
@@ -59,7 +61,7 @@ data class Message(
     }
 
     companion object {
-        fun map(uuid: String, messageSocket: MessageSocket): Message {
+        fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?): Message {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertFromHtmlToNormalString(list)
 
@@ -76,6 +78,7 @@ data class Message(
                 attachmentUrl = messageSocket.attachmentUrl,
                 attachmentType = messageSocket.attachmentType,
                 attachmentName = messageSocket.attachmentName,
+                operatorPreview = operatorPreview,
                 operatorName = if (messageSocket.operatorName == null || !messageSocket.isReply) "Вы" else messageSocket.operatorName,
                 height = null,
                 width = null
