@@ -1,7 +1,7 @@
 package com.crafttalk.chat.data.api.socket
 
 import android.util.Log
-import com.crafttalk.chat.data.helper.converters.text.convertFromHtmlToNormalString
+import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
@@ -323,7 +323,7 @@ class SocketApi constructor(
         arrayMessages.sortWith(compareBy(MessageSocket::timestamp))
         arrayMessages.forEach { messageFromHistory ->
             val list = arrayListOf<Tag>()
-            val message = messageFromHistory.message?.convertFromHtmlToNormalString(list)
+            val message = messageFromHistory.message?.convertTextToNormalString(list)
 
             when (messageFromHistory.messageType) {
                 MessageType.VISITOR_MESSAGE.valueType -> {

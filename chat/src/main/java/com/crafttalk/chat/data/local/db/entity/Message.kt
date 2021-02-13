@@ -3,7 +3,7 @@ package com.crafttalk.chat.data.local.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.crafttalk.chat.data.helper.converters.text.convertFromHtmlToNormalString
+import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.domain.entity.message.Action
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
@@ -63,7 +63,7 @@ data class Message(
     companion object {
         fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?): Message {
             val list = arrayListOf<Tag>()
-            val message = messageSocket.message?.convertFromHtmlToNormalString(list)
+            val message = messageSocket.message?.convertTextToNormalString(list)
 
             return Message(
                 uuid = uuid,
