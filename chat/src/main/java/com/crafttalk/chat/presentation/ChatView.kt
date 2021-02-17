@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -14,6 +15,8 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -21,7 +24,6 @@ import androidx.lifecycle.Observer
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -56,8 +58,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private lateinit var parentFragment: Fragment
     private val inflater: LayoutInflater by lazy {
          context.getSystemService(
-            Context.LAYOUT_INFLATER_SERVICE
-        ) as LayoutInflater
+             Context.LAYOUT_INFLATER_SERVICE
+         ) as LayoutInflater
     }
     private var permissionListener: ChatPermissionListener = object : ChatPermissionListener {
         override fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>) {
@@ -115,6 +117,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
+        AppCompatResources.getDrawable(context, R.drawable.background_count_unread_message)?.let { unwrappedDrawable ->
+            val wrappedDrawable: Drawable = DrawableCompat.wrap(unwrappedDrawable)
+            DrawableCompat.setTint(wrappedDrawable, chatAttr.colorMain)
+            count_unread_message.background = wrappedDrawable
+        }
         // set company name
         company_name.text = chatAttr.companyName
         company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
@@ -132,13 +139,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         send_message.setOnClickListener(this)
         warning_refresh.setOnClickListener(this)
         scroll_to_down.setOnClickListener(this)
-        entry_field.addTextChangedListener(object: TextWatcher {
+        entry_field.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if ((s?:"").isEmpty()) {
+                if ((s ?: "").isEmpty()) {
                     send_message.setImageResource(R.drawable.ic_attach_file)
                     send_message.rotation = 45f
-                }
-                else {
+                } else {
                     send_message.setImageResource(R.drawable.ic_send)
                     send_message.rotation = 0f
                 }
