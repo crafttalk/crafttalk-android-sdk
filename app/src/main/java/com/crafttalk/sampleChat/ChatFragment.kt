@@ -14,7 +14,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        chat_view.onCreate(this)
+        chat_view.onCreate(this, viewLifecycleOwner)
         chat_view.setOnPermissionListener(object : ChatPermissionListener {
             override fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>) {
                 permissions.forEachIndexed { index, permission ->
@@ -32,7 +32,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 
     override fun onResume() {
         super.onResume()
-        chat_view.onResume(this)
+        chat_view.onResume(viewLifecycleOwner)
     }
 
     private fun showWarning(warningText: String) {

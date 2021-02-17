@@ -25,6 +25,7 @@ import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatParams.timeDelayed
 import javax.inject.Inject
+import kotlin.math.min
 
 class ChatViewModel
 @Inject constructor(
@@ -35,6 +36,8 @@ class ChatViewModel
     private val context: Context
 ) : BaseViewModel() {
 
+    var countUnreadMessages = MutableLiveData(0)
+    val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
         val dataSource = chatMessageInteractor.getAllMessages()
@@ -176,6 +179,42 @@ class ChatViewModel
         launchIO { fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
             uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
         }}
+    }
+
+    fun updateValueCountUnreadMessages(indexLastVisibleItem: Int) {
+        launchIO {
+            val list = uploadMessagesForUser.value?.value?.toList() ?: return@launchIO
+
+            when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
+                -1 -> {
+                    countUnreadMessages.postValue(min(list.size, indexLastVisibleItem))
+                    for (i in indexLastVisibleItem until list.size) {
+                        chatMessageInteractor.readMessage(list[i].id)
+                    }
+                }
+                0 -> {
+                    countUnreadMessages.postValue(0)
+                }
+                else -> {
+                    countUnreadMessages.postValue(min(indexLastReadMessage, indexLastVisibleItem))
+                    for (i in indexLastVisibleItem until indexLastReadMessage) {
+                        chatMessageInteractor.readMessage(list[i].id)
+                    }
+                }
+            }
+        }
+    }
+
+    fun setValueCountUnreadMessages() {
+        launchIO {
+            val list = uploadMessagesForUser.value?.value?.toList() ?: return@launchIO
+
+            when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
+                -1 -> firstUploadMessages.postValue(list.size - 1)
+                0 -> firstUploadMessages.postValue(0)
+                else -> firstUploadMessages.postValue(indexLastReadMessage - 1)
+            }
+        }
     }
 
     companion object {

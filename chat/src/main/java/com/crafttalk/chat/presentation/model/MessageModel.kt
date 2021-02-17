@@ -13,6 +13,7 @@ sealed class MessageModel(
     open val authorName: String,
     open val authorPreview: String? = null,
     open val stateCheck: StateMessage,
+    open val isReadMessage: Boolean,
     var isFirstMessageInDay: Boolean = false
 ) : BaseItem() {
     override fun <T : BaseItem> isSame(item: T): Boolean {
@@ -23,7 +24,7 @@ sealed class MessageModel(
 data class DefaultMessageItem(
     override val id: String,
     override val timestamp: Long
-) : MessageModel(id, NEUTRAL, timestamp, "", null, StateMessage.DEFAULT) {
+) : MessageModel(id, NEUTRAL, timestamp, "", null, StateMessage.DEFAULT, false) {
     override fun getLayout(): Int = R.layout.item_default_message
 }
 
@@ -35,8 +36,9 @@ data class TextMessageItem(
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
-    override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+    override val stateCheck: StateMessage,
+    override val isReadMessage: Boolean
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.item_user_text_message
@@ -54,8 +56,9 @@ data class ImageMessageItem(
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
-    override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+    override val stateCheck: StateMessage,
+    override val isReadMessage: Boolean
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.item_user_image_message
@@ -73,8 +76,9 @@ data class GifMessageItem(
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
-    override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+    override val stateCheck: StateMessage,
+    override val isReadMessage: Boolean
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.item_user_gif_message
@@ -91,8 +95,9 @@ data class FileMessageItem(
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
-    override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+    override val stateCheck: StateMessage,
+    override val isReadMessage: Boolean
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout() : Int {
         return when(role) {
             USER -> R.layout.item_user_file_message
@@ -112,8 +117,9 @@ data class UnionMessageItem(
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
-    override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+    override val stateCheck: StateMessage,
+    override val isReadMessage: Boolean
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout() : Int {
         return when(role) {
             USER -> R.layout.item_user_union_message

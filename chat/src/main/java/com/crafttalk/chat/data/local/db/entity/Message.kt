@@ -37,7 +37,9 @@ data class Message(
     @ColumnInfo(name = "height")
     val height: Int?,
     @ColumnInfo(name = "width")
-    val width: Int?
+    val width: Int?,
+    @ColumnInfo(name = "is_read")
+    val isRead: Boolean
 ) {
     @PrimaryKey(autoGenerate = true)
     var idKey: Long = 0
@@ -81,7 +83,8 @@ data class Message(
                 operatorPreview = operatorPreview,
                 operatorName = if (messageSocket.operatorName == null || !messageSocket.isReply) "Вы" else messageSocket.operatorName,
                 height = null,
-                width = null
+                width = null,
+                isRead = false
             )
         }
     }

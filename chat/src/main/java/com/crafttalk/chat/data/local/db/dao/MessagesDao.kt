@@ -31,4 +31,7 @@ interface MessagesDao {
     @Query("SELECT * FROM messages WHERE (uuid = :uuid) AND (message = :textMessage OR attachment_url = :attachmentUrl)")
     fun getMessageByContent(uuid: String, textMessage: String?, attachmentUrl: String?): List<Message>
 
+    @Query("UPDATE messages SET is_read = 1 WHERE uuid = :uuid AND id = :id")
+    fun readMessage(uuid: String, id: String)
+
 }

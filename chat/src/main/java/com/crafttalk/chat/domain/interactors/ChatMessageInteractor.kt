@@ -61,4 +61,9 @@ class ChatMessageInteractor
         }
     }
 
+    fun readMessage(id: String) {
+        val currentVisitorUid = visitorInteractor.getVisitor()?.uuid ?: return
+        messageRepository.readMessage(currentVisitorUid, id)
+    }
+
 }

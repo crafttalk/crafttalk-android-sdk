@@ -7,8 +7,8 @@ import com.crafttalk.chat.domain.entity.tags.*
 fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
     return when {
         this.replace("\n", "").let {
-            matches(Regex(".*<(strong|i|a|img|ul|li|br|p).*")) &&
-            matches(Regex(".*&(ndash|nbsp).*"))
+            it.matches(Regex(".*<(strong|i|a|img|ul|li|br|p).*")) ||
+            it.matches(Regex(".*&(ndash|nbsp).*"))
         } -> convertFromHtmlTextToNormalString(listTag)
         else -> convertFromBaseTextToNormalString(listTag)
     }

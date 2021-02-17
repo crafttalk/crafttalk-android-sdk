@@ -33,4 +33,8 @@ class MessageRepository
         dao.updateSizeMessage(idKey, height, width)
     }
 
+    override fun readMessage(uuid: String, id: String) {
+        dao.readMessage(uuid, id)
+    }
+
 }

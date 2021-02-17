@@ -10,4 +10,5 @@ interface IMessageRepository {
     suspend fun selectAction(actionId: String)
 
     fun updateSizeMessage(idKey: Long, height: Int, width: Int)
+    fun readMessage(uuid: String, id: String)
 }

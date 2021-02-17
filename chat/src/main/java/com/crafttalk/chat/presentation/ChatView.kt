@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
@@ -18,6 +19,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -46,6 +50,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     @Inject
     lateinit var viewModel: ChatViewModel
     private var liveDataMessages: LiveData<PagedList<MessageModel>>? = null
+    private var isFirstUploadMessages = false
     private lateinit var adapterListMessages: AdapterListMessages
     private val fileViewerHelper = FileViewerHelper(PermissionHelper())
     private lateinit var parentFragment: Fragment
@@ -55,9 +60,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         ) as LayoutInflater
     }
     private var permissionListener: ChatPermissionListener = object : ChatPermissionListener {
-        override fun requestedPermissions(permissions: Array<Permission>, message: Array<String>) {
+        override fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>) {
             permissions.forEachIndexed { index, permission ->
-                WarningSnackbar.make(chat_place, null, message[index], null).show()
+                WarningSnackbar.make(chat_place, null, messages[index], null).show()
             }
         }
     }
@@ -104,9 +109,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         state_action_operator.setTextColor(chatAttr.colorTextInfo)
         company_name.setTextColor(chatAttr.colorTextInfo)
         // set dimension
-        warningConnection.textSize = chatAttr.sizeTextInternetConnectionWarning
-        state_action_operator.textSize = chatAttr.sizeTextInfoText
-        company_name.textSize = chatAttr.sizeTextInfoText
+        warningConnection.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInternetConnectionWarning)
+        state_action_operator.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
+        company_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
@@ -126,6 +131,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         sign_in.setOnClickListener(this)
         send_message.setOnClickListener(this)
         warning_refresh.setOnClickListener(this)
+        scroll_to_down.setOnClickListener(this)
         entry_field.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if ((s?:"").isEmpty()) {
@@ -139,6 +145,25 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        list_with_message.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
+                if (indexLastVisible >= 1) {
+                    scroll_to_down.visibility = View.VISIBLE
+                    if (viewModel.countUnreadMessages.value != 0) {
+                        count_unread_message.visibility = View.VISIBLE
+                    } else {
+                        count_unread_message.visibility = View.GONE
+                    }
+                } else {
+                    count_unread_message.visibility = View.GONE
+                    scroll_to_down.visibility = View.GONE
+                }
+
+                viewModel.updateValueCountUnreadMessages(indexLastVisible)
+            }
         })
     }
 
@@ -155,7 +180,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
     }
 
-    fun onCreate(fragment: Fragment) {
+    fun onCreate(fragment: Fragment, lifecycleOwner: LifecycleOwner) {
         Chat.getSdkComponent().createChatComponent()
             .parentFragment(fragment)
             .build()
@@ -164,6 +189,36 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         setAllListeners()
         setListMessages()
+
+        viewModel.uploadMessagesForUser.observe(lifecycleOwner, Observer { liveDataPagedList ->
+            liveDataPagedList ?: return@Observer
+            liveDataMessages?.removeObservers(lifecycleOwner)
+            liveDataMessages = liveDataPagedList
+            isFirstUploadMessages = true
+            liveDataMessages?.observe(lifecycleOwner, Observer { pagedList ->
+                pagedList ?: return@Observer
+
+                adapterListMessages.submitList(pagedList)
+
+                if (isFirstUploadMessages) {
+                    viewModel.setValueCountUnreadMessages()
+                } else {
+                    if (scroll_to_down.visibility == View.GONE) {
+                        list_with_message.smoothScrollToPosition(0)
+                    }
+                }
+                isFirstUploadMessages = false
+            })
+        })
+        viewModel.firstUploadMessages.observe(lifecycleOwner, Observer {
+            it ?: return@Observer
+            chat_place.visibility = View.VISIBLE
+            stopProgressBar(loading)
+            stopProgressBar(warning_loading)
+
+            list_with_message.scrollToPosition(it)
+        })
+
     }
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
@@ -210,9 +265,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             }
         })
-        viewModel.internetConnectionState.observe(lifecycleOwner, Observer {
-            Log.d("CHAT_VIEW", "GET NEW EVENT")
-            when (it) {
+        viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
+            when (state) {
                 InternetConnectionState.NO_INTERNET -> {
                     if (ChatAttr.getInstance().showInternetConnectionState) {
                         warningConnection.visibility = View.VISIBLE
@@ -226,20 +280,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             }
         })
-        viewModel.uploadMessagesForUser.observe(lifecycleOwner, Observer { liveDataPagedList ->
-            liveDataPagedList ?: return@Observer
-            liveDataMessages?.removeObservers(lifecycleOwner)
-            liveDataMessages = liveDataPagedList
-            liveDataMessages?.observe(lifecycleOwner, Observer { pagedList ->
-                pagedList ?: return@Observer
-
-                chat_place.visibility = View.VISIBLE
-                stopProgressBar(loading)
-                stopProgressBar(warning_loading)
-
-                adapterListMessages.submitList(pagedList)
-                list_with_message.smoothScrollToPosition(0)
-            })
+        viewModel.countUnreadMessages.observe(lifecycleOwner, Observer {
+            if (it == 0) {
+                count_unread_message.visibility = View.GONE
+            } else {
+                count_unread_message.text = if (it < 10) it.toString() else "9+"
+                count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
+            }
         })
     }
 
@@ -249,8 +296,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             if (it.text.trim().isEmpty()) {
                 it.setBackgroundResource(R.drawable.background_error_field_auth_form)
                 result = false
-            }
-            else {
+            } else {
                 it.setBackgroundResource(R.drawable.background_normal_field_auth_form)
             }
         }
@@ -304,9 +350,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 warning_refresh.visibility = View.GONE
                 viewModel.reload()
             }
+            R.id.scroll_to_down -> {
+                val countUnreadMessages = viewModel.countUnreadMessages.value
+                val position = when {
+                    countUnreadMessages == null || countUnreadMessages <= 0 -> 0
+                    else -> countUnreadMessages - 1
+                }
+                list_with_message.smoothScrollToPosition(position)
+            }
         }
     }
-
 
     override fun onModalOptionSelected(tag: String?, option: Option) {
         when (option.id) {
