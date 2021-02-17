@@ -35,7 +35,7 @@ dependencies {
 
 При использовании пушей в AndroidManifest необходимо добавить ChatPushService и дефолтный channel id.
 
-Для загрузки файлов необходим FileProvider, для этого в AndroidManifest необходимо указать provider с authorities (он должен совпадать с атрибутом fileProviderAuthorities в ChatView).
+Для загрузки файлов необходим FileProvider, для этого в AndroidManifest необходимо указать provider с authorities (он должен совпадать со значением атрибута fileProviderAuthorities в ChatView).
 
 ```
 <application
@@ -234,7 +234,7 @@ chatView.setOnPermissionListener(object : ChatPermissionListener {
 
 #### UploadFileListener
 
-Этот listener устанавливается через ChatView с помощью метода setOnUploadFileListener. При загрузке файлов может пойти что-то не так, поэтому необходимо уведомить об этом пользователя. Если дефолтный Snackbar не удовлетворяет требованиям, тогда можно установить UploadFileListener и обрабатывать подобные ситуации самому.
+Этот listener устанавливается через ChatView с помощью метода setOnUploadFileListener. При загрузке файлов может пойти что-то не так, поэтому необходимо уведомить об этом пользователя. Если дефолтный Snackbar не удовлетворяет требованиям, тогда можно установить UploadFileListener и обрабатывать подобные ситуации самостоятельно.
 
 ```
 chatView.setOnUploadFileListener(object : UploadFileListener {
