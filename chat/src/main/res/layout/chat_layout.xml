@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,15 +15,39 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_above="@id/info_layout"
+        android:layout_above="@id/lower_limit"
         app:stackFromEnd="false"
         app:reverseLayout="true" />
+
+    <ImageView
+        android:id="@+id/scroll_to_down"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:src="@drawable/ic_scroll_down"
+        android:layout_alignEnd="@id/list_with_message"
+        android:layout_alignBottom="@id/lower_limit"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="52dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/count_unread_message"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:background="@drawable/background_count_unread_message"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:layout_alignBottom="@id/scroll_to_down"
+        android:layout_alignEnd="@id/scroll_to_down"
+        android:visibility="gone"
+        tools:text="1+" />
 
     <RelativeLayout
         android:id="@+id/info_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/lower_limit">
+        android:layout_above="@id/lower_limit"
+        android:background="#fff">
 
         <TextView
             android:id="@+id/state_action_operator"
@@ -109,4 +134,5 @@
 <!--            />-->
 
     </RelativeLayout>
+
 </RelativeLayout>
