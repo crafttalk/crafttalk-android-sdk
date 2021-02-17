@@ -3,7 +3,6 @@ package com.crafttalk.chat.presentation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Handler
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -26,6 +25,7 @@ import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatParams.timeDelayed
 import javax.inject.Inject
+import kotlin.math.min
 
 class ChatViewModel
 @Inject constructor(
@@ -36,6 +36,8 @@ class ChatViewModel
     private val context: Context
 ) : BaseViewModel() {
 
+    var countUnreadMessages = MutableLiveData(0)
+    val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
         val dataSource = chatMessageInteractor.getAllMessages()
@@ -73,6 +75,7 @@ class ChatViewModel
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
     }
+    var uploadFileListener: UploadFileListener? = null
 
     init {
         customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
@@ -150,53 +153,67 @@ class ChatViewModel
 
     fun selectAction(actionId: String) {
         launchIO {
-            chatMessageInteractor.selectActionInMessage(
-                actionId,
-                {},
-                {}
-            )
+            chatMessageInteractor.selectActionInMessage(actionId, {}, {})
         }
     }
 
     fun updateData(idKey: Long, height: Int, width: Int) {
         launchIO {
-            chatMessageInteractor.updateSizeMessage(
-                idKey,
-                height,
-                width,
-                {},
-                {}
-            )
+            chatMessageInteractor.updateSizeMessage(idKey, height, width, {}, {})
         }
     }
 
     fun sendMessage(message: String) {
         launchIO {
-            chatMessageInteractor.sendMessage(
-                message,
-                {},
-                {
-                    handleError(it)
-                }
-            )
+            chatMessageInteractor.sendMessage(message, {}, {})
         }
     }
 
     fun sendFile(file: File) {
-        launchIO {
-            fileInteractor.uploadFile(file, {}, {})
-        }
+        launchIO { fileInteractor.uploadFile(file) { responseCode, responseMessage ->
+            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
+        }}
     }
 
     fun sendFiles(fileList: List<File>) {
+        launchIO { fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
+            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
+        }}
+    }
+
+    fun updateValueCountUnreadMessages(indexLastVisibleItem: Int) {
         launchIO {
-            fileInteractor.uploadFiles(fileList, {}, {})
+            val list = uploadMessagesForUser.value?.value?.toList() ?: return@launchIO
+
+            when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
+                -1 -> {
+                    countUnreadMessages.postValue(min(list.size, indexLastVisibleItem))
+                    for (i in indexLastVisibleItem until list.size) {
+                        chatMessageInteractor.readMessage(list[i].id)
+                    }
+                }
+                0 -> {
+                    countUnreadMessages.postValue(0)
+                }
+                else -> {
+                    countUnreadMessages.postValue(min(indexLastReadMessage, indexLastVisibleItem))
+                    for (i in indexLastVisibleItem until indexLastReadMessage) {
+                        chatMessageInteractor.readMessage(list[i].id)
+                    }
+                }
+            }
         }
     }
 
-    fun sendImage(bitmap: Bitmap) {
+    fun setValueCountUnreadMessages() {
         launchIO {
-            fileInteractor.uploadImage(bitmap, {}, {})
+            val list = uploadMessagesForUser.value?.value?.toList() ?: return@launchIO
+
+            when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
+                -1 -> firstUploadMessages.postValue(list.size - 1)
+                0 -> firstUploadMessages.postValue(0)
+                else -> firstUploadMessages.postValue(indexLastReadMessage - 1)
+            }
         }
     }
 

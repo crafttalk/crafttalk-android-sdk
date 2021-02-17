@@ -10,7 +10,7 @@ import com.crafttalk.chat.presentation.helper.converters.convertToSpannableStrin
 import com.crafttalk.chat.presentation.model.*
 
 fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
-    return when (true) {
+    return when {
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
@@ -18,7 +18,9 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            getMessageTypeByValueType(localMessage.messageType)
+            if (localMessage.isReply) localMessage.operatorPreview else null,
+            getMessageTypeByValueType(localMessage.messageType),
+            localMessage.isRead
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "IMAGE") && (localMessage.attachmentName.contains(".GIF", true)) -> GifMessageItem(
             localMessage.id,
@@ -32,7 +34,9 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            getMessageTypeByValueType(localMessage.messageType)
+            if (localMessage.isReply) localMessage.operatorPreview else null,
+            getMessageTypeByValueType(localMessage.messageType),
+            localMessage.isRead
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "IMAGE") -> ImageMessageItem(
             localMessage.id,
@@ -46,7 +50,9 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            getMessageTypeByValueType(localMessage.messageType)
+            if (localMessage.isReply) localMessage.operatorPreview else null,
+            getMessageTypeByValueType(localMessage.messageType),
+            localMessage.isRead
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "FILE") -> FileMessageItem(
             localMessage.id,
@@ -59,7 +65,9 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            getMessageTypeByValueType(localMessage.messageType)
+            if (localMessage.isReply) localMessage.operatorPreview else null,
+            getMessageTypeByValueType(localMessage.messageType),
+            localMessage.isRead
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && ((localMessage.attachmentType == "FILE") || (localMessage.attachmentType == "IMAGE")) -> UnionMessageItem(
             localMessage.id,
@@ -81,7 +89,9 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            getMessageTypeByValueType(localMessage.messageType)
+            if (localMessage.isReply) localMessage.operatorPreview else null,
+            getMessageTypeByValueType(localMessage.messageType),
+            localMessage.isRead
         )
         else -> DefaultMessageItem(
             localMessage.id,

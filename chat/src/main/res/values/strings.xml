@@ -18,6 +18,12 @@
     <string name="warning_title">Произошла ошибка</string>
     <string name="warning_reload">Пожалуйста, перезагрузите страницу или повторите попытку позже</string>
 
+<!--    Warning snackbar-->
+    <string name="warning_snackbar_not_support_type_title">Невозможно загрузить документ</string>
+    <string name="warning_snackbar_not_support_type_description">Загружаемый файл запрещен к отправке</string>
+    <string name="warning_snackbar_large_title">Невозможно загрузить документ</string>
+    <string name="warning_snackbar_large_description">Загружаемый файл слишком большой</string>
+
 <!--    Bottom sheet file viewer-->
     <string name="bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
     <string name="bottom_sheet_file_viewer_image_from_camera">Камера</string>

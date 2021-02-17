@@ -2,6 +2,7 @@ package com.crafttalk.chat.presentation.holders
 
 import android.content.res.ColorStateList
 import android.text.method.LinkMovementMethod
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.ViewCompat
@@ -40,7 +41,7 @@ class HolderOperatorTextMessage(
         // set color
         message.setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
         // set dimension
-        message.textSize = ChatAttr.getInstance().sizeTextOperatorMessage
+        message.setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
         // set bg
         message.setBackgroundColor(0)
         message.setBackgroundResource(R.drawable.background_item_simple_server_message)

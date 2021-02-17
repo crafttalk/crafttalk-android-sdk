@@ -6,10 +6,7 @@ import com.crafttalk.chat.di.modules.init.DBModule
 import com.crafttalk.chat.di.modules.init.GsonModule
 import com.crafttalk.chat.di.modules.init.NetworkModule
 import com.crafttalk.chat.di.modules.init.RepositoryModule
-import com.crafttalk.chat.domain.repository.IAuthRepository
-import com.crafttalk.chat.domain.repository.IChatBehaviorRepository
-import com.crafttalk.chat.domain.repository.INotificationRepository
-import com.crafttalk.chat.domain.repository.IVisitorRepository
+import com.crafttalk.chat.domain.repository.*
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -33,6 +30,7 @@ interface SdkComponent {
     fun getChatBehaviorRepository(): IChatBehaviorRepository
     fun getAuthRepository(): IAuthRepository
     fun getVisitorRepository(): IVisitorRepository
+    fun getPersonRepository(): IPersonRepository
     fun getNotificationRepository(): INotificationRepository
 
     fun createChatComponent(): ChatComponent.Builder

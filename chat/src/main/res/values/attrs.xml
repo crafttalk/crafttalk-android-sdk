@@ -12,6 +12,7 @@
         <attr name="urlSocketHost" format="string"/>
         <attr name="urlUploadNameSpace" format="string"/>
         <attr name="urlUploadHost" format="string"/>
+        <attr name="fileProviderAuthorities" format="string"/>
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
@@ -35,6 +36,11 @@
         <attr name="size_warning" format="dimension"/>
         <attr name="size_info" format="dimension"/>
         <attr name="size_text_date_grouping" format="dimension"/>
+
+        <attr name="margin_start_media_file" format="dimension"/>
+        <attr name="margin_end_media_file" format="dimension"/>
+        <attr name="margin_top_media_file" format="dimension"/>
+        <attr name="margin_bottom_media_file" format="dimension"/>
 
         <attr name="company_name" format="string"/>
         <attr name="show_company_name" format="boolean"/>

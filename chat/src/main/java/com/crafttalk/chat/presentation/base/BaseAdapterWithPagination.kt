@@ -28,7 +28,7 @@ abstract class BaseAdapterWithPagination <T : BaseItem>(
             if (messageItem == null) {
 //            holder.clear()
             } else {
-                holder.bindTo(messageItem)
+                it.bindTo(messageItem)
             }
         }
     }

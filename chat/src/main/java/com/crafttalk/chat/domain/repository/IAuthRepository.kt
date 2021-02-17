@@ -10,6 +10,7 @@ interface IAuthRepository {
         failAuthUi: (() -> Unit)?,
         successAuthUx: () -> Unit,
         failAuthUx: () -> Unit,
+        getPersonPreview: (personId: String) -> String?,
         chatEventListener: ChatEventListener?
     )
 }

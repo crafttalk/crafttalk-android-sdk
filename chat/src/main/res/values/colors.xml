@@ -17,9 +17,10 @@
     <color name="default_color_info">#AEB0B0</color>
     <color name="default_color_time_mark">#AEB0B0</color>
 
+    <color name="white">#fff</color>
     <color name="gray">#ddd</color>
     <color name="black">#000</color>
     <color name="black_translucent">#7F000000</color>
-    <color name="error">#d50000</color>
+    <color name="error">#ef5350</color>
 
 </resources>

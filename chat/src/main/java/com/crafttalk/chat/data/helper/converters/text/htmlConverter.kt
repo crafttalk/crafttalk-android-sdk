@@ -4,7 +4,44 @@ import android.os.Build
 import android.text.Html
 import com.crafttalk.chat.domain.entity.tags.*
 
-fun String.convertFromHtmlToNormalString(listTag: ArrayList<Tag>): String {
+fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
+    return when {
+        this.replace("\n", "").let {
+            it.matches(Regex(".*<(strong|i|a|img|ul|li|br|p).*")) ||
+            it.matches(Regex(".*&(ndash|nbsp).*"))
+        } -> convertFromHtmlTextToNormalString(listTag)
+        else -> convertFromBaseTextToNormalString(listTag)
+    }
+}
+
+fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
+    fun selectUrl(input: String, protocol: String) {
+        var startIndex = 0
+        startIndex = input.indexOf(protocol, startIndex, true)
+
+        while (startIndex != -1) {
+            val endIndex = input.indexOf(' ', startIndex, true)
+            val url = if (endIndex == -1) {
+                input.substring(startIndex)
+            } else {
+                input.substring(startIndex, endIndex)
+            }
+            listTag.add(
+                UrlTag(
+                    startIndex,
+                    if (endIndex == -1) input.length - 1 else endIndex - 1,
+                    url
+                )
+            )
+            startIndex = input.indexOf(protocol, startIndex + 1, true)
+        }
+    }
+    selectUrl(this, "http")
+    selectUrl(this, "ws")
+    return this
+}
+
+fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
     // атрибуты должны удовлетворять формату: <attrName>="<value>"
     fun String.getAttrTag(startIndex: Int, isSingleTag: Boolean): AttrTag? {
         val endTagIndex =

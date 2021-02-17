@@ -1,9 +1,15 @@
 package com.crafttalk.chat.presentation
 
 import com.crafttalk.chat.utils.Permission
+import com.crafttalk.chat.utils.TypeFailUpload
 
 interface ChatPermissionListener {
-    fun requestedPermissions(permissions: Array<Permission>, message: Array<String>)
+    fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>)
+}
+
+interface UploadFileListener {
+    fun successUpload()
+    fun failUpload(message: String, type: TypeFailUpload)
 }
 
 interface ChatInternetConnectionListener {

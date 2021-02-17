@@ -1,6 +1,7 @@
 package com.crafttalk.chat.presentation.holders
 
 import android.content.res.ColorStateList
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.ViewCompat
@@ -26,7 +27,7 @@ class HolderUserTextMessage(
         // set color
         message.setTextColor(ChatAttr.getInstance().colorTextUserMessage)
         // set dimension
-        message.textSize = ChatAttr.getInstance().sizeTextUserMessage
+        message.setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextUserMessage)
         // set bg
         ViewCompat.setBackgroundTintList(message, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundUserMessage))
     }

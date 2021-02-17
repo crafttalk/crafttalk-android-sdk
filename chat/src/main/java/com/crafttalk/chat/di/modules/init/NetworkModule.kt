@@ -1,6 +1,7 @@
 package com.crafttalk.chat.di.modules.init
 
 import com.crafttalk.chat.data.api.rest.NotificationApi
+import com.crafttalk.chat.data.api.rest.PersonApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.TLSSocketFactory.Companion.enableTls
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
@@ -34,6 +35,10 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideNotificationApi(@Notification retrofit: Retrofit): NotificationApi = retrofit.create(NotificationApi::class.java)
+
+    @Singleton
+    @Provides
+    fun providePersonApi(@Notification retrofit: Retrofit): PersonApi = retrofit.create(PersonApi::class.java)
 
     @Singleton
     @Provides
