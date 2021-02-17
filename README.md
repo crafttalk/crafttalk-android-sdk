@@ -34,6 +34,7 @@ dependencies {
 ```
 
 При использовании пушей в AndroidManifest необходимо добавить ChatPushService и дефолтный channel id
+Для загрузки файлов необходим FileProvider, для этого в AndroidManifest необходимо указать provider с authorities (он должен совпадать с атрибутом fileProviderAuthorities в ChatView).
 
 ```
 <application
@@ -49,12 +50,21 @@ dependencies {
 	    <action android:name="com.google.firebase.MESSAGING_EVENT" />
         </intent-filter>
     </service>
+    <provider
+    	android:name="androidx.core.content.FileProvider"
+	android:authorities="com.crafttalk.chat.fileprovider"
+	android:exported="false"
+	android:grantUriPermissions="true">
+	<meta-data
+	    android:name="android.support.FILE_PROVIDER_PATHS"
+	    android:resource="@xml/file_paths" />
+    </provider>
 </application> 
 ```
 
 #### Шаг 2.
 
-В xml файл, где будет располагаться чат, необходимо добавить ChatView c 5 обязательными атрибутами (auth, urlSocketHost, urlSocketNameSpace, urlUploadHost, urlUploadNameSpace)
+В xml файл, где будет располагаться чат, необходимо добавить ChatView c 5 обязательными атрибутами (auth, urlSocketHost, urlSocketNameSpace, urlUploadHost, urlUploadNameSpace, fileProviderAuthorities)
 
 ```
 <com.crafttalk.chat.presentation.ChatView
@@ -65,7 +75,8 @@ dependencies {
         app:urlSocketHost="@string/urlSocketHost"
         app:urlSocketNameSpace="@string/urlSocketNameSpace"
         app:urlUploadHost="@string/urlUploadHost"
-        app:urlUploadNameSpace="@string/urlUploadNameSpace"/>
+        app:urlUploadNameSpace="@string/urlUploadNameSpace"
+	app:fileProviderAuthorities="@string/chat_file_provider_authorities" />
 ```
 
 
@@ -127,12 +138,12 @@ override fun onStop() {
 ```
 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    chatView.onCreate(this)      
+    chatView.onCreate(this, viewLifecycleOwner)      
 }
 
 override fun onResume() {
     super.onResume()
-    chatView.onResume(this)
+    chatView.onResume(viewLifecycleOwner)
 }
 ```
 
@@ -149,12 +160,13 @@ override fun onResume() {
 - urlSocketHost - указывает, по какому host подключать сокет
 - urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
 - urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
+- fileProviderAuthorities - значение authorities для FileProvider
 
 
 Атрибуты, настраивающие внешний вид:
 
 Цвета:
-- color_main - 
+- color_main - устанавливает главный цвет чата
 - color_bg_user_message - устанавливает цвет фона пользовательского сообщения
 - color_bg_server_message - устанавливает цвет фона сообщения бота/оператора
 - color_text_user_message - устанавливает цвет текста пользовательского сообщения
@@ -163,7 +175,8 @@ override fun onResume() {
 - color_time_mark - устанавливает цвет текста под сообщением (дата + автор + статус сообщения)
 - color_text_warning - устанавливает цвет текста, сообщающего о состоянии соединения
 - color_company - устанавливает цвет текста названия компании (имеет смысл, есть атрибут show_company_name выставлен в true)
-
+- color_text_date_grouping - устанавливает цвет текста даты, группирующей сообщения
+- 
 Ресурсы:
 - progressIndeterminateDrawable - устанавливает цвет всех тробберов в чате
         
@@ -174,10 +187,19 @@ override fun onResume() {
 - size_time_mark - устанавливает размер текста под сообщением (дата + автор + статус сообщения)
 - size_warning - устанавливает размер текста, сообщающего о состоянии соединения
 - size_info - устанавливает размер текста информационного сообщения (название компании/сообщение, сообщающие о том, что оператор набирает сообщение)
-        
+- size_text_date_grouping - устанавливает размер текста даты, группирующей сообщения
+      
+Отступы:
+- margin_start_media_file - устанавливает margin слева от медиа файла
+- margin_end_media_file - устанавливает margin справа от медиа файла
+- margin_top_media_file - устанавливает margin сверху от медиа файла
+- margin_bottom_media_file - устанавливает margin снизу от медиа файла
+
 Элементы UI:
 - company_name - указывает название компании (имеет смысл, есть атрибут show_company_name выставлен в true)
 - show_company_name - указывает о необходимости отобразить название компании
+- show_internet_connection_state - указывает о необходимости отобразить дефолтную панель с состоянием сети
+- show_upper_limiter - указывает о необходимости отобразить верхний разграничитель
 
 ## Listeners
 
@@ -206,6 +228,30 @@ chatView.setOnPermissionListener(object : ChatPermissionListener {
 	    showWarning(messages[index])
 	}
     }
+})
+```
+
+#### UploadFileListener
+
+Этот listener устанавливается через ChatView с помощью метода setOnUploadFileListener. При загрузке файлов может пойти что-то не так, поэтому необходимо уведомить об этом пользователя. Если дефолтный Snackbar не удовлетворяет требованиям, тогда можно установить UploadFileListener и обрабатывать подобные ситуации самому.
+
+```
+chatView.setOnUploadFileListener(object : UploadFileListener {
+    override fun successUpload() {}
+    override fun failUpload(message: String, type: TypeFailUpload) {}
+})
+```
+
+#### ChatInternetConnectionListener
+
+Этот listener устанавливается через ChatView с помощью метода setOnInternetConnectionListener. Этот listener позволяет самостоятельно реализовать Toolbar. Для этого необходимо выставить show_internet_connection_state="false" и show_upper_limiter="false" и установить listener.
+
+```
+chatView.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
+    override fun connect() { status_connection.visibility = View.GONE }
+    override fun failConnect() { status_connection.visibility = View.VISIBLE }
+    override fun lossConnection() { status_connection.visibility = View.VISIBLE }
+    override fun reconnect() { status_connection.visibility = View.GONE }
 })
 ```
 
