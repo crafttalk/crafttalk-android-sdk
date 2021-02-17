@@ -25,9 +25,6 @@ private constructor(
         attrArr.getString(R.styleable.ChatView_fileProviderAuthorities)?.let { ChatParams.fileProviderAuthorities = it }
     }
 
-    // UI part
-    private val scaleRatio = context.resources.displayMetrics.density
-
     val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
     val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_server_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
     val colorBackgroundOperatorAction = attrArr.getColor(R.styleable.ChatView_color_bg_server_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
@@ -44,13 +41,18 @@ private constructor(
 
     val progressIndeterminateDrawable = attrArr.getDrawable(R.styleable.ChatView_progressIndeterminateDrawable)
 
-    val sizeTextInternetConnectionWarning = attrArr.getDimension(R.styleable.ChatView_size_warning, context.resources.getDimension(R.dimen.default_size_warning)) / scaleRatio
-    val sizeTextInfoText = attrArr.getDimension(R.styleable.ChatView_size_info, context.resources.getDimension(R.dimen.default_size_info)) / scaleRatio
-    val sizeTextUserMessage = attrArr.getDimension(R.styleable.ChatView_size_user_message, context.resources.getDimension(R.dimen.default_size_user_message)) / scaleRatio
-    val sizeTextOperatorMessage = attrArr.getDimension(R.styleable.ChatView_size_server_message, context.resources.getDimension(R.dimen.default_size_server_message)) / scaleRatio
-    val sizeTextOperatorAction = attrArr.getDimension(R.styleable.ChatView_size_server_action, context.resources.getDimension(R.dimen.default_size_server_action)) / scaleRatio
-    val sizeTextTimeMark = attrArr.getDimension(R.styleable.ChatView_size_time_mark, context.resources.getDimension(R.dimen.default_size_time_mark)) / scaleRatio
-    val sizeTextDateGrouping = attrArr.getDimension(R.styleable.ChatView_size_text_date_grouping, context.resources.getDimension(R.dimen.default_size_info)) / scaleRatio
+    val sizeTextInternetConnectionWarning = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_warning, context.resources.getDimensionPixelSize(R.dimen.default_size_warning)).toFloat()
+    val sizeTextInfoText = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_info, context.resources.getDimensionPixelSize(R.dimen.default_size_info)).toFloat()
+    val sizeTextUserMessage = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_user_message, context.resources.getDimensionPixelSize(R.dimen.default_size_user_message)).toFloat()
+    val sizeTextOperatorMessage = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_server_message, context.resources.getDimensionPixelSize(R.dimen.default_size_server_message)).toFloat()
+    val sizeTextOperatorAction = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_server_action, context.resources.getDimensionPixelSize(R.dimen.default_size_server_action)).toFloat()
+    val sizeTextTimeMark = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_time_mark, context.resources.getDimensionPixelSize(R.dimen.default_size_time_mark)).toFloat()
+    val sizeTextDateGrouping = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_text_date_grouping, context.resources.getDimensionPixelSize(R.dimen.default_size_info)).toFloat()
+
+    val marginStartMediaFile = attrArr.getDimension(R.styleable.ChatView_margin_start_media_file, context.resources.getDimension(R.dimen.default_margin_start_media_file)).toInt()
+    val marginEndMediaFile = attrArr.getDimension(R.styleable.ChatView_margin_end_media_file, context.resources.getDimension(R.dimen.default_margin_end_media_file)).toInt()
+    val marginTopMediaFile = attrArr.getDimension(R.styleable.ChatView_margin_top_media_file, context.resources.getDimension(R.dimen.default_margin_top_media_file)).toInt()
+    val marginBottomMediaFile = attrArr.getDimension(R.styleable.ChatView_margin_bottom_media_file, context.resources.getDimension(R.dimen.default_margin_bottom_media_file)).toInt()
 
     val companyName = attrArr.getString(R.styleable.ChatView_company_name) ?: context.getString(R.string.chat_name_company)
     val showCompanyName = attrArr.getBoolean(R.styleable.ChatView_show_company_name, false)

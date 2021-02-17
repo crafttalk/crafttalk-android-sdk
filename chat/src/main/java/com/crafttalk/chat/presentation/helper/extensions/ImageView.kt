@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -12,6 +13,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
 import com.crafttalk.chat.presentation.model.FileModel
+import com.crafttalk.chat.utils.ChatAttr
 
 fun ImageView.settingMediaFile(
     mediaFile: FileModel,
@@ -28,6 +30,14 @@ fun ImageView.settingMediaFile(
         visibility = View.VISIBLE
         timeView?.visibility = View.VISIBLE
     }
+    val layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+    layoutParams.setMargins(
+        ChatAttr.getInstance().marginStartMediaFile,
+        ChatAttr.getInstance().marginTopMediaFile,
+        ChatAttr.getInstance().marginEndMediaFile,
+        ChatAttr.getInstance().marginBottomMediaFile
+    )
+    this.layoutParams = layoutParams
 }
 
 @SuppressLint("ResourceAsColor")

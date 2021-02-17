@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
@@ -94,7 +95,7 @@ fun TextView.setTimeMessageDefault(message: MessageModel, hasAuthorIcon: Boolean
     // set color
     setTextColor(ChatAttr.getInstance().colorTextTimeMark)
     // set dimension
-    textSize = ChatAttr.getInstance().sizeTextTimeMark
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextTimeMark)
 }
 
 @SuppressLint("SimpleDateFormat")
@@ -106,7 +107,7 @@ fun TextView.setDate(message: MessageModel) {
         // set color
         setTextColor(ChatAttr.getInstance().colorTextDateGrouping)
         // set dimension
-        textSize = ChatAttr.getInstance().sizeTextDateGrouping
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextDateGrouping)
         visibility = View.VISIBLE
     } else {
         visibility = View.GONE

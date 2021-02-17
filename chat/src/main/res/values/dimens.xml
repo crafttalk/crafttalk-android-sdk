@@ -11,4 +11,9 @@
     <dimen name="default_size_warning">18sp</dimen>
     <dimen name="default_size_info">12sp</dimen>
 
+    <dimen name="default_margin_start_media_file">14dp</dimen>
+    <dimen name="default_margin_end_media_file">12dp</dimen>
+    <dimen name="default_margin_top_media_file">12dp</dimen>
+    <dimen name="default_margin_bottom_media_file">12dp</dimen>
+
 </resources>

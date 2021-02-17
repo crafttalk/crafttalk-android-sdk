@@ -1,5 +1,6 @@
 package com.crafttalk.chat.presentation.holders
 
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import com.crafttalk.chat.R
@@ -20,7 +21,7 @@ class HolderAction(
         // set color
         actionText.setTextColor(ChatAttr.getInstance().colorTextOperatorAction)
         // set dimension
-        actionText.textSize = ChatAttr.getInstance().sizeTextOperatorAction
+        actionText.setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorAction)
         // set bg
         itemView.setBackgroundResource(item.backgroundRes)
         itemView.setOnClickListener{
