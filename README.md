@@ -33,7 +33,8 @@ dependencies {
 <uses-permission android:name="android.permission.CAMERA"/>
 ```
 
-При использовании пушей в AndroidManifest необходимо добавить ChatPushService и дефолтный channel id
+При использовании пушей в AndroidManifest необходимо добавить ChatPushService и дефолтный channel id.
+
 Для загрузки файлов необходим FileProvider, для этого в AndroidManifest необходимо указать provider с authorities (он должен совпадать с атрибутом fileProviderAuthorities в ChatView).
 
 ```
@@ -176,7 +177,7 @@ override fun onResume() {
 - color_text_warning - устанавливает цвет текста, сообщающего о состоянии соединения
 - color_company - устанавливает цвет текста названия компании (имеет смысл, есть атрибут show_company_name выставлен в true)
 - color_text_date_grouping - устанавливает цвет текста даты, группирующей сообщения
-- 
+
 Ресурсы:
 - progressIndeterminateDrawable - устанавливает цвет всех тробберов в чате
         
