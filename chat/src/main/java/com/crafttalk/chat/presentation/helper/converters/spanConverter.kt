@@ -5,13 +5,11 @@ import android.graphics.Typeface
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.style.BulletSpan
-import android.text.style.LeadingMarginSpan
-import android.text.style.StyleSpan
-import android.text.style.URLSpan
+import android.text.style.*
 import androidx.core.content.ContextCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.tags.*
+import com.crafttalk.chat.utils.ChatAttr
 
 fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Context): SpannableString {
     val result = SpannableString(this)
@@ -19,7 +17,10 @@ fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Conte
         when (it) {
             is StrongTag -> result.setSpan(StyleSpan(Typeface.BOLD), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             is ItalicTag -> result.setSpan(StyleSpan(Typeface.ITALIC), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            is UrlTag -> result.setSpan(URLSpan(it.url), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            is UrlTag -> {
+                result.setSpan(URLSpan(it.url), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                result.setSpan(ForegroundColorSpan(ChatAttr.getInstance().colorTextLink), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
             is ImageTag -> {
                 // load bitmap use it.url
 //                ...
@@ -45,5 +46,3 @@ fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Conte
     }
     return result
 }
-
-

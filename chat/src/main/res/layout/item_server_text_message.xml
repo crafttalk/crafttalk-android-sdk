@@ -25,7 +25,9 @@
         android:paddingTop="13dp"
         android:paddingEnd="13dp"
         android:paddingBottom="13dp"
-        android:textColor="#000" />
+        android:background="@drawable/background_item_simple_server_message"
+        android:fontFamily="@font/ubuntu_light"
+        android:textFontWeight="300" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/actions_list"

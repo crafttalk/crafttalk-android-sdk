@@ -21,10 +21,13 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
 
         while (startIndex != -1) {
             val endIndex = input.indexOf(' ', startIndex, true)
-            val url = if (endIndex == -1) {
+            var url = if (endIndex == -1) {
                 input.substring(startIndex)
             } else {
                 input.substring(startIndex, endIndex)
+            }
+            if (protocol == "www") {
+                url = "https://$url"
             }
             listTag.add(
                 UrlTag(
@@ -38,6 +41,7 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
     }
     selectUrl(this, "http")
     selectUrl(this, "ws")
+    selectUrl(this, "www")
     return this
 }
 

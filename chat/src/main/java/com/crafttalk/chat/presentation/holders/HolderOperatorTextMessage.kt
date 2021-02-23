@@ -42,9 +42,6 @@ class HolderOperatorTextMessage(
         message.setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
         // set dimension
         message.setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
-        // set bg
-        message.setBackgroundColor(0)
-        message.setBackgroundResource(R.drawable.background_item_simple_server_message)
         // set bg color
         ViewCompat.setBackgroundTintList(message, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
     }

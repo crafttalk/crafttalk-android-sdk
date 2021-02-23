@@ -26,6 +26,7 @@
         <attr name="color_text_warning" format="color"/>
         <attr name="color_company" format="color"/>
         <attr name="color_text_date_grouping" format="color"/>
+        <attr name="color_text_link" format="color"/>
 
         <attr name="progressIndeterminateDrawable" format="reference"/>
 

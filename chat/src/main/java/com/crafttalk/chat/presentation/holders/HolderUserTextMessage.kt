@@ -1,6 +1,7 @@
 package com.crafttalk.chat.presentation.holders
 
 import android.content.res.ColorStateList
+import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
@@ -23,6 +24,7 @@ class HolderUserTextMessage(
         date.setDate(item)
         time.setTimeMessageWithCheck(item)
         // set content
+        message.movementMethod = LinkMovementMethod.getInstance()
         message.text = item.message
         // set color
         message.setTextColor(ChatAttr.getInstance().colorTextUserMessage)
