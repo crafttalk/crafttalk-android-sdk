@@ -1,72 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp">
-
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/item_date_message" />
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="end"
-        android:background="@drawable/background_item_simple_user_message"
-        android:paddingStart="15dp"
-        android:paddingTop="13dp"
-        android:paddingEnd="13dp"
-        android:paddingBottom="13dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/item_date_message" />
+
+        <LinearLayout
+            android:id="@+id/content_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="end"
+            android:background="@drawable/background_item_simple_user_message"
+            android:paddingStart="15dp"
+            android:paddingTop="13dp"
+            android:paddingEnd="13dp"
+            android:paddingBottom="13dp">
+
+            <TextView
+                android:id="@+id/user_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:fontFamily="@font/ubuntu_light"
+                android:textFontWeight="300" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                android:layout_marginTop="8dp" />
+
+            <ImageView
+                android:id="@+id/user_media"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/user_file"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_file"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/user_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:fontFamily="@font/ubuntu_light"
-            android:textFontWeight="300" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray"
-            android:layout_marginTop="8dp" />
-
-        <ImageView
-            android:id="@+id/user_media"
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/user_file"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/ic_file"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:visibility="gone" />
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="8dp"
+            android:fontFamily="@font/ubuntu_regular"
+            android:textFontWeight="600" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:gravity="center_vertical"
-        android:layout_marginTop="10dp"
-        android:drawablePadding="8dp"
-        android:fontFamily="@font/ubuntu_regular"
-        android:textFontWeight="600" />
-
-</LinearLayout>
+</FrameLayout>

@@ -156,7 +156,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
-                if (indexLastVisible >= 1) {
+                if (indexLastVisible >= 2) {
                     scroll_to_down.visibility = View.VISIBLE
                     if (viewModel.countUnreadMessages.value != 0) {
                         count_unread_message.visibility = View.VISIBLE

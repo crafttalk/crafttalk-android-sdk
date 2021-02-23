@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.ViewCompat
@@ -24,6 +25,8 @@ class HolderOperatorUnionMessage(
     private val clickImageHandler: (imageUrl: String) -> Unit,
     private val clickDocumentHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
+    private val container: ViewGroup = view.findViewById(R.id.container)
+    private val contentContainer: ViewGroup = view.findViewById(R.id.content_container)
     private val message: TextView = view.findViewById(R.id.server_message)
     private val listActions: RecyclerView = view.findViewById(R.id.actions_list)
     private val time: TextView = view.findViewById(R.id.time)
@@ -56,6 +59,8 @@ class HolderOperatorUnionMessage(
     }
 
     override fun bindTo(item: UnionMessageItem) {
+        fileUrl = item.file.url
+        fileType = item.file.type
         date.setDate(item)
         time.setTimeMessageDefault(item, true)
         // set content
@@ -73,10 +78,7 @@ class HolderOperatorUnionMessage(
         // set dimension
         message.setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
         // set bg
-        message.setBackgroundColor(0)
-        message.setBackgroundResource(R.drawable.background_item_simple_server_message)
-        // set bg color
-        ViewCompat.setBackgroundTintList(message, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
+        ViewCompat.setBackgroundTintList(contentContainer, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
 
         when (fileType) {
             TypeFile.FILE -> {
@@ -86,17 +88,15 @@ class HolderOperatorUnionMessage(
             }
             TypeFile.IMAGE -> {
                 fileIcon.visibility = View.GONE
-                media.settingMediaFile(item.file, fileUrl)
+                media.settingMediaFile(item.file, fileUrl, container, true)
                 media.loadMediaFile(item.idKey, item.file, updateData)
             }
             TypeFile.GIF -> {
                 fileIcon.visibility = View.GONE
-                media.settingMediaFile(item.file, fileUrl)
+                media.settingMediaFile(item.file, fileUrl, container, true)
                 media.loadMediaFile(item.idKey, item.file, updateData, true)
             }
         }
-        fileUrl = item.file.url
-        fileType = item.file.type
     }
 
 }

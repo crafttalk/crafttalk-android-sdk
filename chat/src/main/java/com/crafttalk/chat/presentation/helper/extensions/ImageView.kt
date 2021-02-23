@@ -4,8 +4,9 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
-import android.widget.FrameLayout
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
@@ -18,26 +19,32 @@ import com.crafttalk.chat.utils.ChatAttr
 fun ImageView.settingMediaFile(
     mediaFile: FileModel,
     urlFromHolder: String?,
-    timeView: View? = null
+    container: ViewGroup? = null,
+    isUnionMessageItem: Boolean = false
 ) {
     if (mediaFile.height == 0 && mediaFile.width == 0) {
         visibility = View.GONE
-        timeView?.visibility = View.GONE
+        container?.visibility = View.GONE
     } else {
         if (urlFromHolder != mediaFile.url) {
             setImageResource(R.drawable.background_item_media_message_placeholder)
         }
         visibility = View.VISIBLE
-        timeView?.visibility = View.VISIBLE
+        container?.visibility = View.VISIBLE
     }
-    val layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-    layoutParams.setMargins(
-        ChatAttr.getInstance().marginStartMediaFile,
-        ChatAttr.getInstance().marginTopMediaFile,
-        ChatAttr.getInstance().marginEndMediaFile,
-        ChatAttr.getInstance().marginBottomMediaFile
-    )
-    this.layoutParams = layoutParams
+    if (!isUnionMessageItem) {
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        layoutParams.setMargins(
+            ChatAttr.getInstance().marginStartMediaFile,
+            ChatAttr.getInstance().marginTopMediaFile,
+            ChatAttr.getInstance().marginEndMediaFile,
+            ChatAttr.getInstance().marginBottomMediaFile
+        )
+        this.layoutParams = layoutParams
+    }
 }
 
 @SuppressLint("ResourceAsColor")

@@ -1,43 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp">
+    android:layout_height="wrap_content">
 
-    <include
+    <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/item_date_message" />
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_item_simple_server_message"
-        android:layout_gravity="start">
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/item_date_message" />
 
-        <ImageView
-            android:id="@+id/server_image"
+        <LinearLayout
+            android:id="@+id/server_gif_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:background="@drawable/background_item_simple_server_message"
+            android:layout_gravity="start">
 
-    </FrameLayout>
+            <ImageView
+                android:id="@+id/server_gif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:gravity="center_vertical"
-        android:layout_marginTop="10dp"
-        android:drawablePadding="8dp"
-        android:fontFamily="@font/ubuntu_regular"
-        android:textFontWeight="600"
-        android:visibility="gone" />
+        </LinearLayout>
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="8dp"
+            android:fontFamily="@font/ubuntu_regular"
+            android:textFontWeight="600" />
+
+    </LinearLayout>
+</FrameLayout>
