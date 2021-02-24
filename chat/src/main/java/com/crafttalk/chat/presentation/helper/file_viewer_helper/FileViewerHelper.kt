@@ -26,22 +26,26 @@ class FileViewerHelper constructor(
     fun pickFiles(
         pickSettings: Pair<TypeFile, TypeMultiple>,
         resultHandler: (List<Uri>) -> Unit,
-        noPermission: (permissions: Array<String>) -> Unit,
+        noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit,
         fragment: Fragment
     ) {
-        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        permissionHelper.checkPermission(permissions, fragment.requireContext(),  { noPermission(permissions) }) {
+        fun pickFile() {
             pickFilesFromGallery(pickSettings, fragment, resultHandler)
         }
+        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        permissionHelper.checkPermission(
+            permissions,
+            fragment.requireContext(),
+            { noPermission(permissions) { pickFile() } }
+        ) { pickFile() }
     }
 
     fun pickImageFromCamera(
         resultHandler: (Uri) -> Unit,
-        noPermission: (permissions: Array<String>) -> Unit,
+        noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit,
         fragment: Fragment
     ) {
-        val permissions = arrayOf(Manifest.permission.CAMERA)
-        permissionHelper.checkPermission(permissions, fragment.requireContext(), { noPermission(permissions) }) {
+        fun pickImage() {
             ChatParams.fileProviderAuthorities ?: throw Resources.NotFoundException("You haven't set the value of the fileProviderAuthorities attribute!")
             val fileUri = FileProvider.getUriForFile(
                 fragment.requireContext(),
@@ -52,6 +56,12 @@ class FileViewerHelper constructor(
                 resultHandler(fileUri)
             }.launch(fileUri)
         }
+        val permissions = arrayOf(Manifest.permission.CAMERA)
+        permissionHelper.checkPermission(
+            permissions,
+            fragment.requireContext(),
+            { noPermission(permissions) { pickImage() } }
+        ) { pickImage() }
     }
 
     private fun pickFilesFromGallery(

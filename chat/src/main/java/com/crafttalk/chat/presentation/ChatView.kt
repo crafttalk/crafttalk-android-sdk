@@ -39,7 +39,6 @@ import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
-import com.crafttalk.chat.utils.Permission
 import com.crafttalk.chat.utils.TypeFailUpload
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
@@ -62,7 +61,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
          ) as LayoutInflater
     }
     private var permissionListener: ChatPermissionListener = object : ChatPermissionListener {
-        override fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>) {
+        override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
             permissions.forEachIndexed { index, permission ->
                 WarningSnackbar.make(chat_place, null, messages[index], null).show()
             }
@@ -373,10 +372,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 fileViewerHelper.pickFiles(
                     Pair(TypeFile.FILE, TypeMultiple.SINGLE),
                     { viewModel.sendFiles(it.map { File(it, TypeFile.FILE) }) },
-                    {
+                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
-                            arrayOf(Permission.STORAGE),
-                            arrayOf(context.getString(R.string.requested_permission_storage))
+                            permissions,
+                            arrayOf(context.getString(R.string.requested_permission_storage)),
+                            actionsAfterObtainingPermission
                         )
                     },
                     parentFragment
@@ -386,10 +386,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 fileViewerHelper.pickFiles(
                     Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
                     { viewModel.sendFiles(it.map { File(it, TypeFile.IMAGE) }) },
-                    {
+                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
-                            arrayOf(Permission.STORAGE),
-                            arrayOf(context.getString(R.string.requested_permission_storage))
+                            permissions,
+                            arrayOf(context.getString(R.string.requested_permission_storage)),
+                            actionsAfterObtainingPermission
                         )
                     },
                     parentFragment
@@ -398,10 +399,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             R.id.camera -> {
                 fileViewerHelper.pickImageFromCamera(
                     { uri -> viewModel.sendFile(File(uri, TypeFile.IMAGE)) },
-                    {
+                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
-                            arrayOf(Permission.CAMERA),
-                            arrayOf(context.getString(R.string.requested_permission_camera))
+                            permissions,
+                            arrayOf(context.getString(R.string.requested_permission_camera)),
+                            actionsAfterObtainingPermission
                         )
                     },
                     parentFragment
