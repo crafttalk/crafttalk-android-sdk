@@ -67,6 +67,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         }
     }
+    private var stateStartingProgressListener: StateStartingProgressListener? = null
     private val defaultUploadFileListener: UploadFileListener by lazy {
         object : UploadFileListener {
             override fun successUpload() {}
@@ -86,6 +87,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     fun setOnUploadFileListener(listener: UploadFileListener) {
         viewModel.uploadFileListener = listener
+    }
+
+    fun setOnStateStartingProgressListener(listener: StateStartingProgressListener) {
+        this.stateStartingProgressListener = listener
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -218,7 +223,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.firstUploadMessages.observe(lifecycleOwner, Observer {
             it ?: return@Observer
             chat_place.visibility = View.VISIBLE
-            stopProgressBar(loading)
+            if (ChatAttr.getInstance().showStartingProgress) {
+                stopProgressBar(loading)
+            }
+            stateStartingProgressListener?.stop()
             stopProgressBar(warning_loading)
 
             list_with_message.scrollToPosition(it)
@@ -238,7 +246,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         warningConnection.visibility = View.INVISIBLE
                     }
                     stopProgressBar(warning_loading)
-                    startProgressBar(loading)
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        startProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.start()
                 }
                 DisplayableUIObject.CHAT -> {
                     auth_form.visibility = View.GONE
@@ -248,7 +259,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     chat_place.visibility = View.GONE
                     warning.visibility = View.GONE
                     auth_form.visibility = View.VISIBLE
-                    stopProgressBar(loading)
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        stopProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.stop()
                     stopProgressBar(warning_loading)
                 }
                 DisplayableUIObject.WARNING -> {
@@ -259,7 +273,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     }
                     warning.visibility = View.VISIBLE
                     warning_refresh.visibility = View.VISIBLE
-                    stopProgressBar(loading)
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        stopProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.stop()
                     stopProgressBar(warning_loading)
                 }
                 DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE -> {
@@ -321,7 +338,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             R.id.sign_in -> {
                 if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)
-                    startProgressBar(loading)
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        startProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.start()
                     val firstName = first_name_user.text.toString()
                     val lastName = last_name_user.text.toString()
                     val phone = phone_user.text.toString()

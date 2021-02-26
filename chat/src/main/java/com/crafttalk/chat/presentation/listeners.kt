@@ -18,6 +18,11 @@ interface ChatInternetConnectionListener {
     fun reconnect() // has internet
 }
 
+interface StateStartingProgressListener {
+    fun start()
+    fun stop()
+}
+
 interface NavigationListener {
     fun navigate(targetName: String)
 }
