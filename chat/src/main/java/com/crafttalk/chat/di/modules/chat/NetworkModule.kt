@@ -8,6 +8,7 @@ import com.crafttalk.chat.utils.ChatParams
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,9 +19,10 @@ class NetworkModule {
     @Upload
     @ChatScope
     @Provides
-    fun provideRetrofitClientUpload(): Retrofit {
+    fun provideRetrofitClientUpload(certificate: CertificatePinner?): Retrofit {
         val okHttpClient = OkHttpClient.Builder()
             .enableTls()
+            .apply { certificate?.let { certificatePinner(it) } }
             .build()
         val gson = GsonBuilder()
             .setLenient()

@@ -39,20 +39,23 @@ object Chat {
     private fun initParams(
         authType: AuthType,
         urlSocketHost: String,
-        urlSocketNameSpace: String
+        urlSocketNameSpace: String,
+        certificatePinning: String?
     ) {
         ChatParams.authType = authType
         ChatParams.urlSocketHost = urlSocketHost
         ChatParams.urlSocketNameSpace = urlSocketNameSpace
+        ChatParams.certificatePinning = certificatePinning
     }
 
     fun init(
         context: Context,
         authType: AuthType,
         urlSocketHost: String,
-        urlSocketNameSpace: String
+        urlSocketNameSpace: String,
+        certificatePinning: String? = null
     ) {
-        initParams(authType, urlSocketHost, urlSocketNameSpace)
+        initParams(authType, urlSocketHost, urlSocketNameSpace, certificatePinning)
         initDI(context)
     }
 

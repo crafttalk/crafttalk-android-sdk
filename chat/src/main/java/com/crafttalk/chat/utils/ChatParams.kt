@@ -8,4 +8,5 @@ object ChatParams {
     internal var urlUploadNameSpace: String? = null
     internal var urlUploadHost: String? = null
     internal var fileProviderAuthorities: String? = null
+    internal var certificatePinning: String? = null
 }
