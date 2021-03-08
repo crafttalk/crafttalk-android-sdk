@@ -41,7 +41,7 @@
         app:color_text_user_message="#fff"
         app:color_text_user_message_time="#fff"
         app:color_user_message_status="#fff"
-        app:progressIndeterminateDrawable="@drawable/spinner"
+        app:drawable_progress_indeterminate="@drawable/spinner"
         app:show_internet_connection_state="false"
         app:show_upper_limiter="false"
         app:auth="AUTH_WITHOUT_FORM"

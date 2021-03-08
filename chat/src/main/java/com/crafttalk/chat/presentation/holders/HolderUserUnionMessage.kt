@@ -31,6 +31,8 @@ class HolderUserUnionMessage(
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
     private val fileIcon: ImageView? = view.findViewById(R.id.user_file)
+    private val fileName: TextView? = view.findViewById(R.id.user_file_name)
+    private val fileSize: TextView? = view.findViewById(R.id.user_file_size)
     private val media: ImageView? = view.findViewById(R.id.user_media)
     private val date: TextView? = view.findViewById(R.id.date)
 
@@ -92,9 +94,19 @@ class HolderUserUnionMessage(
                     visibility = View.VISIBLE
                     setFileIcon()
                 }
+                fileName?.apply {
+                    visibility = View.VISIBLE
+                    setFileName(item.file)
+                }
+                fileSize?.apply {
+                    visibility = View.VISIBLE
+                    setFileSize(item.file)
+                }
             }
             TypeFile.IMAGE -> {
                 fileIcon?.visibility = View.GONE
+                fileName?.visibility = View.GONE
+                fileSize?.visibility = View.GONE
                 media?.apply {
                     settingMediaFile(item.file, fileUrl, container, true)
                     loadMediaFile(item.idKey, item.file, updateData)
@@ -102,6 +114,8 @@ class HolderUserUnionMessage(
             }
             TypeFile.GIF -> {
                 fileIcon?.visibility = View.GONE
+                fileName?.visibility = View.GONE
+                fileSize?.visibility = View.GONE
                 media?.apply {
                     settingMediaFile(item.file, fileUrl, container, true)
                     loadMediaFile(item.idKey, item.file, updateData, true)

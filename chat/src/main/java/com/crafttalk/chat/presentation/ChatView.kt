@@ -132,7 +132,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
         upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
 
-        chatAttr.progressIndeterminateDrawable?.let {
+        chatAttr.drawableProgressIndeterminate?.let {
             loading.indeterminateDrawable = it
             warning_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
         }

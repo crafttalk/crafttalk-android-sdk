@@ -103,10 +103,9 @@ fun ImageView.loadMediaFile(
 }
 
 fun ImageView.setFileIcon() {
-    val (widthInPx, heightInPx) = getSizeScreenInPx(context)
-
-    layoutParams.let {
-        it.height = (widthInPx * 0.1).toInt()
-        it.width = (widthInPx * 0.1).toInt()
+    ChatAttr.getInstance().drawableFileIcon?.let {
+        Glide.with(context)
+            .load(it)
+            .into(this)
     }
 }

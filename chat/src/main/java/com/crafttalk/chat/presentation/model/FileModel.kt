@@ -5,7 +5,8 @@ import com.crafttalk.chat.domain.entity.file.TypeFile
 data class FileModel(
     val url: String,
     val name: String,
-    val height: Int,
-    val width: Int,
+    val size: Long = 0,
+    val height: Int = 0,
+    val width: Int = 0,
     val type: TypeFile? = null
 )

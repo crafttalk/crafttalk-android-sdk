@@ -15,6 +15,12 @@
     <string name="chat_state_action_operator">Operator write message…</string>
     <string name="chat_entry_field_hint">Enter your message…</string>
 
+    <!--    File-->
+    <string name="file_size_byte">byte</string>
+    <string name="file_size_Kb">Kb</string>
+    <string name="file_size_Mb">Mb</string>
+    <string name="file_size_Gb">Gb</string>
+
     <!--    Warning-->
     <string name="warning_title">Error has occurred</string>
     <string name="warning_reload">Please reload the page or try again later</string>

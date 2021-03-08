@@ -13,6 +13,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.helper.converters.convertDpToPx
+import com.crafttalk.chat.presentation.model.FileModel
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.Role
 import com.crafttalk.chat.utils.ChatAttr
@@ -66,7 +67,7 @@ fun TextView.setAuthor(message: MessageModel, hasAuthorIcon: Boolean = false) {
         typeface = ResourcesCompat.getFont(context, it)
     }
     // set content
-//    setAuthorIcon(message, hasAuthorIcon)
+    setAuthorIcon(message, hasAuthorIcon)
     text = message.authorName
 }
 
@@ -106,5 +107,36 @@ fun TextView.setDate(message: MessageModel) {
         visibility = View.VISIBLE
     } else {
         visibility = View.GONE
+    }
+}
+
+fun TextView.setFileName(file: FileModel) {
+    text = file.name
+    // set color
+    setTextColor(ChatAttr.getInstance().colorTextFileName)
+    // set dimension
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextFileName)
+    // set font
+    ChatAttr.getInstance().resFontFamilyFileInfo?.let {
+        typeface = ResourcesCompat.getFont(context, it)
+    }
+}
+
+fun TextView.setFileSize(file: FileModel) {
+    if (file.size == 0L) return
+    text = when(file.size) {
+        in 0L until 1024L -> "${file.size} ${resources.getString(R.string.file_size_byte)}"
+        in 1024L until 1024L * 1024L -> "${(file.size / 1024L).toInt()} ${resources.getString(R.string.file_size_Kb)}"
+        in 1024L * 1024L until 1024L * 1024L * 1024L -> "${(file.size / (1024L * 1024L)).toInt()} ${resources.getString(R.string.file_size_Mb)}"
+        in 1024L * 1024L * 1024L until 1024L * 1024L * 1024L * 1024L -> "${(file.size / (1024L * 1024L * 1024L)).toInt()} ${resources.getString(R.string.file_size_Gb)}"
+        else -> ""
+    }
+    // set color
+    setTextColor(ChatAttr.getInstance().colorTextFileSize)
+    // set dimension
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextFileSize)
+    // set font
+    ChatAttr.getInstance().resFontFamilyFileInfo?.let {
+        typeface = ResourcesCompat.getFont(context, it)
     }
 }

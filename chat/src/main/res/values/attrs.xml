@@ -22,6 +22,8 @@
         <attr name="color_text_user_message" format="color"/>
         <attr name="color_text_operator_message" format="color"/>
         <attr name="color_text_operator_action" format="color"/>
+        <attr name="color_text_file_name" format="color"/>
+        <attr name="color_text_file_size" format="color"/>
         <attr name="color_text_user_message_author" format="color"/>
         <attr name="color_text_operator_message_author" format="color"/>
         <attr name="color_text_user_message_time" format="color"/>
@@ -32,11 +34,14 @@
         <attr name="color_text_date_grouping" format="color"/>
         <attr name="color_text_link" format="color"/>
 
-        <attr name="progressIndeterminateDrawable" format="reference"/>
+        <attr name="drawable_progress_indeterminate" format="reference"/>
+        <attr name="drawable_file_icon" format="reference"/>
 
         <attr name="size_user_message" format="dimension"/>
         <attr name="size_operator_message" format="dimension"/>
         <attr name="size_operator_action" format="dimension"/>
+        <attr name="size_file_name" format="dimension"/>
+        <attr name="size_file_size" format="dimension"/>
         <attr name="size_user_message_author" format="dimension"/>
         <attr name="size_operator_message_author" format="dimension"/>
         <attr name="size_user_message_time" format="dimension"/>
@@ -49,6 +54,7 @@
         <attr name="resource_font_family_user_message" format="integer"/>
         <attr name="resource_font_family_operator_message" format="integer"/>
         <attr name="resource_font_family_operator_action" format="integer"/>
+        <attr name="resource_font_family_file_info" format="integer"/>
         <attr name="resource_font_family_message_author" format="integer"/>
         <attr name="resource_font_family_message_time" format="integer"/>
         <attr name="resource_font_family_message_date" format="integer"/>

@@ -162,7 +162,7 @@ class SocketApi constructor(
             viewModelScope.launch {
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
-                Log.d("SOCKET_API", "json message___ methon message - $messageJson")
+                Log.d(TAG_SOCKET, "json message___ methon message - $messageJson")
                 val messageSocket = gson.fromJson(messageJson.toString(), MessageSocket::class.java)
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()

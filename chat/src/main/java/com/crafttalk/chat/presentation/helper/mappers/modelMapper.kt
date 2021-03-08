@@ -29,8 +29,8 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             FileModel(
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
-                localMessage.height ?: 0,
-                localMessage.width ?: 0
+                height = localMessage.height ?: 0,
+                width = localMessage.width ?: 0
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -45,8 +45,8 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             FileModel(
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
-                localMessage.height ?: 0,
-                localMessage.width ?: 0
+                height = localMessage.height ?: 0,
+                width = localMessage.width ?: 0
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -59,9 +59,7 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 localMessage.attachmentUrl,
-                localMessage.attachmentName,
-                0,
-                0
+                localMessage.attachmentName
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -78,9 +76,9 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
             FileModel(
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
-                localMessage.height ?: 0,
-                localMessage.width ?: 0,
-                when {
+                height = localMessage.height ?: 0,
+                width = localMessage.width ?: 0,
+                type = when {
                     localMessage.attachmentType == "FILE" -> TypeFile.FILE
                     (localMessage.attachmentType == "IMAGE") && (localMessage.attachmentName.contains(".GIF", true)) -> TypeFile.GIF
                     (localMessage.attachmentType == "IMAGE") && !(localMessage.attachmentName.contains(".GIF", true)) -> TypeFile.IMAGE

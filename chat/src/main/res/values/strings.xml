@@ -14,6 +14,12 @@
     <string name="chat_state_action_operator">Оператор печатает сообщение…</string>
     <string name="chat_entry_field_hint">Введите сообщение…</string>
 
+<!--    File-->
+    <string name="file_size_byte">байт</string>
+    <string name="file_size_Kb">Кб</string>
+    <string name="file_size_Mb">Мб</string>
+    <string name="file_size_Gb">Гб</string>
+
 <!--    Warning-->
     <string name="warning_title">Произошла ошибка</string>
     <string name="warning_reload">Пожалуйста, перезагрузите страницу или повторите попытку позже</string>

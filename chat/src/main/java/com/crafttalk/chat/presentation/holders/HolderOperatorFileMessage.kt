@@ -19,6 +19,8 @@ class HolderOperatorFileMessage(
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
 
     private val fileIcon: ImageView? = view.findViewById(R.id.server_file)
+    private val fileName: TextView? = view.findViewById(R.id.server_file_name)
+    private val fileSize: TextView? = view.findViewById(R.id.server_file_size)
     private val author: TextView? = view.findViewById(R.id.author)
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
@@ -45,11 +47,13 @@ class HolderOperatorFileMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         fileIcon?.setFileIcon()
+        fileName?.setFileName(item.document)
+        fileSize?.setFileSize(item.document)
         // set bg
-//        contentContainer?.apply {
-//            setBackgroundResource(R.drawable.background_item_simple_server_message)
-//            ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
-//        }
+        contentContainer?.apply {
+            setBackgroundResource(R.drawable.background_item_simple_server_message)
+            ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
+        }
     }
 
 }
