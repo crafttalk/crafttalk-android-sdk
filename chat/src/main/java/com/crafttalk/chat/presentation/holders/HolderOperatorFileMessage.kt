@@ -1,23 +1,30 @@
 package com.crafttalk.chat.presentation.holders
 
+import android.content.res.ColorStateList
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.helper.extensions.setDate
-import com.crafttalk.chat.presentation.helper.extensions.setFileIcon
-import com.crafttalk.chat.presentation.helper.extensions.setTimeMessageDefault
+import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.model.FileMessageItem
+import com.crafttalk.chat.utils.ChatAttr
 
 class HolderOperatorFileMessage(
     val view: View,
     private val clickHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<FileMessageItem>(view), View.OnClickListener {
-    private val fileIcon: ImageView = view.findViewById(R.id.server_file)
-    private val time: TextView = view.findViewById(R.id.time)
+    private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
+
+    private val fileIcon: ImageView? = view.findViewById(R.id.server_file)
+    private val author: TextView? = view.findViewById(R.id.author)
+    private val time: TextView? = view.findViewById(R.id.time)
+    private val status: ImageView? = view.findViewById(R.id.status)
+    private val date: TextView? = view.findViewById(R.id.date)
+
     private var fileUrl: String? = null
-    private val date: TextView = view.findViewById(R.id.date)
 
     init {
         view.setOnClickListener(this)
@@ -30,10 +37,19 @@ class HolderOperatorFileMessage(
     }
 
     override fun bindTo(item: FileMessageItem) {
-        date.setDate(item)
         fileUrl = item.document.url
-        fileIcon.setFileIcon()
-        time.setTimeMessageDefault(item, true)
+
+        date?.setDate(item)
+        // set content
+        author?.setAuthor(item, true)
+        time?.setTime(item)
+        status?.setStatusMessage(item)
+        fileIcon?.setFileIcon()
+        // set bg
+//        contentContainer?.apply {
+//            setBackgroundResource(R.drawable.background_item_simple_server_message)
+//            ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
+//        }
     }
 
 }

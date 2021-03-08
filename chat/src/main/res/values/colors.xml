@@ -16,7 +16,6 @@
     <color name="default_color_text_link">@color/default_color_main</color>
 
     <color name="default_color_info">#AEB0B0</color>
-    <color name="default_color_time_mark">#AEB0B0</color>
 
     <color name="white">#fff</color>
     <color name="gray">#ddd</color>

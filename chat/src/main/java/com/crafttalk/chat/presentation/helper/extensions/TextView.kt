@@ -2,9 +2,7 @@ package com.crafttalk.chat.presentation.helper.extensions
 
 import android.annotation.SuppressLint
 import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
-import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
@@ -14,57 +12,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.R
-import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.presentation.helper.converters.convertDpToPx
-import com.crafttalk.chat.presentation.helper.ui.transformSizeDrawable
 import com.crafttalk.chat.presentation.model.MessageModel
+import com.crafttalk.chat.presentation.model.Role
 import com.crafttalk.chat.utils.ChatAttr
 import java.text.SimpleDateFormat
 
-fun TextView.setDrawableColor(color: Int) {
-    compoundDrawables.filterNotNull().forEach {
-        it.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-    }
-}
-
-@SuppressLint("SetTextI18n")
-fun TextView.setTimeMessageWithCheck(message: MessageModel) {
-    setTimeMessageDefault(message)
-
-    when (message.stateCheck) {
-        MessageType.VISITOR_MESSAGE -> {}
-        MessageType.RECEIVED_BY_MEDIATO -> {
-            setCompoundDrawablesWithIntrinsicBounds(
-                null,
-                null,
-                transformSizeDrawable(
-                    context,
-                    R.drawable.ic_check,
-                    (15 * (resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
-                ),
-                null
-            )
-        }
-        MessageType.RECEIVED_BY_OPERATOR -> {
-            setCompoundDrawablesWithIntrinsicBounds(
-                null,
-                null,
-                transformSizeDrawable(
-                    context,
-                    R.drawable.ic_db_check,
-                    (15 * (resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
-                ),
-                null
-            )
-        }
-    }
-
-    setDrawableColor(ChatAttr.getInstance().colorTextTimeMark)
-}
-
-@SuppressLint("SetTextI18n", "SimpleDateFormat")
-fun TextView.setTimeMessageDefault(message: MessageModel, hasAuthorIcon: Boolean = false) {
-    val formatTime = SimpleDateFormat("HH:mm")
+fun TextView.setAuthorIcon(message: MessageModel, hasAuthorIcon: Boolean = false) {
     when {
         hasAuthorIcon && message.authorPreview != null -> {
             Glide.with(context)
@@ -90,12 +44,49 @@ fun TextView.setTimeMessageDefault(message: MessageModel, hasAuthorIcon: Boolean
             setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
         }
     }
+}
+
+fun TextView.setAuthor(message: MessageModel, hasAuthorIcon: Boolean = false) {
+    // set visibility / color / dimension
+    if (message.role == Role.USER) {
+        visibility = if (ChatAttr.getInstance().showUserMessageAuthor) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+        setTextColor(ChatAttr.getInstance().colorTextUserMessageAuthor)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeUserMessageAuthor)
+    } else {
+        visibility = View.VISIBLE
+        setTextColor(ChatAttr.getInstance().colorTextOperatorMessageAuthor)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeOperatorMessageAuthor)
+    }
+    // set font
+    ChatAttr.getInstance().resFontFamilyMessageAuthor?.let {
+        typeface = ResourcesCompat.getFont(context, it)
+    }
     // set content
-    text = "${message.authorName} ${formatTime.format(message.timestamp)}"
-    // set color
-    setTextColor(ChatAttr.getInstance().colorTextTimeMark)
-    // set dimension
-    setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextTimeMark)
+//    setAuthorIcon(message, hasAuthorIcon)
+    text = message.authorName
+}
+
+@SuppressLint("SetTextI18n", "SimpleDateFormat")
+fun TextView.setTime(message: MessageModel) {
+    // set color / dimension
+    if (message.role == Role.USER) {
+        setTextColor(ChatAttr.getInstance().colorTextUserMessageTime)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeUserMessageTime)
+    } else {
+        setTextColor(ChatAttr.getInstance().colorTextOperatorMessageTime)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeOperatorMessageTime)
+    }
+    // set font
+    ChatAttr.getInstance().resFontFamilyMessageTime?.let {
+        typeface = ResourcesCompat.getFont(context, it)
+    }
+    // set content
+    val formatTime = SimpleDateFormat("HH:mm")
+    text = formatTime.format(message.timestamp)
 }
 
 @SuppressLint("SimpleDateFormat")
@@ -108,6 +99,10 @@ fun TextView.setDate(message: MessageModel) {
         setTextColor(ChatAttr.getInstance().colorTextDateGrouping)
         // set dimension
         setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextDateGrouping)
+        // set font
+        ChatAttr.getInstance().resFontFamilyMessageDate?.let {
+            typeface = ResourcesCompat.getFont(context, it)
+        }
         visibility = View.VISIBLE
     } else {
         visibility = View.GONE

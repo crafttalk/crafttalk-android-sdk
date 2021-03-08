@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
@@ -10,26 +10,49 @@
     android:layout_marginEnd="20dp">
 
     <include
+        android:id="@+id/include_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         layout="@layout/item_date_message" />
 
-    <ImageView
-        android:id="@+id/server_file"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_gravity="start"
-        android:src="@drawable/ic_file" />
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/include_date">
+
+        <ImageView
+            android:id="@+id/server_file"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="start"
+            android:src="@drawable/ic_file" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:fontFamily="@font/ubuntu_regular"
+        android:textFontWeight="600"
+        android:drawablePadding="4dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_container" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
         android:gravity="center_vertical"
-        android:layout_marginTop="10dp"
-        android:drawablePadding="8dp"
         android:fontFamily="@font/ubuntu_regular"
-        android:textFontWeight="600" />
+        android:textFontWeight="600"
+        android:layout_marginStart="4dp"
+        app:layout_constraintStart_toEndOf="@id/author"
+        app:layout_constraintTop_toTopOf="@id/author"
+        app:layout_constraintBottom_toBottomOf="@id/author" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

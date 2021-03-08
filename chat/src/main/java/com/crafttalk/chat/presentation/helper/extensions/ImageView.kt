@@ -6,15 +6,40 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.R
+import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
 import com.crafttalk.chat.presentation.model.FileModel
+import com.crafttalk.chat.presentation.model.MessageModel
+import com.crafttalk.chat.presentation.model.Role
 import com.crafttalk.chat.utils.ChatAttr
+
+fun ImageView.setStatusMessage(message: MessageModel) {
+    if (message.role == Role.USER && ChatAttr.getInstance().showUserMessageStatus) {
+        visibility = when (message.stateCheck) {
+            MessageType.RECEIVED_BY_MEDIATO -> {
+                Glide.with(context)
+                    .load(R.drawable.ic_check)
+                    .into(this)
+                View.VISIBLE
+            }
+            MessageType.RECEIVED_BY_OPERATOR -> {
+                Glide.with(context)
+                    .load(R.drawable.ic_db_check)
+                    .into(this)
+                View.VISIBLE
+            }
+            else -> View.GONE
+        }
+        setColorFilter(ChatAttr.getInstance().colorUserMessageStatus)
+    } else {
+        visibility = View.GONE
+    }
+}
 
 fun ImageView.settingMediaFile(
     mediaFile: FileModel,
@@ -33,17 +58,12 @@ fun ImageView.settingMediaFile(
         container?.visibility = View.VISIBLE
     }
     if (!isUnionMessageItem) {
-        val layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        layoutParams.setMargins(
+        (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
             ChatAttr.getInstance().marginStartMediaFile,
             ChatAttr.getInstance().marginTopMediaFile,
             ChatAttr.getInstance().marginEndMediaFile,
             ChatAttr.getInstance().marginBottomMediaFile
         )
-        this.layoutParams = layoutParams
     }
 }
 

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
@@ -25,14 +26,17 @@ class HolderOperatorUnionMessage(
     private val clickImageHandler: (imageUrl: String) -> Unit,
     private val clickDocumentHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
-    private val container: ViewGroup = view.findViewById(R.id.container)
-    private val contentContainer: ViewGroup = view.findViewById(R.id.content_container)
-    private val message: TextView = view.findViewById(R.id.server_message)
-    private val listActions: RecyclerView = view.findViewById(R.id.actions_list)
-    private val time: TextView = view.findViewById(R.id.time)
-    private val fileIcon: ImageView = view.findViewById(R.id.server_file)
-    private val media: ImageView = view.findViewById(R.id.server_media)
-    private val date: TextView = view.findViewById(R.id.date)
+    private val container: ViewGroup? = view.findViewById(R.id.container)
+    private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
+
+    private val message: TextView? = view.findViewById(R.id.server_message)
+    private val listActions: RecyclerView? = view.findViewById(R.id.actions_list)
+    private val author: TextView? = view.findViewById(R.id.author)
+    private val time: TextView? = view.findViewById(R.id.time)
+    private val status: ImageView? = view.findViewById(R.id.status)
+    private val fileIcon: ImageView? = view.findViewById(R.id.server_file)
+    private val media: ImageView? = view.findViewById(R.id.server_media)
+    private val date: TextView? = view.findViewById(R.id.date)
 
     private var fileUrl: String? = null
     private var fileType: TypeFile? = null
@@ -61,40 +65,61 @@ class HolderOperatorUnionMessage(
     override fun bindTo(item: UnionMessageItem) {
         fileUrl = item.file.url
         fileType = item.file.type
-        date.setDate(item)
-        time.setTimeMessageDefault(item, true)
+
+        date?.setDate(item)
         // set content
-        message.movementMethod = LinkMovementMethod.getInstance()
-        message.text = item.message
-        item.actions?.let {
-            listActions.adapter = AdapterAction(
-                selectAction
-            ).apply {
-                this.data = it
+        author?.setAuthor(item, true)
+        time?.setTime(item)
+        status?.setStatusMessage(item)
+        message?.apply {
+            movementMethod = LinkMovementMethod.getInstance()
+            text = item.message
+            listActions?.apply {
+                if (item.actions == null) {
+                    visibility = View.GONE
+                } else {
+                    adapter = AdapterAction(selectAction).apply {
+                        this.data = item.actions
+                    }
+                    visibility = View.VISIBLE
+                }
+            }
+            // set color
+            setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
+            // set dimension
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
+            // set font
+            ChatAttr.getInstance().resFontFamilyOperatorMessage?.let {
+                typeface = ResourcesCompat.getFont(context, it)
             }
         }
-        // set color
-        message.setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
-        // set dimension
-        message.setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
         // set bg
-        ViewCompat.setBackgroundTintList(contentContainer, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
+        contentContainer?.apply {
+            setBackgroundResource(R.drawable.background_item_simple_server_message)
+            ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
+        }
 
         when (fileType) {
             TypeFile.FILE -> {
-                media.visibility = View.GONE
-                fileIcon.visibility = View.VISIBLE
-                fileIcon.setFileIcon()
+                media?.visibility = View.GONE
+                fileIcon?.apply {
+                    visibility = View.VISIBLE
+                    setFileIcon()
+                }
             }
             TypeFile.IMAGE -> {
-                fileIcon.visibility = View.GONE
-                media.settingMediaFile(item.file, fileUrl, container, true)
-                media.loadMediaFile(item.idKey, item.file, updateData)
+                fileIcon?.visibility = View.GONE
+                media?.apply {
+                    settingMediaFile(item.file, fileUrl, container, true)
+                    loadMediaFile(item.idKey, item.file, updateData)
+                }
             }
             TypeFile.GIF -> {
-                fileIcon.visibility = View.GONE
-                media.settingMediaFile(item.file, fileUrl, container, true)
-                media.loadMediaFile(item.idKey, item.file, updateData, true)
+                fileIcon?.visibility = View.GONE
+                media?.apply {
+                    settingMediaFile(item.file, fileUrl, container, true)
+                    loadMediaFile(item.idKey, item.file, updateData, true)
+                }
             }
         }
     }

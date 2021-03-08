@@ -16,13 +16,17 @@
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
-        <attr name="color_bg_server_message" format="color"/>
-        <attr name="color_bg_server_action" format="color"/>
-        <attr name="color_borders_server_action" format="color"/>
+        <attr name="color_bg_operator_message" format="color"/>
+        <attr name="color_bg_operator_action" format="color"/>
+        <attr name="color_borders_operator_action" format="color"/>
         <attr name="color_text_user_message" format="color"/>
-        <attr name="color_text_server_message" format="color"/>
-        <attr name="color_text_server_action" format="color"/>
-        <attr name="color_time_mark" format="color"/>
+        <attr name="color_text_operator_message" format="color"/>
+        <attr name="color_text_operator_action" format="color"/>
+        <attr name="color_text_user_message_author" format="color"/>
+        <attr name="color_text_operator_message_author" format="color"/>
+        <attr name="color_text_user_message_time" format="color"/>
+        <attr name="color_text_operator_message_time" format="color"/>
+        <attr name="color_user_message_status" format="color"/>
         <attr name="color_text_warning" format="color"/>
         <attr name="color_company" format="color"/>
         <attr name="color_text_date_grouping" format="color"/>
@@ -31,12 +35,23 @@
         <attr name="progressIndeterminateDrawable" format="reference"/>
 
         <attr name="size_user_message" format="dimension"/>
-        <attr name="size_server_message" format="dimension"/>
-        <attr name="size_server_action" format="dimension"/>
-        <attr name="size_time_mark" format="dimension"/>
+        <attr name="size_operator_message" format="dimension"/>
+        <attr name="size_operator_action" format="dimension"/>
+        <attr name="size_user_message_author" format="dimension"/>
+        <attr name="size_operator_message_author" format="dimension"/>
+        <attr name="size_user_message_time" format="dimension"/>
+        <attr name="size_operator_message_time" format="dimension"/>
         <attr name="size_warning" format="dimension"/>
         <attr name="size_info" format="dimension"/>
         <attr name="size_text_date_grouping" format="dimension"/>
+
+        <attr name="resource_font_family_all_text" format="integer"/>
+        <attr name="resource_font_family_user_message" format="integer"/>
+        <attr name="resource_font_family_operator_message" format="integer"/>
+        <attr name="resource_font_family_operator_action" format="integer"/>
+        <attr name="resource_font_family_message_author" format="integer"/>
+        <attr name="resource_font_family_message_time" format="integer"/>
+        <attr name="resource_font_family_message_date" format="integer"/>
 
         <attr name="margin_start_media_file" format="dimension"/>
         <attr name="margin_end_media_file" format="dimension"/>
@@ -48,7 +63,21 @@
         <attr name="show_internet_connection_state" format="boolean"/>
         <attr name="show_upper_limiter" format="boolean"/>
         <attr name="show_starting_progress" format="boolean"/>
-        
+
+        <attr name="show_user_message_author" format="boolean"/>
+        <attr name="show_user_message_status" format="boolean"/>
+
+        <attr name="layout_item_user_text_message" format="reference"/>
+        <attr name="layout_item_user_image_message" format="reference"/>
+        <attr name="layout_item_user_gif_message" format="reference"/>
+        <attr name="layout_item_user_file_message" format="reference"/>
+        <attr name="layout_item_user_union_message" format="reference"/>
+        <attr name="layout_item_operator_text_message" format="reference"/>
+        <attr name="layout_item_operator_image_message" format="reference"/>
+        <attr name="layout_item_operator_gif_message" format="reference"/>
+        <attr name="layout_item_operator_file_message" format="reference"/>
+        <attr name="layout_item_operator_union_message" format="reference"/>
+
     </declare-styleable>
 
 </resources>
