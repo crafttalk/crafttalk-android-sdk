@@ -24,6 +24,7 @@
         android:paddingBottom="8dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
+        android:layout_below="@id/include_date"
         android:layout_alignParentEnd="true">
 
         <TextView

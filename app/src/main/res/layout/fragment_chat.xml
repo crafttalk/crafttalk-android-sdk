@@ -39,6 +39,8 @@
         app:color_bg_user_message="@color/color_main"
         app:color_text_operator_action="@color/color_main"
         app:color_text_user_message="#fff"
+        app:color_text_user_message_time="#fff"
+        app:color_user_message_status="#fff"
         app:progressIndeterminateDrawable="@drawable/spinner"
         app:show_internet_connection_state="false"
         app:show_upper_limiter="false"
