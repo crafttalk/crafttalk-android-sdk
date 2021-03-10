@@ -201,6 +201,7 @@ override fun onResume() {
 - show_company_name - указывает о необходимости отобразить название компании
 - show_internet_connection_state - указывает о необходимости отобразить дефолтную панель с состоянием сети
 - show_upper_limiter - указывает о необходимости отобразить верхний разграничитель
+- show_starting_progress - указывает о необходимости отобразить троббер при загрузки чата (значение по умолчанию true)
 
 ## Listeners
 
@@ -224,10 +225,14 @@ Chat.setOnChatMessageListener(object : ChatMessageListener {
 
 ```
 chatView.setOnPermissionListener(object : ChatPermissionListener {
-    override fun requestedPermissions(permissions: Array<Permission>, messages: Array<String>) {
-    	permissions.forEachIndexed { index, permission ->
-	    showWarning(messages[index])
-	}
+    override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
+    	registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+	    	action()
+	    } else {
+	    	showWarning(messages[0])
+	    }
+	}.launch(permissions[0])
     }
 })
 ```
@@ -245,7 +250,7 @@ chatView.setOnUploadFileListener(object : UploadFileListener {
 
 #### ChatInternetConnectionListener
 
-Этот listener устанавливается через ChatView с помощью метода setOnInternetConnectionListener. Этот listener позволяет самостоятельно реализовать Toolbar. Для этого необходимо выставить show_internet_connection_state="false" и show_upper_limiter="false" и установить listener.
+Этот listener устанавливается через ChatView с помощью метода setOnInternetConnectionListener. Этот listener позволяет самостоятельно реализовать Toolbar. Для этого необходимо выставить show_internet_connection_state="false" и show_upper_limiter="false".
 
 ```
 chatView.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
@@ -256,10 +261,20 @@ chatView.setOnInternetConnectionListener(object : ChatInternetConnectionListener
 })
 ```
 
+#### StateStartingProgressListener
+
+Этот listener устанавливается через ChatView с помощью метода setOnStateStartingProgressListener. Этот listener позволяет самостоятельно реализовать троббер, появляющийся при загрузки чата. Для этого необходимо выставить show_starting_progress="false".
+
+```
+chatView.setOnStateStartingProgressListener(object : StateStartingProgressListener {
+    override fun start() { loader.visibility = View.VISIBLE }
+    override fun stop() { loader.visibility = View.GONE }   
+})
+```
+
 License
 --------
 
-    Copyright 2018 Chris Banes
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
