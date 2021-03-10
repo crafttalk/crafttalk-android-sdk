@@ -100,6 +100,10 @@ Chat.init(
 
 Аутентификация может осуществляться двумя способами: явно (AUTH_WITH_FORM) и неявно (AUTH_WITHOUT_FORM) для пользователя. Отличие заключается в том, что при AUTH_WITH_FORM пользователю необходимо самому ввести данные о себе через форму, а при AUTH_WITHOUT_FORM за формирование объекта Visitor, необходимого для аутентификации, отвечает тот, кто использует библиотеку.
 
+##### SSL Pinning
+
+Чтобы включить SSL Pinning необходимо в метод Chat.init передать сертификат, как атрибут certificatePinning. 
+
 ##### Push
 
 Если аутентификация была успешной, то производится подписка пользователя на push уведомления, если тот ранее не был подписан. В противном случае пользователя отписывают от получение push уведомлений.
@@ -169,27 +173,50 @@ override fun onResume() {
 Цвета:
 - color_main - устанавливает главный цвет чата
 - color_bg_user_message - устанавливает цвет фона пользовательского сообщения
-- color_bg_server_message - устанавливает цвет фона сообщения бота/оператора
+- color_bg_operator_message - устанавливает цвет фона сообщения бота/оператора
 - color_text_user_message - устанавливает цвет текста пользовательского сообщения
-- color_text_server_message - устанавливает цвет текста сообщения бота/оператора
-- color_text_server_action - устанавливает цвет текста подсказки бота
-- color_time_mark - устанавливает цвет текста под сообщением (дата + автор + статус сообщения)
+- color_text_operator_message - устанавливает цвет текста сообщения бота/оператора
+- color_text_operator_action - устанавливает цвет текста подсказки бота
+- color_text_file_name - устанавливает цвет имени файла 
+- color_text_file_size - устанавливает цвет размера файла
+- color_text_user_message_author -  устанавливает цвет текста имени пользователя
+- color_text_operator_message_author -  устанавливает цвет текста имени бота/оператора
+- color_text_user_message_time - устанавливает цвет времени сообщения от пользователя
+- color_text_operator_message_time - устанавливает цвет времени сообщения от бота/оператора
+- color_user_message_status - устанавливает цвет иконок статуса
+- color_text_link - устанавливает цвет текста ссылки в сообщении
 - color_text_warning - устанавливает цвет текста, сообщающего о состоянии соединения
 - color_company - устанавливает цвет текста названия компании (имеет смысл, есть атрибут show_company_name выставлен в true)
 - color_text_date_grouping - устанавливает цвет текста даты, группирующей сообщения
 
 Ресурсы:
-- progressIndeterminateDrawable - устанавливает цвет всех тробберов в чате
+- drawable_progress_indeterminate - устанавливает цвет всех тробберов в чате
+- drawable_file_icon - устанавливает иконку в сообщеии, содержащем файлы
         
 Размеры:
 - size_user_message - устанавливает размер текста пользовательского сообщения
-- size_server_message - устанавливает размер текста сообщения бота/оператора
-- size_server_action - устанавливает размер текста подсказки бота
-- size_time_mark - устанавливает размер текста под сообщением (дата + автор + статус сообщения)
+- size_operator_message - устанавливает размер текста сообщения бота/оператора
+- size_operator_action - устанавливает размер текста подсказки бота
+- size_file_name - устанавливает размер текста имени файла
+- size_file_size - устанавливает размер текста размера файла
+- size_user_message_author - устанавливает размер имени пользователя в сообщении
+- size_operator_message_author - устанавливает размер имени бота/оператора в сообщении
+- size_user_message_time - устанавливает размер текста времени в сообщении пользователя
+- size_operator_message_time - устанавливает размер текста времени в сообщении бота/оператора
 - size_warning - устанавливает размер текста, сообщающего о состоянии соединения
 - size_info - устанавливает размер текста информационного сообщения (название компании/сообщение, сообщающие о том, что оператор набирает сообщение)
 - size_text_date_grouping - устанавливает размер текста даты, группирующей сообщения
-      
+
+Шрифты:
+- resource_font_family_all_text - шрифт для всех сообщений, если указан этот аттрибут, то остальные игнорируются
+- resource_font_family_user_message
+- resource_font_family_operator_message
+- resource_font_family_operator_action
+- resource_font_family_file_info
+- resource_font_family_message_author
+- resource_font_family_message_time
+- resource_font_family_message_date
+
 Отступы:
 - margin_start_media_file - устанавливает margin слева от медиа файла
 - margin_end_media_file - устанавливает margin справа от медиа файла
@@ -202,6 +229,20 @@ override fun onResume() {
 - show_internet_connection_state - указывает о необходимости отобразить дефолтную панель с состоянием сети
 - show_upper_limiter - указывает о необходимости отобразить верхний разграничитель
 - show_starting_progress - указывает о необходимости отобразить троббер при загрузки чата (значение по умолчанию true)
+- show_user_message_author - указывает о необходимости отобразить имя автора пользователя
+- show_user_message_status - указывает о необходимости отобразить статус пользовательского сообщения
+
+Собственные layouts:
+- layout_item_user_text_message - задает layout для текстового сообщения пользователя
+- layout_item_user_image_message - задает layout для сообщения с фото от пользователя
+- layout_item_user_gif_message - задает layout для сообщения с гифкой от пользователя
+- layout_item_user_file_message - задает layout для сообщения с файлом от пользователя
+- layout_item_user_union_message - задает layout для смешанного(текст + фото/гифка/файл) сообщения от пользователя
+- layout_item_operator_text_message - задает layout для текстового сообщения бота/оператора
+- layout_item_operator_image_message - задает layout для сообщения с фото от бота/оператора
+- layout_item_operator_gif_message - задает layout для сообщения с гифкой от бота/оператора
+- layout_item_operator_file_message - задает layout для сообщения с файлом от бота/оператора
+- layout_item_operator_union_message - задает layout для смешанного(текст + фото/гифка/файл) сообщения от бота/оператора
 
 ## Listeners
 
@@ -271,6 +312,26 @@ chatView.setOnStateStartingProgressListener(object : StateStartingProgressListen
     override fun stop() { loader.visibility = View.GONE }   
 })
 ```
+
+## Собственные layouts
+
+Реализация собственных layouts позволяет задать свое расположение элементов. Необходимо соблюдать некоторые правила:
+- тип элемента должен быть такой же, как и в реализации по умолчанию
+- id должен быть такой же, как и в реализации по умолчанию
+
+Пример можно найти [тут](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/app/src/main/res/layout/layout_item_user_text_message.xml)
+
+Реализации по умолчанию:
+- [текстовое сообщение пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_text_message.xml)
+- [сообщение с фото от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_image_message.xml)
+- [сообщение с гифкой от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_gif_message.xml)
+- [сообщение с файлом от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_file_message.xml)
+- [смешанное(текст + фото/гифка/файл) сообщение от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_union_message.xml)
+- [текстовое сообщение бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_text_message.xml)
+- [сообщение с фото от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_image_message.xml)
+- [сообщение с гифкой от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_gif_message.xml)
+- [сообщение с файлом от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_file_message.xml)
+- [смешанное(текст + фото/гифка/файл) сообщение от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_union_message.xml)
 
 License
 --------
