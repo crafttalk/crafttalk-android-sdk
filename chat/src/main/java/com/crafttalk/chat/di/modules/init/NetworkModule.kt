@@ -1,5 +1,6 @@
 package com.crafttalk.chat.di.modules.init
 
+import android.content.Context
 import com.crafttalk.chat.data.api.rest.NotificationApi
 import com.crafttalk.chat.data.api.rest.PersonApi
 import com.crafttalk.chat.data.api.socket.SocketApi
@@ -55,9 +56,10 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSocketApi(messagesDao: MessagesDao, gson: Gson) = SocketApi(
+    fun provideSocketApi(messagesDao: MessagesDao, gson: Gson, context: Context) = SocketApi(
         messagesDao,
-        gson
+        gson,
+        context
     )
 
 }

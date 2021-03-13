@@ -63,7 +63,7 @@ data class Message(
     }
 
     companion object {
-        fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?): Message {
+        fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?, height: Int? = null, width: Int? = null): Message {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertTextToNormalString(list)
 
@@ -82,8 +82,8 @@ data class Message(
                 attachmentName = messageSocket.attachmentName,
                 operatorPreview = operatorPreview,
                 operatorName = if (messageSocket.operatorName == null || !messageSocket.isReply) "Вы" else messageSocket.operatorName,
-                height = null,
-                width = null,
+                height = height,
+                width = width,
                 isRead = false
             )
         }

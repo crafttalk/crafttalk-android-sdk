@@ -1,5 +1,6 @@
 package com.crafttalk.chat.data.api.socket
 
+import android.content.Context
 import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
@@ -9,6 +10,7 @@ import com.crafttalk.chat.domain.entity.tags.Tag
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
+import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams.authType
 import com.crafttalk.chat.utils.ChatParams.urlSocketHost
@@ -31,7 +33,8 @@ import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 class SocketApi constructor(
     private val dao: MessagesDao,
-    private val gson: Gson
+    private val gson: Gson,
+    private val context: Context
 ) {
 
     private var socket: Socket? = null
@@ -308,6 +311,15 @@ class SocketApi constructor(
 
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
         when {
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() && messageSocket.attachmentType == "IMAGE") -> {
+                messageSocket.attachmentUrl?.let{
+                    getSizeMediaFile(context, it) { height, width ->
+                        viewModelScope.launch {
+                            dao.insertMessage(MessageDB.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
+                        }
+                    }
+                }
+            }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
                 dao.insertMessage(MessageDB.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
