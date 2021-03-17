@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/chat_entry_field_hint"
-            android:inputType="textMultiLine"
+            android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
             android:maxHeight="@dimen/max_height_entry_field_message"
             android:minHeight="38dp"
             android:layout_toStartOf="@id/send_message"
