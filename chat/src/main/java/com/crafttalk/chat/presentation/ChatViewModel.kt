@@ -37,6 +37,8 @@ class ChatViewModel
 ) : BaseViewModel() {
 
     var countUnreadMessages = MutableLiveData(0)
+    val scrollToDownVisible = MutableLiveData(false)
+
     val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
@@ -188,15 +190,18 @@ class ChatViewModel
             when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
                 -1 -> {
                     countUnreadMessages.postValue(min(list.size, indexLastVisibleItem))
+                    scrollToDownVisible.postValue(indexLastVisibleItem >= MAX_COUNT_UNREAD_MESSAGES)
                     for (i in indexLastVisibleItem until list.size) {
                         chatMessageInteractor.readMessage(list[i].id)
                     }
                 }
                 0 -> {
                     countUnreadMessages.postValue(0)
+                    scrollToDownVisible.postValue(indexLastVisibleItem >= MAX_COUNT_UNREAD_MESSAGES)
                 }
                 else -> {
                     countUnreadMessages.postValue(min(indexLastReadMessage, indexLastVisibleItem))
+                    scrollToDownVisible.postValue(indexLastVisibleItem >= MAX_COUNT_UNREAD_MESSAGES)
                     for (i in indexLastVisibleItem until indexLastReadMessage) {
                         chatMessageInteractor.readMessage(list[i].id)
                     }
@@ -219,6 +224,7 @@ class ChatViewModel
 
     companion object {
         const val PAGE_SIZE = 20
+        const val MAX_COUNT_UNREAD_MESSAGES = 1
     }
 
 }

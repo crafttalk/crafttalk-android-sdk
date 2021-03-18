@@ -17,7 +17,6 @@ class HolderUserGifMessage(
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickHandler: (gifUrl: String) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
-    private val container: ViewGroup? = view.findViewById(R.id.container)
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
 
     private val gif: ImageView? = view.findViewById(R.id.user_gif)
@@ -47,7 +46,7 @@ class HolderUserGifMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         gif?.apply {
-            settingMediaFile(item.gif, gifUrl, container)
+            settingMediaFile()
             loadMediaFile(item.idKey, item.gif, updateData, true)
         }
         // set bg

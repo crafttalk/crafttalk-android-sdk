@@ -8,5 +8,6 @@ data class FileModel(
     val size: Long = 0,
     val height: Int = 0,
     val width: Int = 0,
+    val failLoading: Boolean = false,
     val type: TypeFile? = null
 )

@@ -308,7 +308,6 @@ class SocketApi constructor(
         socket!!.emit("history-messages-requested", timestamp, visitor.token)
     }
 
-
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() && messageSocket.attachmentType == "IMAGE") -> {

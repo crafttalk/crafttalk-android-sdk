@@ -160,18 +160,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
-                if (indexLastVisible >= 2) {
-                    scroll_to_down.visibility = View.VISIBLE
-                    if (viewModel.countUnreadMessages.value != 0) {
-                        count_unread_message.visibility = View.VISIBLE
-                    } else {
-                        count_unread_message.visibility = View.GONE
-                    }
-                } else {
-                    count_unread_message.visibility = View.GONE
-                    scroll_to_down.visibility = View.GONE
+                if (indexLastVisible == -1) {
+                    viewModel.scrollToDownVisible.value = false
+                    return
                 }
-
                 viewModel.updateValueCountUnreadMessages(indexLastVisible)
             }
         })
@@ -208,12 +200,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             liveDataMessages?.observe(lifecycleOwner, Observer { pagedList ->
                 pagedList ?: return@Observer
 
+                val countItemsLastVersion = adapterListMessages.itemCount
                 adapterListMessages.submitList(pagedList)
 
                 if (isFirstUploadMessages) {
                     viewModel.setValueCountUnreadMessages()
                 } else {
-                    if (scroll_to_down.visibility == View.GONE) {
+                    if (scroll_to_down.visibility == View.GONE && countItemsLastVersion < pagedList.size) {
                         list_with_message.smoothScrollToPosition(0)
                     }
                 }
@@ -231,7 +224,27 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
             list_with_message.scrollToPosition(it)
         })
-
+        viewModel.scrollToDownVisible.observe(lifecycleOwner, Observer {
+            if (it) {
+                scroll_to_down.visibility = View.VISIBLE
+                if (viewModel.countUnreadMessages.value != 0) {
+                    count_unread_message.visibility = View.VISIBLE
+                } else {
+                    count_unread_message.visibility = View.GONE
+                }
+            } else {
+                count_unread_message.visibility = View.GONE
+                scroll_to_down.visibility = View.GONE
+            }
+        })
+        viewModel.countUnreadMessages.observe(lifecycleOwner, Observer {
+            if (it <= 0) {
+                count_unread_message.visibility = View.GONE
+            } else {
+                count_unread_message.text = if (it < 10) it.toString() else "9+"
+                count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
+            }
+        })
     }
 
     fun onResume(lifecycleOwner: LifecycleOwner) {
@@ -300,14 +313,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         warningConnection.visibility = View.INVISIBLE
                     }
                 }
-            }
-        })
-        viewModel.countUnreadMessages.observe(lifecycleOwner, Observer {
-            if (it == 0) {
-                count_unread_message.visibility = View.GONE
-            } else {
-                count_unread_message.text = if (it < 10) it.toString() else "9+"
-                count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
             }
         })
     }

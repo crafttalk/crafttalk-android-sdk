@@ -30,7 +30,8 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
                 height = localMessage.height ?: 0,
-                width = localMessage.width ?: 0
+                width = localMessage.width ?: 0,
+                failLoading = localMessage.height == null || localMessage.width == null
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -46,7 +47,8 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
                 height = localMessage.height ?: 0,
-                width = localMessage.width ?: 0
+                width = localMessage.width ?: 0,
+                failLoading = localMessage.height == null || localMessage.width == null
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -78,6 +80,7 @@ fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
                 localMessage.attachmentName,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
+                failLoading = localMessage.height == null || localMessage.width == null,
                 type = when {
                     localMessage.attachmentType == "FILE" -> TypeFile.FILE
                     (localMessage.attachmentType == "IMAGE") && (localMessage.attachmentName.contains(".GIF", true)) -> TypeFile.GIF

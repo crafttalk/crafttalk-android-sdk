@@ -17,7 +17,6 @@ class HolderUserImageMessage(
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickHandler: (imageUrl: String) -> Unit
 ) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
-    private val container: ViewGroup? = view.findViewById(R.id.container)
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
 
     private val img: ImageView? = view.findViewById(R.id.user_image)
@@ -47,7 +46,7 @@ class HolderUserImageMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         img?.apply {
-            settingMediaFile(item.image, imageUrl, container)
+            settingMediaFile()
             loadMediaFile(item.idKey, item.image, updateData)
         }
         // set bg

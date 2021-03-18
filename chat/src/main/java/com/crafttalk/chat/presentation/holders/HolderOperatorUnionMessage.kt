@@ -26,7 +26,6 @@ class HolderOperatorUnionMessage(
     private val clickImageHandler: (imageUrl: String) -> Unit,
     private val clickDocumentHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
-    private val container: ViewGroup? = view.findViewById(R.id.container)
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
 
     private val message: TextView? = view.findViewById(R.id.server_message)
@@ -107,14 +106,14 @@ class HolderOperatorUnionMessage(
                 fileIcon?.apply {
                     visibility = View.VISIBLE
                     setFileIcon()
-                }
-                fileName?.apply {
-                    visibility = View.VISIBLE
-                    setFileName(item.file)
-                }
-                fileSize?.apply {
-                    visibility = View.VISIBLE
-                    setFileSize(item.file)
+                    fileName?.apply {
+                        visibility = View.VISIBLE
+                        setFileName(item.file)
+                    }
+                    fileSize?.apply {
+                        visibility = View.VISIBLE
+                        setFileSize(item.file)
+                    }
                 }
             }
             TypeFile.IMAGE -> {
@@ -122,7 +121,8 @@ class HolderOperatorUnionMessage(
                 fileName?.visibility = View.GONE
                 fileSize?.visibility = View.GONE
                 media?.apply {
-                    settingMediaFile(item.file, fileUrl, container, true)
+                    visibility = View.VISIBLE
+                    settingMediaFile(true)
                     loadMediaFile(item.idKey, item.file, updateData)
                 }
             }
@@ -131,7 +131,8 @@ class HolderOperatorUnionMessage(
                 fileName?.visibility = View.GONE
                 fileSize?.visibility = View.GONE
                 media?.apply {
-                    settingMediaFile(item.file, fileUrl, container, true)
+                    visibility = View.VISIBLE
+                    settingMediaFile(true)
                     loadMediaFile(item.idKey, item.file, updateData, true)
                 }
             }
