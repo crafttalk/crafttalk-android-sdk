@@ -1,36 +1,36 @@
 <resources>
     <string name="app_name">Чат</string>
 
-<!--    Auth-->
+    <!--    Auth-->
     <string name="auth_user_introduction">Пожалуйста, представьтесь</string>
     <string name="auth_user_first_name">Ваше имя</string>
     <string name="auth_user_surname_name">Ваша фамилия</string>
     <string name="auth_user_phone">Ваш номер телефона</string>
     <string name="auth_sign_in">Начать чат</string>
 
-<!--    Chat-->
+    <!--    Chat-->
     <string name="chat_internet_connection_warning">Нет доступа к сети…</string>
     <string name="chat_name_company">автор CraftTalk</string>
     <string name="chat_state_action_operator">Оператор печатает сообщение…</string>
     <string name="chat_entry_field_hint">Введите сообщение…</string>
 
-<!--    File-->
+    <!--    File-->
     <string name="file_size_byte">байт</string>
     <string name="file_size_Kb">Кб</string>
     <string name="file_size_Mb">Мб</string>
     <string name="file_size_Gb">Гб</string>
 
-<!--    Warning-->
+    <!--    Warning-->
     <string name="warning_title">Произошла ошибка</string>
     <string name="warning_reload">Пожалуйста, перезагрузите страницу или повторите попытку позже</string>
 
-<!--    Warning snackbar-->
+    <!--    Warning snackbar-->
     <string name="warning_snackbar_not_support_type_title">Невозможно загрузить документ</string>
     <string name="warning_snackbar_not_support_type_description">Загружаемый файл запрещен к отправке</string>
     <string name="warning_snackbar_large_title">Невозможно загрузить документ</string>
     <string name="warning_snackbar_large_description">Загружаемый файл слишком большой</string>
 
-<!--    Bottom sheet file viewer-->
+    <!--    Bottom sheet file viewer-->
     <string name="bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
     <string name="bottom_sheet_file_viewer_image_from_camera">Камера</string>
     <string name="bottom_sheet_file_viewer_document_from_gallery">Документ</string>
@@ -39,5 +39,8 @@
 
     <string name="requested_permission_storage">У вас нет разрешения на доступ к ресурсам!</string>
     <string name="requested_permission_camera">У вас нет разрешения на доступ к камере!</string>
+
+    <!--    Phone formats-->
+    <string name="russian_phone_format">+7 ([000]) [000]-[00]-[00]</string>
 
 </resources>

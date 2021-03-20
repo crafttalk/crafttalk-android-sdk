@@ -41,4 +41,7 @@
     <string name="requested_permission_storage">You do not have permission to access resources!</string>
     <string name="requested_permission_camera">You do not have permission to access the camera!</string>
 
+    <!--    Phone formats-->
+    <string name="russian_phone_format">+7 ([000]) [000]-[00]-[00]</string>
+
 </resources>

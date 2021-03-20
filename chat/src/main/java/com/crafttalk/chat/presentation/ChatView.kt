@@ -40,6 +40,7 @@ import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.TypeFailUpload
+import com.redmadrobot.inputmask.MaskedTextChangedListener
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
 import kotlinx.android.synthetic.main.view_host.view.*
@@ -139,6 +140,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     private fun setAllListeners() {
+        phone_user.apply {
+            val maskedListener = MaskedTextChangedListener(context.getString(R.string.russian_phone_format), this)
+            addTextChangedListener(maskedListener)
+            onFocusChangeListener = maskedListener
+        }
         sign_in.setOnClickListener(this)
         send_message.setOnClickListener(this)
         warning_refresh.setOnClickListener(this)
