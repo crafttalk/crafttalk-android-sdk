@@ -62,6 +62,19 @@ data class Message(
         }
     }
 
+    override fun hashCode(): Int {
+        var result = uuid.hashCode()
+        result = 31 * result + isReply.hashCode()
+        result = 31 * result + (parentMsgId?.hashCode() ?: 0)
+        result = 31 * result + (message?.hashCode() ?: 0)
+        result = if (actions.isNullOrEmpty()) 31 * result else 31 * result + (actions.hashCode())
+        result = 31 * result + (attachmentUrl?.hashCode() ?: 0)
+        result = 31 * result + (attachmentType?.hashCode() ?: 0)
+        result = 31 * result + (attachmentName?.hashCode() ?: 0)
+        result = 31 * result + (operatorName?.hashCode() ?: 0)
+        return result
+    }
+
     companion object {
         fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?, height: Int? = null, width: Int? = null): Message {
             val list = arrayListOf<Tag>()
