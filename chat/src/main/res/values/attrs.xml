@@ -73,6 +73,9 @@
         <attr name="show_user_message_author" format="boolean"/>
         <attr name="show_user_message_status" format="boolean"/>
 
+        <attr name="resource_bg_user_message" format="integer"/>
+        <attr name="resource_bg_operator_message" format="integer"/>
+
         <attr name="layout_item_user_text_message" format="reference"/>
         <attr name="layout_item_user_image_message" format="reference"/>
         <attr name="layout_item_user_gif_message" format="reference"/>

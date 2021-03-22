@@ -60,7 +60,7 @@ class HolderOperatorTextMessage(
         }
         // set bg
         contentContainer?.apply {
-            setBackgroundResource(R.drawable.background_item_simple_server_message)
+            setBackgroundResource(ChatAttr.getInstance().bgOperatorMessageResId)
             ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorMessage))
         }
     }

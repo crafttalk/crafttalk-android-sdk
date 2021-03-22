@@ -86,6 +86,9 @@ private constructor(
     val showUserMessageAuthor = attrArr.getBoolean(R.styleable.ChatView_show_user_message_author, true)
     val showUserMessageStatus = attrArr.getBoolean(R.styleable.ChatView_show_user_message_status, true)
 
+    val bgUserMessageResId = attrArr.getResourceId(R.styleable.ChatView_resource_bg_user_message, R.drawable.background_item_simple_user_message)
+    val bgOperatorMessageResId = attrArr.getResourceId(R.styleable.ChatView_resource_bg_operator_message, R.drawable.background_item_simple_server_message)
+
     val layoutItemUserTextMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_user_text_message)
     val layoutItemUserImageMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_user_image_message)
     val layoutItemUserGifMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_user_gif_message)

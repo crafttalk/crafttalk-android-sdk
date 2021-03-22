@@ -51,7 +51,7 @@ class HolderUserGifMessage(
         }
         // set bg
         contentContainer?.apply {
-            setBackgroundResource(R.drawable.background_item_simple_user_message)
+            setBackgroundResource(ChatAttr.getInstance().bgUserMessageResId)
             ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundUserMessage))
         }
     }
