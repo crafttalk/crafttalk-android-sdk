@@ -8,28 +8,28 @@ import javax.inject.Inject
 
 class CustomizingChatBehaviorInteractor
 @Inject constructor(
-    private val сhatBehaviorRepository: IChatBehaviorRepository
+    private val chatBehaviorRepository: IChatBehaviorRepository
 ) {
 
     fun setInternetConnectionListener(listener: ChatInternetConnectionListener) {
-        сhatBehaviorRepository.setInternetConnectionListener(listener)
+        chatBehaviorRepository.setInternetConnectionListener(listener)
     }
 
     fun setMessageListener(listener: ChatMessageListener) {
-        сhatBehaviorRepository.setMessageListener(listener)
+        chatBehaviorRepository.setMessageListener(listener)
     }
 
     fun leaveChatScreen() {
-        сhatBehaviorRepository.setStatusChat(ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP)
+        chatBehaviorRepository.setStatusChat(ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP)
     }
 
     fun goToChatScreen() {
-        сhatBehaviorRepository.setStatusChat(ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
+        chatBehaviorRepository.setStatusChat(ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
     }
 
     fun openApp() {
-        сhatBehaviorRepository.setStatusChat(
-            when (сhatBehaviorRepository.getStatusChat()) {
+        chatBehaviorRepository.setStatusChat(
+            when (chatBehaviorRepository.getStatusChat()) {
                 ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP
                 ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP
             }
@@ -37,8 +37,8 @@ class CustomizingChatBehaviorInteractor
     }
 
     fun closeApp() {
-        сhatBehaviorRepository.setStatusChat(
-            when (сhatBehaviorRepository.getStatusChat()) {
+        chatBehaviorRepository.setStatusChat(
+            when (chatBehaviorRepository.getStatusChat()) {
                 ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP
                 ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP
             }
@@ -46,7 +46,7 @@ class CustomizingChatBehaviorInteractor
     }
 
     fun destroyHostChat() {
-        сhatBehaviorRepository.destroyChatSession()
+        chatBehaviorRepository.destroyChatSession()
     }
 
 }

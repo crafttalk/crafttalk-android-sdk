@@ -2,6 +2,7 @@ package com.crafttalk.chat.di.modules.init
 
 import android.content.Context
 import androidx.room.Room
+import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
 import com.crafttalk.chat.data.local.db.database.ChatDatabase
@@ -33,5 +34,11 @@ class DBModule {
     fun providePersonDao(
         chatDatabase: ChatDatabase
     ): PersonDao = chatDatabase.personDao()
+
+    @Provides
+    @Singleton
+    fun provideFileDao(
+        chatDatabase: ChatDatabase
+    ): FileDao = chatDatabase.fileDao()
 
 }

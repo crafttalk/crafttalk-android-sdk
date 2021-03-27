@@ -3,15 +3,17 @@ package com.crafttalk.chat.data.local.db.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
+import com.crafttalk.chat.data.local.db.entity.File
 import com.crafttalk.chat.data.local.db.entity.Message
 import com.crafttalk.chat.data.local.db.entity.Person
 import com.crafttalk.chat.data.local.db.entity.converters.ActionConverter
 import com.crafttalk.chat.data.local.db.entity.converters.SpanStructureListConverter
 
 @Database(
-    entities = [Message::class, Person::class],
+    entities = [Message::class, Person::class, File::class],
     version = 1,
     exportSchema = false
 )
@@ -19,4 +21,5 @@ import com.crafttalk.chat.data.local.db.entity.converters.SpanStructureListConve
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun messageDao(): MessagesDao
     abstract fun personDao(): PersonDao
+    abstract fun fileDao(): FileDao
 }

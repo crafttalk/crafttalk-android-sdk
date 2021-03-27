@@ -7,8 +7,16 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.interactors.*
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 object Chat {
+
+    private val job = Job()
+    private val scopeIO = CoroutineScope(Dispatchers.IO + job)
+    private val scopeUI = CoroutineScope(Dispatchers.Main + job)
 
     private lateinit var customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor
     private lateinit var visitorInteractor: VisitorInteractor
@@ -71,8 +79,26 @@ object Chat {
         customizingChatBehaviorInteractor.destroyHostChat()
     }
 
-//    fun logOut(visitor: Visitor?) {
-//        authInteractor.logOut(visitor)
-//    }
+    fun logOut(context: Context) {
+        scopeIO.launch {
+            authInteractor.logOut(context.filesDir)
+        }
+    }
+
+    fun logOutWithUIActionAfter(context: Context, actionUIAfterLogOut: () -> Unit) {
+        scopeIO.launch {
+            authInteractor.logOut(context.filesDir)
+            scopeUI.launch {
+                actionUIAfterLogOut()
+            }
+        }
+    }
+
+    fun logOutWithIOActionAfter(context: Context, actionIOAfterLogOut: () -> Unit) {
+        scopeIO.launch {
+            authInteractor.logOut(context.filesDir)
+            actionIOAfterLogOut()
+        }
+    }
 
 }

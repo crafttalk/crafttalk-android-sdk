@@ -115,9 +115,6 @@ private constructor(
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: ChatAttr(attrArr!!, context!!).also { INSTANCE = it }
             }
-        fun createInstance(attrArr: TypedArray, context: Context) {
-            getInstance(attrArr, context)
-        }
     }
 
 }

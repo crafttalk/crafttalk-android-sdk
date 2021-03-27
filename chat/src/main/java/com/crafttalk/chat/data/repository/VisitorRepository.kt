@@ -35,7 +35,7 @@ class VisitorRepository
         prefEditor.apply()
     }
 
-    override fun deleteVisitor(visitor: Visitor) {
+    override fun deleteVisitor() {
         val prefEditor = pref.edit()
         prefEditor.remove("Visitor")
         prefEditor.putBoolean("isVisitor", false)

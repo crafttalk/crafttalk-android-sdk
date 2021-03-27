@@ -98,7 +98,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         inflater.inflate(R.layout.view_host, this, true)
 
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
-        ChatAttr.createInstance(attrArr, context)
         customizationChat(attrArr)
         attrArr.recycle()
     }

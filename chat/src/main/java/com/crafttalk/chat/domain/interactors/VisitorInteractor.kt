@@ -24,5 +24,5 @@ class VisitorInteractor
     }
     fun setVisitor(visitor: Visitor?) = visitorRepository.setVisitorFromClient(visitor)
     fun saveVisitor(visitor: Visitor) = visitorRepository.saveVisitor(visitor)
-    fun deleteVisitor(visitor: Visitor) = visitorRepository.deleteVisitor(visitor)
+    fun deleteVisitor() = visitorRepository.deleteVisitor()
 }

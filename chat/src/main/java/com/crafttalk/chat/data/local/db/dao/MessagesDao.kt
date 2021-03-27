@@ -34,4 +34,7 @@ interface MessagesDao {
     @Query("UPDATE messages SET is_read = 1 WHERE uuid = :uuid AND id = :id")
     fun readMessage(uuid: String, id: String)
 
+    @Query("DELETE FROM messages WHERE uuid = :uuid")
+    fun deleteAllMessages(uuid: String)
+
 }

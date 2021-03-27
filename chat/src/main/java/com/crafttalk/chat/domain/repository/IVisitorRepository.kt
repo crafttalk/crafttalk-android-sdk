@@ -7,5 +7,5 @@ interface IVisitorRepository {
     fun getVisitorFromSharedPreferences(): Visitor?
     fun setVisitorFromClient(visitor: Visitor?)
     fun saveVisitor(visitor: Visitor)
-    fun deleteVisitor(visitor: Visitor)
+    fun deleteVisitor()
 }

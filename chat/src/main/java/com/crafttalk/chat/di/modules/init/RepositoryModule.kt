@@ -11,7 +11,7 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindChatBehaviorRepository(сhatBehaviorRepository: ChatBehaviorRepository): IChatBehaviorRepository
+    abstract fun bindChatBehaviorRepository(chatBehaviorRepository: ChatBehaviorRepository): IChatBehaviorRepository
 
     @Singleton
     @Binds

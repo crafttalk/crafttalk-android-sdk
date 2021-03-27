@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
-import android.os.Environment
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -91,8 +90,7 @@ class FileViewerHelper constructor(
     @SuppressLint("SimpleDateFormat")
     private fun createImageFile(context: Context, format: String): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
-        return File.createTempFile("MEDIA_${timeStamp}_", format, storageDir)
+        return File.createTempFile("MEDIA_${timeStamp}_", format, context.filesDir)
     }
 
     companion object {

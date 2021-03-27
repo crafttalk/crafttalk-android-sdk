@@ -5,6 +5,7 @@ import com.crafttalk.chat.domain.repository.IAuthRepository
 import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams
+import java.io.File
 import javax.inject.Inject
 
 class AuthInteractor
@@ -84,11 +85,14 @@ class AuthInteractor
         }
     }
 
-    fun logOut(visitor: Visitor?) {
+    fun logOut(filesDir: File) {
         notificationInteractor.unsubscribeNotification()
+        visitorInteractor.getVisitor()?.uuid?.let { uuid ->
+            authRepository.logOut(uuid, filesDir)
+        }
         when (ChatParams.authType) {
             AuthType.AUTH_WITH_FORM -> {
-                visitor?.let {  visitorInteractor.deleteVisitor(it) }
+                visitorInteractor.deleteVisitor()
             }
             AuthType.AUTH_WITHOUT_FORM -> {
                 visitorInteractor.setVisitor(null)
