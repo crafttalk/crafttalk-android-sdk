@@ -73,6 +73,7 @@ class HolderOperatorUnionMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         message?.apply {
+            setTextIsSelectable(true)
             movementMethod = LinkMovementMethod.getInstance()
             text = item.message
             listActions?.apply {

@@ -17,6 +17,7 @@ class HolderAction(
 
     override fun bindTo(item: ActionItem) {
         actionText?.apply {
+            setTextIsSelectable(true)
             // set content
             text = item.actionText
             tag = item.id

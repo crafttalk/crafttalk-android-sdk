@@ -36,6 +36,7 @@ class HolderUserTextMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         message?.apply {
+            setTextIsSelectable(true)
             movementMethod = LinkMovementMethod.getInstance()
             text = item.message
             // set color
