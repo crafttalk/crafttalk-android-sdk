@@ -50,8 +50,11 @@ class AuthInteractor
         }
 
         val getPersonPreview: (personId: String) -> String? =  { personId ->
-            currentVisitor?.token?.let { token ->
-                personInteractor.getPersonPreview(personId, token)
+            if (personId.isEmpty()) null
+            else {
+                currentVisitor?.token?.let { token ->
+                    personInteractor.getPersonPreview(personId, token)
+                }
             }
         }
 
