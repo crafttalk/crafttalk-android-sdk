@@ -58,8 +58,11 @@ fun ImageView.loadMediaFile(
     idKey: Long,
     mediaFile: FileModel,
     updateData: (idKey: Long, height: Int, width: Int) -> Unit,
+    warningContainer: ViewGroup? = null,
     isGif: Boolean = false
 ) {
+    warningContainer?.visibility = View.GONE
+
     val (widthInPx, heightInPx) = getSizeScreenInPx(context)
     if (!mediaFile.failLoading) {
         layoutParams.width = if (mediaFile.height > mediaFile.width) (heightInPx * 0.4 * mediaFile.width / mediaFile.height).toInt() else (widthInPx * 0.7).toInt()
@@ -78,6 +81,11 @@ fun ImageView.loadMediaFile(
         .listener(
             object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    warningContainer?.apply {
+                        layoutParams.width = widthInPx / 2 + ChatAttr.getInstance().marginStartMediaFile + ChatAttr.getInstance().marginEndMediaFile
+                        layoutParams.height = widthInPx / 2 + ChatAttr.getInstance().marginTopMediaFile + ChatAttr.getInstance().marginBottomMediaFile
+                        visibility = View.VISIBLE
+                    }
                     return false
                 }
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {

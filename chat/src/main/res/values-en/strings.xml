@@ -24,6 +24,9 @@
     <!--    Warning-->
     <string name="warning_title">Error has occurred</string>
     <string name="warning_reload">Please reload the page or try again later</string>
+    <string name="warning_loading_image">Error loading image</string>
+    <string name="warning_loading_gif">Error loading gif</string>
+    <string name="warning_loading_media_file">Error loading media file</string>
 
     <!--    Warning snackbar-->
     <string name="warning_snackbar_not_support_type_title">Unable to load document</string>

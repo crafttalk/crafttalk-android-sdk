@@ -18,6 +18,7 @@ class HolderOperatorImageMessage(
     private val clickHandler: (imageUrl: String) -> Unit
 ) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
+    private val warningContainer: ViewGroup? = view.findViewById(R.id.server_image_warning)
 
     private val img: ImageView? = view.findViewById(R.id.server_image)
     private val author: TextView? = view.findViewById(R.id.author)
@@ -26,6 +27,7 @@ class HolderOperatorImageMessage(
     private val date: TextView? = view.findViewById(R.id.date)
 
     private var imageUrl: String? = null
+    private var failLoading: Boolean = false
 
     init {
         view.setOnClickListener(this)
@@ -33,12 +35,14 @@ class HolderOperatorImageMessage(
 
     override fun onClick(view: View) {
         imageUrl?.let{
-            clickHandler(it)
+            if (!failLoading)
+                clickHandler(it)
         }
     }
 
     override fun bindTo(item: ImageMessageItem) {
         imageUrl = item.image.url
+        failLoading = item.image.failLoading
 
         date?.setDate(item)
         // set content
@@ -47,7 +51,7 @@ class HolderOperatorImageMessage(
         status?.setStatusMessage(item)
         img?.apply {
             settingMediaFile()
-            loadMediaFile(item.idKey, item.image, updateData)
+            loadMediaFile(item.idKey, item.image, updateData, warningContainer)
         }
         // set bg
         contentContainer?.apply {

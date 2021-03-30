@@ -18,6 +18,7 @@ class HolderUserGifMessage(
     private val clickHandler: (gifUrl: String) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
+    private val warningContainer: ViewGroup? = view.findViewById(R.id.user_gif_warning)
 
     private val gif: ImageView? = view.findViewById(R.id.user_gif)
     private val author: TextView? = view.findViewById(R.id.author)
@@ -26,6 +27,7 @@ class HolderUserGifMessage(
     private val date: TextView? = view.findViewById(R.id.date)
 
     private var gifUrl: String? = null
+    private var failLoading: Boolean = false
 
     init {
         view.setOnClickListener(this)
@@ -33,12 +35,14 @@ class HolderUserGifMessage(
 
     override fun onClick(view: View) {
         gifUrl?.let{
-            clickHandler(it)
+            if (!failLoading)
+                clickHandler(it)
         }
     }
 
     override fun bindTo(item: GifMessageItem) {
         gifUrl = item.gif.url
+        failLoading = item.gif.failLoading
 
         date?.setDate(item)
         // set content
@@ -47,7 +51,7 @@ class HolderUserGifMessage(
         status?.setStatusMessage(item)
         gif?.apply {
             settingMediaFile()
-            loadMediaFile(item.idKey, item.gif, updateData, true)
+            loadMediaFile(item.idKey, item.gif, updateData, warningContainer, true)
         }
         // set bg
         contentContainer?.apply {

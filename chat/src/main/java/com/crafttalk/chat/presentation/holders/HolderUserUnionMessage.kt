@@ -24,6 +24,7 @@ class HolderUserUnionMessage(
     private val clickDocumentHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
+    private val warningContainer: ViewGroup? = view.findViewById(R.id.user_media_warning)
 
     private val message: TextView? = view.findViewById(R.id.user_message)
     private val author: TextView? = view.findViewById(R.id.author)
@@ -37,6 +38,7 @@ class HolderUserUnionMessage(
 
     private var fileUrl: String? = null
     private var fileType: TypeFile? = null
+    private var failLoading: Boolean = false
 
     init {
         view.setOnClickListener(this)
@@ -46,13 +48,16 @@ class HolderUserUnionMessage(
         fileUrl?.let{ url ->
             when (fileType) {
                 TypeFile.FILE -> {
-                    clickDocumentHandler(url)
+                    if (!failLoading)
+                        clickDocumentHandler(url)
                 }
                 TypeFile.IMAGE -> {
-                    clickImageHandler(url)
+                    if (!failLoading)
+                        clickImageHandler(url)
                 }
                 TypeFile.GIF -> {
-                    clickGifHandler(url)
+                    if (!failLoading)
+                        clickGifHandler(url)
                 }
                 else -> {}
             }
@@ -62,6 +67,7 @@ class HolderUserUnionMessage(
     override fun bindTo(item: UnionMessageItem) {
         fileUrl = item.file.url
         fileType = item.file.type
+        failLoading = item.file.failLoading
 
         date?.setDate(item)
         // set content
@@ -90,6 +96,7 @@ class HolderUserUnionMessage(
         when (fileType) {
             TypeFile.FILE -> {
                 media?.visibility = View.GONE
+                warningContainer?.visibility = View.GONE
                 fileIcon?.apply {
                     visibility = View.VISIBLE
                     setFileIcon()
@@ -110,7 +117,7 @@ class HolderUserUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData)
+                    loadMediaFile(item.idKey, item.file, updateData, warningContainer)
                 }
             }
             TypeFile.GIF -> {
@@ -120,7 +127,7 @@ class HolderUserUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, true)
+                    loadMediaFile(item.idKey, item.file, updateData, warningContainer, true)
                 }
             }
         }

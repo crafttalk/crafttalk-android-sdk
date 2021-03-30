@@ -23,6 +23,9 @@
     <!--    Warning-->
     <string name="warning_title">Произошла ошибка</string>
     <string name="warning_reload">Пожалуйста, перезагрузите страницу или повторите попытку позже</string>
+    <string name="warning_loading_image">Ошибка при загрузке изображения</string>
+    <string name="warning_loading_gif">Ошибка при загрузке гифки</string>
+    <string name="warning_loading_media_file">Ошибка при загрузке медиафайла</string>
 
     <!--    Warning snackbar-->
     <string name="warning_snackbar_not_support_type_title">Невозможно загрузить документ</string>
