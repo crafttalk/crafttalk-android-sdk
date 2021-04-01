@@ -2,6 +2,7 @@ package com.crafttalk.chat.presentation.holders
 
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.crafttalk.chat.R
@@ -12,15 +13,31 @@ import com.crafttalk.chat.utils.ChatAttr
 class HolderAction(
     view: View,
     private val clickHandler: (actionId: String) -> Unit
-) : BaseViewHolder<ActionItem>(view) {
+) : BaseViewHolder<ActionItem>(view), View.OnClickListener {
+    private val itemAction: ViewGroup? = view.findViewById(R.id.item_action)
     private val actionText: TextView? = view.findViewById(R.id.action_text)
 
+    private var actionId: String? = null
+
+    init {
+        view.setOnClickListener(this)
+    }
+
+    override fun onClick(view: View) {
+        actionId?.let(clickHandler)
+    }
+
     override fun bindTo(item: ActionItem) {
+        actionId = item.id
+        // set width item
+        itemAction?.apply {
+            ChatAttr.getInstance().widthItemOperatorTextMessage?.let {
+                layoutParams.width = it
+            }
+        }
         actionText?.apply {
-            setTextIsSelectable(true)
             // set content
             text = item.actionText
-            tag = item.id
             // set color
             setTextColor(ChatAttr.getInstance().colorTextOperatorAction)
             // set dimension
@@ -32,8 +49,5 @@ class HolderAction(
         }
         // set bg
         itemView.setBackgroundResource(item.backgroundRes)
-        itemView.setOnClickListener{
-            clickHandler(item.id)
-        }
     }
 }

@@ -9,3 +9,8 @@ fun TypedArray.getResourceIdOrNull(@StyleableRes index: Int): Int? {
     val result = getResourceId(index, -1)
     return if (result == -1) null else result
 }
+
+fun TypedArray.getDimensionOrNull(@StyleableRes index: Int): Float? {
+    val result = getDimension(index, -1f)
+    return if (result == -1f) null else result
+}

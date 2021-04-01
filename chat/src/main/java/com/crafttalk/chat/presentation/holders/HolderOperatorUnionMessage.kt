@@ -79,8 +79,14 @@ class HolderOperatorUnionMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         message?.apply {
+            // set behavior
             setTextIsSelectable(true)
             movementMethod = LinkMovementMethod.getInstance()
+            // set width item
+            ChatAttr.getInstance().widthItemOperatorTextMessage?.let {
+                maxWidth = it
+            }
+            // set content
             text = item.message
             listActions?.apply {
                 if (item.actions == null) {

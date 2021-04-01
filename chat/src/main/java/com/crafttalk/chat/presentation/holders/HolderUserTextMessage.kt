@@ -36,8 +36,14 @@ class HolderUserTextMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         message?.apply {
+            // set behavior
             setTextIsSelectable(true)
             movementMethod = LinkMovementMethod.getInstance()
+            // set width item
+            ChatAttr.getInstance().widthItemUserTextMessage?.let {
+                maxWidth = it
+            }
+            // set content
             text = item.message
             // set color
             setTextColor(ChatAttr.getInstance().colorTextUserMessage)
