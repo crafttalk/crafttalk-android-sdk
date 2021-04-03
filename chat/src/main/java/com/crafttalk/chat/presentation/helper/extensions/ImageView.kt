@@ -13,7 +13,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.message.MessageType
-import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
 import com.crafttalk.chat.presentation.model.FileModel
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.Role
@@ -58,18 +57,37 @@ fun ImageView.loadMediaFile(
     idKey: Long,
     mediaFile: FileModel,
     updateData: (idKey: Long, height: Int, width: Int) -> Unit,
+    isUserMessage: Boolean,
     warningContainer: ViewGroup? = null,
     isGif: Boolean = false
 ) {
     warningContainer?.visibility = View.GONE
 
-    val (widthInPx, heightInPx) = getSizeScreenInPx(context)
-    if (!mediaFile.failLoading) {
-        layoutParams.width = if (mediaFile.height > mediaFile.width) (heightInPx * 0.4 * mediaFile.width / mediaFile.height).toInt() else (widthInPx * 0.7).toInt()
-        layoutParams.height = if (mediaFile.height > mediaFile.width) (heightInPx * 0.4).toInt() else (widthInPx * 0.7 * mediaFile.height / mediaFile.width).toInt()
-    } else {
-        layoutParams.width = widthInPx / 2
-        layoutParams.height = widthInPx / 2
+    when {
+        !mediaFile.failLoading && mediaFile.height > mediaFile.width && isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().heightElongatedItemUserFilePreviewMessage * mediaFile.width / mediaFile.height
+            layoutParams.height = ChatAttr.getInstance().heightElongatedItemUserFilePreviewMessage
+        }
+        !mediaFile.failLoading && mediaFile.height <= mediaFile.width && isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().widthElongatedItemUserFilePreviewMessage
+            layoutParams.height = ChatAttr.getInstance().widthElongatedItemUserFilePreviewMessage * mediaFile.height / mediaFile.width
+        }
+        !mediaFile.failLoading && mediaFile.height > mediaFile.width && !isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().heightElongatedItemOperatorFilePreviewMessage * mediaFile.width / mediaFile.height
+            layoutParams.height = ChatAttr.getInstance().heightElongatedItemOperatorFilePreviewMessage
+        }
+        !mediaFile.failLoading && mediaFile.height <= mediaFile.width && !isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().widthElongatedItemOperatorFilePreviewMessage
+            layoutParams.height = ChatAttr.getInstance().widthElongatedItemOperatorFilePreviewMessage * mediaFile.height / mediaFile.width
+        }
+        mediaFile.failLoading && isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().widthItemUserFilePreviewWarningMessage
+            layoutParams.height = ChatAttr.getInstance().widthItemUserFilePreviewWarningMessage
+        }
+        mediaFile.failLoading && !isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().widthItemOperatorFilePreviewWarningMessage
+            layoutParams.height = ChatAttr.getInstance().widthItemOperatorFilePreviewWarningMessage
+        }
     }
 
     Glide.with(context)
@@ -82,8 +100,8 @@ fun ImageView.loadMediaFile(
             object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                     warningContainer?.apply {
-                        layoutParams.width = widthInPx / 2 + ChatAttr.getInstance().marginStartMediaFile + ChatAttr.getInstance().marginEndMediaFile
-                        layoutParams.height = widthInPx / 2 + ChatAttr.getInstance().marginTopMediaFile + ChatAttr.getInstance().marginBottomMediaFile
+                        layoutParams.width = this@loadMediaFile.layoutParams.width + ChatAttr.getInstance().marginStartMediaFile + ChatAttr.getInstance().marginEndMediaFile
+                        layoutParams.height = this@loadMediaFile.layoutParams.height + ChatAttr.getInstance().marginTopMediaFile + ChatAttr.getInstance().marginBottomMediaFile
                         visibility = View.VISIBLE
                     }
                     return false

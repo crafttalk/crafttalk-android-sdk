@@ -120,6 +120,9 @@ class HolderOperatorUnionMessage(
                 fileIcon?.apply {
                     visibility = View.VISIBLE
                     setFileIcon()
+                    ChatAttr.getInstance().widthItemOperatorFileIconMessage?.let {
+                        layoutParams.width = it
+                    }
                     fileName?.apply {
                         visibility = View.VISIBLE
                         setFileName(item.file)
@@ -137,7 +140,7 @@ class HolderOperatorUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, warningContainer)
+                    loadMediaFile(item.idKey, item.file, updateData, false, warningContainer)
                 }
             }
             TypeFile.GIF -> {
@@ -147,7 +150,7 @@ class HolderOperatorUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, warningContainer, true)
+                    loadMediaFile(item.idKey, item.file, updateData, false, warningContainer, true)
                 }
             }
         }

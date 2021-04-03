@@ -51,7 +51,7 @@ class HolderOperatorImageMessage(
         status?.setStatusMessage(item)
         img?.apply {
             settingMediaFile()
-            loadMediaFile(item.idKey, item.image, updateData, warningContainer)
+            loadMediaFile(item.idKey, item.image, updateData, false, warningContainer)
         }
         // set bg
         contentContainer?.apply {

@@ -106,6 +106,9 @@ class HolderUserUnionMessage(
                 fileIcon?.apply {
                     visibility = View.VISIBLE
                     setFileIcon()
+                    ChatAttr.getInstance().widthItemUserFileIconMessage?.let {
+                        layoutParams.width = it
+                    }
                     fileName?.apply {
                         visibility = View.VISIBLE
                         setFileName(item.file)
@@ -123,7 +126,7 @@ class HolderUserUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, warningContainer)
+                    loadMediaFile(item.idKey, item.file, updateData, true, warningContainer)
                 }
             }
             TypeFile.GIF -> {
@@ -133,7 +136,7 @@ class HolderUserUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, warningContainer, true)
+                    loadMediaFile(item.idKey, item.file, updateData, true, warningContainer, true)
                 }
             }
         }

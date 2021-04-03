@@ -51,7 +51,7 @@ class HolderUserGifMessage(
         status?.setStatusMessage(item)
         gif?.apply {
             settingMediaFile()
-            loadMediaFile(item.idKey, item.gif, updateData, warningContainer, true)
+            loadMediaFile(item.idKey, item.gif, updateData, true, warningContainer, true)
         }
         // set bg
         contentContainer?.apply {

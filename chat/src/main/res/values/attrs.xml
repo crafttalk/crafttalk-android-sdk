@@ -54,6 +54,8 @@
         <attr name="width_item_operator_text_message" format="dimension"/>
         <attr name="width_item_user_file_icon_message" format="dimension"/>
         <attr name="width_item_operator_file_icon_message" format="dimension"/>
+        <attr name="width_item_user_file_preview_warning_message" format="dimension"/>
+        <attr name="width_item_operator_file_preview_warning_message" format="dimension"/>
         <attr name="width_elongated_item_user_file_preview_message" format="dimension"/>
         <attr name="width_elongated_item_operator_file_preview_message" format="dimension"/>
         <attr name="height_elongated_item_user_file_preview_message" format="dimension"/>

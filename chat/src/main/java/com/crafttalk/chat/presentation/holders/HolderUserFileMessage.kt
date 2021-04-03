@@ -46,7 +46,13 @@ class HolderUserFileMessage(
         author?.setAuthor(item)
         time?.setTime(item)
         status?.setStatusMessage(item)
-        fileIcon?.setFileIcon()
+        // set width item and content
+        fileIcon?.apply {
+            setFileIcon()
+            ChatAttr.getInstance().widthItemUserFileIconMessage?.let {
+                layoutParams.width = it
+            }
+        }
         fileName?.setFileName(item.document)
         fileSize?.setFileSize(item.document)
         // set bg

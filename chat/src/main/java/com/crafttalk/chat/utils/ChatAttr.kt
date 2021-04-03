@@ -10,6 +10,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.helper.extensions.getDimensionOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getResourceIdOrNull
+import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
 
 class ChatAttr
 private constructor(
@@ -26,6 +27,9 @@ private constructor(
         attrArr.getString(R.styleable.ChatView_urlUploadHost)?.let { ChatParams.urlUploadHost = it }
         attrArr.getString(R.styleable.ChatView_fileProviderAuthorities)?.let { ChatParams.fileProviderAuthorities = it }
     }
+
+    private val widthScreenInPx = getSizeScreenInPx(context).first.toFloat()
+    private val heightScreenInPx = getSizeScreenInPx(context).second.toFloat()
 
     val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
     val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
@@ -68,10 +72,12 @@ private constructor(
     val widthItemOperatorTextMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_text_message)?.toInt()
     val widthItemUserFileIconMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_file_icon_message)?.toInt()
     val widthItemOperatorFileIconMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_file_icon_message)?.toInt()
-    val widthElongatedItemUserFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_width_elongated_item_user_file_preview_message)?.toInt()
-    val widthElongatedItemOperatorFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_width_elongated_item_operator_file_preview_message)?.toInt()
-    val heightElongatedItemUserFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_height_elongated_item_user_file_preview_message)?.toInt()
-    val heightElongatedItemOperatorFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_height_elongated_item_operator_file_preview_message)?.toInt()
+    val widthItemUserFilePreviewWarningMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_file_preview_warning_message) ?: (widthScreenInPx / 2)).toInt()
+    val widthItemOperatorFilePreviewWarningMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_file_preview_warning_message) ?: (widthScreenInPx / 2)).toInt()
+    val widthElongatedItemUserFilePreviewMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_elongated_item_user_file_preview_message) ?: (0.7f * widthScreenInPx)).toInt()
+    val widthElongatedItemOperatorFilePreviewMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_elongated_item_operator_file_preview_message) ?: (0.7f * widthScreenInPx)).toInt()
+    val heightElongatedItemUserFilePreviewMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_height_elongated_item_user_file_preview_message) ?: (0.4f * heightScreenInPx)).toInt()
+    val heightElongatedItemOperatorFilePreviewMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_height_elongated_item_operator_file_preview_message) ?: (0.4f * heightScreenInPx)).toInt()
 
     private val resFontFamilyAllText = attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_all_text)
     val resFontFamilyUserMessage = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_user_message)
