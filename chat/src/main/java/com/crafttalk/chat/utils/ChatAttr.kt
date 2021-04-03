@@ -11,6 +11,7 @@ import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.helper.extensions.getDimensionOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getResourceIdOrNull
 import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
+import java.util.*
 
 class ChatAttr
 private constructor(
@@ -30,6 +31,11 @@ private constructor(
 
     private val widthScreenInPx = getSizeScreenInPx(context).first.toFloat()
     private val heightScreenInPx = getSizeScreenInPx(context).second.toFloat()
+
+    val locale: Locale? = attrArr.getString(R.styleable.ChatView_locale_language)?.let { language ->
+        val country = attrArr.getString(R.styleable.ChatView_locale_country) ?: ""
+        Locale(language, country)
+    }
 
     val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
     val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))

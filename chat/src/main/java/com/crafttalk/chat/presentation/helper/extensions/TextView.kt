@@ -94,8 +94,22 @@ fun TextView.setTime(message: MessageModel) {
 fun TextView.setDate(message: MessageModel) {
     if (message.isFirstMessageInDay) {
         // set content
-        val formatTime = SimpleDateFormat("dd.MM.yyyy")
-        text = formatTime.format(message.timestamp)
+        val formatYear = SimpleDateFormat("yyyy")
+        val formatTime = if (ChatAttr.getInstance().locale == null) {
+            SimpleDateFormat("dd MMMM")
+        } else {
+            SimpleDateFormat("dd MMMM", ChatAttr.getInstance().locale)
+        }
+
+        val nowYear = formatYear.format(System.currentTimeMillis())
+        val currentYear = formatYear.format(message.timestamp)
+        val date = formatTime.format(message.timestamp)
+
+        text = if (nowYear == currentYear) {
+            date
+        } else {
+            "$date $currentYear"
+        }
         // set color
         setTextColor(ChatAttr.getInstance().colorTextDateGrouping)
         // set dimension

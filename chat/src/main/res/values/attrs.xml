@@ -14,6 +14,9 @@
         <attr name="urlUploadHost" format="string"/>
         <attr name="fileProviderAuthorities" format="string"/>
 
+        <attr name="locale_language" format="string"/>
+        <attr name="locale_country" format="string"/>
+
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
         <attr name="color_bg_operator_message" format="color"/>
