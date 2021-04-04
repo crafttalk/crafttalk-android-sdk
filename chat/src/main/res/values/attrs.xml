@@ -29,9 +29,21 @@
         <attr name="color_text_file_size" format="color"/>
         <attr name="color_text_user_message_author" format="color"/>
         <attr name="color_text_operator_message_author" format="color"/>
-        <attr name="color_text_user_message_time" format="color"/>
-        <attr name="color_text_operator_message_time" format="color"/>
+        <attr name="color_user_message_time" format="color"/>
+        <attr name="color_user_file_message_time" format="color"/>
+        <attr name="color_user_gif_message_time" format="color"/>
+        <attr name="color_user_image_message_time" format="color"/>
+        <attr name="color_user_text_message_time" format="color"/>
+        <attr name="color_operator_message_time" format="color"/>
+        <attr name="color_operator_file_message_time" format="color"/>
+        <attr name="color_operator_gif_message_time" format="color"/>
+        <attr name="color_operator_image_message_time" format="color"/>
+        <attr name="color_operator_text_message_time" format="color"/>
         <attr name="color_user_message_status" format="color"/>
+        <attr name="color_user_file_message_status" format="color"/>
+        <attr name="color_user_gif_message_status" format="color"/>
+        <attr name="color_user_image_message_status" format="color"/>
+        <attr name="color_user_text_message_status" format="color"/>
         <attr name="color_text_warning" format="color"/>
         <attr name="color_company" format="color"/>
         <attr name="color_text_date_grouping" format="color"/>
@@ -47,6 +59,7 @@
         <attr name="size_file_size" format="dimension"/>
         <attr name="size_user_message_author" format="dimension"/>
         <attr name="size_operator_message_author" format="dimension"/>
+        <attr name="size_operator_message_author_preview" format="dimension"/>
         <attr name="size_user_message_time" format="dimension"/>
         <attr name="size_operator_message_time" format="dimension"/>
         <attr name="size_warning" format="dimension"/>

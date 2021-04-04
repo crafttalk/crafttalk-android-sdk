@@ -28,6 +28,7 @@ class HolderUserUnionMessage(
 
     private val message: TextView? = view.findViewById(R.id.user_message)
     private val author: TextView? = view.findViewById(R.id.author)
+    private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
     private val fileIcon: ImageView? = view.findViewById(R.id.user_file)
@@ -72,6 +73,7 @@ class HolderUserUnionMessage(
         date?.setDate(item)
         // set content
         author?.setAuthor(item)
+        authorPreview?.setAuthorIcon(showAuthorIcon = false)
         time?.setTime(item)
         status?.setStatusMessage(item)
         message?.apply {

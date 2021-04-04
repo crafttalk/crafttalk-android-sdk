@@ -13,9 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.message.MessageType
-import com.crafttalk.chat.presentation.model.FileModel
-import com.crafttalk.chat.presentation.model.MessageModel
-import com.crafttalk.chat.presentation.model.Role
+import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
 
 fun ImageView.setStatusMessage(message: MessageModel) {
@@ -35,7 +33,38 @@ fun ImageView.setStatusMessage(message: MessageModel) {
             }
             else -> View.GONE
         }
-        setColorFilter(ChatAttr.getInstance().colorUserMessageStatus)
+        when (message) {
+            is TextMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserTextMessageStatus)
+            is ImageMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserImageMessageStatus)
+            is GifMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserGifMessageStatus)
+            is FileMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserFileMessageStatus)
+            is UnionMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserTextMessageStatus)
+        }
+    } else {
+        visibility = View.GONE
+    }
+}
+
+fun ImageView.setAuthorIcon(authorPreview: String? = null, showAuthorIcon: Boolean = true) {
+    if (showAuthorIcon) {
+        Glide.with(context)
+            .load(authorPreview ?: R.drawable.ic_operator)
+            .circleCrop()
+            .apply(
+                RequestOptions().override(
+                    ChatAttr.getInstance().sizeOperatorMessageAuthorPreview,
+                    ChatAttr.getInstance().sizeOperatorMessageAuthorPreview
+                )
+            )
+            .error(R.drawable.ic_operator)
+            .into(this)
+
+        if (authorPreview == null) {
+            setColorFilter(ChatAttr.getInstance().colorMain)
+        } else {
+            colorFilter = null
+        }
+        visibility = View.VISIBLE
     } else {
         visibility = View.GONE
     }

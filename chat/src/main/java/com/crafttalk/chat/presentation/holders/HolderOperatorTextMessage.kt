@@ -26,6 +26,7 @@ class HolderOperatorTextMessage(
     private val message: TextView? = view.findViewById(R.id.server_message)
     private val listActions: RecyclerView? = view.findViewById(R.id.actions_list)
     private val author: TextView? = view.findViewById(R.id.author)
+    private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
     private val date: TextView? = view.findViewById(R.id.date)
@@ -33,7 +34,8 @@ class HolderOperatorTextMessage(
     override fun bindTo(item: TextMessageItem) {
         date?.setDate(item)
         // set content
-        author?.setAuthor(item, true)
+        author?.setAuthor(item)
+        authorPreview?.setAuthorIcon(item.authorPreview)
         time?.setTime(item)
         status?.setStatusMessage(item)
         message?.apply {

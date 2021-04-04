@@ -22,6 +22,7 @@ class HolderUserImageMessage(
 
     private val img: ImageView? = view.findViewById(R.id.user_image)
     private val author: TextView? = view.findViewById(R.id.author)
+    private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
     private val date: TextView? = view.findViewById(R.id.date)
@@ -47,6 +48,7 @@ class HolderUserImageMessage(
         date?.setDate(item)
         // set content
         author?.setAuthor(item)
+        authorPreview?.setAuthorIcon(showAuthorIcon = false)
         time?.setTime(item)
         status?.setStatusMessage(item)
         img?.apply {

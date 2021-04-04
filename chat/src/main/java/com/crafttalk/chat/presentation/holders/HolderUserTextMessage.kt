@@ -11,10 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
-import com.crafttalk.chat.presentation.helper.extensions.setAuthor
-import com.crafttalk.chat.presentation.helper.extensions.setDate
-import com.crafttalk.chat.presentation.helper.extensions.setStatusMessage
-import com.crafttalk.chat.presentation.helper.extensions.setTime
+import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.model.TextMessageItem
 import com.crafttalk.chat.utils.ChatAttr
 
@@ -25,6 +22,7 @@ class HolderUserTextMessage(
 
     private val message: TextView? = view.findViewById(R.id.user_message)
     private val author: TextView? = view.findViewById(R.id.author)
+    private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
     private val date: TextView? = view.findViewById(R.id.date)
@@ -33,6 +31,7 @@ class HolderUserTextMessage(
         date?.setDate(item)
         // set content
         author?.setAuthor(item)
+        authorPreview?.setAuthorIcon(showAuthorIcon = false)
         time?.setTime(item)
         status?.setStatusMessage(item)
         message?.apply {

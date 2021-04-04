@@ -1,53 +1,16 @@
 package com.crafttalk.chat.presentation.helper.extensions
 
 import android.annotation.SuppressLint
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.R
-import com.crafttalk.chat.presentation.helper.converters.convertDpToPx
-import com.crafttalk.chat.presentation.model.FileModel
-import com.crafttalk.chat.presentation.model.MessageModel
-import com.crafttalk.chat.presentation.model.Role
+import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
 import java.text.SimpleDateFormat
 
-fun TextView.setAuthorIcon(message: MessageModel, hasAuthorIcon: Boolean = false) {
-    when {
-        hasAuthorIcon && message.authorPreview != null -> {
-            Glide.with(context)
-                .asDrawable()
-                .load(message.authorPreview)
-                .circleCrop()
-                .apply(RequestOptions().override(convertDpToPx(24f, context).toInt(), convertDpToPx(24f, context).toInt()))
-                .error(R.drawable.ic_operator)
-                .into(object : CustomTarget<Drawable>() {
-                    override fun onLoadCleared(placeholder: Drawable?) {}
-                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                        setCompoundDrawablesWithIntrinsicBounds(resource, null, null, null)
-                    }
-                })
-        }
-        hasAuthorIcon && message.authorPreview == null -> {
-            val authorIcon = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_operator, null).apply {
-                this?.setColorFilter(ChatAttr.getInstance().colorMain, PorterDuff.Mode.MULTIPLY)
-            }
-            setCompoundDrawablesWithIntrinsicBounds(authorIcon, null, null, null)
-        }
-        !hasAuthorIcon -> {
-            setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
-        }
-    }
-}
-
-fun TextView.setAuthor(message: MessageModel, hasAuthorIcon: Boolean = false) {
+fun TextView.setAuthor(message: MessageModel) {
     // set visibility / color / dimension
     if (message.role == Role.USER) {
         visibility = if (ChatAttr.getInstance().showUserMessageAuthor) {
@@ -67,7 +30,6 @@ fun TextView.setAuthor(message: MessageModel, hasAuthorIcon: Boolean = false) {
         typeface = ResourcesCompat.getFont(context, it)
     }
     // set content
-    setAuthorIcon(message, hasAuthorIcon)
     text = message.authorName
 }
 
@@ -75,11 +37,21 @@ fun TextView.setAuthor(message: MessageModel, hasAuthorIcon: Boolean = false) {
 fun TextView.setTime(message: MessageModel) {
     // set color / dimension
     if (message.role == Role.USER) {
-        setTextColor(ChatAttr.getInstance().colorTextUserMessageTime)
         setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeUserMessageTime)
     } else {
-        setTextColor(ChatAttr.getInstance().colorTextOperatorMessageTime)
         setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeOperatorMessageTime)
+    }
+    when {
+        message is TextMessageItem && message.role == Role.USER -> setTextColor(ChatAttr.getInstance().colorUserTextMessageTime)
+        message is ImageMessageItem && message.role == Role.USER -> setTextColor(ChatAttr.getInstance().colorUserImageMessageTime)
+        message is GifMessageItem && message.role == Role.USER -> setTextColor(ChatAttr.getInstance().colorUserGifMessageTime)
+        message is FileMessageItem && message.role == Role.USER -> setTextColor(ChatAttr.getInstance().colorUserFileMessageTime)
+        message is UnionMessageItem && message.role == Role.USER -> setTextColor(ChatAttr.getInstance().colorUserTextMessageTime)
+        message is TextMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorTextMessageTime)
+        message is ImageMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorImageMessageTime)
+        message is GifMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorGifMessageTime)
+        message is FileMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorFileMessageTime)
+        message is UnionMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorTextMessageTime)
     }
     // set font
     ChatAttr.getInstance().resFontFamilyMessageTime?.let {
