@@ -6,14 +6,14 @@ import androidx.room.TypeConverters
 import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
-import com.crafttalk.chat.data.local.db.entity.File
-import com.crafttalk.chat.data.local.db.entity.Message
-import com.crafttalk.chat.data.local.db.entity.Person
+import com.crafttalk.chat.data.local.db.entity.FileEntity
+import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.data.local.db.entity.PersonEntity
 import com.crafttalk.chat.data.local.db.entity.converters.ActionConverter
 import com.crafttalk.chat.data.local.db.entity.converters.SpanStructureListConverter
 
 @Database(
-    entities = [Message::class, Person::class, File::class],
+    entities = [MessageEntity::class, PersonEntity::class, FileEntity::class],
     version = 1,
     exportSchema = false
 )

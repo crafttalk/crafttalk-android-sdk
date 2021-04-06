@@ -20,7 +20,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
-import com.crafttalk.chat.data.local.db.entity.File as FileDB
+import com.crafttalk.chat.data.local.db.entity.FileEntity
 
 class FileRepository
 @Inject constructor(
@@ -82,7 +82,7 @@ class FileRepository
 
     override fun uploadFile(visitor: Visitor, file: FileModel, type: TypeUpload, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val fileName = fileInfoHelper.getFileName(file.uri) ?: return
-        fileDao.addFile(FileDB(visitor.uuid, fileName))
+        fileDao.addFile(FileEntity(visitor.uuid, fileName))
         when (type) {
             TypeUpload.JSON -> {
                 val fileRequestBody = fileRequestHelper.generateJsonRequestBody(file.uri, file.type) ?: return

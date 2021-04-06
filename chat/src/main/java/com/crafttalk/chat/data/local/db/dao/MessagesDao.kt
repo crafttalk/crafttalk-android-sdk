@@ -2,22 +2,23 @@ package com.crafttalk.chat.data.local.db.dao
 
 import androidx.paging.DataSource
 import androidx.room.*
-import com.crafttalk.chat.data.local.db.entity.Message
+import com.crafttalk.chat.data.local.db.entity.ActionEntity
+import com.crafttalk.chat.data.local.db.entity.MessageEntity
 
 @Dao
 interface MessagesDao {
 
     @Query("SELECT * FROM messages WHERE uuid = :uuid ORDER BY timestamp DESC")
-    fun getMessages(uuid: String): DataSource.Factory<Int, Message>
+    fun getMessages(uuid: String): DataSource.Factory<Int, MessageEntity>
 
     @Query("SELECT timestamp FROM messages WHERE uuid = :uuid ORDER BY idKey DESC LIMIT 1")
     fun getLastTime(uuid: String): Long
 
     @Insert
-    fun insertMessage(message: Message)
+    fun insertMessage(message: MessageEntity)
 
     @Insert
-    fun insertMessages(messageList: List<Message>)
+    fun insertMessages(messageList: List<MessageEntity>)
 
     @Query("UPDATE messages SET message_type = :type WHERE uuid = :uuid AND id = :id")
     fun updateMessage(uuid: String, id: String, type: Int)
@@ -26,10 +27,10 @@ interface MessagesDao {
     fun updateSizeMessage(idKey: Long, height: Int, width: Int)
 
     @Query("SELECT * FROM messages WHERE uuid = :uuid AND id = :id")
-    fun getMessageById(uuid: String, id: String): Message?
+    fun getMessageById(uuid: String, id: String): MessageEntity?
 
     @Query("SELECT * FROM messages WHERE (uuid = :uuid) AND (message = :textMessage OR attachment_url = :attachmentUrl)")
-    fun getMessageByContent(uuid: String, textMessage: String?, attachmentUrl: String?): List<Message>
+    fun getMessageByContent(uuid: String, textMessage: String?, attachmentUrl: String?): List<MessageEntity>
 
     @Query("UPDATE messages SET is_read = 1 WHERE uuid = :uuid AND id = :id")
     fun readMessage(uuid: String, id: String)

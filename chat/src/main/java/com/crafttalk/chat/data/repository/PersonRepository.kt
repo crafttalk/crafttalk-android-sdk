@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteConstraintException
 import com.crafttalk.chat.data.api.rest.PersonApi
 import com.crafttalk.chat.data.helper.network.toData
 import com.crafttalk.chat.data.local.db.dao.PersonDao
-import com.crafttalk.chat.data.local.db.entity.Person
+import com.crafttalk.chat.data.local.db.entity.PersonEntity
 import com.crafttalk.chat.domain.repository.IPersonRepository
 import javax.inject.Inject
 
@@ -22,7 +22,7 @@ class PersonRepository
             ).toData().picture
             return previewFromNetwork?.apply {
                 try {
-                    dao.addPersonPreview(Person(personId, this))
+                    dao.addPersonPreview(PersonEntity(personId, this))
                 } catch (ex: SQLiteConstraintException) {}
             }
         } else {

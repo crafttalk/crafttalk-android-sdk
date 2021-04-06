@@ -1,7 +1,7 @@
 package com.crafttalk.chat.domain.interactors
 
 import androidx.paging.DataSource
-import com.crafttalk.chat.data.local.db.entity.Message
+import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ class ChatMessageInteractor
 ) {
     private var visitorUid: String? = null
 
-    fun getAllMessages(): DataSource.Factory<Int, Message>? {
+    fun getAllMessages(): DataSource.Factory<Int, MessageEntity>? {
         val currentVisitorUid = visitorInteractor.getVisitor()?.uuid
         if (visitorUid == currentVisitorUid) return null
         visitorUid = currentVisitorUid

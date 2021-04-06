@@ -3,7 +3,7 @@ package com.crafttalk.chat.data.local.db.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.crafttalk.chat.data.local.db.entity.Person
+import com.crafttalk.chat.data.local.db.entity.PersonEntity
 
 @Dao
 interface PersonDao {
@@ -12,6 +12,6 @@ interface PersonDao {
     fun getPersonPreview(personId: String): String?
 
     @Insert
-    fun addPersonPreview(person: Person)
+    fun addPersonPreview(person: PersonEntity)
 
 }

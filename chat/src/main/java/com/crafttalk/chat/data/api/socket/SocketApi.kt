@@ -314,13 +314,13 @@ class SocketApi constructor(
                 messageSocket.attachmentUrl?.let{
                     getSizeMediaFile(context, it) { height, width ->
                         viewModelScope.launch {
-                            dao.insertMessage(MessageDB.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
+                            dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
                         }
                     }
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                dao.insertMessage(MessageDB.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }))
+                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
@@ -348,7 +348,7 @@ class SocketApi constructor(
                     else {
                         // user
                         val messagesFromDb = dao.getMessageByContent(visitor.uuid, message, messageFromHistory.attachmentUrl)
-                        val messageCheckObj = MessageDB(
+                        val messageCheckObj = MessageEntity(
                             uuid = visitor.uuid,
                             id = messageFromHistory.id,
                             messageType = messageFromHistory.messageType,

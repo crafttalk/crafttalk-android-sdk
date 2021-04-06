@@ -2,14 +2,14 @@ package com.crafttalk.chat.presentation.helper.mappers
 
 import android.content.Context
 import com.crafttalk.chat.R
-import com.crafttalk.chat.data.local.db.entity.Message
+import com.crafttalk.chat.data.local.db.entity.ActionEntity
+import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import com.crafttalk.chat.domain.entity.message.Action
 import com.crafttalk.chat.domain.entity.message.MessageType.Companion.getMessageTypeByValueType
 import com.crafttalk.chat.presentation.helper.converters.convertToSpannableString
 import com.crafttalk.chat.presentation.model.*
 
-fun messageModelMapper(localMessage: Message, context: Context): MessageModel? {
+fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageModel? {
     return when {
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             localMessage.id,

@@ -4,13 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
-import com.crafttalk.chat.domain.entity.message.Action
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 @Entity(tableName = "messages")
-data class Message(
+data class MessageEntity(
     val uuid: String,
     var id: String,
     @ColumnInfo(name = "is_reply")
@@ -46,7 +45,7 @@ data class Message(
 
     override fun equals(other: Any?): Boolean {
         return when (other) {
-            is Message -> {
+            is MessageEntity -> {
                         this.uuid == other.uuid &&
                         this.isReply == other.isReply &&
                         this.parentMsgId == other.parentMsgId &&
@@ -76,11 +75,11 @@ data class Message(
     }
 
     companion object {
-        fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?, height: Int? = null, width: Int? = null): Message {
+        fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?, height: Int? = null, width: Int? = null): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertTextToNormalString(list)
 
-            return Message(
+            return MessageEntity(
                 uuid = uuid,
                 id = messageSocket.id,
                 messageType = messageSocket.messageType,
