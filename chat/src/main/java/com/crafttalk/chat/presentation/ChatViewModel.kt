@@ -153,9 +153,9 @@ class ChatViewModel
             .show()
     }
 
-    fun selectAction(actionId: String) {
+    fun selectAction(messageId: String, actionId: String) {
         launchIO {
-            chatMessageInteractor.selectActionInMessage(actionId, {}, {})
+            chatMessageInteractor.selectActionInMessage(messageId, actionId, {}, {})
         }
     }
 

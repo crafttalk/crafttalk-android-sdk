@@ -16,6 +16,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             localMessage.message.convertToSpannableString(localMessage.spanStructureList, context),
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
+            localMessage.hasSelectedAction(),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
@@ -75,6 +76,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             localMessage.message.convertToSpannableString(localMessage.spanStructureList, context),
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
+            localMessage.hasSelectedAction(),
             FileModel(
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
@@ -101,7 +103,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
     }
 }
 
-fun actionModelMapper(listAction: List<Action>): List<ActionItem>? {
+fun actionModelMapper(listAction: List<ActionEntity>): List<ActionItem>? {
     if (listAction.isEmpty()) return null
     return listAction.mapIndexed { position, action ->
         val backgroundRes = if (listAction.size == 1) {
@@ -113,6 +115,6 @@ fun actionModelMapper(listAction: List<Action>): List<ActionItem>? {
                 else -> R.drawable.background_item_action
             }
         }
-        ActionItem(action.actionId, action.actionText, backgroundRes)
+        ActionItem(action.actionId, action.actionText, action.isSelected, backgroundRes)
     }
 }

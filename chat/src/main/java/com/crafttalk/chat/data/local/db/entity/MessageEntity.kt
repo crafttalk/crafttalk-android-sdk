@@ -22,7 +22,7 @@ data class MessageEntity(
     val message: String?,
 //    @ColumnInfo(name = "span_structure_list")
     val spanStructureList: List<Tag>,
-    val actions: List<Action>?,
+    val actions: List<ActionEntity>?,
     @ColumnInfo(name = "attachment_url")
     val attachmentUrl: String?,
     @ColumnInfo(name = "attachment_type")
@@ -43,6 +43,14 @@ data class MessageEntity(
     @PrimaryKey(autoGenerate = true)
     var idKey: Long = 0
 
+    fun hasSelectedAction(): Boolean {
+        return if (actions == null) {
+            false
+        } else {
+            actions.find { it.isSelected } != null
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         return when (other) {
             is MessageEntity -> {
@@ -50,7 +58,7 @@ data class MessageEntity(
                         this.isReply == other.isReply &&
                         this.parentMsgId == other.parentMsgId &&
                         this.message == other.message &&
-                        (this.actions.isNullOrEmpty() && other.actions.isNullOrEmpty()) || (!this.actions.isNullOrEmpty() && !other.actions.isNullOrEmpty() && this.actions == other.actions) &&
+//                        (this.actions.isNullOrEmpty() && other.actions.isNullOrEmpty()) || (!this.actions.isNullOrEmpty() && !other.actions.isNullOrEmpty() && this.actions == other.actions) &&
                         this.attachmentUrl == other.attachmentUrl &&
                         this.attachmentType == other.attachmentType &&
                         this.attachmentName == other.attachmentName &&
@@ -66,7 +74,7 @@ data class MessageEntity(
         result = 31 * result + isReply.hashCode()
         result = 31 * result + (parentMsgId?.hashCode() ?: 0)
         result = 31 * result + (message?.hashCode() ?: 0)
-        result = if (actions.isNullOrEmpty()) 31 * result else 31 * result + (actions.hashCode())
+//        result = if (actions.isNullOrEmpty()) 31 * result else 31 * result + (actions.hashCode())
         result = 31 * result + (attachmentUrl?.hashCode() ?: 0)
         result = 31 * result + (attachmentType?.hashCode() ?: 0)
         result = 31 * result + (attachmentName?.hashCode() ?: 0)
@@ -88,7 +96,7 @@ data class MessageEntity(
                 timestamp = messageSocket.timestamp,
                 message = message,
                 spanStructureList = list,
-                actions = messageSocket.actions,
+                actions = messageSocket.actions?.let { ActionEntity.map(it) },
                 attachmentUrl = messageSocket.attachmentUrl,
                 attachmentType = messageSocket.attachmentType,
                 attachmentName = messageSocket.attachmentName,

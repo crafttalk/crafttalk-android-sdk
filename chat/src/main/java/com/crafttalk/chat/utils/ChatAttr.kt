@@ -38,17 +38,13 @@ private constructor(
         Locale(language, country)
     }
 
-    val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
-    val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
-    val colorBackgroundOperatorAction = attrArr.getColor(R.styleable.ChatView_color_bg_operator_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
-    val colorBordersOperatorAction = attrArr.getColor(R.styleable.ChatView_color_borders_operator_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
-
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main))
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.default_color_text_warning))
     val colorTextInfo = attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.default_color_info))
     val colorTextUserMessage = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.default_color_text_user_message))
     val colorTextOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_text_operator_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
     val colorTextOperatorAction = attrArr.getColor(R.styleable.ChatView_color_text_operator_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
+    val colorTextOperatorSelectedAction = attrArr.getColor(R.styleable.ChatView_color_text_operator_selected_action, ContextCompat.getColor(context, R.color.white))
     val colorTextFileName = attrArr.getColor(R.styleable.ChatView_color_text_file_name, ContextCompat.getColor(context, R.color.default_color_info))
     val colorTextFileSize = attrArr.getColor(R.styleable.ChatView_color_text_file_size, ContextCompat.getColor(context, R.color.default_color_info))
     val colorTextUserMessageAuthor = attrArr.getColor(R.styleable.ChatView_color_text_user_message_author, ContextCompat.getColor(context, R.color.default_color_info))
@@ -70,6 +66,12 @@ private constructor(
     val colorUserTextMessageStatus = attrArr.getColorOrNull(R.styleable.ChatView_color_user_text_message_status) ?: colorUserMessageStatus
     val colorTextDateGrouping = attrArr.getColor(R.styleable.ChatView_color_text_date_grouping, ContextCompat.getColor(context, R.color.default_color_info))
     val colorTextLink = attrArr.getColor(R.styleable.ChatView_color_text_link, ContextCompat.getColor(context, R.color.default_color_text_link))
+
+    val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
+    val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
+    val colorBackgroundOperatorAction = attrArr.getColor(R.styleable.ChatView_color_bg_operator_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
+    val colorBackgroundOperatorSelectedAction = attrArr.getColorOrNull(R.styleable.ChatView_color_bg_operator_selected_action) ?: colorMain
+    val colorBordersOperatorAction = attrArr.getColor(R.styleable.ChatView_color_borders_operator_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
 
     val drawableProgressIndeterminate = attrArr.getDrawable(R.styleable.ChatView_drawable_progress_indeterminate)
     val drawableFileIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_file_icon)

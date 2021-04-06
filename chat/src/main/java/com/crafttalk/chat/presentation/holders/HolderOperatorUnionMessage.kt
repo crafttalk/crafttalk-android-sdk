@@ -20,7 +20,7 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderOperatorUnionMessage(
     view: View,
-    private val selectAction: (actionId: String) -> Unit,
+    private val selectAction: (messageId: String, actionId: String) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickGifHandler: (gifUrl: String) -> Unit,
     private val clickImageHandler: (imageUrl: String) -> Unit,
@@ -94,7 +94,7 @@ class HolderOperatorUnionMessage(
                 if (item.actions == null) {
                     visibility = View.GONE
                 } else {
-                    adapter = AdapterAction(selectAction).apply {
+                    adapter = AdapterAction(item.id, item.hasSelectedAction, selectAction).apply {
                         this.data = item.actions
                     }
                     visibility = View.VISIBLE

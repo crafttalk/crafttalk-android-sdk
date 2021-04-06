@@ -6,14 +6,16 @@ import com.crafttalk.chat.presentation.base.BaseItem
 
 sealed class ActionModel(
     open val id: String,
-    open val actionText: String
+    open val actionText: String,
+    open val isSelected: Boolean
 ) : BaseItem()
 
 data class ActionItem(
     override val id: String,
     override val actionText: String,
+    override val isSelected: Boolean,
     @DrawableRes val backgroundRes: Int
-) : ActionModel(id, actionText) {
+) : ActionModel(id, actionText, isSelected) {
     override fun getLayout() = R.layout.item_action
 
     override fun <T : BaseItem> isSame(item: T): Boolean {

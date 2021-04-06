@@ -38,4 +38,7 @@ interface MessagesDao {
     @Query("DELETE FROM messages WHERE uuid = :uuid")
     fun deleteAllMessages(uuid: String)
 
+    @Query("UPDATE messages SET actions = :actions WHERE uuid = :uuid AND id = :id")
+    fun selectAction(uuid: String, id: String, actions: List<ActionEntity>?)
+
 }

@@ -21,10 +21,12 @@
         <attr name="color_bg_user_message" format="color"/>
         <attr name="color_bg_operator_message" format="color"/>
         <attr name="color_bg_operator_action" format="color"/>
+        <attr name="color_bg_operator_selected_action" format="color"/>
         <attr name="color_borders_operator_action" format="color"/>
         <attr name="color_text_user_message" format="color"/>
         <attr name="color_text_operator_message" format="color"/>
         <attr name="color_text_operator_action" format="color"/>
+        <attr name="color_text_operator_selected_action" format="color"/>
         <attr name="color_text_file_name" format="color"/>
         <attr name="color_text_file_size" format="color"/>
         <attr name="color_text_user_message_author" format="color"/>

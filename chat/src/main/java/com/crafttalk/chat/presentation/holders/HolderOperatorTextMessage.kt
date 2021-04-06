@@ -19,7 +19,7 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderOperatorTextMessage(
     view: View,
-    private val selectAction: (actionId: String) -> Unit
+    private val selectAction: (messageId: String, actionId: String) -> Unit
 ) : BaseViewHolder<TextMessageItem>(view) {
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
 
@@ -52,7 +52,7 @@ class HolderOperatorTextMessage(
                 if (item.actions == null) {
                     visibility = View.GONE
                 } else {
-                    adapter = AdapterAction(selectAction).apply {
+                    adapter = AdapterAction(item.id, item.hasSelectedAction, selectAction).apply {
                         this.data = item.actions
                     }
                     visibility = View.VISIBLE

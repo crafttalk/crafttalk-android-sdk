@@ -1,10 +1,12 @@
 package com.crafttalk.chat.presentation.holders
 
+import android.content.res.ColorStateList
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
 import com.crafttalk.chat.presentation.model.ActionItem
@@ -12,6 +14,7 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderAction(
     view: View,
+    private val hasSelectedAction: Boolean,
     private val clickHandler: (actionId: String) -> Unit
 ) : BaseViewHolder<ActionItem>(view), View.OnClickListener {
     private val itemAction: ViewGroup? = view.findViewById(R.id.item_action)
@@ -24,7 +27,11 @@ class HolderAction(
     }
 
     override fun onClick(view: View) {
-        actionId?.let(clickHandler)
+        if (hasSelectedAction || actionId == null) {
+            return
+        } else {
+            clickHandler(actionId!!)
+        }
     }
 
     override fun bindTo(item: ActionItem) {
@@ -39,7 +46,11 @@ class HolderAction(
             // set content
             text = item.actionText
             // set color
-            setTextColor(ChatAttr.getInstance().colorTextOperatorAction)
+            if (item.isSelected) {
+                setTextColor(ChatAttr.getInstance().colorTextOperatorSelectedAction)
+            } else {
+                setTextColor(ChatAttr.getInstance().colorTextOperatorAction)
+            }
             // set dimension
             setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorAction)
             // set font
@@ -48,6 +59,11 @@ class HolderAction(
             }
         }
         // set bg
-        itemView.setBackgroundResource(item.backgroundRes)
+        itemView.apply {
+            setBackgroundResource(item.backgroundRes)
+            if (item.isSelected) {
+                ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundOperatorSelectedAction))
+            }
+        }
     }
 }

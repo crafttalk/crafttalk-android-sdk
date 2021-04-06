@@ -31,9 +31,10 @@ class ChatMessageInteractor
         }
     }
 
-    suspend fun selectActionInMessage(actionId: String, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
+    suspend fun selectActionInMessage(messageId: String, actionId: String, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
         try {
-            messageRepository.selectAction(actionId)
+            val uuid = visitorInteractor.getVisitor()?.uuid ?: return
+            messageRepository.selectAction(uuid, messageId, actionId)
             success()
         }
         catch (ex: Throwable) {

@@ -15,7 +15,7 @@ class AdapterListMessages(
     private val openFile: (context: Context, fileUrl: String) -> Unit,
     private val openImage: (activity: Activity, imageUrl: String) -> Unit,
     private val openGif: (activity: Activity, gifUrl: String) -> Unit,
-    private val selectAction: (actionId: String) -> Unit,
+    private val selectAction: (messageId: String, actionId: String) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit
 ) : BaseAdapterWithPagination<MessageModel>() {
 

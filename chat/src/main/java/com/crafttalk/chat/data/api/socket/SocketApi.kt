@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
+import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.tags.Tag
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
-import com.crafttalk.chat.data.local.db.entity.Message as MessageDB
+import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 class SocketApi constructor(
@@ -357,7 +358,7 @@ class SocketApi constructor(
                             timestamp = messageFromHistory.timestamp,
                             message = message,
                             spanStructureList = list,
-                            actions = messageFromHistory.actions,
+                            actions = messageFromHistory.actions?.let { ActionEntity.map(it) },
                             attachmentUrl = messageFromHistory.attachmentUrl,
                             attachmentType = messageFromHistory.attachmentType,
                             attachmentName = messageFromHistory.attachmentName,
