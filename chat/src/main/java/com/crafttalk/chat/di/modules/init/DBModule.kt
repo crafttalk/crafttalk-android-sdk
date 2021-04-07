@@ -2,6 +2,7 @@ package com.crafttalk.chat.di.modules.init
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
@@ -21,7 +22,7 @@ class DBModule {
         context,
         ChatDatabase::class.java,
         "chat.db"
-    ).build()
+    ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE).build()
 
     @Provides
     @Singleton
