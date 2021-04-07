@@ -116,6 +116,12 @@
         <attr name="layout_item_operator_file_message" format="reference"/>
         <attr name="layout_item_operator_union_message" format="reference"/>
 
+        <!--feedback-->
+        <attr name="delay_feedback_screen_appears" format="integer"/>
+        <attr name="color_feedback_title" format="color"/>
+        <attr name="size_feedback_title" format="dimension"/>
+        <attr name="color_feedback_star" format="color"/>
+
     </declare-styleable>
 
 </resources>
