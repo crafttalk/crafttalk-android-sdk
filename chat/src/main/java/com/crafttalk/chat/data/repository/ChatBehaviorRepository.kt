@@ -33,4 +33,8 @@ class ChatBehaviorRepository
         socketApi.destroy()
     }
 
+    override fun giveFeedbackOnOperator(countStars: Int) {
+        socketApi.giveFeedbackOnOperator(countStars)
+    }
+
 }

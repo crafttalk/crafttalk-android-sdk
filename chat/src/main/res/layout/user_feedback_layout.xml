@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="40dp"
+    android:background="@color/gray_f5f5f5">
+
+    <TextView
+        android:id="@+id/feedback_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/feedback_title"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/feedback_star_1" />
+
+    <ImageView
+        android:id="@+id/feedback_star_1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_star_outline"
+        android:tint="@color/black"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/feedback_star_2"
+        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+
+    <ImageView
+        android:id="@+id/feedback_star_2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_star_outline"
+        android:tint="@color/black"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintStart_toEndOf="@id/feedback_star_1"
+        app:layout_constraintEnd_toStartOf="@+id/feedback_star_3"
+        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+
+    <ImageView
+        android:id="@+id/feedback_star_3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_star_outline"
+        android:tint="@color/black"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintStart_toEndOf="@id/feedback_star_2"
+        app:layout_constraintEnd_toStartOf="@+id/feedback_star_4"
+        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+
+    <ImageView
+        android:id="@+id/feedback_star_4"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_star_outline"
+        android:tint="@color/black"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintStart_toEndOf="@id/feedback_star_3"
+        app:layout_constraintEnd_toStartOf="@+id/feedback_star_5"
+        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+
+    <ImageView
+        android:id="@+id/feedback_star_5"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_star_outline"
+        android:tint="@color/black"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintStart_toEndOf="@id/feedback_star_4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+
+    <ImageView
+        android:id="@+id/close_feedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:src="@drawable/ic_arrow_down"
+        android:tint="@color/gray_8d8d8d"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,4 +30,5 @@ interface NavigationListener {
 interface ChatEventListener {
     fun operatorStartWriteMessage()
     fun operatorStopWriteMessage()
+    fun finishDialog()
 }

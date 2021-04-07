@@ -10,4 +10,6 @@ interface IChatBehaviorRepository {
     fun setStatusChat(newStatus: ChatStatus)
     fun getStatusChat(): ChatStatus
     fun destroyChatSession()
+
+    fun giveFeedbackOnOperator(countStars: Int)
 }

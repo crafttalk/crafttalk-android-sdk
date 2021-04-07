@@ -52,6 +52,14 @@
         layout="@layout/warning_layout"
         android:visibility="gone" />
 
+    <include
+        android:id="@+id/user_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/user_feedback_layout"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
+
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="80dp"

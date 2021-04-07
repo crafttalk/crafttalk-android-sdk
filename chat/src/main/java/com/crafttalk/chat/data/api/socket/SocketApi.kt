@@ -174,6 +174,7 @@ class SocketApi constructor(
                     MessageType.VISITOR_MESSAGE.valueType -> {
                         chatEventListener?.operatorStopWriteMessage()
                     }
+                    MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
                 }
                 if (!messageJson.toString().contains(""""message":"\/start"""")) {
                     when {
@@ -241,7 +242,6 @@ class SocketApi constructor(
 
     }
 
-
     fun destroy() {
         isOnline = false
         socket?.disconnect()
@@ -300,7 +300,21 @@ class SocketApi constructor(
 
     fun selectAction(actionId: String) {
         if (isOnline) {
-            socket!!.emit("visitor-action", actionId)
+            socket?.emit("visitor-action", actionId)
+        }
+    }
+
+    fun giveFeedbackOnOperator(countStars: Int) {
+        if (isOnline) {
+            socket?.emit(
+                "visitor-message",
+                "",
+                MessageType.UPDATE_DIALOG_SCORE.valueType,
+                null,
+                countStars,
+                null,
+                null
+            )
         }
     }
 

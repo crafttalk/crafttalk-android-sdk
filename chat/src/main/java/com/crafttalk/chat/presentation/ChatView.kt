@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -43,6 +44,7 @@ import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
 import kotlinx.android.synthetic.main.auth_layout.view.*
 import kotlinx.android.synthetic.main.chat_layout.view.*
+import kotlinx.android.synthetic.main.user_feedback_layout.view.*
 import kotlinx.android.synthetic.main.view_host.view.*
 import kotlinx.android.synthetic.main.warning_layout.view.*
 import javax.inject.Inject
@@ -131,6 +133,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
         warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
         upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
+        feedback_title.apply {
+            setTextColor(ChatAttr.getInstance().colorFeedbackTitle)
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeFeedbackTitle)
+        }
+        feedback_star_1.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_2.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_3.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_4.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_5.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
 
         chatAttr.drawableProgressIndeterminate?.let {
             loading.indeterminateDrawable = it
@@ -172,6 +183,24 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 viewModel.updateValueCountUnreadMessages(indexLastVisible)
             }
         })
+        close_feedback.setOnClickListener(this)
+        setFeedbackListeners()
+    }
+
+    private fun setFeedbackListeners() {
+        feedback_star_1.setOnClickListener(this)
+        feedback_star_2.setOnClickListener(this)
+        feedback_star_3.setOnClickListener(this)
+        feedback_star_4.setOnClickListener(this)
+        feedback_star_5.setOnClickListener(this)
+    }
+
+    private fun removeFeedbackListeners() {
+        feedback_star_1.setOnClickListener(null)
+        feedback_star_2.setOnClickListener(null)
+        feedback_star_3.setOnClickListener(null)
+        feedback_star_4.setOnClickListener(null)
+        feedback_star_5.setOnClickListener(null)
     }
 
     private fun setListMessages() {
@@ -305,6 +334,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             }
         })
+        viewModel.feedbackContainerVisible.observe(lifecycleOwner, Observer {
+            user_feedback.visibility = if (it) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
         viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
             when (state) {
                 InternetConnectionState.NO_INTERNET -> {
@@ -393,7 +429,61 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 list_with_message.smoothScrollToPosition(position)
             }
+            R.id.close_feedback -> {
+                viewModel.feedbackContainerVisible.value = false
+                feedback_star_1.setImageResource(R.drawable.ic_star_outline)
+                feedback_star_2.setImageResource(R.drawable.ic_star_outline)
+                feedback_star_3.setImageResource(R.drawable.ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.ic_star_outline)
+            }
+            R.id.feedback_star_1 -> giveFeedback(1)
+            R.id.feedback_star_2 -> giveFeedback(2)
+            R.id.feedback_star_3 -> giveFeedback(3)
+            R.id.feedback_star_4 -> giveFeedback(4)
+            R.id.feedback_star_5 -> giveFeedback(5)
         }
+    }
+
+    private fun giveFeedback(countStars: Int) {
+        when (countStars) {
+            1 -> {
+                feedback_star_1.setImageResource(R.drawable.ic_star)
+            }
+            2 -> {
+                feedback_star_1.setImageResource(R.drawable.ic_star)
+                feedback_star_2.setImageResource(R.drawable.ic_star)
+            }
+            3 -> {
+                feedback_star_1.setImageResource(R.drawable.ic_star)
+                feedback_star_2.setImageResource(R.drawable.ic_star)
+                feedback_star_3.setImageResource(R.drawable.ic_star)
+            }
+            4 -> {
+                feedback_star_1.setImageResource(R.drawable.ic_star)
+                feedback_star_2.setImageResource(R.drawable.ic_star)
+                feedback_star_3.setImageResource(R.drawable.ic_star)
+                feedback_star_4.setImageResource(R.drawable.ic_star)
+            }
+            5 -> {
+                feedback_star_1.setImageResource(R.drawable.ic_star)
+                feedback_star_2.setImageResource(R.drawable.ic_star)
+                feedback_star_3.setImageResource(R.drawable.ic_star)
+                feedback_star_4.setImageResource(R.drawable.ic_star)
+                feedback_star_5.setImageResource(R.drawable.ic_star)
+            }
+        }
+        removeFeedbackListeners()
+        viewModel.giveFeedbackOnOperator(countStars)
+        Handler().postDelayed({
+            viewModel.feedbackContainerVisible.value = false
+            feedback_star_1.setImageResource(R.drawable.ic_star_outline)
+            feedback_star_2.setImageResource(R.drawable.ic_star_outline)
+            feedback_star_3.setImageResource(R.drawable.ic_star_outline)
+            feedback_star_4.setImageResource(R.drawable.ic_star_outline)
+            feedback_star_5.setImageResource(R.drawable.ic_star_outline)
+            setFeedbackListeners()
+        }, ChatAttr.getInstance().delayFeedbackScreenAppears)
     }
 
     override fun onModalOptionSelected(tag: String?, option: Option) {

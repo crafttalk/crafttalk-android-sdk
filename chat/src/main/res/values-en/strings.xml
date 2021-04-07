@@ -39,6 +39,9 @@
     <string name="bottom_sheet_file_viewer_image_from_camera">Camera</string>
     <string name="bottom_sheet_file_viewer_document_from_gallery">Document</string>
 
+    <!--    FeedBack-->
+    <string name="feedback_title">The dialogue is over. Rate the quality of service.</string>
+
     <string name="string_chooser_open_file_action_view">Select an application to view this file:</string>
 
     <string name="requested_permission_storage">You do not have permission to access resources!</string>

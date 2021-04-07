@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Чат</string>
 
@@ -37,6 +38,9 @@
     <string name="bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
     <string name="bottom_sheet_file_viewer_image_from_camera">Камера</string>
     <string name="bottom_sheet_file_viewer_document_from_gallery">Документ</string>
+
+    <!--    FeedBack-->
+    <string name="feedback_title">Диалог завершен. Оцените качество обслуживания.</string>
 
     <string name="string_chooser_open_file_action_view">Выберите приложение для просмотра этого файла:</string>
 

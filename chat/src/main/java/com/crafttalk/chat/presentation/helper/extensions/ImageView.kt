@@ -57,13 +57,23 @@ fun ImageView.setAuthorIcon(authorPreview: String? = null, showAuthorIcon: Boole
                 )
             )
             .error(R.drawable.ic_operator)
+            .listener(
+                object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        setColorFilter(ChatAttr.getInstance().colorMain)
+                        return false
+                    }
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        if (authorPreview == null) {
+                            setColorFilter(ChatAttr.getInstance().colorMain)
+                        } else {
+                            colorFilter = null
+                        }
+                        return false
+                    }
+                }
+            )
             .into(this)
-
-        if (authorPreview == null) {
-            setColorFilter(ChatAttr.getInstance().colorMain)
-        } else {
-            colorFilter = null
-        }
         visibility = View.VISIBLE
     } else {
         visibility = View.GONE

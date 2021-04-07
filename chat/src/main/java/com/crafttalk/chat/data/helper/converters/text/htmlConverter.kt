@@ -2,6 +2,7 @@ package com.crafttalk.chat.data.helper.converters.text
 
 import android.os.Build
 import android.text.Html
+import android.util.Log
 import com.crafttalk.chat.domain.entity.tags.*
 
 fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
@@ -166,9 +167,13 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                     if ((isSingleTag || !isCloseTag) && !isReplaceTag) {
                         when (tagName.toString()) {
                             "a", "img" -> {
-                                getAttrTag(index, isSingleTag)?.let {
-                                    isFillAttrTag = true
-                                    listAttrsTag.add(it)
+                                try {
+                                    getAttrTag(index, isSingleTag)?.let {
+                                        isFillAttrTag = true
+                                        listAttrsTag.add(it)
+                                    }
+                                } catch (ex: StringIndexOutOfBoundsException) {
+                                    Log.e("FAIL_PARSE", "getAttrTag fail - ${ex.message}")
                                 }
                             }
                         }

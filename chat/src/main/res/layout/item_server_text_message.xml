@@ -27,6 +27,7 @@
             android:id="@+id/server_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoLink="all"
             android:gravity="start"
             android:paddingStart="15dp"
             android:paddingTop="13dp"

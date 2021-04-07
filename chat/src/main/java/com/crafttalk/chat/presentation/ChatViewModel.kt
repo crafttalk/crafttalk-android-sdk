@@ -38,6 +38,7 @@ class ChatViewModel
 
     var countUnreadMessages = MutableLiveData(0)
     val scrollToDownVisible = MutableLiveData(false)
+    val feedbackContainerVisible = MutableLiveData(false)
 
     val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
@@ -76,6 +77,7 @@ class ChatViewModel
     private val chatEventListener = object : ChatEventListener {
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
+        override fun finishDialog() { feedbackContainerVisible.postValue(true) }
     }
     var uploadFileListener: UploadFileListener? = null
 
@@ -156,6 +158,12 @@ class ChatViewModel
     fun selectAction(messageId: String, actionId: String) {
         launchIO {
             chatMessageInteractor.selectActionInMessage(messageId, actionId, {}, {})
+        }
+    }
+
+    fun giveFeedbackOnOperator(countStars: Int) {
+        launchIO {
+            customizingChatBehaviorInteractor.giveFeedbackOnOperator(countStars)
         }
     }
 

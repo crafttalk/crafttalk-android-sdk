@@ -49,4 +49,8 @@ class CustomizingChatBehaviorInteractor
         chatBehaviorRepository.destroyChatSession()
     }
 
+    fun giveFeedbackOnOperator(countStars: Int) {
+        chatBehaviorRepository.giveFeedbackOnOperator(countStars)
+    }
+
 }
