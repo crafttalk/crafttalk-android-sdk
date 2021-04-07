@@ -78,6 +78,16 @@
         <attr name="width_elongated_item_operator_file_preview_message" format="dimension"/>
         <attr name="height_elongated_item_user_file_preview_message" format="dimension"/>
         <attr name="height_elongated_item_operator_file_preview_message" format="dimension"/>
+        <attr name="width_item_user_text_message_in_percent" format="float"/>
+        <attr name="width_item_operator_text_message_in_percent" format="float"/>
+        <attr name="width_item_user_file_icon_message_in_percent" format="float"/>
+        <attr name="width_item_operator_file_icon_message_in_percent" format="float"/>
+        <attr name="width_item_user_file_preview_warning_message_in_percent" format="float"/>
+        <attr name="width_item_operator_file_preview_warning_message_in_percent" format="float"/>
+        <attr name="width_elongated_item_user_file_preview_message_in_percent" format="float"/>
+        <attr name="width_elongated_item_operator_file_preview_message_in_percent" format="float"/>
+        <attr name="height_elongated_item_user_file_preview_message_in_percent" format="float"/>
+        <attr name="height_elongated_item_operator_file_preview_message_in_percent" format="float"/>
 
         <attr name="resource_font_family_all_text" format="integer"/>
         <attr name="resource_font_family_user_message" format="integer"/>

@@ -16,6 +16,11 @@ fun TypedArray.getDimensionOrNull(@StyleableRes index: Int): Float? {
     return if (result == -1f) null else result
 }
 
+fun TypedArray.getFloatOrNull(@StyleableRes index: Int): Float? {
+    val result = getFloat(index, -1f)
+    return if (result == -1f) null else result
+}
+
 @ColorInt
 fun TypedArray.getColorOrNull(@StyleableRes index: Int): Int? {
     val result = getColor(index, -1)
