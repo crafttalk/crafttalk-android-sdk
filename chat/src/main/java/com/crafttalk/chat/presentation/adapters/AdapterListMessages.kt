@@ -45,6 +45,7 @@ class AdapterListMessages(
                 { imageUrl -> openImage(parent.context as Activity, imageUrl) },
                 { fileUrl -> openFile(parent.context, fileUrl) }
             )
+            R.layout.item_transfer_message -> HolderTransferMessage(parent.inflate(ChatAttr.getInstance().layoutItemTransferMessage ?: viewType))
             else -> HolderDefaultMessage(parent.inflate(R.layout.item_default_message))
         }
     }
