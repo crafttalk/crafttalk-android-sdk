@@ -12,6 +12,7 @@ enum class MessageType(val valueType: Int) {
     FINISH_DIALOG(16), // завершение диалога
     UPDATE_NEGATIVE_REASON(19), // обновление негативной причины завершения диалога
     CLIENT_HOLD(23), // оператор отправил сообщение удержания (hold)   - ?
+    TRANSFER_TO_OPERATOR(18), // техническое сообщение о подключении оператора
     DEFAULT(-1);
 
     companion object {

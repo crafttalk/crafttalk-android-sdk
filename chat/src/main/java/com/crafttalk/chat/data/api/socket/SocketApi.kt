@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
-import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.tags.Tag
@@ -342,6 +341,9 @@ class SocketApi constructor(
                     dao.updateMessage(visitor.uuid, parentId, messageSocket.messageType)
                 }
             }
+            (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
+                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }))
+            }
         }
     }
 
@@ -385,6 +387,14 @@ class SocketApi constructor(
                         if (messageCheckObj !in messagesFromDb) {
                             updateDataInDatabase(messageFromHistory)
                         }
+*/
+                    }
+                }
+                MessageType.TRANSFER_TO_OPERATOR.valueType -> {
+                    val messagesFromDb = dao.getMessageById(visitor.uuid, messageFromHistory.id)
+
+                    if (messagesFromDb == null) {
+                        updateDataInDatabase(messageFromHistory)
                     }
                 }
                 MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {

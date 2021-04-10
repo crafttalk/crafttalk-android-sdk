@@ -15,6 +15,9 @@
     <string name="chat_state_action_operator">Оператор печатает сообщение…</string>
     <string name="chat_entry_field_hint">Введите сообщение…</string>
 
+    <!--    Message-->
+    <string name="message_join">Оператор %s подключился к диалогу</string>
+
     <!--    File-->
     <string name="file_size_byte">байт</string>
     <string name="file_size_Kb">Кб</string>

@@ -130,3 +130,13 @@ data class UnionMessageItem(
         }
     }
 }
+
+data class TransferMessageItem(
+    override val id: String,
+    override val timestamp: Long,
+    override val authorName: String,
+    override val authorPreview: String?,
+    override val isReadMessage: Boolean
+) : MessageModel(id, NEUTRAL, timestamp, authorName, authorPreview, StateMessage.TRANSFER_TO_OPERATOR, isReadMessage) {
+    override fun getLayout(): Int = R.layout.item_transfer_message
+}

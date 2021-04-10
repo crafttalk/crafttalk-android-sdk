@@ -101,7 +101,7 @@ data class MessageEntity(
                 attachmentType = messageSocket.attachmentType,
                 attachmentName = messageSocket.attachmentName,
                 operatorPreview = operatorPreview,
-                operatorName = if (messageSocket.operatorName == null || !messageSocket.isReply) "Вы" else messageSocket.operatorName,
+                operatorName = if (messageSocket.isReply) messageSocket.operatorName else "Вы",
                 height = height,
                 width = width,
                 isRead = false

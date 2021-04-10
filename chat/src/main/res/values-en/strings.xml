@@ -15,6 +15,9 @@
     <string name="chat_state_action_operator">Operator write message…</string>
     <string name="chat_entry_field_hint">Enter your message…</string>
 
+    <!--    Message-->
+    <string name="message_join">Operator %s joined the dialogue</string>
+
     <!--    File-->
     <string name="file_size_byte">byte</string>
     <string name="file_size_Kb">Kb</string>

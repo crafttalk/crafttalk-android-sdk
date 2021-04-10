@@ -5,12 +5,20 @@ import com.crafttalk.chat.R
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeFile
+import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.MessageType.Companion.getMessageTypeByValueType
 import com.crafttalk.chat.presentation.helper.converters.convertToSpannableString
 import com.crafttalk.chat.presentation.model.*
 
 fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageModel? {
     return when {
+        localMessage.messageType == MessageType.TRANSFER_TO_OPERATOR.valueType -> TransferMessageItem(
+            localMessage.id,
+            localMessage.timestamp,
+            if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            localMessage.operatorPreview,
+            localMessage.isRead
+        )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,

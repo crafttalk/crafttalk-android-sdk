@@ -52,6 +52,7 @@ fun TextView.setTime(message: MessageModel) {
         message is GifMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorGifMessageTime)
         message is FileMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorFileMessageTime)
         message is UnionMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorTextMessageTime)
+        message is TransferMessageItem -> setTextColor(ChatAttr.getInstance().colorOperatorTextMessageTime)
     }
     // set font
     ChatAttr.getInstance().resFontFamilyMessageTime?.let {

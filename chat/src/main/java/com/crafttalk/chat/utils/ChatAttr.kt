@@ -148,9 +148,10 @@ private constructor(
     val layoutItemOperatorGifMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_gif_message)
     val layoutItemOperatorFileMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_file_message)
     val layoutItemOperatorUnionMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_union_message)
+    val layoutItemTransferMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_transfer_message)
 
 //    feedback
-    val delayFeedbackScreenAppears = attrArr.getInt(R.styleable.ChatView_delay_feedback_screen_appears, 100000).toLong()
+    val delayFeedbackScreenAppears = attrArr.getInt(R.styleable.ChatView_delay_feedback_screen_appears, 1000).toLong()
     val colorFeedbackTitle = attrArr.getColor(R.styleable.ChatView_color_feedback_title, ContextCompat.getColor(context, R.color.gray_707070))
     val sizeFeedbackTitle = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_feedback_title, context.resources.getDimensionPixelSize(R.dimen.default_size_feedback_title)).toFloat()
     val colorFeedbackStar = attrArr.getColorOrNull(R.styleable.ChatView_color_feedback_star) ?: colorMain
