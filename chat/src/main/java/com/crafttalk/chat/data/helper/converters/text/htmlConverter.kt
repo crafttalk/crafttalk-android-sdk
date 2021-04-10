@@ -9,7 +9,12 @@ fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
     return when {
         this.replace("\n", "").let {
             it.matches(Regex(".*<(strong|i|a|img|ul|li|br|p).*")) ||
-            it.matches(Regex(".*&(ndash|nbsp).*"))
+            it.matches(Regex(".*&(nbsp|pound|euro|para|sect|copy|reg|trade|deg|plusmn|frac14|frac12|frac34|times|divide|fnof);.*")) ||
+            it.matches(Regex(".*&(larr|uarr|rarr|darr|harr);.*")) ||
+            it.matches(Regex(".*&(spades|clubs|hearts|diams|quot|amp|lt|gt);.*")) ||
+            it.matches(Regex(".*&(hellip|prime|Prime);.*")) ||
+            it.matches(Regex(".*&(ndash|mdash|lsquo|rsquo|sbquo|ldquo|rdquo|bdquo|laquo|raquo);.*")) ||
+            it.matches(Regex(".*&#[0-9]*;.*"))
         } -> convertFromHtmlTextToNormalString(listTag)
         else -> convertFromBaseTextToNormalString(listTag)
     }
