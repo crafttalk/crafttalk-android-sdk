@@ -48,11 +48,17 @@ object Chat {
         authType: AuthType,
         urlSocketHost: String,
         urlSocketNameSpace: String,
+        urlUploadHost: String?,
+        urlUploadNameSpace: String?,
+        fileProviderAuthorities: String?,
         certificatePinning: String?
     ) {
         ChatParams.authType = authType
         ChatParams.urlSocketHost = urlSocketHost
         ChatParams.urlSocketNameSpace = urlSocketNameSpace
+        ChatParams.urlUploadHost = urlUploadHost
+        ChatParams.urlUploadNameSpace = urlUploadNameSpace
+        ChatParams.fileProviderAuthorities = fileProviderAuthorities
         ChatParams.certificatePinning = certificatePinning
     }
 
@@ -61,9 +67,12 @@ object Chat {
         authType: AuthType,
         urlSocketHost: String,
         urlSocketNameSpace: String,
+        urlUploadHost: String? = null,
+        urlUploadNameSpace: String? = null,
+        fileProviderAuthorities: String? = null,
         certificatePinning: String? = null
     ) {
-        initParams(authType, urlSocketHost, urlSocketNameSpace, certificatePinning)
+        initParams(authType, urlSocketHost, urlSocketNameSpace, urlUploadHost, urlUploadNameSpace, fileProviderAuthorities, certificatePinning)
         initDI(context)
     }
 
