@@ -165,6 +165,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             onFocusChangeListener = maskedListener
         }
         sign_in.setOnClickListener(this)
+        user_feedback.setOnClickListener(this)
         send_message.setOnClickListener(this)
         warning_refresh.setOnClickListener(this)
         scroll_to_down.setOnClickListener(this)
