@@ -39,6 +39,8 @@ private constructor(
         Locale(language, country)
     }
 
+    val operatorPreviewMode = attrArr.getInt(R.styleable.ChatView_operator_preview_mode, 0).let { OperatorPreviewMode.values()[it] }
+
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.default_color_main))
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.default_color_text_warning))
     val colorTextInfo = attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.default_color_info))

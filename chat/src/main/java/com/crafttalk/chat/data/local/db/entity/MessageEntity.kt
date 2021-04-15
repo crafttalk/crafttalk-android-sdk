@@ -29,6 +29,8 @@ data class MessageEntity(
     val attachmentType: String?,
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String?,
+    @ColumnInfo(name = "operator_id")
+    val operatorId: String?,
     @ColumnInfo(name = "operator_preview")
     val operatorPreview: String?,
     @ColumnInfo(name = "operator_name")
@@ -100,6 +102,7 @@ data class MessageEntity(
                 attachmentUrl = messageSocket.attachmentUrl,
                 attachmentType = messageSocket.attachmentType,
                 attachmentName = messageSocket.attachmentName,
+                operatorId = messageSocket.operatorId,
                 operatorPreview = operatorPreview,
                 operatorName = if (messageSocket.isReply) messageSocket.operatorName else "Вы",
                 height = height,

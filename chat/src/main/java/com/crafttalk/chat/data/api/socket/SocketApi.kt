@@ -5,6 +5,7 @@ import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
+import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.tags.Tag
@@ -29,7 +30,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
-import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 class SocketApi constructor(
@@ -379,6 +379,7 @@ class SocketApi constructor(
                             attachmentUrl = messageFromHistory.attachmentUrl,
                             attachmentType = messageFromHistory.attachmentType,
                             attachmentName = messageFromHistory.attachmentName,
+                            operatorId = messageFromHistory.operatorId,
                             operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
                             operatorPreview = null,
                             height = 0,

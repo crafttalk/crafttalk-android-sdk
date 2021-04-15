@@ -7,6 +7,10 @@
             <enum name="AUTH_WITH_FORM" value="0"/>
             <enum name="AUTH_WITHOUT_FORM" value="1"/>
         </attr>
+        <attr name="operator_preview_mode" format="enum">
+            <enum name="CACHE_ONLY_LINK" value="0"/>
+            <enum name="ALWAYS_REQUEST" value="1"/>
+        </attr>
         <attr name="timeDelayed" format="integer"/>
         <attr name="urlSocketNameSpace" format="string"/>
         <attr name="urlSocketHost" format="string"/>
