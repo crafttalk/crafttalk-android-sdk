@@ -15,10 +15,11 @@
         android:layout_height="wrap_content"
         layout="@layout/item_date_message" />
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/content_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/include_date">
 
@@ -26,6 +27,17 @@
             android:id="@+id/user_gif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/download_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/user_gif_warning"
@@ -52,7 +64,7 @@
 
         </LinearLayout>
 
-    </FrameLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/author"

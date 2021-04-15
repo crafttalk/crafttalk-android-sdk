@@ -3,8 +3,11 @@ package com.crafttalk.chat.presentation.helper.extensions
 import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
@@ -95,6 +98,32 @@ fun TextView.setDate(message: MessageModel) {
     } else {
         visibility = View.GONE
     }
+}
+
+fun TextView.settingDownloadBtn(isUserMessage: Boolean, failLoading: Boolean) {
+    // set visible
+    visibility = if (ChatAttr.getInstance().showFileMessageDownload && !failLoading) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+    // set color
+    setTextColor(if (isUserMessage) ChatAttr.getInstance().colorUserFileMessageDownload else ChatAttr.getInstance().colorOperatorFileMessageDownload)
+    // set dimension
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, if (isUserMessage) ChatAttr.getInstance().sizeUserFileMessageDownload else ChatAttr.getInstance().sizeOperatorFileMessageDownload)
+    // set font
+    (if (isUserMessage) ChatAttr.getInstance().resFontFamilyUserMessage else ChatAttr.getInstance().resFontFamilyOperatorMessage)?.let {
+        typeface = ResourcesCompat.getFont(context, it)
+    }
+    // set bg
+    setBackgroundResource(if (isUserMessage) ChatAttr.getInstance().backgroundUserFileMessageDownload else ChatAttr.getInstance().backgroundOperatorFileMessageDownload)
+    // set margins
+    (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
+        ChatAttr.getInstance().marginStartMediaFile,
+        marginTop,
+        ChatAttr.getInstance().marginEndMediaFile,
+        marginBottom
+    )
 }
 
 fun TextView.setFileName(file: FileModel) {

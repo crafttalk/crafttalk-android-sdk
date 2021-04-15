@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
+import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.base.BaseViewHolder
 import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.model.GifMessageItem
@@ -14,6 +15,7 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderUserGifMessage(
     view: View,
+    private val download: (fileName: String?, fileUrl: String?, fileType: TypeFile) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickHandler: (gifUrl: String) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
@@ -21,6 +23,7 @@ class HolderUserGifMessage(
     private val warningContainer: ViewGroup? = view.findViewById(R.id.user_gif_warning)
 
     private val gif: ImageView? = view.findViewById(R.id.user_gif)
+    private val downloadGif: TextView? = view.findViewById(R.id.download_file)
     private val author: TextView? = view.findViewById(R.id.author)
     private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
@@ -28,21 +31,31 @@ class HolderUserGifMessage(
     private val date: TextView? = view.findViewById(R.id.date)
 
     private var gifUrl: String? = null
+    private var gifName: String? = null
     private var failLoading: Boolean = false
 
     init {
-        view.setOnClickListener(this)
+        gif?.setOnClickListener(this)
+        downloadGif?.setOnClickListener(this)
     }
 
     override fun onClick(view: View) {
-        gifUrl?.let{
-            if (!failLoading)
-                clickHandler(it)
+        when (view.id) {
+            R.id.user_gif -> {
+                gifUrl?.let {
+                    if (!failLoading)
+                        clickHandler(it)
+                }
+            }
+            R.id.download_file -> {
+                download(gifName, gifUrl, TypeFile.GIF)
+            }
         }
     }
 
     override fun bindTo(item: GifMessageItem) {
         gifUrl = item.gif.url
+        gifName = item.gif.name
         failLoading = item.gif.failLoading
 
         date?.setDate(item)
@@ -55,10 +68,11 @@ class HolderUserGifMessage(
             settingMediaFile()
             loadMediaFile(item.idKey, item.gif, updateData, true, warningContainer, true)
         }
+        downloadGif?.settingDownloadBtn(true, failLoading)
         // set bg
         contentContainer?.apply {
             setBackgroundResource(ChatAttr.getInstance().bgUserMessageResId)
-            ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundUserMessage))
+            ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundUserMediaFileMessage))
         }
     }
 

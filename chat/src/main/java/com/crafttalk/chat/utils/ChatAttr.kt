@@ -71,7 +71,9 @@ private constructor(
     val colorTextLink = attrArr.getColor(R.styleable.ChatView_color_text_link, ContextCompat.getColor(context, R.color.default_color_text_link))
 
     val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
+    val colorBackgroundUserMediaFileMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_media_file_message, ContextCompat.getColor(context, R.color.default_color_bg_user_message))
     val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
+    val colorBackgroundOperatorMediaFileMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_media_file_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
     val colorBackgroundOperatorAction = attrArr.getColor(R.styleable.ChatView_color_bg_operator_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
     val colorBackgroundOperatorSelectedAction = attrArr.getColorOrNull(R.styleable.ChatView_color_bg_operator_selected_action) ?: colorMain
     val colorBordersOperatorAction = attrArr.getColor(R.styleable.ChatView_color_borders_operator_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
@@ -151,6 +153,15 @@ private constructor(
     val layoutItemOperatorFileMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_file_message)
     val layoutItemOperatorUnionMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_union_message)
     val layoutItemTransferMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_transfer_message)
+
+//    download
+    val showFileMessageDownload = attrArr.getBoolean(R.styleable.ChatView_show_file_message_download, true)
+    val colorUserFileMessageDownload = attrArr.getColor(R.styleable.ChatView_color_user_file_message_download, ContextCompat.getColor(context, R.color.gray_707070))
+    val colorOperatorFileMessageDownload = attrArr.getColor(R.styleable.ChatView_color_operator_file_message_download, ContextCompat.getColor(context, R.color.gray_707070))
+    val sizeUserFileMessageDownload = attrArr.getDimension(R.styleable.ChatView_size_user_file_message_download, context.resources.getDimension(R.dimen.default_size_download))
+    val sizeOperatorFileMessageDownload = attrArr.getDimension(R.styleable.ChatView_size_operator_file_message_download, context.resources.getDimension(R.dimen.default_size_download))
+    val backgroundUserFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_background_user_file_message_download, R.drawable.background_download_file)
+    val backgroundOperatorFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_background_operator_file_message_download, R.drawable.background_download_file)
 
 //    feedback
     val delayFeedbackScreenAppears = attrArr.getInt(R.styleable.ChatView_delay_feedback_screen_appears, 1000).toLong()

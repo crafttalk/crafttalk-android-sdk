@@ -326,7 +326,7 @@ class SocketApi constructor(
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() && messageSocket.attachmentType == "IMAGE") -> {
-                messageSocket.attachmentUrl?.let{
+                messageSocket.attachmentUrl?.let {
                     getSizeMediaFile(context, it) { height, width ->
                         viewModelScope.launch {
                             dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))

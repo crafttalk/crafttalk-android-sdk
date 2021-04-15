@@ -23,7 +23,9 @@
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
+        <attr name="color_bg_user_media_file_message" format="color"/>
         <attr name="color_bg_operator_message" format="color"/>
+        <attr name="color_bg_operator_media_file_message" format="color"/>
         <attr name="color_bg_operator_action" format="color"/>
         <attr name="color_bg_operator_selected_action" format="color"/>
         <attr name="color_borders_operator_action" format="color"/>
@@ -54,6 +56,14 @@
         <attr name="color_company" format="color"/>
         <attr name="color_text_date_grouping" format="color"/>
         <attr name="color_text_link" format="color"/>
+
+        <attr name="show_file_message_download" format="boolean"/>
+        <attr name="color_user_file_message_download" format="color"/>
+        <attr name="color_operator_file_message_download" format="color"/>
+        <attr name="size_user_file_message_download" format="dimension"/>
+        <attr name="size_operator_file_message_download" format="dimension"/>
+        <attr name="background_user_file_message_download" format="reference"/>
+        <attr name="background_operator_file_message_download" format="reference"/>
 
         <attr name="drawable_progress_indeterminate" format="reference"/>
         <attr name="drawable_file_icon" format="reference"/>
@@ -116,8 +126,8 @@
         <attr name="show_user_message_author" format="boolean"/>
         <attr name="show_user_message_status" format="boolean"/>
 
-        <attr name="resource_bg_user_message" format="integer"/>
-        <attr name="resource_bg_operator_message" format="integer"/>
+        <attr name="resource_bg_user_message" format="reference"/>
+        <attr name="resource_bg_operator_message" format="reference"/>
 
         <attr name="layout_item_user_text_message" format="reference"/>
         <attr name="layout_item_user_image_message" format="reference"/>

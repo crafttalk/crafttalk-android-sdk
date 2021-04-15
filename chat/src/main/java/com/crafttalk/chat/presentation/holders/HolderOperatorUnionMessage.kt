@@ -21,6 +21,7 @@ import com.crafttalk.chat.utils.ChatAttr
 class HolderOperatorUnionMessage(
     view: View,
     private val selectAction: (messageId: String, actionId: String) -> Unit,
+    private val download: (fileName: String?, fileUrl: String?, fileType: TypeFile) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickGifHandler: (gifUrl: String) -> Unit,
     private val clickImageHandler: (imageUrl: String) -> Unit,
@@ -30,6 +31,7 @@ class HolderOperatorUnionMessage(
     private val warningContainer: ViewGroup? = view.findViewById(R.id.server_media_warning)
 
     private val message: TextView? = view.findViewById(R.id.server_message)
+    private val downloadMediaFile: TextView? = view.findViewById(R.id.download_file)
     private val listActions: RecyclerView? = view.findViewById(R.id.actions_list)
     private val author: TextView? = view.findViewById(R.id.author)
     private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
@@ -42,35 +44,48 @@ class HolderOperatorUnionMessage(
     private val date: TextView? = view.findViewById(R.id.date)
 
     private var fileUrl: String? = null
+    private var mediaFileName: String? = null
     private var fileType: TypeFile? = null
     private var failLoading: Boolean = false
 
     init {
-        view.setOnClickListener(this)
+        fileIcon?.setOnClickListener(this)
+        media?.setOnClickListener(this)
+        downloadMediaFile?.setOnClickListener(this)
     }
 
     override fun onClick(view: View) {
-        fileUrl?.let{ url ->
-            when (fileType) {
-                TypeFile.FILE -> {
+        when (view.id) {
+            R.id.server_file -> {
+                fileUrl?.let {
                     if (!failLoading)
-                        clickDocumentHandler(url)
+                        clickDocumentHandler(it)
                 }
-                TypeFile.IMAGE -> {
-                    if (!failLoading)
-                        clickImageHandler(url)
+            }
+            R.id.server_media -> {
+                fileUrl?.let{ url ->
+                    when (fileType) {
+                        TypeFile.IMAGE -> {
+                            if (!failLoading)
+                                clickImageHandler(url)
+                        }
+                        TypeFile.GIF -> {
+                            if (!failLoading)
+                                clickGifHandler(url)
+                        }
+                        else -> {}
+                    }
                 }
-                TypeFile.GIF -> {
-                    if (!failLoading)
-                        clickGifHandler(url)
-                }
-                else -> {}
+            }
+            R.id.download_file -> {
+                download(mediaFileName, fileUrl, fileType ?: TypeFile.IMAGE)
             }
         }
     }
 
     override fun bindTo(item: UnionMessageItem) {
         fileUrl = item.file.url
+        mediaFileName = item.file.name
         fileType = item.file.type
         failLoading = item.file.failLoading
 
@@ -107,6 +122,14 @@ class HolderOperatorUnionMessage(
             // set font
             ChatAttr.getInstance().resFontFamilyOperatorMessage?.let {
                 typeface = ResourcesCompat.getFont(context, it)
+            }
+        }
+        downloadMediaFile?.apply {
+            if (fileType in listOf(TypeFile.IMAGE, TypeFile.GIF)) {
+                visibility = View.VISIBLE
+                settingDownloadBtn(false, failLoading)
+            } else {
+                visibility = View.GONE
             }
         }
         // set bg

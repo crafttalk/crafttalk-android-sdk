@@ -5,6 +5,9 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.marginBottom
+import androidx.core.view.marginEnd
+import androidx.core.view.marginStart
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -141,6 +144,12 @@ fun ImageView.loadMediaFile(
                     warningContainer?.apply {
                         layoutParams.width = this@loadMediaFile.layoutParams.width + ChatAttr.getInstance().marginStartMediaFile + ChatAttr.getInstance().marginEndMediaFile
                         layoutParams.height = this@loadMediaFile.layoutParams.height + ChatAttr.getInstance().marginTopMediaFile + ChatAttr.getInstance().marginBottomMediaFile
+                        (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
+                            marginStart,
+                            -this@loadMediaFile.layoutParams.height,
+                            marginEnd,
+                            marginBottom
+                        )
                         visibility = View.VISIBLE
                     }
                     return false

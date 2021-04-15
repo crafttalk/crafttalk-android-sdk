@@ -13,20 +13,22 @@ import java.io.File
 
 fun downloadResource(
     context: Context,
-    fileName: String,
-    fileUrl: String,
+    fileName: String?,
+    fileUrl: String?,
     fileType: TypeFile,
     downloadListener: DownloadFileListener,
     noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit
 ) {
     fun downloadFile(
         context: Context,
-        fileName: String,
-        fileUrl: String,
+        fileName: String?,
+        fileUrl: String?,
         fileType: TypeFile,
         downloadListener: DownloadFileListener
     ) {
         try {
+            if (fileName == null) throw Exception("Not found file name for file!")
+            if (fileUrl == null) throw Exception("Not found file url for file!")
             val dm = ContextCompat.getSystemService(context, DownloadManager::class.java)
             val downloadUri: Uri = Uri.parse(fileUrl)
             val request = DownloadManager.Request(downloadUri)
