@@ -11,16 +11,14 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFileContract
-import com.crafttalk.chat.presentation.helper.permission.PermissionHelper
+import com.crafttalk.chat.presentation.helper.permission.checkPermission
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatParams
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FileViewerHelper constructor(
-    private val permissionHelper: PermissionHelper
-) {
+class FileViewerHelper {
 
     fun pickFiles(
         pickSettings: Pair<TypeFile, TypeMultiple>,
@@ -32,7 +30,7 @@ class FileViewerHelper constructor(
             pickFilesFromGallery(pickSettings, fragment, resultHandler)
         }
         val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        permissionHelper.checkPermission(
+        checkPermission(
             permissions,
             fragment.requireContext(),
             { noPermission(permissions) { pickFile() } }
@@ -56,7 +54,7 @@ class FileViewerHelper constructor(
             }.launch(fileUri)
         }
         val permissions = arrayOf(Manifest.permission.CAMERA)
-        permissionHelper.checkPermission(
+        checkPermission(
             permissions,
             fragment.requireContext(),
             { noPermission(permissions) { pickImage() } }

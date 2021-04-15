@@ -34,8 +34,8 @@ import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnackbar
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
+import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
-import com.crafttalk.chat.presentation.helper.permission.PermissionHelper
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.TypeMultiple
@@ -56,7 +56,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var liveDataMessages: LiveData<PagedList<MessageModel>>? = null
     private var isFirstUploadMessages = false
     private lateinit var adapterListMessages: AdapterListMessages
-    private val fileViewerHelper = FileViewerHelper(PermissionHelper())
+    private val fileViewerHelper = FileViewerHelper()
     private lateinit var parentFragment: Fragment
     private val inflater: LayoutInflater by lazy {
          context.getSystemService(
@@ -68,6 +68,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             permissions.forEachIndexed { index, permission ->
                 WarningSnackbar.make(chat_place, null, messages[index], null).show()
             }
+        }
+    }
+    private var downloadFileListener: DownloadFileListener = object : DownloadFileListener {
+        override fun failDownload() {
+            WarningSnackbar.make(chat_place, null, context.getString(R.string.download_file_fail), null).show()
         }
     }
     private var stateStartingProgressListener: StateStartingProgressListener? = null
@@ -82,6 +87,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     fun setOnPermissionListener(listener: ChatPermissionListener) {
         this.permissionListener = listener
+    }
+
+    fun setOnDownloadFileListener(listener: DownloadFileListener) {
+        this.downloadFileListener = listener
     }
 
     fun setOnInternetConnectionListener(listener: ChatInternetConnectionListener) {
@@ -209,6 +218,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 viewModel::openFile,
                 viewModel::openImage,
                 viewModel::openGif,
+                { fileName, fileUrl, fileType ->
+                    downloadResource(context, fileName, fileUrl, fileType, downloadFileListener)
+                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
+                        permissionListener.requestedPermissions(
+                            permissions,
+                            arrayOf(context.getString(R.string.requested_permission_download)),
+                            actionsAfterObtainingPermission
+                        )
+                    }
+                },
                 viewModel::selectAction,
                 viewModel::updateData
             ).apply {

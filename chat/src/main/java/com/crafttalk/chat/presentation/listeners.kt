@@ -11,6 +11,10 @@ interface UploadFileListener {
     fun failUpload(message: String, type: TypeFailUpload)
 }
 
+interface DownloadFileListener {
+    fun failDownload()
+}
+
 interface ChatInternetConnectionListener {
     fun connect() // has internet
     fun failConnect() // hasn't internet
