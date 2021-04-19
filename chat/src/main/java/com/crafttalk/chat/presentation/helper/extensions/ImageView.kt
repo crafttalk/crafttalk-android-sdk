@@ -11,6 +11,7 @@ import androidx.core.view.marginStart
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -132,10 +133,48 @@ fun ImageView.loadMediaFile(
         }
     }
 
+    var roundedTopLeft = 0f
+    var roundedTopRight = 0f
+    var roundedBottomRight = 0f
+    var roundedBottomLeft = 0f
+
+    when {
+        isUserMessage && isGif -> {
+            roundedTopLeft = ChatAttr.getInstance().roundedTopLeftUserGifFilePreviewMessage
+            roundedTopRight = ChatAttr.getInstance().roundedTopRightUserGifFilePreviewMessage
+            roundedBottomRight = ChatAttr.getInstance().roundedBottomRightUserGifFilePreviewMessage
+            roundedBottomLeft = ChatAttr.getInstance().roundedBottomLeftUserGifFilePreviewMessage
+        }
+        isUserMessage && !isGif -> {
+            roundedTopLeft = ChatAttr.getInstance().roundedTopLeftUserMediaFilePreviewMessage
+            roundedTopRight = ChatAttr.getInstance().roundedTopRightUserMediaFilePreviewMessage
+            roundedBottomRight = ChatAttr.getInstance().roundedBottomRightUserMediaFilePreviewMessage
+            roundedBottomLeft = ChatAttr.getInstance().roundedBottomLeftUserMediaFilePreviewMessage
+        }
+        !isUserMessage && isGif -> {
+            roundedTopLeft = ChatAttr.getInstance().roundedTopLeftOperatorGifFilePreviewMessage
+            roundedTopRight = ChatAttr.getInstance().roundedTopRightOperatorGifFilePreviewMessage
+            roundedBottomRight = ChatAttr.getInstance().roundedBottomRightOperatorGifFilePreviewMessage
+            roundedBottomLeft = ChatAttr.getInstance().roundedBottomLeftOperatorGifFilePreviewMessage
+        }
+        !isUserMessage && !isGif -> {
+            roundedTopLeft = ChatAttr.getInstance().roundedTopLeftOperatorMediaFilePreviewMessage
+            roundedTopRight = ChatAttr.getInstance().roundedTopRightOperatorMediaFilePreviewMessage
+            roundedBottomRight = ChatAttr.getInstance().roundedBottomRightOperatorMediaFilePreviewMessage
+            roundedBottomLeft = ChatAttr.getInstance().roundedBottomLeftOperatorMediaFilePreviewMessage
+        }
+    }
+
     Glide.with(context)
         .apply { if (isGif) asGif() }
         .load(mediaFile.url)
         .apply(RequestOptions().override(layoutParams.width, layoutParams.height))
+        .apply(RequestOptions.bitmapTransform(GranularRoundedCorners(
+            roundedTopLeft,
+            roundedTopRight,
+            roundedBottomRight,
+            roundedBottomLeft
+        )))
         .placeholder(R.drawable.background_item_media_message_placeholder)
         .error(R.drawable.background_item_media_message_placeholder)
         .listener(

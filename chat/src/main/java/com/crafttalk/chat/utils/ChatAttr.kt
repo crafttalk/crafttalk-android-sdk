@@ -116,6 +116,27 @@ private constructor(
     val heightElongatedItemUserFilePreviewMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_height_elongated_item_user_file_preview_message) ?: heightElongatedItemUserFilePreviewMessageInPercent).toInt()
     val heightElongatedItemOperatorFilePreviewMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_height_elongated_item_operator_file_preview_message) ?: heightElongatedItemOperatorFilePreviewMessageInPercent).toInt()
 
+    private val roundedMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_media_file_preview_message)
+    private val roundedGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_gif_file_preview_message)
+    private val defaultRoundedMediaFilePreview = context.resources.getDimensionPixelSize(R.dimen.default_rounded_media_file_preview).toFloat()
+    private val defaultRoundedGifFilePreview = context.resources.getDimensionPixelSize(R.dimen.default_rounded_gif_file_preview).toFloat()
+    val roundedTopLeftUserMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_left_user_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: defaultRoundedMediaFilePreview
+    val roundedTopRightUserMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_right_user_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: defaultRoundedMediaFilePreview
+    val roundedBottomLeftUserMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_left_user_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: defaultRoundedMediaFilePreview
+    val roundedBottomRightUserMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_right_user_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: 0f
+    val roundedTopLeftUserGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_left_user_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: defaultRoundedGifFilePreview
+    val roundedTopRightUserGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_right_user_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: defaultRoundedGifFilePreview
+    val roundedBottomLeftUserGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_left_user_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: defaultRoundedGifFilePreview
+    val roundedBottomRightUserGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_right_user_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: 0f
+    val roundedTopLeftOperatorMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_left_operator_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: defaultRoundedMediaFilePreview
+    val roundedTopRightOperatorMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_right_operator_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: defaultRoundedMediaFilePreview
+    val roundedBottomLeftOperatorMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_left_operator_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: 0f
+    val roundedBottomRightOperatorMediaFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_right_operator_media_file_preview_message) ?: roundedMediaFilePreviewMessage ?: defaultRoundedMediaFilePreview
+    val roundedTopLeftOperatorGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_left_operator_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: defaultRoundedGifFilePreview
+    val roundedTopRightOperatorGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_top_right_operator_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: defaultRoundedGifFilePreview
+    val roundedBottomLeftOperatorGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_left_operator_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: 0f
+    val roundedBottomRightOperatorGifFilePreviewMessage = attrArr.getDimensionOrNull(R.styleable.ChatView_rounded_bottom_right_operator_gif_file_preview_message) ?: roundedGifFilePreviewMessage ?: defaultRoundedGifFilePreview
+
     private val resFontFamilyAllText = attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_all_text)
     val resFontFamilyUserMessage = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_user_message)
     val resFontFamilyOperatorMessage = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_operator_message)

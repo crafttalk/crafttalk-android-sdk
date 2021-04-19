@@ -20,4 +20,7 @@
     <dimen name="default_margin_top_media_file">12dp</dimen>
     <dimen name="default_margin_bottom_media_file">12dp</dimen>
 
+    <dimen name="default_rounded_media_file_preview">5dp</dimen>
+    <dimen name="default_rounded_gif_file_preview">2dp</dimen>
+
 </resources>

@@ -103,6 +103,25 @@
         <attr name="height_elongated_item_user_file_preview_message_in_percent" format="float"/>
         <attr name="height_elongated_item_operator_file_preview_message_in_percent" format="float"/>
 
+        <attr name="rounded_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_left_user_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_right_user_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_left_user_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_right_user_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_left_user_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_right_user_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_left_user_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_right_user_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_left_operator_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_right_operator_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_left_operator_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_right_operator_media_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_left_operator_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_top_right_operator_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_left_operator_gif_file_preview_message" format="dimension"/>
+        <attr name="rounded_bottom_right_operator_gif_file_preview_message" format="dimension"/>
+
         <attr name="resource_font_family_all_text" format="integer"/>
         <attr name="resource_font_family_user_message" format="integer"/>
         <attr name="resource_font_family_operator_message" format="integer"/>
