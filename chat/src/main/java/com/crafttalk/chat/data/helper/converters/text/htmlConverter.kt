@@ -26,7 +26,13 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
         startIndex = input.indexOf(protocol, startIndex, true)
 
         while (startIndex != -1) {
-            val endIndex = input.indexOf(' ', startIndex, true)
+            val endIndexSpace = input.indexOf(' ', startIndex, true)
+            val endIndexNewLine = input.indexOf("\n", startIndex, true)
+            val endIndex = when {
+                endIndexNewLine == -1 -> endIndexSpace
+                endIndexSpace == -1 -> endIndexNewLine
+                else -> Math.min(endIndexSpace, endIndexNewLine)
+            }
             var url = if (endIndex == -1) {
                 input.substring(startIndex)
             } else {
