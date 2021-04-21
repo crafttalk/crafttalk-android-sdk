@@ -11,6 +11,7 @@ import androidx.core.view.marginTop
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
 fun TextView.setAuthor(message: MessageModel) {
@@ -140,11 +141,24 @@ fun TextView.setFileName(file: FileModel) {
 
 fun TextView.setFileSize(file: FileModel) {
     if (file.size == 0L) return
+    val df = DecimalFormat("#.##")
+    val countByteInKByte = 1000L
+    val countByteInMByte = 1000L * 1000L
+    val countByteInGByte = 1000L * 1000L * 1000L
     text = when(file.size) {
-        in 0L until 1024L -> "${file.size} ${resources.getString(R.string.file_size_byte)}"
-        in 1024L until 1024L * 1024L -> "${(file.size / 1024L).toInt()} ${resources.getString(R.string.file_size_Kb)}"
-        in 1024L * 1024L until 1024L * 1024L * 1024L -> "${(file.size / (1024L * 1024L)).toInt()} ${resources.getString(R.string.file_size_Mb)}"
-        in 1024L * 1024L * 1024L until 1024L * 1024L * 1024L * 1024L -> "${(file.size / (1024L * 1024L * 1024L)).toInt()} ${resources.getString(R.string.file_size_Gb)}"
+        in 0L until countByteInKByte -> "${file.size} ${resources.getString(R.string.file_size_byte)}"
+        in countByteInKByte until countByteInMByte -> {
+            val value = file.size.toDouble() / countByteInKByte
+            "${(df.parse(df.format(value)) as Double)} ${resources.getString(R.string.file_size_Kb)}"
+        }
+        in countByteInMByte until countByteInGByte -> {
+            val value = file.size.toDouble() / countByteInMByte
+            "${(df.parse(df.format(value)) as Double)} ${resources.getString(R.string.file_size_Mb)}"
+        }
+        in countByteInGByte until countByteInGByte * 1000L -> {
+            val value = file.size.toDouble() / countByteInGByte
+            "${(df.parse(df.format(value)) as Double)} ${resources.getString(R.string.file_size_Gb)}"
+        }
         else -> ""
     }
     // set color

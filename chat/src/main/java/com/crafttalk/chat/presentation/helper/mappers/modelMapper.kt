@@ -38,6 +38,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             FileModel(
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
+                size = localMessage.attachmentSize ?: 0,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
                 failLoading = localMessage.height == null || localMessage.width == null
@@ -55,6 +56,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             FileModel(
                 localMessage.attachmentUrl,
                 localMessage.attachmentName,
+                size = localMessage.attachmentSize ?: 0,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
                 failLoading = localMessage.height == null || localMessage.width == null
@@ -70,7 +72,8 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 localMessage.attachmentUrl,
-                localMessage.attachmentName
+                localMessage.attachmentName,
+                size = localMessage.attachmentSize ?: 0
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -90,6 +93,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 localMessage.attachmentName,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
+                size = localMessage.attachmentSize ?: 0,
                 failLoading = localMessage.height == null || localMessage.width == null,
                 type = when {
                     localMessage.attachmentType == "FILE" -> TypeFile.FILE

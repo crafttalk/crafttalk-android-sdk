@@ -29,6 +29,8 @@ data class MessageEntity(
     val attachmentType: String?,
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String?,
+    @ColumnInfo(name = "attachment_size")
+    val attachmentSize: Long?,
     @ColumnInfo(name = "operator_id")
     val operatorId: String?,
     @ColumnInfo(name = "operator_preview")
@@ -85,7 +87,7 @@ data class MessageEntity(
     }
 
     companion object {
-        fun map(uuid: String, messageSocket: MessageSocket, isUploadHistory: Boolean, operatorPreview: String?, height: Int? = null, width: Int? = null): MessageEntity {
+        fun map(uuid: String, messageSocket: MessageSocket, isUploadHistory: Boolean, operatorPreview: String?, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertTextToNormalString(list)
 
@@ -102,6 +104,7 @@ data class MessageEntity(
                 attachmentUrl = messageSocket.attachmentUrl,
                 attachmentType = messageSocket.attachmentType,
                 attachmentName = messageSocket.attachmentName,
+                attachmentSize = attachmentSize,
                 operatorId = messageSocket.operatorId,
                 operatorPreview = operatorPreview,
                 operatorName = if (messageSocket.isReply) messageSocket.operatorName else "Вы",

@@ -13,6 +13,7 @@ import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
+import com.crafttalk.chat.presentation.helper.ui.getWeightFile
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams.authType
 import com.crafttalk.chat.utils.ChatParams.urlSocketHost
@@ -353,6 +354,15 @@ class SocketApi constructor(
                     }
                 }
             }
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() && messageSocket.attachmentType == "FILE") -> {
+                messageSocket.attachmentUrl?.let {
+                    getWeightFile(it) { size ->
+                        viewModelScope.launch {
+                            dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, attachmentSize = size))
+                        }
+                    }
+                }
+            }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
                 dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
@@ -398,6 +408,7 @@ class SocketApi constructor(
                             attachmentUrl = messageFromHistory.attachmentUrl,
                             attachmentType = messageFromHistory.attachmentType,
                             attachmentName = messageFromHistory.attachmentName,
+                            attachmentSize = null,
                             operatorId = messageFromHistory.operatorId,
                             operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
                             operatorPreview = null,

@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import java.lang.Exception
+import java.net.URL
 
 fun getSizeMediaFile(context: Context, url: String, resultSize: (height: Int?, width: Int?) -> Unit) {
     Glide.with(context)
@@ -21,4 +23,16 @@ fun getSizeMediaFile(context: Context, url: String, resultSize: (height: Int?, w
             }
             override fun onLoadCleared(placeholder: Drawable?) {}
         })
+}
+
+fun getWeightFile(urlPath: String, resultSize: (size: Long) -> Unit) {
+    return try {
+        val url = URL(urlPath)
+        val urlConnection = url.openConnection()
+        urlConnection.connect()
+        val size = urlConnection.contentLength
+        resultSize(size.toLong())
+    } catch (ex: Exception) {
+        resultSize(0)
+    }
 }
