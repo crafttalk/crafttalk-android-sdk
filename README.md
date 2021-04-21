@@ -30,6 +30,7 @@ dependencies {
 ```
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.CAMERA"/>
 ```
 
@@ -170,6 +171,7 @@ override fun onResume() {
 - urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
 - urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
 - fileProviderAuthorities - значение authorities для FileProvider
+- operator_preview_mode - может принимать CACHE_ONLY_LINK или ALWAYS_REQUEST. Этот атрибут определяет режим сохранения иконки оператора. 
 
 
 Атрибуты, настраивающие внешний вид:
@@ -181,7 +183,9 @@ override fun onResume() {
 Цвета:
 - color_main - устанавливает главный цвет чата
 - color_bg_user_message - устанавливает цвет фона пользовательского сообщения
+- color_bg_user_media_file_message - устанавливает цвет фона пользовательского сообщения с фото или гифкой
 - color_bg_operator_message - устанавливает цвет фона сообщения бота/оператора
+- color_bg_operator_media_file_message - устанавливает цвет фона сообщения бота/оператора с фото или гифкой
 - color_text_user_message - устанавливает цвет текста пользовательского сообщения
 - color_text_operator_message - устанавливает цвет текста сообщения бота/оператора
 - color_text_operator_action - устанавливает цвет текста подсказки бота
@@ -281,6 +285,15 @@ Drawable:
 - show_user_message_author - указывает о необходимости отобразить имя автора пользователя
 - show_user_message_status - указывает о необходимости отобразить статус пользовательского сообщения
 
+Кнопка для скачивания файлов:
+- show_file_message_download - указывает о необходимости отобразить кнопку для скачивания файлов
+- color_user_file_message_download - устанавливает цвет текста кнопки для пользовательского сообщения
+- color_operator_file_message_download - устанавливает цвет текста кнопки для сообщения от бота/оператора
+- size_user_file_message_download - устанавливает размер текста кнопки для пользовательского сообщения
+- size_operator_file_message_download - устанавливает размер текста кнопки для сообщения от бота/оператора
+- background_user_file_message_download - устанавливает фон кнопки для пользовательского сообщения
+- background_operator_file_message_download - устанавливает фон кнопки для сообщения от бота/оператора
+
 Оценка работы оператора:
 - delay_feedback_screen_appears - выставляет время в мс (при выставлении оценки), по истечении которого сворачивается плашка оценки работы оператора (по умолчанию 1000 мс)
 - color_feedback_title - устанавливает цвет заголовка на плашке оценки работы оператора
@@ -341,6 +354,16 @@ chatView.setOnPermissionListener(object : ChatPermissionListener {
 chatView.setOnUploadFileListener(object : UploadFileListener {
     override fun successUpload() {}
     override fun failUpload(message: String, type: TypeFailUpload) {}
+})
+```
+
+#### DownloadFileListener
+
+Этот listener устанавливается через ChatView с помощью метода setOnDownloadFileListener. При скачивании медиафайлов может пойти что-то не так, поэтому необходимо уведомить об этом пользователя. Если дефолтный Snackbar не удовлетворяет требованиям, тогда можно установить DownloadFileListener и обрабатывать подобные ситуации самостоятельно.
+
+```
+chatView.setOnDownloadFileListener(object : DownloadFileListener {
+    override fun failDownload() {}  
 })
 ```
 
