@@ -47,4 +47,7 @@ interface MessagesDao {
     @Query("SELECT timestamp FROM messages WHERE uuid = :uuid ORDER BY timestamp ASC LIMIT 1")
     fun getFirstMessageTime(uuid: String): Long?
 
+    @Query("SELECT timestamp FROM messages WHERE uuid = :uuid ORDER BY timestamp DESC LIMIT 1")
+    fun getLastMessageTime(uuid: String): Long?
+
 }

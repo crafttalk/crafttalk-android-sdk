@@ -207,7 +207,7 @@ class ChatViewModel
 
     fun updateValueCountUnreadMessages(indexLastVisibleItem: Int) {
         launchIO {
-            val list = uploadMessagesForUser.value?.value?.toList() ?: return@launchIO
+            val list = uploadMessagesForUser.value?.value?.toList()?.filterNotNull() ?: return@launchIO
 
             when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
                 -1 -> {
@@ -234,7 +234,7 @@ class ChatViewModel
 
     fun setValueCountUnreadMessages() {
         launchIO {
-            val list = uploadMessagesForUser.value?.value?.toList() ?: return@launchIO
+            val list = uploadMessagesForUser.value?.value?.toList()?.filterNotNull() ?: return@launchIO
 
             when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
                 -1 -> firstUploadMessages.postValue(list.size - 1)

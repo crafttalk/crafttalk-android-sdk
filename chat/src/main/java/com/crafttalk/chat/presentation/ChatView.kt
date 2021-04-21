@@ -155,6 +155,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         chatAttr.drawableProgressIndeterminate?.let {
             loading.indeterminateDrawable = it
             warning_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
+            upload_history_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
         }
     }
 
@@ -370,10 +371,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         })
         viewModel.uploadHistoryVisible.observe(lifecycleOwner, Observer {
-            upload_history_btn.visibility = if (it) {
-                View.VISIBLE
+            if (it) {
+                upload_history_btn.visibility = View.VISIBLE
             } else {
-                View.GONE
+                upload_history_btn.visibility = View.GONE
+                stopProgressBar(upload_history_loading)
             }
         })
         viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
@@ -416,7 +418,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     override fun onClick(view: View) {
         when(view.id) {
-            R.id.upload_history_btn -> viewModel.uploadOldMessages()
+            R.id.upload_history_btn -> {
+                upload_history_btn.visibility = View.GONE
+                startProgressBar(upload_history_loading)
+                viewModel.uploadOldMessages()
+                Handler().postDelayed({
+                    stopProgressBar(upload_history_loading)
+                }, 5000)
+            }
             R.id.sign_in -> {
                 if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)

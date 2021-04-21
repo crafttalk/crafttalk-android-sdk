@@ -16,7 +16,7 @@
         android:layout_centerHorizontal="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_above="@id/lower_limit"
-        android:paddingTop="52dp"
+        android:paddingTop="60dp"
         android:clipToPadding="false"
         app:stackFromEnd="false"
         app:reverseLayout="true" />
@@ -33,6 +33,16 @@
         android:paddingVertical="8dp"
         android:paddingHorizontal="16dp"
         android:layout_marginTop="16dp" />
+
+    <ProgressBar
+        android:id="@+id/upload_history_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/spinner_ring"
+        android:indeterminateOnly="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/scroll_to_down"
