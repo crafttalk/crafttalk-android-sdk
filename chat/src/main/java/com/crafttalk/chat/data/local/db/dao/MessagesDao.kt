@@ -44,4 +44,7 @@ interface MessagesDao {
     @Query("UPDATE messages SET actions = :actions WHERE uuid = :uuid AND id = :id")
     fun selectAction(uuid: String, id: String, actions: List<ActionEntity>?)
 
+    @Query("SELECT timestamp FROM messages WHERE uuid = :uuid ORDER BY timestamp ASC LIMIT 1")
+    fun getFirstMessageTime(uuid: String): Long?
+
 }

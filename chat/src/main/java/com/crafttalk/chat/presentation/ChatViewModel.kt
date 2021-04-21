@@ -39,6 +39,7 @@ class ChatViewModel
     var countUnreadMessages = MutableLiveData(0)
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
+    val uploadHistoryVisible = MutableLiveData(false)
 
     val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
@@ -49,7 +50,14 @@ class ChatViewModel
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder<Int, MessageModel>(
             dataSource,
             PAGE_SIZE
-        )
+        ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
+            override fun onZeroItemsLoaded() {
+                super.onZeroItemsLoaded()
+                launchIO {
+                    chatMessageInteractor.syncMessages(true)
+                }
+            }
+        })
         uploadMessagesForUser.postValue(pagedListBuilder.build())
     }
 
@@ -128,6 +136,12 @@ class ChatViewModel
                 chatEventListener = chatEventListener
             )
         }, timeDelayed)
+    }
+
+    fun uploadOldMessages() {
+        launchIO {
+            chatMessageInteractor.syncMessages(false)
+        }
     }
 
     fun openFile(context: Context, fileUrl: String) {

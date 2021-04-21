@@ -42,13 +42,16 @@ class ChatMessageInteractor
         }
     }
 
-    suspend fun syncMessages(timestamp: Long = 0, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
-        try {
-            messageRepository.syncMessages(timestamp)
-            success()
-        }
-        catch (ex: Throwable) {
-            fail(ex)
+    fun syncMessages(isEmptyDB: Boolean) {
+        if (isEmptyDB) {
+            messageRepository.syncMessages(System.currentTimeMillis())
+        } else {
+            val uuid = visitorInteractor.getVisitor()?.uuid ?: return
+            val firstMessageTime = messageRepository.getFirstMessageTime(uuid)
+
+            firstMessageTime?.let { time ->
+                messageRepository.syncMessages(time)
+            }
         }
     }
 

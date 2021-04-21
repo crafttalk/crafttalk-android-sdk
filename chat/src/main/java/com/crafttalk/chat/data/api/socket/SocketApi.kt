@@ -46,6 +46,8 @@ class SocketApi constructor(
     private var failAuthUxFun: () -> Unit = {}
     private var getPersonPreview: (personId: String) -> String? = { null }
     private var isOnline = false
+    private var newMessagesStartTime: Long? = null
+    private var isUploadHistory: Boolean = false
 
     private var chatInternetConnectionListener: ChatInternetConnectionListener? = null
     private var chatMessageListener: ChatMessageListener? = null
@@ -143,7 +145,7 @@ class SocketApi constructor(
             }
             if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 viewModelScope.launch {
-                    sync(0)
+                    uploadNewMessages()
                 }
             }
         }
@@ -202,6 +204,13 @@ class SocketApi constructor(
                     greet() // переделать, не ориентируясь на пустой лист сообщений
                 } else {
                     marge(listMessages)
+                    if (listMessages.isNotEmpty() && newMessagesStartTime != null && listMessages[0].timestamp > newMessagesStartTime!!) {
+                        newMessagesStartTime = listMessages[0].timestamp
+                        socket.emit("history-messages-requested", newMessagesStartTime, visitor.token)
+                    } else {
+                        newMessagesStartTime = null
+                    }
+                    isUploadHistory = false
                 }
             }
         }
@@ -319,8 +328,18 @@ class SocketApi constructor(
     }
 
     fun sync(timestamp: Long) {
-        //dao.getLastTime()
+        isUploadHistory = true
         socket!!.emit("history-messages-requested", timestamp, visitor.token)
+    }
+
+    private fun uploadNewMessages() {
+        viewModelScope.launch {
+            dao.getLastMessageTime(visitor.uuid)?.let { time ->
+                isUploadHistory = false
+                newMessagesStartTime = time
+                socket!!.emit("history-messages-requested", System.currentTimeMillis(), visitor.token)
+            }
+        }
     }
 
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
@@ -329,13 +348,13 @@ class SocketApi constructor(
                 messageSocket.attachmentUrl?.let {
                     getSizeMediaFile(context, it) { height, width ->
                         viewModelScope.launch {
-                            dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
+                            dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
                         }
                     }
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }))
+                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
@@ -343,7 +362,7 @@ class SocketApi constructor(
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
-                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, messageSocket.operatorId?.let { getPersonPreview(it) }))
+                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
         }
     }

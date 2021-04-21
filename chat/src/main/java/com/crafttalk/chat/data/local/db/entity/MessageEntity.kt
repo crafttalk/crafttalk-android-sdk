@@ -85,7 +85,7 @@ data class MessageEntity(
     }
 
     companion object {
-        fun map(uuid: String, messageSocket: MessageSocket, operatorPreview: String?, height: Int? = null, width: Int? = null): MessageEntity {
+        fun map(uuid: String, messageSocket: MessageSocket, isUploadHistory: Boolean, operatorPreview: String?, height: Int? = null, width: Int? = null): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertTextToNormalString(list)
 
@@ -107,7 +107,7 @@ data class MessageEntity(
                 operatorName = if (messageSocket.isReply) messageSocket.operatorName else "Вы",
                 height = height,
                 width = width,
-                isRead = false
+                isRead = isUploadHistory
             )
         }
     }

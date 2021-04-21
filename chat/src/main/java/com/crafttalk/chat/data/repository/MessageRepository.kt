@@ -22,7 +22,7 @@ class MessageRepository
         socketApi.sendMessage(message)
     }
 
-    override suspend fun syncMessages(timestamp: Long) {
+    override fun syncMessages(timestamp: Long) {
         socketApi.sync(timestamp)
     }
 
@@ -38,6 +38,10 @@ class MessageRepository
             }
             dao.selectAction(uuid, messageId, updatedActions)
         }
+    }
+
+    override fun getFirstMessageTime(uuid: String): Long? {
+        return dao.getFirstMessageTime(uuid)
     }
 
     override fun updateSizeMessage(idKey: Long, height: Int, width: Int) {

@@ -45,6 +45,9 @@
     <!--    FeedBack-->
     <string name="feedback_title">Диалог завершен. Оцените качество обслуживания.</string>
 
+<!--    History-->
+    <string name="upload_history">Загрузить историю</string>
+
     <!--    Download file-->
     <string name="download_file_success">Файл успешно скачен</string>
     <string name="download_file_fail">Файл не удалось скачать</string>

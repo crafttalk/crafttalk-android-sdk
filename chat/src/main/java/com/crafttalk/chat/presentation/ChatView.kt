@@ -186,6 +186,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
+                val indexFirstVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: return
+                viewModel.uploadHistoryVisible.value = indexFirstVisible != -1 && recyclerView.adapter?.itemCount != null && indexFirstVisible == recyclerView.adapter!!.itemCount - 1 && recyclerView.adapter!!.itemCount > 5
                 if (indexLastVisible == -1) {
                     viewModel.scrollToDownVisible.value = false
                     return
@@ -194,6 +196,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         })
         close_feedback.setOnClickListener(this)
+        upload_history_btn.setOnClickListener(this)
         setFeedbackListeners()
     }
 
@@ -251,6 +254,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             liveDataMessages?.removeObservers(lifecycleOwner)
             liveDataMessages = liveDataPagedList
             isFirstUploadMessages = true
+            var lastOldMessageId: String? = null
             liveDataMessages?.observe(lifecycleOwner, Observer { pagedList ->
                 pagedList ?: return@Observer
 
@@ -260,10 +264,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 if (isFirstUploadMessages) {
                     viewModel.setValueCountUnreadMessages()
                 } else {
-                    if (scroll_to_down.visibility == View.GONE && countItemsLastVersion < pagedList.size) {
+                    if (scroll_to_down.visibility == View.GONE && countItemsLastVersion < pagedList.size && pagedList[0]?.id != null && lastOldMessageId != pagedList[0]?.id) {
                         list_with_message.smoothScrollToPosition(0)
                     }
                 }
+                if (pagedList.size != 0) {
+                    lastOldMessageId = pagedList[0]?.id
+                }
+                viewModel.uploadHistoryVisible.value = false
                 isFirstUploadMessages = false
             })
         })
@@ -361,6 +369,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 View.GONE
             }
         })
+        viewModel.uploadHistoryVisible.observe(lifecycleOwner, Observer {
+            upload_history_btn.visibility = if (it) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
         viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
             when (state) {
                 InternetConnectionState.NO_INTERNET -> {
@@ -401,6 +416,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     override fun onClick(view: View) {
         when(view.id) {
+            R.id.upload_history_btn -> viewModel.uploadOldMessages()
             R.id.sign_in -> {
                 if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)
