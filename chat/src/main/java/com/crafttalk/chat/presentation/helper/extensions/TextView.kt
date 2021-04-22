@@ -149,15 +149,15 @@ fun TextView.setFileSize(file: FileModel) {
         in 0L until countByteInKByte -> "${file.size} ${resources.getString(R.string.file_size_byte)}"
         in countByteInKByte until countByteInMByte -> {
             val value = file.size.toDouble() / countByteInKByte
-            "${(df.parse(df.format(value)) as Double)} ${resources.getString(R.string.file_size_Kb)}"
+            "${(df.parse(df.format(value)).toDouble())} ${resources.getString(R.string.file_size_Kb)}"
         }
         in countByteInMByte until countByteInGByte -> {
             val value = file.size.toDouble() / countByteInMByte
-            "${(df.parse(df.format(value)) as Double)} ${resources.getString(R.string.file_size_Mb)}"
+            "${(df.parse(df.format(value)).toDouble())} ${resources.getString(R.string.file_size_Mb)}"
         }
         in countByteInGByte until countByteInGByte * 1000L -> {
             val value = file.size.toDouble() / countByteInGByte
-            "${(df.parse(df.format(value)) as Double)} ${resources.getString(R.string.file_size_Gb)}"
+            "${(df.parse(df.format(value)).toDouble())} ${resources.getString(R.string.file_size_Gb)}"
         }
         else -> ""
     }

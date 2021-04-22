@@ -30,10 +30,14 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
             val indexNewLine = input.indexOf("\n", startIndex, true)
             val indexEndSentence = input.indexOf(".\n", startIndex, true)
             val endIndex = when {
-                indexSpace == -1 && indexNewLine == -1 -> indexEndSentence
-                indexSpace == -1 && indexEndSentence == -1 -> indexNewLine
-                indexNewLine == -1 && indexEndSentence == -1 -> indexSpace
-                else -> Math.min(Math.min(indexSpace, indexNewLine), indexEndSentence)
+                indexSpace != -1 && indexNewLine != -1 && indexEndSentence != -1 -> Math.min(Math.min(indexSpace, indexNewLine), indexEndSentence)
+                indexSpace != -1 && indexNewLine != -1 && indexEndSentence == -1 -> Math.min(indexSpace, indexNewLine)
+                indexSpace != -1 && indexNewLine == -1 && indexEndSentence != -1 -> Math.min(indexSpace, indexEndSentence)
+                indexSpace != -1 && indexNewLine == -1 && indexEndSentence == -1 -> indexSpace
+                indexSpace == -1 && indexNewLine != -1 && indexEndSentence != -1 -> Math.min(indexNewLine, indexEndSentence)
+                indexSpace == -1 && indexNewLine != -1 && indexEndSentence == -1 -> indexNewLine
+                indexSpace == -1 && indexNewLine == -1 && indexEndSentence != -1 -> indexEndSentence
+                else -> -1
             }
             var url = if (endIndex == -1) {
                 input.substring(startIndex)
