@@ -18,10 +18,10 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderUserUnionMessage(
     view: View,
-    private val download: (fileName: String?, fileUrl: String?, fileType: TypeFile) -> Unit,
+    private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
-    private val clickGifHandler: (gifUrl: String) -> Unit,
-    private val clickImageHandler: (imageUrl: String) -> Unit,
+    private val clickGifHandler: (gifName: String, gifUrl: String) -> Unit,
+    private val clickImageHandler: (imageName: String, imageUrl: String) -> Unit,
     private val clickDocumentHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
@@ -59,22 +59,19 @@ class HolderUserUnionMessage(
                 }
             }
             R.id.user_media -> {
-                fileUrl?.let{ url ->
+                if (!failLoading) {
+                    val name = mediaFileName ?: return
+                    val url = fileUrl ?: return
                     when (fileType) {
-                        TypeFile.IMAGE -> {
-                            if (!failLoading)
-                                clickImageHandler(url)
-                        }
-                        TypeFile.GIF -> {
-                            if (!failLoading)
-                                clickGifHandler(url)
-                        }
-                        else -> {}
+                        TypeFile.IMAGE -> clickImageHandler(name, url)
+                        TypeFile.GIF -> clickGifHandler(name, url)
                     }
                 }
             }
             R.id.download_file -> {
-                download(mediaFileName, fileUrl, fileType ?: TypeFile.IMAGE)
+                val name = mediaFileName ?: return
+                val url = fileUrl ?: return
+                download(name, url, fileType ?: TypeFile.IMAGE)
             }
         }
     }

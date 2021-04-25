@@ -3,6 +3,8 @@ package com.crafttalk.chat.presentation.custom_views.custom_snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.custom_views.custom_snackbar.binding.findSuitableParent
@@ -20,7 +22,14 @@ class WarningSnackbar(
     }
 
     companion object {
-        fun make(view: View, typeFailUpload: TypeFailUpload? = null, title: String? = null, description: String? = null): WarningSnackbar {
+        fun make(
+            view: View,
+            typeFailUpload: TypeFailUpload? = null,
+            title: String? = null,
+            description: String? = null,
+            @DrawableRes iconRes: Int = R.drawable.chat_ic_warning,
+            @ColorRes backgroundColor: Int = R.color.error
+        ): WarningSnackbar {
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
                 "No suitable parent found from the given view. Please provide a valid view."
             )
@@ -32,10 +41,10 @@ class WarningSnackbar(
             ) as WarningSnackbarView
 
             when (typeFailUpload) {
-                TypeFailUpload.LARGE -> customView.bind(R.string.warning_snackbar_large_title, R.string.warning_snackbar_large_description)
-                TypeFailUpload.NOT_SUPPORT_TYPE -> customView.bind(R.string.warning_snackbar_not_support_type_title, R.string.warning_snackbar_not_support_type_description)
-                TypeFailUpload.DEFAULT -> customView.bind(R.string.warning_snackbar_not_support_type_title, R.string.warning_snackbar_not_support_type_description)
-                else -> customView.bind(title, description)
+                TypeFailUpload.LARGE -> customView.bind(R.string.warning_snackbar_large_title, R.string.warning_snackbar_large_description, iconRes, backgroundColor)
+                TypeFailUpload.NOT_SUPPORT_TYPE -> customView.bind(R.string.warning_snackbar_not_support_type_title, R.string.warning_snackbar_not_support_type_description, iconRes, backgroundColor)
+                TypeFailUpload.DEFAULT -> customView.bind(R.string.warning_snackbar_not_support_type_title, R.string.warning_snackbar_not_support_type_description, iconRes, backgroundColor)
+                else -> customView.bind(title, description, iconRes, backgroundColor)
             }
 
             return WarningSnackbar(

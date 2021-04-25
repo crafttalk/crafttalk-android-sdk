@@ -57,9 +57,13 @@
         <attr name="color_text_date_grouping" format="color"/>
         <attr name="color_text_link" format="color"/>
 
-        <attr name="show_file_message_download" format="boolean"/>
-        <attr name="color_user_file_message_download" format="color"/>
-        <attr name="color_operator_file_message_download" format="color"/>
+        <attr name="media_file_download_mode" format="enum">
+            <enum name="ONLY_IN_VIEWER" value="0"/>
+            <enum name="ONLY_IN_CHAT" value="1"/>
+            <enum name="All_PLACES" value="2"/>
+        </attr>
+        <attr name="color_user_file_message_download" format="reference"/>
+        <attr name="color_operator_file_message_download" format="reference"/>
         <attr name="size_user_file_message_download" format="dimension"/>
         <attr name="size_operator_file_message_download" format="dimension"/>
         <attr name="background_user_file_message_download" format="reference"/>

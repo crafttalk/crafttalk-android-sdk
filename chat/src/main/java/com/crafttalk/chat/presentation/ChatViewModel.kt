@@ -155,17 +155,21 @@ class ChatViewModel
         }
     }
 
-    fun openImage(activity: Activity, imageUrl: String) {
+    fun openImage(activity: Activity, imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
         ShowImageDialog.Builder(activity)
+            .setName(imageName)
             .setUrl(imageUrl)
             .setType(TypeFile.IMAGE)
+            .setFunDownload(downloadFun)
             .show()
     }
 
-    fun openGif(activity: Activity, gifUrl: String) {
+    fun openGif(activity: Activity, gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
         ShowImageDialog.Builder(activity)
+            .setName(gifName)
             .setUrl(gifUrl)
             .setType(TypeFile.GIF)
+            .setFunDownload(downloadFun)
             .show()
     }
 

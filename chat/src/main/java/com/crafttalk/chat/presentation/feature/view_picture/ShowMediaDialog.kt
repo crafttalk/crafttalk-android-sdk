@@ -5,10 +5,15 @@ import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import com.crafttalk.chat.domain.entity.file.TypeFile.*
+import com.crafttalk.chat.domain.entity.file.TypeFile.GIF
+import com.crafttalk.chat.domain.entity.file.TypeFile.IMAGE
+import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnackbar
+import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.MediaFileDownloadMode
 import kotlinx.android.synthetic.main.bottom_sheet_show_gif.*
 import kotlinx.android.synthetic.main.bottom_sheet_show_image.*
 
@@ -19,28 +24,66 @@ class ShowImageDialog(
 
     override fun onClick(view: View) {
         when(view.id) {
+            R.id.image_download, R.id.gif_download -> {
+                val fileName = name ?: return
+                val fileUrl = url ?: return
+                val fileType = type ?: return
+                downloadFile?.invoke(fileName, fileUrl, fileType)
+            }
             R.id.image_navigate_back, R.id.gif_navigate_back -> dismiss()
         }
     }
 
+    private var name: String? = null
     private var url: String? = null
     private var type: TypeFile? = null
+    private var downloadFile: ((fileName: String, fileUrl: String, fileType: TypeFile) -> Unit)? = null
 
     companion object {
+        private var dialog: ShowImageDialog? = null
+
         private fun newInstance(builder: Builder): ShowImageDialog {
             val dialog = ShowImageDialog(builder.activity, R.style.ThemeFullscreen)
-            dialog.url = builder.imageUrl!!
-            dialog.type = builder.type!!
+            dialog.name = builder.mediaFileName
+            dialog.url = builder.mediaFileUrl
+            dialog.type = builder.type
+            dialog.downloadFile = builder.downloadMediaFile
+            this.dialog = dialog
             return dialog
         }
+
+        fun isOpen(): Boolean {
+            return dialog != null
+        }
+
+        fun showWarning(isSuccess: Boolean) {
+            dialog?.let {
+                WarningSnackbar.make(
+                    it.image_show ?: it.gif_show,
+                    null,
+                    if (isSuccess) it.context.getString(R.string.download_file_success) else it.context.getString(R.string.download_file_fail),
+                    null,
+                    iconRes = if (isSuccess) R.drawable.chat_ic_file_download_done else R.drawable.chat_ic_warning,
+                    backgroundColor = if (isSuccess) R.color.success else R.color.error
+                ).show()
+            }
+        }
+
     }
 
     class Builder(val activity: Activity) {
-        var imageUrl: String? = null
+        var mediaFileName: String? = null
+        var mediaFileUrl: String? = null
         var type: TypeFile? = null
+        var downloadMediaFile: ((fileName: String, fileUrl: String, fileType: TypeFile) -> Unit)? = null
+
+        fun setName(name: String): Builder {
+            this.mediaFileName = name
+            return this
+        }
 
         fun setUrl(url: String): Builder {
-            this.imageUrl = url
+            this.mediaFileUrl = url
             return this
         }
 
@@ -49,10 +92,26 @@ class ShowImageDialog(
             return this
         }
 
+        fun setFunDownload(downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit): Builder {
+            this.downloadMediaFile = downloadFun
+            return this
+        }
+
         fun show() {
-            imageUrl ?: return
+            mediaFileName ?: return
+            mediaFileUrl ?: return
             type ?: return
             newInstance(this).show()
+        }
+
+    }
+
+    private fun settingFileDownload(file_download: ImageView) {
+        if (ChatAttr.getInstance().mediaFileDownloadMode in listOf(MediaFileDownloadMode.ONLY_IN_VIEWER, MediaFileDownloadMode.All_PLACES)) {
+            file_download.visibility = View.VISIBLE
+            file_download.setOnClickListener(this)
+        } else {
+            file_download.visibility = View.GONE
         }
     }
 
@@ -64,6 +123,7 @@ class ShowImageDialog(
             IMAGE -> {
                 setContentView(R.layout.bottom_sheet_show_image)
                 image_navigate_back.setOnClickListener(this)
+                settingFileDownload(image_download)
                 Glide.with(context)
                     .load(url)
                     .error(R.drawable.background_item_media_message_placeholder)
@@ -72,6 +132,7 @@ class ShowImageDialog(
             GIF -> {
                 setContentView(R.layout.bottom_sheet_show_gif)
                 gif_navigate_back.setOnClickListener(this)
+                settingFileDownload(gif_download)
                 Glide.with(context)
                     .asGif()
                     .load(url)
@@ -83,4 +144,8 @@ class ShowImageDialog(
 
     }
 
+    override fun dismiss() {
+        super.dismiss()
+        dialog = null
+    }
 }

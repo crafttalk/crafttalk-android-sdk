@@ -1,7 +1,11 @@
 package com.crafttalk.chat.presentation
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
@@ -34,6 +38,7 @@ import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnackbar
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
+import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
@@ -71,16 +76,49 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
     }
     private var downloadFileListener: DownloadFileListener = object : DownloadFileListener {
+        override fun successDownload() {
+            if (ShowImageDialog.isOpen()) {
+                ShowImageDialog.showWarning(true)
+            } else {
+                WarningSnackbar.make(
+                    chat_place,
+                    null,
+                    context.getString(R.string.download_file_success),
+                    null,
+                    iconRes = R.drawable.chat_ic_file_download_done,
+                    backgroundColor = R.color.success
+                ).show()
+            }
+        }
         override fun failDownload() {
-            WarningSnackbar.make(chat_place, null, context.getString(R.string.download_file_fail), null).show()
+            if (ShowImageDialog.isOpen()) {
+                ShowImageDialog.showWarning(false)
+            } else {
+                WarningSnackbar.make(
+                    chat_place,
+                    null,
+                    context.getString(R.string.download_file_fail),
+                    null
+                ).show()
+            }
         }
     }
     private var stateStartingProgressListener: StateStartingProgressListener? = null
+    private var downloadID: Long? = null
     private val defaultUploadFileListener: UploadFileListener by lazy {
         object : UploadFileListener {
             override fun successUpload() {}
             override fun failUpload(message: String, type: TypeFailUpload) {
                 WarningSnackbar.make(chat_place, type).show()
+            }
+        }
+    }
+
+    private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val id: Long? = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (downloadID != null && id != null && id != -1L && downloadID == id) {
+                downloadFileListener.successDownload()
             }
         }
     }
@@ -224,14 +262,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 viewModel::openImage,
                 viewModel::openGif,
                 { fileName, fileUrl, fileType ->
-                    downloadResource(context, fileName, fileUrl, fileType, downloadFileListener)
+                    downloadResource(context, fileName, fileUrl, fileType, downloadFileListener,
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
                             arrayOf(context.getString(R.string.requested_permission_download)),
                             actionsAfterObtainingPermission
                         )
-                    }
+                    })
+                    { id -> downloadID = id }
                 },
                 viewModel::selectAction,
                 viewModel::updateData
@@ -249,6 +288,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         setAllListeners()
         setListMessages()
+        context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         viewModel.uploadMessagesForUser.observe(lifecycleOwner, Observer { liveDataPagedList ->
             liveDataPagedList ?: return@Observer

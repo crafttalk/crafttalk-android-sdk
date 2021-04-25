@@ -15,9 +15,9 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderOperatorGifMessage(
     view: View,
-    private val download: (fileName: String?, fileUrl: String?, fileType: TypeFile) -> Unit,
+    private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
-    private val clickHandler: (gifUrl: String) -> Unit
+    private val clickHandler: (gifName: String, gifUrl: String) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
     private val warningContainer: ViewGroup? = view.findViewById(R.id.server_gif_warning)
@@ -42,13 +42,16 @@ class HolderOperatorGifMessage(
     override fun onClick(view: View) {
         when (view.id) {
             R.id.server_gif -> {
-                gifUrl?.let {
-                    if (!failLoading)
-                        clickHandler(it)
+                if (!failLoading) {
+                    val name = gifName ?: return
+                    val url = gifUrl ?: return
+                    clickHandler(name, url)
                 }
             }
             R.id.download_file -> {
-                download(gifName, gifUrl, TypeFile.GIF)
+                val name = gifName ?: return
+                val url = gifUrl ?: return
+                download(name, url, TypeFile.GIF)
             }
         }
     }
