@@ -1,5 +1,6 @@
 package com.crafttalk.chat.domain.interactors
 
+import android.util.Log
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IAuthRepository
 import com.crafttalk.chat.presentation.ChatEventListener
@@ -89,9 +90,13 @@ class AuthInteractor
     }
 
     fun logOut(filesDir: File) {
-        notificationInteractor.unsubscribeNotification()
-        visitorInteractor.getVisitor()?.uuid?.let { uuid ->
-            authRepository.logOut(uuid, filesDir)
+        try {
+            notificationInteractor.unsubscribeNotification()
+            visitorInteractor.getVisitor()?.uuid?.let { uuid ->
+                authRepository.logOut(uuid, filesDir)
+            }
+        } catch (ex: Exception) {
+            Log.e("FAIL logOut", "${ex.message}")
         }
         when (ChatParams.authType) {
             AuthType.AUTH_WITH_FORM -> {
