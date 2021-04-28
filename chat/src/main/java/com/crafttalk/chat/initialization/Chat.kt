@@ -1,7 +1,6 @@
 package com.crafttalk.chat.initialization
 
 import android.content.Context
-import android.os.Handler
 import com.crafttalk.chat.di.DaggerSdkComponent
 import com.crafttalk.chat.di.SdkComponent
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -78,12 +77,10 @@ object Chat {
     }
 
     fun wakeUp(visitor: Visitor?) {
-        Handler().postDelayed({
-            customizingChatBehaviorInteractor?.openApp()
-            authInteractor?.logIn(
-                visitor = visitor
-            )
-        }, 1000)
+        customizingChatBehaviorInteractor?.openApp()
+        authInteractor?.logIn(
+            visitor = visitor
+        )
     }
 
     fun destroy() {
