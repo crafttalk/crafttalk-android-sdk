@@ -338,7 +338,7 @@ class SocketApi constructor(
             dao.getLastMessageTime(visitor.uuid)?.let { time ->
                 isUploadHistory = false
                 newMessagesStartTime = time
-                socket!!.emit("history-messages-requested", System.currentTimeMillis(), visitor.token)
+                socket!!.emit("history-messages-requested", 0, visitor.token)
             }
         }
     }

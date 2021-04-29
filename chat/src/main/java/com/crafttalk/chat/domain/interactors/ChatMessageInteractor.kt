@@ -44,7 +44,7 @@ class ChatMessageInteractor
 
     fun syncMessages(isEmptyDB: Boolean) {
         if (isEmptyDB) {
-            messageRepository.syncMessages(System.currentTimeMillis())
+            messageRepository.syncMessages(0)
         } else {
             val uuid = visitorInteractor.getVisitor()?.uuid ?: return
             val firstMessageTime = messageRepository.getFirstMessageTime(uuid)
