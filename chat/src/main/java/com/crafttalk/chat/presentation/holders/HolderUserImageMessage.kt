@@ -15,9 +15,9 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderUserImageMessage(
     view: View,
-    private val download: (fileName: String?, fileUrl: String?, fileType: TypeFile) -> Unit,
+    private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
-    private val clickHandler: (imageUrl: String) -> Unit
+    private val clickHandler: (imageName: String, imageUrl: String) -> Unit
 ) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
     private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
     private val warningContainer: ViewGroup? = view.findViewById(R.id.user_image_warning)
@@ -42,13 +42,16 @@ class HolderUserImageMessage(
     override fun onClick(view: View) {
         when (view.id) {
             R.id.user_image -> {
-                imageUrl?.let {
-                    if (!failLoading)
-                        clickHandler(it)
+                if (!failLoading) {
+                    val name = imageName ?: return
+                    val url = imageUrl ?: return
+                    clickHandler(name, url)
                 }
             }
             R.id.download_file -> {
-                download(imageName, imageUrl, TypeFile.IMAGE)
+                val name = imageName ?: return
+                val url = imageUrl ?: return
+                download(name, url, TypeFile.IMAGE)
             }
         }
     }

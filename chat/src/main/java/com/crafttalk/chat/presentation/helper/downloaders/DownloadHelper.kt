@@ -13,22 +13,22 @@ import java.io.File
 
 fun downloadResource(
     context: Context,
-    fileName: String?,
-    fileUrl: String?,
+    fileName: String,
+    fileUrl: String,
     fileType: TypeFile,
     downloadListener: DownloadFileListener,
-    noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit
+    noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit,
+    updateDownloadID: (downloadID: Long?) -> Unit
 ) {
     fun downloadFile(
         context: Context,
-        fileName: String?,
-        fileUrl: String?,
+        fileName: String,
+        fileUrl: String,
         fileType: TypeFile,
-        downloadListener: DownloadFileListener
+        downloadListener: DownloadFileListener,
+        updateDownloadID: (downloadID: Long?) -> Unit
     ) {
         try {
-            if (fileName == null) throw Exception("Not found file name for file!")
-            if (fileUrl == null) throw Exception("Not found file url for file!")
             val dm = ContextCompat.getSystemService(context, DownloadManager::class.java)
             val downloadUri: Uri = Uri.parse(fileUrl)
             val request = DownloadManager.Request(downloadUri)
@@ -41,16 +41,18 @@ fun downloadResource(
                     Environment.DIRECTORY_PICTURES,
                     File.separator.toString() + fileName
                 )
-            dm!!.enqueue(request)
+            val downloadID = dm!!.enqueue(request)
+            updateDownloadID(downloadID)
         } catch (e: Exception) {
             downloadListener.failDownload()
+            updateDownloadID(null)
         }
     }
     val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     checkPermission(
         permissions,
         context,
-        { noPermission(permissions) { downloadFile(context, fileName, fileUrl, fileType, downloadListener) } }
-    ) { downloadFile(context, fileName, fileUrl, fileType, downloadListener) }
+        { noPermission(permissions) { downloadFile(context, fileName, fileUrl, fileType, downloadListener, updateDownloadID) } }
+    ) { downloadFile(context, fileName, fileUrl, fileType, downloadListener, updateDownloadID) }
 }
 

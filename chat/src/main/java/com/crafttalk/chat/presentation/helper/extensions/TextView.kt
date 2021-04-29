@@ -1,6 +1,8 @@
 package com.crafttalk.chat.presentation.helper.extensions
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.os.Build
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,7 @@ import androidx.core.view.marginTop
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.MediaFileDownloadMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
@@ -103,13 +106,26 @@ fun TextView.setDate(message: MessageModel) {
 
 fun TextView.settingDownloadBtn(isUserMessage: Boolean, failLoading: Boolean) {
     // set visible
-    visibility = if (ChatAttr.getInstance().showFileMessageDownload && !failLoading) {
+    visibility = if (ChatAttr.getInstance().mediaFileDownloadMode in listOf(MediaFileDownloadMode.ONLY_IN_CHAT, MediaFileDownloadMode.All_PLACES) && !failLoading) {
         View.VISIBLE
     } else {
         View.GONE
     }
     // set color
-    setTextColor(if (isUserMessage) ChatAttr.getInstance().colorUserFileMessageDownload else ChatAttr.getInstance().colorOperatorFileMessageDownload)
+    try {
+        val xpp = resources.getXml(if (isUserMessage) ChatAttr.getInstance().colorUserFileMessageDownload else ChatAttr.getInstance().colorOperatorFileMessageDownload)
+        val colorStateList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ColorStateList.createFromXml(resources, xpp, context.theme)
+        } else {
+            ColorStateList.createFromXml(resources, xpp)
+        }
+        setTextColor(colorStateList)
+    } catch (e: Exception) {
+        if (isUserMessage)
+            setTextColor(ChatAttr.getInstance().colorUserFileMessageDownload)
+        else
+            setTextColor(ChatAttr.getInstance().colorOperatorFileMessageDownload)
+    }
     // set dimension
     setTextSize(TypedValue.COMPLEX_UNIT_PX, if (isUserMessage) ChatAttr.getInstance().sizeUserFileMessageDownload else ChatAttr.getInstance().sizeOperatorFileMessageDownload)
     // set font

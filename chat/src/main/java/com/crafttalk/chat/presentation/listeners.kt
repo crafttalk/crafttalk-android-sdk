@@ -12,6 +12,7 @@ interface UploadFileListener {
 }
 
 interface DownloadFileListener {
+    fun successDownload()
     fun failDownload()
 }
 

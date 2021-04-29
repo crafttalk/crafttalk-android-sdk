@@ -176,9 +176,9 @@ private constructor(
     val layoutItemTransferMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_transfer_message)
 
 //    download
-    val showFileMessageDownload = attrArr.getBoolean(R.styleable.ChatView_show_file_message_download, true)
-    val colorUserFileMessageDownload = attrArr.getColor(R.styleable.ChatView_color_user_file_message_download, ContextCompat.getColor(context, R.color.gray_707070))
-    val colorOperatorFileMessageDownload = attrArr.getColor(R.styleable.ChatView_color_operator_file_message_download, ContextCompat.getColor(context, R.color.gray_707070))
+    val mediaFileDownloadMode = attrArr.getInt(R.styleable.ChatView_media_file_download_mode, 0).let { MediaFileDownloadMode.values()[it] }
+    val colorUserFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_color_user_file_message_download, R.color.color_download_file)
+    val colorOperatorFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_color_operator_file_message_download, R.color.color_download_file)
     val sizeUserFileMessageDownload = attrArr.getDimension(R.styleable.ChatView_size_user_file_message_download, context.resources.getDimension(R.dimen.default_size_download))
     val sizeOperatorFileMessageDownload = attrArr.getDimension(R.styleable.ChatView_size_operator_file_message_download, context.resources.getDimension(R.dimen.default_size_download))
     val backgroundUserFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_background_user_file_message_download, R.drawable.background_download_file)

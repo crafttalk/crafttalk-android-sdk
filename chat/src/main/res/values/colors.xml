@@ -24,6 +24,7 @@
     <color name="gray_707070">#707070</color>
     <color name="black">#000</color>
     <color name="black_translucent">#7F000000</color>
+    <color name="success">#2e7d32</color>
     <color name="error">#ef5350</color>
 
 </resources>
