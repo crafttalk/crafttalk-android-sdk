@@ -184,6 +184,14 @@ private constructor(
     val backgroundUserFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_background_user_file_message_download, R.drawable.background_download_file)
     val backgroundOperatorFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_background_operator_file_message_download, R.drawable.background_download_file)
 
+//    warnings
+    val titleSuccessDownloadFileWarning = attrArr.getString(R.styleable.ChatView_title_success_download_file_warning) ?: context.getString(R.string.download_file_success)
+    val colorSuccessDownloadFileWarning = attrArr.getColor(R.styleable.ChatView_color_success_download_file_warning, ContextCompat.getColor(context, R.color.white))
+    val backgroundSuccessDownloadFileWarning = attrArr.getColor(R.styleable.ChatView_background_success_download_file_warning, ContextCompat.getColor(context, R.color.success))
+    val titleFailDownloadFileWarning = attrArr.getString(R.styleable.ChatView_title_fail_download_file_warning) ?: context.getString(R.string.download_file_fail)
+    val colorFailDownloadFileWarning = attrArr.getColor(R.styleable.ChatView_color_fail_download_file_warning, ContextCompat.getColor(context, R.color.white))
+    val backgroundFailDownloadFileWarning = attrArr.getColor(R.styleable.ChatView_background_fail_download_file_warning, ContextCompat.getColor(context, R.color.error))
+
 //    feedback
     val delayFeedbackScreenAppears = attrArr.getInt(R.styleable.ChatView_delay_feedback_screen_appears, 1000).toLong()
     val colorFeedbackTitle = attrArr.getColor(R.styleable.ChatView_color_feedback_title, ContextCompat.getColor(context, R.color.gray_707070))

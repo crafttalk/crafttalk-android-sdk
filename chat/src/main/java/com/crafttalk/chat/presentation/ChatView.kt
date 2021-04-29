@@ -83,10 +83,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 WarningSnackbar.make(
                     chat_place,
                     null,
-                    context.getString(R.string.download_file_success),
+                    ChatAttr.getInstance().titleSuccessDownloadFileWarning,
                     null,
                     iconRes = R.drawable.chat_ic_file_download_done,
-                    backgroundColor = R.color.success
+                    textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
+                    backgroundColor = ChatAttr.getInstance().backgroundSuccessDownloadFileWarning
                 ).show()
             }
         }
@@ -97,7 +98,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 WarningSnackbar.make(
                     chat_place,
                     null,
-                    context.getString(R.string.download_file_fail),
+                    ChatAttr.getInstance().titleFailDownloadFileWarning,
                     null
                 ).show()
             }

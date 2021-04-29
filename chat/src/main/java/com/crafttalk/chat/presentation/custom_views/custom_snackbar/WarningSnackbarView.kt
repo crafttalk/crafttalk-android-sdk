@@ -1,5 +1,6 @@
 package com.crafttalk.chat.presentation.custom_views.custom_snackbar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
@@ -8,7 +9,6 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import com.crafttalk.chat.R
 import com.google.android.material.snackbar.ContentViewCallback
 import kotlinx.android.synthetic.main.view_warning_snackbar.view.*
@@ -24,26 +24,30 @@ class WarningSnackbarView @JvmOverloads constructor(
         clipToPadding =  false
     }
 
+    @SuppressLint("ResourceAsColor")
     fun bind(
         title: String?,
         description: String?,
         @DrawableRes iconRes: Int,
+        @ColorRes textColor: Int,
         @ColorRes backgroundColor: Int
     ) {
         setVisibilityTextViewByContent(warning_snackbar_title, title)
         setVisibilityTextViewByContent(warning_snackbar_description, description)
 
+        warning_snackbar_title.setTextColor(textColor)
         icon_warning.setImageResource(iconRes)
-        warning_snackbar_container.setBackgroundColor(ContextCompat.getColor(context, backgroundColor))
+        warning_snackbar_container.setBackgroundColor(backgroundColor)
     }
 
     fun bind(
         @StringRes title: Int?,
         @StringRes description: Int?,
         @DrawableRes iconRes: Int,
+        @ColorRes textColor: Int,
         @ColorRes backgroundColor: Int
     ) {
-        bind(title?.let { context.getString(it) }, description?.let { context.getString(it) }, iconRes, backgroundColor)
+        bind(title?.let { context.getString(it) }, description?.let { context.getString(it) }, iconRes, textColor, backgroundColor)
     }
 
     private fun setVisibilityTextViewByContent(view: TextView, content: String?) {

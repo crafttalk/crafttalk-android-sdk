@@ -58,14 +58,24 @@ class ShowImageDialog(
 
         fun showWarning(isSuccess: Boolean) {
             dialog?.let {
-                WarningSnackbar.make(
-                    it.image_show ?: it.gif_show,
-                    null,
-                    if (isSuccess) it.context.getString(R.string.download_file_success) else it.context.getString(R.string.download_file_fail),
-                    null,
-                    iconRes = if (isSuccess) R.drawable.chat_ic_file_download_done else R.drawable.chat_ic_warning,
-                    backgroundColor = if (isSuccess) R.color.success else R.color.error
-                ).show()
+                if (isSuccess) {
+                    WarningSnackbar.make(
+                        it.image_show ?: it.gif_show,
+                        null,
+                        ChatAttr.getInstance().titleSuccessDownloadFileWarning,
+                        null,
+                        iconRes = R.drawable.chat_ic_file_download_done,
+                        textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
+                        backgroundColor = ChatAttr.getInstance().backgroundSuccessDownloadFileWarning
+                    ).show()
+                } else {
+                    WarningSnackbar.make(
+                        it.image_show ?: it.gif_show,
+                        null,
+                        ChatAttr.getInstance().titleFailDownloadFileWarning,
+                        null
+                    ).show()
+                }
             }
         }
 

@@ -170,6 +170,14 @@
         <attr name="size_feedback_title" format="dimension"/>
         <attr name="color_feedback_star" format="color"/>
 
+        <!--warning-->
+        <attr name="title_success_download_file_warning" format="string"/>
+        <attr name="color_success_download_file_warning" format="color"/>
+        <attr name="background_success_download_file_warning" format="color"/>
+        <attr name="title_fail_download_file_warning" format="string"/>
+        <attr name="color_fail_download_file_warning" format="color"/>
+        <attr name="background_fail_download_file_warning" format="color"/>
+
     </declare-styleable>
 
 </resources>
