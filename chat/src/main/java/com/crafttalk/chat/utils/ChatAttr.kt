@@ -199,11 +199,15 @@ private constructor(
     }
 
     companion object {
-        @Volatile private var INSTANCE: ChatAttr? = null
+        private var INSTANCE: ChatAttr? = null
 
         fun getInstance(attrArr: TypedArray? = null, context: Context? = null): ChatAttr =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: ChatAttr(attrArr!!, context!!).also { INSTANCE = it }
+            if (attrArr == null) {
+                INSTANCE!!
+            } else {
+                synchronized(this) {
+                    ChatAttr(attrArr, context!!).also { INSTANCE = it }
+                }
             }
     }
 
