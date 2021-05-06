@@ -4,6 +4,8 @@ import android.os.Build
 import android.text.Html
 import android.util.Log
 import com.crafttalk.chat.domain.entity.tags.*
+import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ClickableLinkMode
 
 fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
     return when {
@@ -57,8 +59,16 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
             startIndex = input.indexOf(protocol, startIndex + 1, true)
         }
     }
-    selectUrl(this, "http")
-    selectUrl(this, "ws")
+    when (ChatAttr.getInstance().clickableLinkMode) {
+        ClickableLinkMode.ALL -> {
+            selectUrl(this, "http")
+            selectUrl(this, "ws")
+        }
+        ClickableLinkMode.SECURE -> {
+            selectUrl(this, "https")
+            selectUrl(this, "wss")
+        }
+    }
     selectUrl(this, "www")
     return this
 }

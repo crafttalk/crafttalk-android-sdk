@@ -17,6 +17,10 @@
         <attr name="urlUploadNameSpace" format="string"/>
         <attr name="urlUploadHost" format="string"/>
         <attr name="fileProviderAuthorities" format="string"/>
+        <attr name="clickable_link_mode" format="enum">
+            <enum name="ALL" value="0"/>
+            <enum name="SECURE" value="1"/>
+        </attr>
 
         <attr name="locale_language" format="string"/>
         <attr name="locale_country" format="string"/>
