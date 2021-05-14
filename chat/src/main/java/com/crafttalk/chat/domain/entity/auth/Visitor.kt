@@ -19,8 +19,18 @@ class Visitor (
     val hash: String? = null
 ) : Serializable {
 
+    private val addedFields = HashMap<String, Any>()
+
     override fun toString(): String {
         return "${uuid}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"
+    }
+
+    fun addNewFiled(fieldName: String, fieldValue: Any) {
+        addedFields[fieldName] = fieldValue
+    }
+
+    fun removeAddedField(firstName: String) {
+        addedFields.remove(firstName)
     }
 
     fun getJsonObject(): JSONObject {
@@ -34,6 +44,9 @@ class Visitor (
         visitorJson.put("contract", contract)
         visitorJson.put("birthday", birthday)
         visitorJson.put("hash", hash)
+        for ((key, value) in addedFields) {
+            visitorJson.put(key, value)
+        }
         return visitorJson
     }
 
