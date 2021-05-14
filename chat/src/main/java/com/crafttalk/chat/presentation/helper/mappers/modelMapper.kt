@@ -94,7 +94,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
                 size = localMessage.attachmentSize ?: 0,
-                failLoading = localMessage.height == null || localMessage.width == null,
+                failLoading = (localMessage.attachmentType == "IMAGE") && (localMessage.height == null || localMessage.width == null),
                 type = when {
                     localMessage.attachmentType == "FILE" -> TypeFile.FILE
                     (localMessage.attachmentType == "IMAGE") && (localMessage.attachmentName.contains(".GIF", true)) -> TypeFile.GIF
