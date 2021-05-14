@@ -55,8 +55,8 @@ class HolderOperatorFileMessage(
                 layoutParams.width = it
             }
         }
-        fileName?.setFileName(item.document)
-        fileSize?.setFileSize(item.document)
+        fileName?.setFileName(item.document, false)
+        fileSize?.setFileSize(item.document, false)
         // set bg
         contentContainer?.apply {
             setBackgroundResource(ChatAttr.getInstance().bgOperatorMessageResId)

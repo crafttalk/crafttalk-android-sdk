@@ -8,7 +8,6 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.crafttalk.chat.R
-import com.crafttalk.chat.presentation.helper.extensions.getColorOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getDimensionOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getFloatOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getResourceIdOrNull
@@ -49,25 +48,29 @@ private constructor(
     val colorTextOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_text_operator_message, ContextCompat.getColor(context, R.color.default_color_text_server_message))
     val colorTextOperatorAction = attrArr.getColor(R.styleable.ChatView_color_text_operator_action, ContextCompat.getColor(context, R.color.default_color_text_server_action))
     val colorTextOperatorSelectedAction = attrArr.getColor(R.styleable.ChatView_color_text_operator_selected_action, ContextCompat.getColor(context, R.color.white))
-    val colorTextFileName = attrArr.getColor(R.styleable.ChatView_color_text_file_name, ContextCompat.getColor(context, R.color.default_color_info))
-    val colorTextFileSize = attrArr.getColor(R.styleable.ChatView_color_text_file_size, ContextCompat.getColor(context, R.color.default_color_info))
+    private val colorFileName = attrArr.getColor(R.styleable.ChatView_color_file_name, ContextCompat.getColor(context, R.color.default_color_info))
+    val colorUserFileName = attrArr.getColor(R.styleable.ChatView_color_user_file_name, colorFileName)
+    val colorOperatorFileName = attrArr.getColor(R.styleable.ChatView_color_operator_file_name, colorFileName)
+    private val colorFileSize = attrArr.getColor(R.styleable.ChatView_color_file_size, ContextCompat.getColor(context, R.color.default_color_info))
+    val colorUserFileSize = attrArr.getColor(R.styleable.ChatView_color_user_file_size, colorFileSize)
+    val colorOperatorFileSize = attrArr.getColor(R.styleable.ChatView_color_operator_file_size, colorFileSize)
     val colorTextUserMessageAuthor = attrArr.getColor(R.styleable.ChatView_color_text_user_message_author, ContextCompat.getColor(context, R.color.default_color_info))
     val colorTextOperatorMessageAuthor = attrArr.getColor(R.styleable.ChatView_color_text_operator_message_author, ContextCompat.getColor(context, R.color.default_color_info))
     private val colorUserMessageTime = attrArr.getColor(R.styleable.ChatView_color_user_message_time, ContextCompat.getColor(context, R.color.default_color_info))
-    val colorUserFileMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_user_file_message_time) ?: colorUserMessageTime
-    val colorUserGifMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_user_gif_message_time) ?: colorUserMessageTime
-    val colorUserImageMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_user_image_message_time) ?: colorUserMessageTime
-    val colorUserTextMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_user_text_message_time) ?: colorUserMessageTime
+    val colorUserFileMessageTime = attrArr.getColor(R.styleable.ChatView_color_user_file_message_time, colorUserMessageTime)
+    val colorUserGifMessageTime = attrArr.getColor(R.styleable.ChatView_color_user_gif_message_time, colorUserMessageTime)
+    val colorUserImageMessageTime = attrArr.getColor(R.styleable.ChatView_color_user_image_message_time, colorUserMessageTime)
+    val colorUserTextMessageTime = attrArr.getColor(R.styleable.ChatView_color_user_text_message_time, colorUserMessageTime)
     private val colorOperatorMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_message_time, ContextCompat.getColor(context, R.color.default_color_info))
-    val colorOperatorFileMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_operator_file_message_time) ?: colorOperatorMessageTime
-    val colorOperatorGifMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_operator_gif_message_time) ?: colorOperatorMessageTime
-    val colorOperatorImageMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_operator_image_message_time) ?: colorOperatorMessageTime
-    val colorOperatorTextMessageTime = attrArr.getColorOrNull(R.styleable.ChatView_color_operator_text_message_time) ?: colorOperatorMessageTime
+    val colorOperatorFileMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_file_message_time, colorOperatorMessageTime)
+    val colorOperatorGifMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_gif_message_time, colorOperatorMessageTime)
+    val colorOperatorImageMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_image_message_time, colorOperatorMessageTime)
+    val colorOperatorTextMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_text_message_time, colorOperatorMessageTime)
     private val colorUserMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_message_status, ContextCompat.getColor(context, R.color.default_color_info))
-    val colorUserFileMessageStatus = attrArr.getColorOrNull(R.styleable.ChatView_color_user_file_message_status) ?: colorUserMessageStatus
-    val colorUserGifMessageStatus = attrArr.getColorOrNull(R.styleable.ChatView_color_user_gif_message_status) ?: colorUserMessageStatus
-    val colorUserImageMessageStatus = attrArr.getColorOrNull(R.styleable.ChatView_color_user_image_message_status) ?: colorUserMessageStatus
-    val colorUserTextMessageStatus = attrArr.getColorOrNull(R.styleable.ChatView_color_user_text_message_status) ?: colorUserMessageStatus
+    val colorUserFileMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_file_message_status, colorUserMessageStatus)
+    val colorUserGifMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_gif_message_status, colorUserMessageStatus)
+    val colorUserImageMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_image_message_status, colorUserMessageStatus)
+    val colorUserTextMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_text_message_status, colorUserMessageStatus)
     val colorTextDateGrouping = attrArr.getColor(R.styleable.ChatView_color_text_date_grouping, ContextCompat.getColor(context, R.color.default_color_info))
     val colorTextLink = attrArr.getColor(R.styleable.ChatView_color_text_link, ContextCompat.getColor(context, R.color.default_color_text_link))
 
@@ -76,7 +79,7 @@ private constructor(
     val colorBackgroundOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
     val colorBackgroundOperatorMediaFileMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_media_file_message, ContextCompat.getColor(context, R.color.default_color_bg_server_message))
     val colorBackgroundOperatorAction = attrArr.getColor(R.styleable.ChatView_color_bg_operator_action, ContextCompat.getColor(context, R.color.default_color_bg_server_action))
-    val colorBackgroundOperatorSelectedAction = attrArr.getColorOrNull(R.styleable.ChatView_color_bg_operator_selected_action) ?: colorMain
+    val colorBackgroundOperatorSelectedAction = attrArr.getColor(R.styleable.ChatView_color_bg_operator_selected_action, colorMain)
     val colorBordersOperatorAction = attrArr.getColor(R.styleable.ChatView_color_borders_operator_action, ContextCompat.getColor(context, R.color.default_color_borders_server_action))
 
     val drawableProgressIndeterminate = attrArr.getDrawable(R.styleable.ChatView_drawable_progress_indeterminate)
@@ -87,8 +90,13 @@ private constructor(
     val sizeTextUserMessage = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_user_message, context.resources.getDimensionPixelSize(R.dimen.default_size_user_message)).toFloat()
     val sizeTextOperatorMessage = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_message, context.resources.getDimensionPixelSize(R.dimen.default_size_server_message)).toFloat()
     val sizeTextOperatorAction = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_action, context.resources.getDimensionPixelSize(R.dimen.default_size_server_action)).toFloat()
-    val sizeTextFileName = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_file_name, context.resources.getDimensionPixelSize(R.dimen.default_size_info)).toFloat()
-    val sizeTextFileSize = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_file_size, context.resources.getDimensionPixelSize(R.dimen.default_size_info)).toFloat()
+    private val sizeFileName = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_file_name, context.resources.getDimensionPixelSize(R.dimen.default_size_info)).toFloat()
+    val sizeUserFileName = attrArr.getDimension(R.styleable.ChatView_size_user_file_name, sizeFileName)
+    val sizeOperatorFileName = attrArr.getDimension(R.styleable.ChatView_size_operator_file_name, sizeFileName)
+    private val sizeFileSize = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_file_size, context.resources.getDimensionPixelSize(R.dimen.default_size_info)).toFloat()
+    val sizeUserFileSize = attrArr.getDimension(R.styleable.ChatView_size_user_file_size, sizeFileSize)
+    val sizeOperatorFileSize = attrArr.getDimension(R.styleable.ChatView_size_operator_file_size, sizeFileSize)
+
     val sizeUserMessageAuthor = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_user_message_author, context.resources.getDimensionPixelSize(R.dimen.default_size_author)).toFloat()
     val sizeOperatorMessageAuthor = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_message_author, context.resources.getDimensionPixelSize(R.dimen.default_size_author)).toFloat()
     val sizeOperatorMessageAuthorPreview = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_message_author_preview, context.resources.getDimensionPixelSize(R.dimen.default_size_author_preview))
@@ -197,7 +205,7 @@ private constructor(
     val delayFeedbackScreenAppears = attrArr.getInt(R.styleable.ChatView_delay_feedback_screen_appears, 1000).toLong()
     val colorFeedbackTitle = attrArr.getColor(R.styleable.ChatView_color_feedback_title, ContextCompat.getColor(context, R.color.gray_707070))
     val sizeFeedbackTitle = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_feedback_title, context.resources.getDimensionPixelSize(R.dimen.default_size_feedback_title)).toFloat()
-    val colorFeedbackStar = attrArr.getColorOrNull(R.styleable.ChatView_color_feedback_star) ?: colorMain
+    val colorFeedbackStar = attrArr.getColor(R.styleable.ChatView_color_feedback_star, colorMain)
 
     val drawableBackgroundSignInButton: Drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.background_sign_in_auth_form)!!).apply {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

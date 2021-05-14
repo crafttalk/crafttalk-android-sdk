@@ -133,11 +133,11 @@ class HolderUserUnionMessage(
                     }
                     fileName?.apply {
                         visibility = View.VISIBLE
-                        setFileName(item.file)
+                        setFileName(item.file, true)
                     }
                     fileSize?.apply {
                         visibility = View.VISIBLE
-                        setFileSize(item.file)
+                        setFileSize(item.file, true)
                     }
                 }
             }

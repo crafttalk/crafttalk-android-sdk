@@ -37,8 +37,12 @@
         <attr name="color_text_operator_message" format="color"/>
         <attr name="color_text_operator_action" format="color"/>
         <attr name="color_text_operator_selected_action" format="color"/>
-        <attr name="color_text_file_name" format="color"/>
-        <attr name="color_text_file_size" format="color"/>
+        <attr name="color_file_name" format="color"/>
+        <attr name="color_user_file_name" format="color"/>
+        <attr name="color_operator_file_name" format="color"/>
+        <attr name="color_file_size" format="color"/>
+        <attr name="color_user_file_size" format="color"/>
+        <attr name="color_operator_file_size" format="color"/>
         <attr name="color_text_user_message_author" format="color"/>
         <attr name="color_text_operator_message_author" format="color"/>
         <attr name="color_user_message_time" format="color"/>
@@ -80,7 +84,11 @@
         <attr name="size_operator_message" format="dimension"/>
         <attr name="size_operator_action" format="dimension"/>
         <attr name="size_file_name" format="dimension"/>
+        <attr name="size_user_file_name" format="dimension"/>
+        <attr name="size_operator_file_name" format="dimension"/>
         <attr name="size_file_size" format="dimension"/>
+        <attr name="size_user_file_size" format="dimension"/>
+        <attr name="size_operator_file_size" format="dimension"/>
         <attr name="size_user_message_author" format="dimension"/>
         <attr name="size_operator_message_author" format="dimension"/>
         <attr name="size_operator_message_author_preview" format="dimension"/>

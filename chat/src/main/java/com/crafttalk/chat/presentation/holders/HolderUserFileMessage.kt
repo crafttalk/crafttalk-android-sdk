@@ -55,8 +55,8 @@ class HolderUserFileMessage(
                 layoutParams.width = it
             }
         }
-        fileName?.setFileName(item.document)
-        fileSize?.setFileSize(item.document)
+        fileName?.setFileName(item.document, true)
+        fileSize?.setFileSize(item.document, true)
         // set bg
         contentContainer?.apply {
             setBackgroundResource(ChatAttr.getInstance().bgUserMessageResId)

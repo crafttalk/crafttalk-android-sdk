@@ -143,19 +143,23 @@ fun TextView.settingDownloadBtn(isUserMessage: Boolean, failLoading: Boolean) {
     )
 }
 
-fun TextView.setFileName(file: FileModel) {
+fun TextView.setFileName(file: FileModel, isUserMessage: Boolean) {
     text = file.name
-    // set color
-    setTextColor(ChatAttr.getInstance().colorTextFileName)
-    // set dimension
-    setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextFileName)
+    // set color and dimension
+    if (isUserMessage) {
+        setTextColor(ChatAttr.getInstance().colorUserFileName)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeUserFileName)
+    } else {
+        setTextColor(ChatAttr.getInstance().colorOperatorFileName)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeOperatorFileName)
+    }
     // set font
     ChatAttr.getInstance().resFontFamilyFileInfo?.let {
         typeface = ResourcesCompat.getFont(context, it)
     }
 }
 
-fun TextView.setFileSize(file: FileModel) {
+fun TextView.setFileSize(file: FileModel, isUserMessage: Boolean) {
     if (file.size == 0L) return
     val df = DecimalFormat("#.##")
     val countByteInKByte = 1000L
@@ -177,10 +181,14 @@ fun TextView.setFileSize(file: FileModel) {
         }
         else -> ""
     }
-    // set color
-    setTextColor(ChatAttr.getInstance().colorTextFileSize)
-    // set dimension
-    setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextFileSize)
+    // set color and dimension
+    if (isUserMessage) {
+        setTextColor(ChatAttr.getInstance().colorUserFileSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeUserFileSize)
+    } else {
+        setTextColor(ChatAttr.getInstance().colorOperatorFileSize)
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeOperatorFileSize)
+    }
     // set font
     ChatAttr.getInstance().resFontFamilyFileInfo?.let {
         typeface = ResourcesCompat.getFont(context, it)
