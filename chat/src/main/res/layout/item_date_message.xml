@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -14,6 +15,8 @@
         android:paddingBottom="20dp"
         android:fontFamily="@font/ubuntu_regular"
         android:textFontWeight="600"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:text="12.03.2021"
+        tools:visibility="visible" />
 
 </LinearLayout>
