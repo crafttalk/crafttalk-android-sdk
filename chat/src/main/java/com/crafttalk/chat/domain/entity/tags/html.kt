@@ -37,6 +37,11 @@ data class ItemListTag(
     override var pointEnd: Int,
     val countNesting: Int
 ): Tag("li", pointStart, pointEnd)
+data class PhoneTag(
+    override val pointStart: Int,
+    override var pointEnd: Int,
+    val phone: String
+): Tag("phone", pointStart, pointEnd)
 
 class AttrTag(
     val attrName: String,

@@ -27,6 +27,7 @@ class SpanStructureListConverter {
                 is ImageTag -> result.append(gson.toJson(it, ImageTag::class.java)).append(",")
                 is ItemListTag -> result.append(gson.toJson(it, ItemListTag::class.java)).append(",")
                 is HostListTag -> result.append(gson.toJson(it, HostListTag::class.java)).append(",")
+                is PhoneTag -> result.append(gson.toJson(it, PhoneTag::class.java)).append(",")
             }
         }
         result.replace(result.length - 1, result.length, "]")

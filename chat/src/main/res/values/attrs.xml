@@ -21,6 +21,7 @@
             <enum name="ALL" value="0"/>
             <enum name="SECURE" value="1"/>
         </attr>
+        <attr name="phone_patterns" format="reference"/>
 
         <attr name="locale_language" format="string"/>
         <attr name="locale_country" format="string"/>
@@ -64,6 +65,7 @@
         <attr name="color_company" format="color"/>
         <attr name="color_text_date_grouping" format="color"/>
         <attr name="color_text_link" format="color"/>
+        <attr name="color_text_phone" format="color"/>
 
         <attr name="media_file_download_mode" format="enum">
             <enum name="ONLY_IN_VIEWER" value="0"/>

@@ -1,11 +1,14 @@
 package com.crafttalk.chat.presentation.helper.converters
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.*
+import android.view.View
 import androidx.core.content.ContextCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.tags.*
@@ -41,7 +44,14 @@ fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Conte
             is HostListTag -> {
                 result.setSpan(LeadingMarginSpan.Standard(80), it.pointStart, it.pointEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
-
+            is PhoneTag -> {
+                result.setSpan(object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${it.phone}")))
+                    }
+                }, it.pointStart, it.pointEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                result.setSpan(ForegroundColorSpan(ChatAttr.getInstance().colorTextPhone), it.pointStart, it.pointEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
         }
     }
     return result

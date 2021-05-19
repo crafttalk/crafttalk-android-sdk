@@ -6,8 +6,39 @@ import android.util.Log
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ClickableLinkMode
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
+    fun <T: Tag> setTagsByPatterns(text: String, regexs: Array<CharSequence>, factory : (startPosition: Int, endPosition: Int, value: String) -> T, listTag: ArrayList<Tag>) {
+        regexs.forEach { regex ->
+            val pattern: Pattern = Pattern.compile(regex.toString())
+            val matcher: Matcher = pattern.matcher(text)
+            while (matcher.find()) {
+                listTag.add(factory(matcher.start(), matcher.end(), matcher.group()))
+            }
+        }
+    }
+    fun String.selectPhones(): String {
+        setTagsByPatterns(
+            this,
+            ChatAttr.getInstance().phonePatterns,
+            { startPosition: Int, endPosition: Int, value: String ->
+                PhoneTag(
+                    startPosition,
+                    endPosition,
+                    value
+                        .replace("(", "")
+                        .replace(")", "")
+                        .replace("+", "")
+                        .replace("-", "")
+                        .replace(" ", "")
+                )
+            },
+            listTag
+        )
+        return this
+    }
     return when {
         this.replace("\n", "").let {
             it.matches(Regex(".*<(strong|i|a|img|ul|li|br|p).*")) ||
@@ -17,8 +48,8 @@ fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
             it.matches(Regex(".*&(hellip|prime|Prime);.*")) ||
             it.matches(Regex(".*&(ndash|mdash|lsquo|rsquo|sbquo|ldquo|rdquo|bdquo|laquo|raquo);.*")) ||
             it.matches(Regex(".*&#[0-9]*;.*"))
-        } -> convertFromHtmlTextToNormalString(listTag)
-        else -> convertFromBaseTextToNormalString(listTag)
+        } -> convertFromHtmlTextToNormalString(listTag).selectPhones()
+        else -> convertFromBaseTextToNormalString(listTag).selectPhones()
     }
 }
 

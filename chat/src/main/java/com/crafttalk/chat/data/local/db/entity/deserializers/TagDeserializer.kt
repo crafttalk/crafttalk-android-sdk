@@ -20,6 +20,7 @@ class TagDeserializer(val gson: Gson): JsonDeserializer<List<Tag>> {
                 "img" -> result.add(ImageTag(pointStart, pointEnd, jsonObject.get("url").asString, jsonObject.get("width").asInt, jsonObject.get("height").asInt))
                 "li" -> result.add(ItemListTag(pointStart, pointEnd, jsonObject.get("countNesting").asInt))
                 "ul" -> result.add(HostListTag(pointStart, pointEnd, jsonObject.get("countNesting").asInt))
+                "phone" -> result.add(PhoneTag(pointStart, pointEnd, jsonObject.get("phone").asString))
             }
         }
         return result
