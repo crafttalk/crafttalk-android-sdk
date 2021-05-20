@@ -101,6 +101,7 @@ fun ImageView.loadMediaFile(
     mediaFile: FileModel,
     updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     isUserMessage: Boolean,
+    isUnionMessage: Boolean,
     warningContainer: ViewGroup? = null,
     isGif: Boolean = false
 ) {
@@ -181,8 +182,12 @@ fun ImageView.loadMediaFile(
             object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                     warningContainer?.apply {
-                        layoutParams.width = this@loadMediaFile.layoutParams.width + ChatAttr.getInstance().marginStartMediaFile + ChatAttr.getInstance().marginEndMediaFile
-                        layoutParams.height = this@loadMediaFile.layoutParams.height + ChatAttr.getInstance().marginTopMediaFile + ChatAttr.getInstance().marginBottomMediaFile
+                        layoutParams.width = if (isUnionMessage) this@loadMediaFile.layoutParams.width
+                        else this@loadMediaFile.layoutParams.width + ChatAttr.getInstance().marginStartMediaFile + ChatAttr.getInstance().marginEndMediaFile
+
+                        layoutParams.height = if (isUnionMessage) this@loadMediaFile.layoutParams.height
+                        else this@loadMediaFile.layoutParams.height + ChatAttr.getInstance().marginTopMediaFile + ChatAttr.getInstance().marginBottomMediaFile
+
                         (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
                             marginStart,
                             -this@loadMediaFile.layoutParams.height,

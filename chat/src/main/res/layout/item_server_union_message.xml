@@ -22,7 +22,7 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="@id/server_message"
         app:layout_constraintTop_toTopOf="@id/server_message"
-        app:layout_constraintEnd_toEndOf="@id/actions_list"
+        app:layout_constraintEnd_toEndOf="@id/barrier_content_end"
         app:layout_constraintBottom_toBottomOf="@+id/bottom_content"
         tools:background="@drawable/background_item_simple_server_message" />
 
@@ -49,10 +49,18 @@
         android:layout_marginTop="6dp"
         android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/server_message"
         tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="server_message,actions_list" />
 
     <View
         android:id="@+id/border"
@@ -63,7 +71,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="12dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/actions_list"
+        app:layout_constraintEnd_toEndOf="@id/barrier_content_end"
         app:layout_constraintTop_toBottomOf="@id/actions_list" />
 
     <ImageView

@@ -69,7 +69,7 @@ class HolderOperatorGifMessage(
         status?.setStatusMessage(item)
         gif?.apply {
             settingMediaFile()
-            loadMediaFile(item.idKey, item.gif, updateData, false, warningContainer, true)
+            loadMediaFile(item.idKey, item.gif, updateData, false, false, warningContainer, true)
         }
         downloadGif?.settingDownloadBtn(false, failLoading)
         // set bg

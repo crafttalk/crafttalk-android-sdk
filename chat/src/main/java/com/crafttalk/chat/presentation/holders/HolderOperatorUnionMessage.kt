@@ -28,7 +28,7 @@ class HolderOperatorUnionMessage(
     private val clickDocumentHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
-    private val warningContainer: ViewGroup? = view.findViewById(R.id.chat_crafttalk_media_warning)
+    private val warningContainer: ViewGroup? = view.findViewById(R.id.include_chat_crafttalk_media_warning)
 
     private val message: TextView? = view.findViewById(R.id.server_message)
     private val downloadMediaFile: TextView? = view.findViewById(R.id.download_file)
@@ -162,7 +162,7 @@ class HolderOperatorUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, false, warningContainer)
+                    loadMediaFile(item.idKey, item.file, updateData, false, true, warningContainer)
                 }
             }
             TypeFile.GIF -> {
@@ -172,7 +172,7 @@ class HolderOperatorUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, false, warningContainer, true)
+                    loadMediaFile(item.idKey, item.file, updateData, false, true, warningContainer, true)
                 }
             }
         }
