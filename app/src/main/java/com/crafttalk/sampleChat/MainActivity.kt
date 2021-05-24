@@ -60,7 +60,8 @@ class MainActivity: AppCompatActivity() {
             this,
             AuthType.AUTH_WITHOUT_FORM,
             getString(R.string.urlSocketHost),
-            getString(R.string.urlSocketNameSpace)
+            getString(R.string.urlSocketNameSpace),
+            getString(R.string.urlSyncHistory)
         )
         Chat.setOnChatMessageListener(object : ChatMessageListener {
             override fun getNewMessages(countMessages: Int) {

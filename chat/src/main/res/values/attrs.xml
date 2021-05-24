@@ -14,6 +14,7 @@
         <attr name="timeDelayed" format="integer"/>
         <attr name="urlSocketNameSpace" format="string"/>
         <attr name="urlSocketHost" format="string"/>
+        <attr name="urlSyncHistory" format="string"/>
         <attr name="urlUploadNameSpace" format="string"/>
         <attr name="urlUploadHost" format="string"/>
         <attr name="fileProviderAuthorities" format="string"/>

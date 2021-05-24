@@ -18,6 +18,7 @@ import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams.authType
 import com.crafttalk.chat.utils.ChatParams.urlSocketHost
 import com.crafttalk.chat.utils.ChatParams.urlSocketNameSpace
+import com.crafttalk.chat.utils.ChatParams.urlSyncHistory
 import com.crafttalk.chat.utils.ChatStatus
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
@@ -207,7 +208,7 @@ class SocketApi constructor(
                     marge(listMessages)
                     if (listMessages.isNotEmpty() && newMessagesStartTime != null && listMessages[0].timestamp > newMessagesStartTime!!) {
                         newMessagesStartTime = listMessages[0].timestamp
-                        socket.emit("history-messages-requested", newMessagesStartTime, visitor.token)
+                        socket.emit("history-messages-requested", newMessagesStartTime, visitor.token, urlSyncHistory)
                     } else {
                         newMessagesStartTime = null
                     }
@@ -330,7 +331,7 @@ class SocketApi constructor(
 
     fun sync(timestamp: Long) {
         isUploadHistory = true
-        socket!!.emit("history-messages-requested", timestamp, visitor.token)
+        socket!!.emit("history-messages-requested", timestamp, visitor.token, urlSyncHistory)
     }
 
     private fun uploadNewMessages() {
@@ -338,7 +339,7 @@ class SocketApi constructor(
             dao.getLastMessageTime(visitor.uuid)?.let { time ->
                 isUploadHistory = false
                 newMessagesStartTime = time
-                socket!!.emit("history-messages-requested", 0, visitor.token)
+                socket!!.emit("history-messages-requested", 0, visitor.token, urlSyncHistory)
             }
         }
     }
