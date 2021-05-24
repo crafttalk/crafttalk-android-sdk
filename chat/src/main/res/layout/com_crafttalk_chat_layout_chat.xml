@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/upper_limiter"
+    android:layout_centerHorizontal="true">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_with_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_above="@id/lower_limit"
+        android:paddingTop="60dp"
+        android:clipToPadding="false"
+        app:stackFromEnd="false"
+        app:reverseLayout="true" />
+
+    <TextView
+        android:id="@+id/upload_history_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/com_crafttalk_chat_upload_history"
+        android:textColor="@color/com_crafttalk_chat_white"
+        android:background="@drawable/com_crafttalk_chat_background_upload_history"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp"
+        android:layout_marginTop="16dp" />
+
+    <ProgressBar
+        android:id="@+id/upload_history_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/com_crafttalk_chat_spinner_ring"
+        android:indeterminateOnly="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/scroll_to_down"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:src="@drawable/com_crafttalk_chat_ic_scroll_down"
+        android:layout_alignEnd="@id/list_with_message"
+        android:layout_alignBottom="@id/lower_limit"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="52dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/count_unread_message"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:background="@drawable/com_crafttalk_chat_background_count_unread_message"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:layout_alignBottom="@id/scroll_to_down"
+        android:layout_alignEnd="@id/scroll_to_down"
+        android:visibility="gone"
+        tools:text="1+" />
+
+    <RelativeLayout
+        android:id="@+id/info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/lower_limit"
+        android:background="#fff">
+
+        <TextView
+            android:id="@+id/state_action_operator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/com_crafttalk_chat_state_action_operator"
+            android:paddingStart="8dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
+            android:textFontWeight="700"
+            android:layout_alignParentStart="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/company_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/com_crafttalk_chat_name_company"
+            android:gravity="right"
+            android:paddingEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
+            android:textFontWeight="700"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/lower_limit"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@id/entry_place" />
+
+    <RelativeLayout
+        android:id="@+id/entry_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/entry_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/com_crafttalk_chat_entry_field_hint"
+            android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+            android:maxHeight="@dimen/com_crafttalk_chat_max_height_entry_field_message"
+            android:minHeight="38dp"
+            android:layout_toStartOf="@id/send_message"
+            android:paddingStart="15dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="2dp"
+            android:background="@null" />
+
+        <ImageView
+            android:id="@+id/send_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/com_crafttalk_chat_ic_attach_file"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="12dp"
+            android:rotation="45" />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/like"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_like"-->
+<!--            android:padding="4dp"-->
+<!--            android:layout_toStartOf="@id/attach_file"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            />-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/attach_file"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_attach_file"-->
+<!--            android:padding="4dp"-->
+<!--            android:rotation="45"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            />-->
+
+    </RelativeLayout>
+
+</RelativeLayout>

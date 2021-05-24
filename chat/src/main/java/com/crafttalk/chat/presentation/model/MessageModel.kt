@@ -25,7 +25,7 @@ data class DefaultMessageItem(
     override val id: String,
     override val timestamp: Long
 ) : MessageModel(id, NEUTRAL, timestamp, "", null, StateMessage.DEFAULT, false) {
-    override fun getLayout(): Int = R.layout.item_default_message
+    override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_default_message
 }
 
 data class TextMessageItem(
@@ -42,9 +42,9 @@ data class TextMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout(): Int {
         return when(role) {
-            USER -> R.layout.item_user_text_message
-            OPERATOR -> R.layout.item_server_text_message
-            NEUTRAL -> R.layout.item_default_message
+            USER -> R.layout.com_crafttalk_chat_item_user_text_message
+            OPERATOR -> R.layout.com_crafttalk_chat_item_server_text_message
+            NEUTRAL -> R.layout.com_crafttalk_chat_item_default_message
         }
     }
 }
@@ -62,9 +62,9 @@ data class ImageMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout(): Int {
         return when(role) {
-            USER -> R.layout.item_user_image_message
-            OPERATOR -> R.layout.item_server_image_message
-            NEUTRAL -> R.layout.item_default_message
+            USER -> R.layout.com_crafttalk_chat_item_user_image_message
+            OPERATOR -> R.layout.com_crafttalk_chat_item_server_image_message
+            NEUTRAL -> R.layout.com_crafttalk_chat_item_default_message
         }
     }
 }
@@ -82,9 +82,9 @@ data class GifMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout(): Int {
         return when(role) {
-            USER -> R.layout.item_user_gif_message
-            OPERATOR -> R.layout.item_server_gif_message
-            NEUTRAL -> R.layout.item_default_message
+            USER -> R.layout.com_crafttalk_chat_item_user_gif_message
+            OPERATOR -> R.layout.com_crafttalk_chat_item_server_gif_message
+            NEUTRAL -> R.layout.com_crafttalk_chat_item_default_message
         }
     }
 }
@@ -101,9 +101,9 @@ data class FileMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout() : Int {
         return when(role) {
-            USER -> R.layout.item_user_file_message
-            OPERATOR -> R.layout.item_server_file_message
-            NEUTRAL -> R.layout.item_default_message
+            USER -> R.layout.com_crafttalk_chat_item_user_file_message
+            OPERATOR -> R.layout.com_crafttalk_chat_item_server_file_message
+            NEUTRAL -> R.layout.com_crafttalk_chat_item_default_message
         }
     }
 }
@@ -124,9 +124,9 @@ data class UnionMessageItem(
 ) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck, isReadMessage) {
     override fun getLayout() : Int {
         return when(role) {
-            USER -> R.layout.item_user_union_message
-            OPERATOR -> R.layout.item_server_union_message
-            NEUTRAL -> R.layout.item_default_message
+            USER -> R.layout.com_crafttalk_chat_item_user_union_message
+            OPERATOR -> R.layout.com_crafttalk_chat_item_server_union_message
+            NEUTRAL -> R.layout.com_crafttalk_chat_item_default_message
         }
     }
 }
@@ -138,5 +138,5 @@ data class TransferMessageItem(
     override val authorPreview: String?,
     override val isReadMessage: Boolean
 ) : MessageModel(id, NEUTRAL, timestamp, authorName, authorPreview, StateMessage.TRANSFER_TO_OPERATOR, isReadMessage) {
-    override fun getLayout(): Int = R.layout.item_transfer_message
+    override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_transfer_message
 }

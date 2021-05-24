@@ -9,7 +9,7 @@ class Adapter(private val callback: (option: Option) -> Unit) : RecyclerView.Ada
     private val data = mutableListOf<Option>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.bottom_sheet_file_viewer_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.com_crafttalk_chat_bottom_sheet_file_viewer_item, parent, false)
         val holder = ItemViewHolder(view)
         view.setOnClickListener {
             val localData = data[holder.adapterPosition]

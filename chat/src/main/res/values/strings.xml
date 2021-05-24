@@ -1,65 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Чат</string>
 
     <!--    Auth-->
-    <string name="auth_user_introduction">Пожалуйста, представьтесь</string>
-    <string name="auth_user_first_name">Ваше имя</string>
-    <string name="auth_user_surname_name">Ваша фамилия</string>
-    <string name="auth_user_phone">Ваш номер телефона</string>
-    <string name="auth_sign_in">Начать чат</string>
+    <string name="com_crafttalk_chat_auth_user_introduction">Пожалуйста, представьтесь</string>
+    <string name="com_crafttalk_chat_auth_user_first_name">Ваше имя</string>
+    <string name="com_crafttalk_chat_auth_user_surname_name">Ваша фамилия</string>
+    <string name="com_crafttalk_chat_auth_user_phone">Ваш номер телефона</string>
+    <string name="com_crafttalk_chat_auth_sign_in">Начать чат</string>
 
     <!--    Chat-->
-    <string name="chat_internet_connection_warning">Нет доступа к сети…</string>
-    <string name="chat_name_company">автор CraftTalk</string>
-    <string name="chat_state_action_operator">Оператор печатает сообщение…</string>
-    <string name="chat_entry_field_hint">Введите сообщение…</string>
+    <string name="com_crafttalk_chat_internet_connection_warning">Нет доступа к сети…</string>
+    <string name="com_crafttalk_chat_name_company">автор CraftTalk</string>
+    <string name="com_crafttalk_chat_state_action_operator">Оператор печатает сообщение…</string>
+    <string name="com_crafttalk_chat_entry_field_hint">Введите сообщение…</string>
 
     <!--    Message-->
-    <string name="message_join">Оператор %s подключился к диалогу</string>
+    <string name="com_crafttalk_chat_message_join">Оператор %s подключился к диалогу</string>
 
     <!--    File-->
-    <string name="file_size_byte">байт</string>
-    <string name="file_size_Kb">Кб</string>
-    <string name="file_size_Mb">Мб</string>
-    <string name="file_size_Gb">Гб</string>
+    <string name="com_crafttalk_chat_file_size_byte">байт</string>
+    <string name="com_crafttalk_chat_file_size_Kb">Кб</string>
+    <string name="com_crafttalk_chat_file_size_Mb">Мб</string>
+    <string name="com_crafttalk_chat_file_size_Gb">Гб</string>
 
     <!--    Warning-->
-    <string name="warning_title">Произошла ошибка</string>
-    <string name="warning_reload">Пожалуйста, перезагрузите страницу или повторите попытку позже</string>
-    <string name="warning_loading_image">Ошибка при загрузке изображения</string>
-    <string name="warning_loading_gif">Ошибка при загрузке гифки</string>
-    <string name="warning_loading_media_file">Ошибка при загрузке медиафайла</string>
+    <string name="com_crafttalk_chat_warning_title">Произошла ошибка</string>
+    <string name="com_crafttalk_chat_warning_reload">Пожалуйста, перезагрузите страницу или повторите попытку позже</string>
+    <string name="com_crafttalk_chat_warning_loading_image">Ошибка при загрузке изображения</string>
+    <string name="com_crafttalk_chat_warning_loading_gif">Ошибка при загрузке гифки</string>
+    <string name="com_crafttalk_chat_warning_loading_media_file">Ошибка при загрузке медиафайла</string>
 
     <!--    Warning snackbar-->
-    <string name="warning_snackbar_not_support_type_title">Невозможно загрузить документ</string>
-    <string name="warning_snackbar_not_support_type_description">Загружаемый файл запрещен к отправке</string>
-    <string name="warning_snackbar_large_title">Невозможно загрузить документ</string>
-    <string name="warning_snackbar_large_description">Загружаемый файл слишком большой</string>
+    <string name="com_crafttalk_chat_warning_snackbar_not_support_type_title">Невозможно загрузить документ</string>
+    <string name="com_crafttalk_chat_warning_snackbar_not_support_type_description">Загружаемый файл запрещен к отправке</string>
+    <string name="com_crafttalk_chat_warning_snackbar_large_title">Невозможно загрузить документ</string>
+    <string name="com_crafttalk_chat_warning_snackbar_large_description">Загружаемый файл слишком большой</string>
 
     <!--    Bottom sheet file viewer-->
-    <string name="bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
-    <string name="bottom_sheet_file_viewer_image_from_camera">Камера</string>
-    <string name="bottom_sheet_file_viewer_document_from_gallery">Документ</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_camera">Камера</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_document_from_gallery">Документ</string>
 
     <!--    FeedBack-->
-    <string name="feedback_title">Диалог завершен. Оцените качество обслуживания.</string>
+    <string name="com_crafttalk_chat_feedback_title">Диалог завершен. Оцените качество обслуживания.</string>
 
-<!--    History-->
-    <string name="upload_history">Загрузить историю</string>
+    <!--    History-->
+    <string name="com_crafttalk_chat_upload_history">Загрузить историю</string>
 
     <!--    Download file-->
-    <string name="download_file_success">Файл успешно скачен</string>
-    <string name="download_file_fail">Файл не удалось скачать</string>
-    <string name="download">Загрузить</string>
+    <string name="com_crafttalk_chat_download_file_success">Файл успешно скачен</string>
+    <string name="com_crafttalk_chat_download_file_fail">Файл не удалось скачать</string>
+    <string name="com_crafttalk_chat_download">Загрузить</string>
 
-    <string name="string_chooser_open_file_action_view">Выберите приложение для просмотра этого файла:</string>
+    <string name="com_crafttalk_chat_string_chooser_open_file_action_view">Выберите приложение для просмотра этого файла:</string>
 
-    <string name="requested_permission_storage">У вас нет разрешения на доступ к ресурсам!</string>
-    <string name="requested_permission_camera">У вас нет разрешения на доступ к камере!</string>
-    <string name="requested_permission_download">У вас нет разрешения на скачивание файлов!</string>
+    <string name="com_crafttalk_chat_requested_permission_storage">У вас нет разрешения на доступ к ресурсам!</string>
+    <string name="com_crafttalk_chat_requested_permission_camera">У вас нет разрешения на доступ к камере!</string>
+    <string name="com_crafttalk_chat_requested_permission_download">У вас нет разрешения на скачивание файлов!</string>
 
     <!--    Phone formats-->
-    <string name="russian_phone_format">+7 ([000]) [000]-[00]-[00]</string>
+    <string name="com_crafttalk_chat_russian_phone_format">+7 ([000]) [000]-[00]-[00]</string>
 
 </resources>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:id="@+id/chat_layout">
+
+    <TextView
+        android:id="@+id/warningConnection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="15dp"
+        android:text="@string/com_crafttalk_chat_internet_connection_warning"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_regular"
+        android:textFontWeight="400"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@+id/upper_limiter"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/warningConnection" />
+
+    <include
+        android:id="@+id/chat_place"
+        layout="@layout/com_crafttalk_chat_layout_chat"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/auth_form"
+        layout="@layout/com_crafttalk_chat_layout_auth"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/warning"
+        layout="@layout/com_crafttalk_chat_layout_warning"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/user_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_layout_user_feedback"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="80dp"
+        android:layout_height="280dp"
+        android:indeterminateDrawable="@drawable/com_crafttalk_chat_spinner_ring"
+        android:indeterminateOnly="true"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="200dp"
+        android:visibility="gone" />
+
+</RelativeLayout>

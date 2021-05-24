@@ -47,11 +47,11 @@ import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
-import kotlinx.android.synthetic.main.auth_layout.view.*
-import kotlinx.android.synthetic.main.chat_layout.view.*
-import kotlinx.android.synthetic.main.user_feedback_layout.view.*
-import kotlinx.android.synthetic.main.view_host.view.*
-import kotlinx.android.synthetic.main.warning_layout.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_auth.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_user_feedback.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_warning.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
 import javax.inject.Inject
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
@@ -85,7 +85,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     null,
                     ChatAttr.getInstance().titleSuccessDownloadFileWarning,
                     null,
-                    iconRes = R.drawable.chat_ic_file_download_done,
+                    iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                     textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
                     backgroundColor = ChatAttr.getInstance().backgroundSuccessDownloadFileWarning
                 ).show()
@@ -145,7 +145,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        inflater.inflate(R.layout.view_host, this, true)
+        inflater.inflate(R.layout.com_crafttalk_chat_view_host, this, true)
 
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
         customizationChat(attrArr)
@@ -171,7 +171,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
-        AppCompatResources.getDrawable(context, R.drawable.background_count_unread_message)?.let { unwrappedDrawable ->
+        AppCompatResources.getDrawable(context, R.drawable.com_crafttalk_chat_background_count_unread_message)?.let { unwrappedDrawable ->
             val wrappedDrawable: Drawable = DrawableCompat.wrap(unwrappedDrawable)
             DrawableCompat.setTint(wrappedDrawable, chatAttr.colorMain)
             count_unread_message.background = wrappedDrawable
@@ -200,7 +200,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     private fun setAllListeners() {
         phone_user.apply {
-            val maskedListener = MaskedTextChangedListener(context.getString(R.string.russian_phone_format), this)
+            val maskedListener = MaskedTextChangedListener(context.getString(R.string.com_crafttalk_chat_russian_phone_format), this)
             addTextChangedListener(maskedListener)
             onFocusChangeListener = maskedListener
         }
@@ -212,10 +212,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         entry_field.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if ((s ?: "").isEmpty()) {
-                    send_message.setImageResource(R.drawable.ic_attach_file)
+                    send_message.setImageResource(R.drawable.com_crafttalk_chat_ic_attach_file)
                     send_message.rotation = 45f
                 } else {
-                    send_message.setImageResource(R.drawable.ic_send)
+                    send_message.setImageResource(R.drawable.com_crafttalk_chat_ic_send)
                     send_message.rotation = 0f
                 }
             }
@@ -267,7 +267,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
-                            arrayOf(context.getString(R.string.requested_permission_download)),
+                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_download)),
                             actionsAfterObtainingPermission
                         )
                     })
@@ -440,10 +440,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         var result = true
         fields.forEach{
             if (it.text.trim().isEmpty()) {
-                it.setBackgroundResource(R.drawable.background_error_field_auth_form)
+                it.setBackgroundResource(R.drawable.com_crafttalk_chat_background_error_field_auth_form)
                 result = false
             } else {
-                it.setBackgroundResource(R.drawable.background_normal_field_auth_form)
+                it.setBackgroundResource(R.drawable.com_crafttalk_chat_background_normal_field_auth_form)
             }
         }
         return result
@@ -492,7 +492,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     entry_field.text.toString().isEmpty() -> {
                         send_message.isClickable = false
                         BottomSheetFileViewer.Builder()
-                            .add(R.menu.options)
+                            .add(R.menu.com_crafttalk_chat_options)
                             .setListener(this)
                             .show(parentFragment.parentFragmentManager)
                     }
@@ -517,11 +517,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.close_feedback -> {
                 viewModel.feedbackContainerVisible.value = false
-                feedback_star_1.setImageResource(R.drawable.ic_star_outline)
-                feedback_star_2.setImageResource(R.drawable.ic_star_outline)
-                feedback_star_3.setImageResource(R.drawable.ic_star_outline)
-                feedback_star_4.setImageResource(R.drawable.ic_star_outline)
-                feedback_star_5.setImageResource(R.drawable.ic_star_outline)
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
             R.id.feedback_star_1 -> giveFeedback(1)
             R.id.feedback_star_2 -> giveFeedback(2)
@@ -534,40 +534,40 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private fun giveFeedback(countStars: Int) {
         when (countStars) {
             1 -> {
-                feedback_star_1.setImageResource(R.drawable.ic_star)
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
             }
             2 -> {
-                feedback_star_1.setImageResource(R.drawable.ic_star)
-                feedback_star_2.setImageResource(R.drawable.ic_star)
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
             }
             3 -> {
-                feedback_star_1.setImageResource(R.drawable.ic_star)
-                feedback_star_2.setImageResource(R.drawable.ic_star)
-                feedback_star_3.setImageResource(R.drawable.ic_star)
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
             }
             4 -> {
-                feedback_star_1.setImageResource(R.drawable.ic_star)
-                feedback_star_2.setImageResource(R.drawable.ic_star)
-                feedback_star_3.setImageResource(R.drawable.ic_star)
-                feedback_star_4.setImageResource(R.drawable.ic_star)
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
             }
             5 -> {
-                feedback_star_1.setImageResource(R.drawable.ic_star)
-                feedback_star_2.setImageResource(R.drawable.ic_star)
-                feedback_star_3.setImageResource(R.drawable.ic_star)
-                feedback_star_4.setImageResource(R.drawable.ic_star)
-                feedback_star_5.setImageResource(R.drawable.ic_star)
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
             }
         }
         removeFeedbackListeners()
         viewModel.giveFeedbackOnOperator(countStars)
         Handler().postDelayed({
             viewModel.feedbackContainerVisible.value = false
-            feedback_star_1.setImageResource(R.drawable.ic_star_outline)
-            feedback_star_2.setImageResource(R.drawable.ic_star_outline)
-            feedback_star_3.setImageResource(R.drawable.ic_star_outline)
-            feedback_star_4.setImageResource(R.drawable.ic_star_outline)
-            feedback_star_5.setImageResource(R.drawable.ic_star_outline)
+            feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             setFeedbackListeners()
         }, ChatAttr.getInstance().delayFeedbackScreenAppears)
     }
@@ -581,7 +581,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
-                            arrayOf(context.getString(R.string.requested_permission_storage)),
+                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
                             actionsAfterObtainingPermission
                         )
                     },
@@ -595,7 +595,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
-                            arrayOf(context.getString(R.string.requested_permission_storage)),
+                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
                             actionsAfterObtainingPermission
                         )
                     },
@@ -608,7 +608,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
-                            arrayOf(context.getString(R.string.requested_permission_camera)),
+                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_camera)),
                             actionsAfterObtainingPermission
                         )
                     },

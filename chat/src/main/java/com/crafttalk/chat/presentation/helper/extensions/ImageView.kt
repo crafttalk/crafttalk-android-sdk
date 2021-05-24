@@ -25,13 +25,13 @@ fun ImageView.setStatusMessage(message: MessageModel) {
         visibility = when (message.stateCheck) {
             MessageType.RECEIVED_BY_MEDIATO -> {
                 Glide.with(context)
-                    .load(R.drawable.ic_check)
+                    .load(R.drawable.com_crafttalk_chat_ic_check)
                     .into(this)
                 View.VISIBLE
             }
             MessageType.RECEIVED_BY_OPERATOR -> {
                 Glide.with(context)
-                    .load(R.drawable.ic_db_check)
+                    .load(R.drawable.com_crafttalk_chat_ic_db_check)
                     .into(this)
                 View.VISIBLE
             }
@@ -52,7 +52,7 @@ fun ImageView.setStatusMessage(message: MessageModel) {
 fun ImageView.setAuthorIcon(authorPreview: String? = null, showAuthorIcon: Boolean = true) {
     if (showAuthorIcon) {
         Glide.with(context)
-            .load(authorPreview ?: R.drawable.ic_operator)
+            .load(authorPreview ?: R.drawable.com_crafttalk_chat_ic_operator)
             .circleCrop()
             .apply(
                 RequestOptions().override(
@@ -60,7 +60,7 @@ fun ImageView.setAuthorIcon(authorPreview: String? = null, showAuthorIcon: Boole
                     ChatAttr.getInstance().sizeOperatorMessageAuthorPreview
                 )
             )
-            .error(R.drawable.ic_operator)
+            .error(R.drawable.com_crafttalk_chat_ic_operator)
             .listener(
                 object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -176,8 +176,8 @@ fun ImageView.loadMediaFile(
             roundedBottomRight,
             roundedBottomLeft
         )))
-        .placeholder(R.drawable.background_item_media_message_placeholder)
-        .error(R.drawable.background_item_media_message_placeholder)
+        .placeholder(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
+        .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
         .listener(
             object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {

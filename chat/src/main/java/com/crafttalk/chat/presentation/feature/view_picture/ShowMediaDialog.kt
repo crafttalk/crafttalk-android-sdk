@@ -14,8 +14,8 @@ import com.crafttalk.chat.domain.entity.file.TypeFile.IMAGE
 import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnackbar
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.MediaFileDownloadMode
-import kotlinx.android.synthetic.main.bottom_sheet_show_gif.*
-import kotlinx.android.synthetic.main.bottom_sheet_show_image.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_gif.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_image.*
 
 class ShowImageDialog(
     activity: Activity,
@@ -64,7 +64,7 @@ class ShowImageDialog(
                         null,
                         ChatAttr.getInstance().titleSuccessDownloadFileWarning,
                         null,
-                        iconRes = R.drawable.chat_ic_file_download_done,
+                        iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                         textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
                         backgroundColor = ChatAttr.getInstance().backgroundSuccessDownloadFileWarning
                     ).show()
@@ -131,22 +131,22 @@ class ShowImageDialog(
 
         when (type) {
             IMAGE -> {
-                setContentView(R.layout.bottom_sheet_show_image)
+                setContentView(R.layout.com_crafttalk_chat_bottom_sheet_show_image)
                 image_navigate_back.setOnClickListener(this)
                 settingFileDownload(image_download)
                 Glide.with(context)
                     .load(url)
-                    .error(R.drawable.background_item_media_message_placeholder)
+                    .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
                     .into(image_show)
             }
             GIF -> {
-                setContentView(R.layout.bottom_sheet_show_gif)
+                setContentView(R.layout.com_crafttalk_chat_bottom_sheet_show_gif)
                 gif_navigate_back.setOnClickListener(this)
                 settingFileDownload(gif_download)
                 Glide.with(context)
                     .asGif()
                     .load(url)
-                    .error(R.drawable.background_item_media_message_placeholder)
+                    .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
                     .into(gif_show)
             }
             else -> {}

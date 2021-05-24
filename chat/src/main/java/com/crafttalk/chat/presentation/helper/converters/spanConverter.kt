@@ -33,7 +33,7 @@ fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Conte
             }
             is ItemListTag -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    result.setSpan(BulletSpan(10, ContextCompat.getColor(context, R.color.default_color_text_user_message), 6), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    result.setSpan(BulletSpan(10, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_user_message), 6), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 } else {
                     result.setSpan(BulletSpan(), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }

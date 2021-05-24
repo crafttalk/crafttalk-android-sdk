@@ -1,65 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Chat</string>
 
     <!--    Auth-->
-    <string name="auth_user_introduction">Please, introduce yourself</string>
-    <string name="auth_user_first_name">Your name</string>
-    <string name="auth_user_surname_name">Your surname</string>
-    <string name="auth_user_phone">Your phone number</string>
-    <string name="auth_sign_in">Start chat</string>
+    <string name="com_crafttalk_chat_auth_user_introduction">Please, introduce yourself</string>
+    <string name="com_crafttalk_chat_auth_user_first_name">Your name</string>
+    <string name="com_crafttalk_chat_auth_user_surname_name">Your surname</string>
+    <string name="com_crafttalk_chat_auth_user_phone">Your phone number</string>
+    <string name="com_crafttalk_chat_auth_sign_in">Start chat</string>
 
     <!--    Chat-->
-    <string name="chat_internet_connection_warning">Waiting for network…</string>
-    <string name="chat_name_company">by CraftTalk</string>
-    <string name="chat_state_action_operator">Operator write message…</string>
-    <string name="chat_entry_field_hint">Enter your message…</string>
+    <string name="com_crafttalk_chat_internet_connection_warning">Waiting for network…</string>
+    <string name="com_crafttalk_chat_name_company">by CraftTalk</string>
+    <string name="com_crafttalk_chat_state_action_operator">Operator write message…</string>
+    <string name="com_crafttalk_chat_entry_field_hint">Enter your message…</string>
 
     <!--    Message-->
-    <string name="message_join">Operator %s joined the dialogue</string>
+    <string name="com_crafttalk_chat_message_join">Operator %s joined the dialogue</string>
 
     <!--    File-->
-    <string name="file_size_byte">byte</string>
-    <string name="file_size_Kb">Kb</string>
-    <string name="file_size_Mb">Mb</string>
-    <string name="file_size_Gb">Gb</string>
+    <string name="com_crafttalk_chat_file_size_byte">byte</string>
+    <string name="com_crafttalk_chat_file_size_Kb">Kb</string>
+    <string name="com_crafttalk_chat_file_size_Mb">Mb</string>
+    <string name="com_crafttalk_chat_file_size_Gb">Gb</string>
 
     <!--    Warning-->
-    <string name="warning_title">Error has occurred</string>
-    <string name="warning_reload">Please reload the page or try again later</string>
-    <string name="warning_loading_image">Error loading image</string>
-    <string name="warning_loading_gif">Error loading gif</string>
-    <string name="warning_loading_media_file">Error loading media file</string>
+    <string name="com_crafttalk_chat_warning_title">Error has occurred</string>
+    <string name="com_crafttalk_chat_warning_reload">Please reload the page or try again later</string>
+    <string name="com_crafttalk_chat_warning_loading_image">Error loading image</string>
+    <string name="com_crafttalk_chat_warning_loading_gif">Error loading gif</string>
+    <string name="com_crafttalk_chat_warning_loading_media_file">Error loading media file</string>
 
     <!--    Warning snackbar-->
-    <string name="warning_snackbar_not_support_type_title">Unable to load document</string>
-    <string name="warning_snackbar_not_support_type_description">The download file is not allowed to be sent</string>
-    <string name="warning_snackbar_large_title">Unable to load document</string>
-    <string name="warning_snackbar_large_description">The download file is too large</string>
+    <string name="com_crafttalk_chat_warning_snackbar_not_support_type_title">Unable to load document</string>
+    <string name="com_crafttalk_chat_warning_snackbar_not_support_type_description">The download file is not allowed to be sent</string>
+    <string name="com_crafttalk_chat_warning_snackbar_large_title">Unable to load document</string>
+    <string name="com_crafttalk_chat_warning_snackbar_large_description">The download file is too large</string>
 
     <!--    Bottom sheet file viewer-->
-    <string name="bottom_sheet_file_viewer_image_from_gallery">Image</string>
-    <string name="bottom_sheet_file_viewer_image_from_camera">Camera</string>
-    <string name="bottom_sheet_file_viewer_document_from_gallery">Document</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_gallery">Image</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_camera">Camera</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_document_from_gallery">Document</string>
 
     <!--    FeedBack-->
-    <string name="feedback_title">The dialogue is over. Rate the quality of service.</string>
+    <string name="com_crafttalk_chat_feedback_title">The dialogue is over. Rate the quality of service.</string>
 
     <!--    History-->
-    <string name="upload_history">Download history</string>
+    <string name="com_crafttalk_chat_upload_history">Download history</string>
 
     <!--    Download file-->
-    <string name="download_file_success">File downloaded successfully</string>
-    <string name="download_file_fail">File could not be downloaded</string>
-    <string name="download">Download</string>
+    <string name="com_crafttalk_chat_download_file_success">File downloaded successfully</string>
+    <string name="com_crafttalk_chat_download_file_fail">File could not be downloaded</string>
+    <string name="com_crafttalk_chat_download">Download</string>
 
-    <string name="string_chooser_open_file_action_view">Select an application to view this file:</string>
+    <string name="com_crafttalk_chat_string_chooser_open_file_action_view">Select an application to view this file:</string>
 
-    <string name="requested_permission_storage">You do not have permission to access resources!</string>
-    <string name="requested_permission_camera">You do not have permission to access the camera!</string>
-    <string name="requested_permission_download">You don\'t have permission to download files!</string>
+    <string name="com_crafttalk_chat_requested_permission_storage">You do not have permission to access resources!</string>
+    <string name="com_crafttalk_chat_requested_permission_camera">You do not have permission to access the camera!</string>
+    <string name="com_crafttalk_chat_requested_permission_download">You don\'t have permission to download files!</string>
 
     <!--    Phone formats-->
-    <string name="russian_phone_format">+7 ([000]) [000]-[00]-[00]</string>
+    <string name="com_crafttalk_chat_russian_phone_format">+7 ([000]) [000]-[00]-[00]</string>
 
 </resources>

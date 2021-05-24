@@ -28,7 +28,7 @@ class WarningSnackbar(
             typeFailUpload: TypeFailUpload? = null,
             title: String? = null,
             description: String? = null,
-            @DrawableRes iconRes: Int = R.drawable.chat_ic_warning,
+            @DrawableRes iconRes: Int = R.drawable.com_crafttalk_chat_ic_warning,
             @ColorRes textColor: Int = ChatAttr.getInstance().colorFailDownloadFileWarning,
             @ColorRes backgroundColor: Int = ChatAttr.getInstance().backgroundFailDownloadFileWarning
         ): WarningSnackbar {
@@ -37,16 +37,40 @@ class WarningSnackbar(
             )
 
             val customView = LayoutInflater.from(view.context).inflate(
-                R.layout.layout_warning_snackbar,
+                R.layout.com_crafttalk_chat_layout_warning_snackbar,
                 parent,
                 false
             ) as WarningSnackbarView
 
             when (typeFailUpload) {
-                TypeFailUpload.LARGE -> customView.bind(R.string.warning_snackbar_large_title, R.string.warning_snackbar_large_description, iconRes, textColor, backgroundColor)
-                TypeFailUpload.NOT_SUPPORT_TYPE -> customView.bind(R.string.warning_snackbar_not_support_type_title, R.string.warning_snackbar_not_support_type_description, iconRes, textColor, backgroundColor)
-                TypeFailUpload.DEFAULT -> customView.bind(R.string.warning_snackbar_not_support_type_title, R.string.warning_snackbar_not_support_type_description, iconRes, textColor, backgroundColor)
-                else -> customView.bind(title, description, iconRes, textColor, backgroundColor)
+                TypeFailUpload.LARGE -> customView.bind(
+                    R.string.com_crafttalk_chat_warning_snackbar_large_title,
+                    R.string.com_crafttalk_chat_warning_snackbar_large_description,
+                    iconRes,
+                    textColor,
+                    backgroundColor
+                )
+                TypeFailUpload.NOT_SUPPORT_TYPE -> customView.bind(
+                    R.string.com_crafttalk_chat_warning_snackbar_not_support_type_title,
+                    R.string.com_crafttalk_chat_warning_snackbar_not_support_type_description,
+                    iconRes,
+                    textColor,
+                    backgroundColor
+                )
+                TypeFailUpload.DEFAULT -> customView.bind(
+                    R.string.com_crafttalk_chat_warning_snackbar_not_support_type_title,
+                    R.string.com_crafttalk_chat_warning_snackbar_not_support_type_description,
+                    iconRes,
+                    textColor,
+                    backgroundColor
+                )
+                else -> customView.bind(
+                    title,
+                    description,
+                    iconRes,
+                    textColor,
+                    backgroundColor
+                )
             }
 
             return WarningSnackbar(

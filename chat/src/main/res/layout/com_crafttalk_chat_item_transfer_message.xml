@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp">
+
+    <include
+        android:id="@+id/include_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_item_date_message" />
+
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/include_date">
+
+        <TextView
+            android:id="@+id/server_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:paddingStart="15dp"
+            android:paddingTop="13dp"
+            android:paddingEnd="13dp"
+            android:paddingBottom="13dp"
+            android:fontFamily="@font/com_crafttalk_chat_ubuntu_light"
+            android:textFontWeight="300"
+            tools:text="Оператор Тест подключился к диалогу" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/author_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_container"
+        tools:src="@drawable/com_crafttalk_chat_ic_operator" />
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_regular"
+        android:textFontWeight="600"
+        android:gravity="center_vertical"
+        android:layout_marginStart="4dp"
+        app:layout_goneMarginStart="0dp"
+        app:layout_constraintStart_toEndOf="@id/author_preview"
+        app:layout_constraintTop_toTopOf="@+id/author_preview"
+        app:layout_constraintBottom_toBottomOf="@+id/author_preview"
+        tools:text="Бот" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_regular"
+        android:textFontWeight="600"
+        android:layout_marginStart="4dp"
+        app:layout_constraintStart_toEndOf="@id/author"
+        app:layout_constraintTop_toTopOf="@id/author"
+        app:layout_constraintBottom_toBottomOf="@id/author"
+        tools:text="12:01" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
