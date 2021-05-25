@@ -67,7 +67,7 @@ data class MessageEntity(
                         this.attachmentType == other.attachmentType &&
                         this.attachmentName == other.attachmentName &&
                         this.operatorName == other.operatorName &&
-                        abs(this.timestamp - other.timestamp) <= 50
+                        abs(this.timestamp - other.timestamp) <= COUNT_MS
             }
             else -> false
         }
@@ -87,6 +87,8 @@ data class MessageEntity(
     }
 
     companion object {
+        private const val COUNT_MS = 1000
+
         fun map(uuid: String, messageSocket: MessageSocket, isUploadHistory: Boolean, operatorPreview: String?, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertTextToNormalString(list)
