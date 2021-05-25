@@ -5,9 +5,6 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.view.marginBottom
-import androidx.core.view.marginEnd
-import androidx.core.view.marginStart
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -182,23 +179,25 @@ fun ImageView.loadMediaFile(
             object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                     warningContainer?.apply {
-                        layoutParams.width = if (isUnionMessage) this@loadMediaFile.layoutParams.width
-                        else this@loadMediaFile.layoutParams.width + ChatAttr.getInstance().marginStartMediaFile + ChatAttr.getInstance().marginEndMediaFile
+                        layoutParams.width = this@loadMediaFile.layoutParams.width
+                        layoutParams.height = this@loadMediaFile.layoutParams.height
+                        setBackgroundResource(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
 
-                        layoutParams.height = if (isUnionMessage) this@loadMediaFile.layoutParams.height
-                        else this@loadMediaFile.layoutParams.height + ChatAttr.getInstance().marginTopMediaFile + ChatAttr.getInstance().marginBottomMediaFile
-
-                        (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
-                            marginStart,
-                            -this@loadMediaFile.layoutParams.height,
-                            marginEnd,
-                            marginBottom
-                        )
+                        if (!isUnionMessage) {
+                            (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
+                                ChatAttr.getInstance().marginStartMediaFile,
+                                ChatAttr.getInstance().marginTopMediaFile,
+                                ChatAttr.getInstance().marginEndMediaFile,
+                                ChatAttr.getInstance().marginBottomMediaFile
+                            )
+                        }
                         visibility = View.VISIBLE
                     }
+                    this@loadMediaFile.visibility = View.GONE
                     return false
                 }
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    this@loadMediaFile.visibility = View.VISIBLE
                     if (mediaFile.failLoading) {
                         resource ?: return false
                         updateData(idKey, resource.intrinsicHeight, resource.intrinsicWidth)
