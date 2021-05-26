@@ -171,7 +171,7 @@ class SocketApi constructor(
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
                 Log.d(TAG_SOCKET, "json message___ methon message - $messageJson")
-                val messageSocket = gson.fromJson(messageJson.toString(), MessageSocket::class.java)
+                val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), MessageSocket::class.java)
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
@@ -196,7 +196,7 @@ class SocketApi constructor(
             Log.d(TAG_SOCKET_EVENT, "history-messages-loaded, ${it.size}")
             isOnline = true
             viewModelScope.launch {
-                val listMessages = gson.fromJson(it[0].toString(), Array<MessageSocket>::class.java)
+                val listMessages = gson.fromJson(it[0].toString().replace("&amp;", "&"), Array<MessageSocket>::class.java)
 
 //                listMessages.forEach {
 //                    Log.d(TAG_SOCKET, "history: $it")

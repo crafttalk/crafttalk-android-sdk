@@ -69,7 +69,7 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
             selectUrl(this, "wss")
         }
     }
-    selectUrl(this, "www")
+//    selectUrl(this, "www")
     return this
 }
 
