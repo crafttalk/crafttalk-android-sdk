@@ -91,7 +91,8 @@ Chat.init(
     this,
     AuthType.AUTH_WITHOUT_FORM,
     getString(R.string.urlSocketHost),
-    getString(R.string.urlSocketNameSpace)
+    getString(R.string.urlSocketNameSpace),
+    getString(R.string.urlSyncHistory)
 ) 
 ```
 
@@ -172,6 +173,7 @@ override fun onResume() {
 - timeDelayed - выставляет минимальное время отображения троббера
 - urlSocketNameSpace - указывает, по какому nameSpace подключать сокет
 - urlSocketHost - указывает, по какому host подключать сокет
+- urlSyncHistory - указывает, какое доменное имя будет использоваться при запросе истории
 - urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
 - urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
 - fileProviderAuthorities - значение authorities для FileProvider
