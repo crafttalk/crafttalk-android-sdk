@@ -16,7 +16,7 @@ data class ActionItem(
     override val isSelected: Boolean,
     @DrawableRes val backgroundRes: Int
 ) : ActionModel(id, actionText, isSelected) {
-    override fun getLayout() = R.layout.item_action
+    override fun getLayout() = R.layout.com_crafttalk_chat_item_action
 
     override fun <T : BaseItem> isSame(item: T): Boolean {
         return item is ActionItem && item.id == id

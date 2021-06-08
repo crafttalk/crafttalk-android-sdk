@@ -148,7 +148,7 @@ class HolderUserUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, true, warningContainer)
+                    loadMediaFile(item.idKey, item.file, updateData, true, true, warningContainer)
                 }
             }
             TypeFile.GIF -> {
@@ -158,7 +158,7 @@ class HolderUserUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, true, warningContainer, true)
+                    loadMediaFile(item.idKey, item.file, updateData, true, true, warningContainer, true)
                 }
             }
         }

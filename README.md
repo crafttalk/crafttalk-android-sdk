@@ -91,7 +91,8 @@ Chat.init(
     this,
     AuthType.AUTH_WITHOUT_FORM,
     getString(R.string.urlSocketHost),
-    getString(R.string.urlSocketNameSpace)
+    getString(R.string.urlSocketNameSpace),
+    getString(R.string.urlSyncHistory)
 ) 
 ```
 
@@ -100,6 +101,10 @@ Chat.init(
 ##### Аутентификация пользователя
 
 Аутентификация может осуществляться двумя способами: явно (AUTH_WITH_FORM) и неявно (AUTH_WITHOUT_FORM) для пользователя. Отличие заключается в том, что при AUTH_WITH_FORM пользователю необходимо самому ввести данные о себе через форму, а при AUTH_WITHOUT_FORM за формирование объекта Visitor, необходимого для аутентификации, отвечает тот, кто использует библиотеку.
+
+##### Добавление новых полей объекту Visitor
+
+Схему авторизации клиент может поменять, для этого необходимо расширять объект Visitor новыми полями. Для этих целей у объекта Visitor есть метод addNewFiled(fieldName: String, fieldValue: Any), который добавляет наименование поля и его значение, и removeAddedField(firstName: String), который удаляет ранее добавленное поле по его наименованию.
 
 ##### LogOut
 
@@ -168,10 +173,12 @@ override fun onResume() {
 - timeDelayed - выставляет минимальное время отображения троббера
 - urlSocketNameSpace - указывает, по какому nameSpace подключать сокет
 - urlSocketHost - указывает, по какому host подключать сокет
+- urlSyncHistory - указывает, какое доменное имя будет использоваться при запросе истории
 - urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
 - urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
 - fileProviderAuthorities - значение authorities для FileProvider
-- operator_preview_mode - может принимать CACHE_ONLY_LINK или ALWAYS_REQUEST. Этот атрибут определяет режим сохранения иконки оператора. 
+- operator_preview_mode - может принимать CACHE_ONLY_LINK (по умолчанию) или ALWAYS_REQUEST. Этот атрибут определяет режим сохранения иконки оператора. 
+- clickable_link_mode - может принимать ALL (по умолчанию) или SECURE. Этот атрибут определяет, какие из ссылок будут кликабельными, а какие нет.
 
 
 Атрибуты, настраивающие внешний вид:
@@ -191,8 +198,12 @@ override fun onResume() {
 - color_text_operator_action - устанавливает цвет текста подсказки бота
 - color_bg_operator_selected_action - устанавливает цвет фона выбранной подсказки бота
 - color_text_operator_selected_action- устанавливает цвет текста выбранной подсказки бота
-- color_text_file_name - устанавливает цвет имени файла 
-- color_text_file_size - устанавливает цвет размера файла
+- color_file_name - устанавливает цвет имени файла для всех сообщений
+- color_user_file_name - устанавливает цвет имени файла для пользовательского сообщения
+- color_operator_file_name - устанавливает цвет имени файла для сообщения бота/оператора
+- color_file_size - устанавливает цвет размера файла для всех сообщений
+- color_user_file_size - устанавливает цвет размера файла для пользовательского сообщения
+- color_operator_file_size - устанавливает цвет размера файла для сообщения бота/оператора
 - color_text_user_message_author -  устанавливает цвет текста имени пользователя
 - color_text_operator_message_author -  устанавливает цвет текста имени бота/оператора
 - color_user_message_time - устанавливает цвет времени сообщения для всех типов от пользователя
@@ -227,8 +238,12 @@ Drawable:
 - size_user_message - устанавливает размер текста пользовательского сообщения
 - size_operator_message - устанавливает размер текста сообщения бота/оператора
 - size_operator_action - устанавливает размер текста подсказки бота
-- size_file_name - устанавливает размер текста имени файла
-- size_file_size - устанавливает размер текста размера файла
+- size_file_name - устанавливает размер текста имени файла для всех сообщений
+- size_user_file_name - устанавливает размер текста имени файла пользовательского сообщения
+- size_operator_file_name - устанавливает размер текста имени файла сообщения бота/оператора
+- size_file_size - устанавливает размер текста размера файла для всех сообщений
+- size_user_file_size - устанавливает размер текста размера файла пользовательского сообщения
+- size_operator_file_size - устанавливает размер текста размера файла сообщения бота/оператора
 - size_user_message_author - устанавливает размер имени пользователя в сообщении
 - size_operator_message_author - устанавливает размер имени бота/оператора в сообщении
 - size_user_message_time - устанавливает размер текста времени в сообщении пользователя

@@ -149,7 +149,7 @@ class ChatViewModel
             data = fileUrl.toUri()
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        val intentChooser = Intent.createChooser(intentView, context.getString(R.string.string_chooser_open_file_action_view))
+        val intentChooser = Intent.createChooser(intentView, context.getString(R.string.com_crafttalk_chat_string_chooser_open_file_action_view))
         if (intentView.resolveActivity(context.packageManager) != null) {
             context.startActivity(intentChooser)
         }

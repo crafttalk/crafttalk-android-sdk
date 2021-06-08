@@ -12,7 +12,7 @@ import androidx.core.view.iterator
 import androidx.fragment.app.FragmentManager
 import com.crafttalk.chat.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.bottom_sheet_file_viewer.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_file_viewer.*
 
 @SuppressLint("RestrictedApi")
 class BottomSheetFileViewer : BottomSheetDialogFragment() {
@@ -23,7 +23,7 @@ class BottomSheetFileViewer : BottomSheetDialogFragment() {
         private fun newInstance(builder: Builder): BottomSheetFileViewer {
             val fragment = BottomSheetFileViewer()
             val args = Bundle()
-            args.putInt(KEY_MENU, builder.menuRes ?: R.menu.options)
+            args.putInt(KEY_MENU, builder.menuRes ?: R.menu.com_crafttalk_chat_options)
             fragment.arguments = args
             fragment.listener = builder.listener
             return fragment
@@ -37,7 +37,7 @@ class BottomSheetFileViewer : BottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bottom_sheet_file_viewer, container, false)
+        return inflater.inflate(R.layout.com_crafttalk_chat_bottom_sheet_file_viewer, container, false)
     }
 
     @SuppressLint("RestrictedApi")

@@ -119,12 +119,12 @@ fun actionModelMapper(listAction: List<ActionEntity>): List<ActionItem>? {
     if (listAction.isEmpty()) return null
     return listAction.mapIndexed { position, action ->
         val backgroundRes = if (listAction.size == 1) {
-            R.drawable.background_single_item_action
+            R.drawable.com_crafttalk_chat_background_single_item_action
         } else {
             when (position) {
-                0 -> R.drawable.background_top_item_action
-                listAction.size - 1 -> R.drawable.background_bottom_item_action
-                else -> R.drawable.background_item_action
+                0 -> R.drawable.com_crafttalk_chat_background_top_item_action
+                listAction.size - 1 -> R.drawable.com_crafttalk_chat_background_bottom_item_action
+                else -> R.drawable.com_crafttalk_chat_background_item_action
             }
         }
         ActionItem(action.actionId, action.actionText, action.isSelected, backgroundRes)

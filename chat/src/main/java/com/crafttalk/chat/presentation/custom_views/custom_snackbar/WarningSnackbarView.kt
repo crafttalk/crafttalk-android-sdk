@@ -11,7 +11,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.crafttalk.chat.R
 import com.google.android.material.snackbar.ContentViewCallback
-import kotlinx.android.synthetic.main.view_warning_snackbar.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_view_warning_snackbar.view.*
 
 class WarningSnackbarView @JvmOverloads constructor(
     context: Context,
@@ -20,7 +20,7 @@ class WarningSnackbarView @JvmOverloads constructor(
 ) : RelativeLayout(context, attrs, defStyleAttr), ContentViewCallback {
 
     init {
-        View.inflate(context, R.layout.view_warning_snackbar, this)
+        View.inflate(context, R.layout.com_crafttalk_chat_view_warning_snackbar, this)
         clipToPadding =  false
     }
 

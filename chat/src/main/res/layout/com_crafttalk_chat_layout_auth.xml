@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/upper_limiter"
+    android:layout_centerHorizontal="true"
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/com_crafttalk_chat_auth_user_introduction"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_gravity="center" />
+
+    <EditText
+        android:id="@+id/first_name_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/com_crafttalk_chat_auth_user_first_name"
+        android:textSize="16sp"
+        android:textColor="#000"
+        android:inputType="text"
+        android:maxLines="1"
+        android:background="@drawable/com_crafttalk_chat_background_normal_field_auth_form"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center" />
+
+    <EditText
+        android:id="@+id/last_name_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/com_crafttalk_chat_auth_user_surname_name"
+        android:textSize="16sp"
+        android:textColor="#000"
+        android:inputType="text"
+        android:maxLines="1"
+        android:background="@drawable/com_crafttalk_chat_background_normal_field_auth_form"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center" />
+
+    <EditText
+        android:id="@+id/phone_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/com_crafttalk_chat_auth_user_phone"
+        android:textSize="16sp"
+        android:textColor="#000"
+        android:digits="1234567890+-() "
+        android:inputType="number"
+        android:imeOptions="actionDone"
+        android:maxLines="1"
+        android:background="@drawable/com_crafttalk_chat_background_normal_field_auth_form"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/com_crafttalk_chat_auth_sign_in"
+        android:textSize="14sp"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/com_crafttalk_chat_background_sign_in_auth_form"
+        android:padding="8dp" />
+
+</LinearLayout>

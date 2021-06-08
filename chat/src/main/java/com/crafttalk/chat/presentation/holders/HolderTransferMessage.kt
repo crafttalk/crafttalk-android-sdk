@@ -43,7 +43,7 @@ class HolderTransferMessage(
                 maxWidth = it
             }
             // set content
-            text = context.resources.getString(R.string.message_join, item.authorName)
+            text = context.resources.getString(R.string.com_crafttalk_chat_message_join, item.authorName)
             // set color
             setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
             // set dimension

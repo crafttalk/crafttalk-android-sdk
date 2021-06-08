@@ -5,6 +5,7 @@ object ChatParams {
     internal var timeDelayed: Long = 0L
     internal var urlSocketNameSpace: String? = null
     internal var urlSocketHost: String? = null
+    internal var urlSyncHistory: String? = null
     internal var urlUploadNameSpace: String? = null
     internal var urlUploadHost: String? = null
     internal var fileProviderAuthorities: String? = null
