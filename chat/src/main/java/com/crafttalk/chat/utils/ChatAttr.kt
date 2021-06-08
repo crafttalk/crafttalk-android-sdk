@@ -41,7 +41,7 @@ private constructor(
 
     val operatorPreviewMode = attrArr.getInt(R.styleable.ChatView_operator_preview_mode, 0).let { OperatorPreviewMode.values()[it] }
     val clickableLinkMode = attrArr.getInt(R.styleable.ChatView_clickable_link_mode, 0).let { ClickableLinkMode.values()[it] }
-    val phonePatterns = attrArr.getTextArray(R.styleable.ChatView_phone_patterns) ?: context.resources.getTextArray(R.array.phone_patterns)
+    val phonePatterns = attrArr.getTextArray(R.styleable.ChatView_phone_patterns) ?: context.resources.getTextArray(R.array.com_crafttalk_chat_phone_patterns)
 
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_main))
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_warning))
@@ -75,7 +75,7 @@ private constructor(
     val colorUserTextMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_text_message_status, colorUserMessageStatus)
     val colorTextDateGrouping = attrArr.getColor(R.styleable.ChatView_color_text_date_grouping, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_info))
     val colorTextLink = attrArr.getColor(R.styleable.ChatView_color_text_link, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_link))
-    val colorTextPhone = attrArr.getColor(R.styleable.ChatView_color_text_phone, ContextCompat.getColor(context, R.color.default_color_text_phone))
+    val colorTextPhone = attrArr.getColor(R.styleable.ChatView_color_text_phone, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_phone))
 
     val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_bg_user_message))
     val colorBackgroundUserMediaFileMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_media_file_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_bg_user_message))
