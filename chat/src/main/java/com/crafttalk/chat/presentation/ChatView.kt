@@ -504,7 +504,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.warning_refresh -> {
                 startProgressBar(warning_loading)
-                warning_refresh.visibility = View.GONE
+                warning_refresh.visibility = View.INVISIBLE
                 viewModel.reload()
             }
             R.id.scroll_to_down -> {

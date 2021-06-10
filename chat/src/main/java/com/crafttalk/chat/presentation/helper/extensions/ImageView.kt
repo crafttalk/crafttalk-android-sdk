@@ -83,7 +83,7 @@ fun ImageView.setAuthorIcon(authorPreview: String? = null, showAuthorIcon: Boole
 
 fun ImageView.settingMediaFile(isUnionMessageItem: Boolean = false) {
     if (!isUnionMessageItem) {
-        (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
+        setPadding(
             ChatAttr.getInstance().marginStartMediaFile,
             ChatAttr.getInstance().marginTopMediaFile,
             ChatAttr.getInstance().marginEndMediaFile,
@@ -184,7 +184,7 @@ fun ImageView.loadMediaFile(
                         setBackgroundResource(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
 
                         if (!isUnionMessage) {
-                            (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
+                            setPadding(
                                 ChatAttr.getInstance().marginStartMediaFile,
                                 ChatAttr.getInstance().marginTopMediaFile,
                                 ChatAttr.getInstance().marginEndMediaFile,

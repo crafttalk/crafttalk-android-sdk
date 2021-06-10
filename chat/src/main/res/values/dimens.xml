@@ -24,4 +24,15 @@
     <dimen name="com_crafttalk_chat_default_rounded_media_file_preview">5dp</dimen>
     <dimen name="com_crafttalk_chat_default_rounded_gif_file_preview">2dp</dimen>
 
+    <dimen name="com_crafttalk_chat_message_margin_start">20dp</dimen>
+    <dimen name="com_crafttalk_chat_message_margin_top">10dp</dimen>
+    <dimen name="com_crafttalk_chat_message_margin_end">20dp</dimen>
+    <dimen name="com_crafttalk_chat_message_margin_bottom">10dp</dimen>
+    <dimen name="com_crafttalk_chat_message_content_padding_start">16dp</dimen>
+    <dimen name="com_crafttalk_chat_message_content_padding_top">12dp</dimen>
+    <dimen name="com_crafttalk_chat_message_content_padding_end">12dp</dimen>
+    <dimen name="com_crafttalk_chat_message_content_padding_bottom">12dp</dimen>
+    <dimen name="com_crafttalk_chat_download_btn_margin_top">16dp</dimen>
+    <dimen name="com_crafttalk_chat_message_info_margin_top">10dp</dimen>
+
 </resources>

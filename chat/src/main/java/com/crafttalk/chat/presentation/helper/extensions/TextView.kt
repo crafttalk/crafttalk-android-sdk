@@ -5,11 +5,8 @@ import android.content.res.ColorStateList
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginBottom
-import androidx.core.view.marginTop
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
@@ -134,13 +131,6 @@ fun TextView.settingDownloadBtn(isUserMessage: Boolean, failLoading: Boolean) {
     }
     // set bg
     setBackgroundResource(if (isUserMessage) ChatAttr.getInstance().backgroundUserFileMessageDownload else ChatAttr.getInstance().backgroundOperatorFileMessageDownload)
-    // set margins
-    (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
-        ChatAttr.getInstance().marginStartMediaFile,
-        marginTop,
-        ChatAttr.getInstance().marginEndMediaFile,
-        marginBottom
-    )
 }
 
 fun TextView.setFileName(file: FileModel, isUserMessage: Boolean) {

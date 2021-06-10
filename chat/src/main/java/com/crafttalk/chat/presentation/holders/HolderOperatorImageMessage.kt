@@ -19,12 +19,12 @@ class HolderOperatorImageMessage(
     private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
     private val clickHandler: (imageName: String, imageUrl: String) -> Unit
 ) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
-    private val contentContainer: ViewGroup? = view.findViewById(R.id.content_container)
+    private val contentContainer: View? = view.findViewById(R.id.content_container)
     private val warningContainer: ViewGroup? = view.findViewById(R.id.server_image_warning)
 
     private val img: ImageView? = view.findViewById(R.id.server_image)
     private val downloadImage: TextView? = view.findViewById(R.id.download_file)
-    private val author: TextView? = view.findViewById(R.id.author)
+    private val authorName: TextView? = view.findViewById(R.id.author_name)
     private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
@@ -63,7 +63,7 @@ class HolderOperatorImageMessage(
 
         date?.setDate(item)
         // set content
-        author?.setAuthor(item)
+        authorName?.setAuthor(item)
         authorPreview?.setAuthorIcon(item.authorPreview)
         time?.setTime(item)
         status?.setStatusMessage(item)

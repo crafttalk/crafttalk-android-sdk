@@ -1,65 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_below="@id/upper_limiter"
     android:padding="16dp">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/warning_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:rotation="180"
+        android:src="@drawable/com_crafttalk_chat_ic_circle_warning"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/warning_title" />
+
+    <TextView
+        android:id="@+id/warning_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:text="@string/com_crafttalk_chat_warning_title"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/warning_icon"
+        app:layout_constraintBottom_toTopOf="@id/warning_description" />
 
-        <ImageView
-            android:id="@+id/warning_icon"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:rotation="180"
-            android:src="@drawable/com_crafttalk_chat_ic_circle_warning" />
+    <TextView
+        android:id="@+id/warning_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/com_crafttalk_chat_warning_reload"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/warning_title"
+        app:layout_constraintBottom_toTopOf="@id/warning_refresh" />
 
-        <TextView
-            android:id="@+id/warning_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/com_crafttalk_chat_warning_title"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_below="@id/warning_icon" />
+    <ImageView
+        android:id="@+id/warning_refresh"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/com_crafttalk_chat_ic_refresh"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/warning_description"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/warning_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/com_crafttalk_chat_warning_reload"
-            android:textSize="18sp"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_below="@id/warning_title" />
+    <ProgressBar
+        android:id="@+id/warning_loading"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:indeterminateDrawable="@drawable/com_crafttalk_chat_spinner_ring"
+        android:indeterminateOnly="true"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/warning_description"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <ImageView
-            android:id="@+id/warning_refresh"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/com_crafttalk_chat_ic_refresh"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/warning_description" />
-
-        <ProgressBar
-            android:id="@+id/warning_loading"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:indeterminateDrawable="@drawable/com_crafttalk_chat_spinner_ring"
-            android:indeterminateOnly="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/warning_description"
-            android:visibility="gone" />
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

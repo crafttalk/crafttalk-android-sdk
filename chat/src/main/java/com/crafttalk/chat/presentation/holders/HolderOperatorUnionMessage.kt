@@ -28,19 +28,19 @@ class HolderOperatorUnionMessage(
     private val clickDocumentHandler: (fileUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
-    private val warningContainer: ViewGroup? = view.findViewById(R.id.include_chat_crafttalk_media_warning)
+    private val warningContainer: ViewGroup? = view.findViewById(R.id.server_media_warning)
 
     private val message: TextView? = view.findViewById(R.id.server_message)
-    private val downloadMediaFile: TextView? = view.findViewById(R.id.download_file)
     private val listActions: RecyclerView? = view.findViewById(R.id.actions_list)
-    private val authorName: TextView? = view.findViewById(R.id.chat_crafttalk_author_name)
-    private val authorPreview: ImageView? = view.findViewById(R.id.chat_crafttalk_author_preview)
+    private val fileIcon: ImageView? = view.findViewById(R.id.file_icon)
+    private val fileName: TextView? = view.findViewById(R.id.file_name)
+    private val fileSize: TextView? = view.findViewById(R.id.file_size)
+    private val media: ImageView? = view.findViewById(R.id.server_media)
+    private val downloadMediaFile: TextView? = view.findViewById(R.id.download_file)
+    private val authorName: TextView? = view.findViewById(R.id.author_name)
+    private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
     private val status: ImageView? = view.findViewById(R.id.status)
-    private val fileIcon: ImageView? = view.findViewById(R.id.chat_crafttalk_file_icon)
-    private val fileName: TextView? = view.findViewById(R.id.chat_crafttalk_file_name)
-    private val fileSize: TextView? = view.findViewById(R.id.chat_crafttalk_file_size)
-    private val media: ImageView? = view.findViewById(R.id.server_media)
     private val date: TextView? = view.findViewById(R.id.date)
 
     private var fileUrl: String? = null
@@ -56,7 +56,7 @@ class HolderOperatorUnionMessage(
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.chat_crafttalk_file_icon -> {
+            R.id.file_icon -> {
                 fileUrl?.let {
                     if (!failLoading)
                         clickDocumentHandler(it)

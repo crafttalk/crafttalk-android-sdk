@@ -14,7 +14,7 @@
         android:id="@+id/include_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/com_crafttalk_chat_item_date_message" />
+        layout="@layout/com_crafttalk_chat_include_date_message" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content_container"
