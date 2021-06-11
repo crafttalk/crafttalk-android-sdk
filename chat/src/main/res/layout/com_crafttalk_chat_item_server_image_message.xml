@@ -22,8 +22,8 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/include_date"
-        app:layout_constraintEnd_toEndOf="@id/barrier_end_image"
-        app:layout_constraintBottom_toBottomOf="@id/barrier_bottom_image"
+        app:layout_constraintEnd_toEndOf="@id/barrier_image_end"
+        app:layout_constraintBottom_toBottomOf="@id/barrier_image_bottom"
         tools:background="@drawable/com_crafttalk_chat_background_item_simple_server_message" />
 
     <ImageView
@@ -64,21 +64,21 @@
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_end_image"
+        android:id="@+id/barrier_image_end"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:barrierDirection="end"
         app:constraint_referenced_ids="server_image,server_image_warning" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_bottom_image"
+        android:id="@+id/barrier_image_bottom"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="server_image,server_image_warning" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_content"
+        android:id="@+id/barrier_content_bottom"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:barrierDirection="bottom"
@@ -90,6 +90,6 @@
         layout="@layout/com_crafttalk_chat_include_server_message_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier_content" />
+        app:layout_constraintTop_toBottomOf="@id/barrier_content_bottom" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

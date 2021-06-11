@@ -20,7 +20,7 @@
         android:id="@+id/content_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@id/border"
+        app:layout_constraintStart_toStartOf="@id/border_content_start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/include_date"
         app:layout_constraintBottom_toTopOf="@id/include_message_status"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@id/include_date" />
 
     <View
-        android:id="@+id/border"
+        android:id="@+id/border_content_start"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="@dimen/com_crafttalk_chat_message_content_padding_start"
