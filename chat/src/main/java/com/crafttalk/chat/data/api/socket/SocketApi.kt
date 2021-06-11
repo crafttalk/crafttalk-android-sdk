@@ -22,8 +22,8 @@ import com.crafttalk.chat.utils.ChatParams.urlSyncHistory
 import com.crafttalk.chat.utils.ChatStatus
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
-import com.github.nkzawa.socketio.client.Manager
-import com.github.nkzawa.socketio.client.Socket
+import io.socket.client.Manager
+import io.socket.client.Socket
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
