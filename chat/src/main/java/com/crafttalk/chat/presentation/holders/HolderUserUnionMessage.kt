@@ -26,6 +26,7 @@ class HolderUserUnionMessage(
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
     private val warningContainer: ViewGroup? = view.findViewById(R.id.user_media_warning)
+    private val fileInfo: ViewGroup? = view.findViewById(R.id.file_info)
 
     private val message: TextView? = view.findViewById(R.id.user_message)
     private val fileIcon: ImageView? = view.findViewById(R.id.file_icon)
@@ -109,7 +110,6 @@ class HolderUserUnionMessage(
         }
         downloadMediaFile?.apply {
             if (fileType in listOf(TypeFile.IMAGE, TypeFile.GIF)) {
-                visibility = View.VISIBLE
                 settingDownloadBtn(true, failLoading)
             } else {
                 visibility = View.GONE
@@ -125,26 +125,18 @@ class HolderUserUnionMessage(
             TypeFile.FILE -> {
                 media?.visibility = View.GONE
                 warningContainer?.visibility = View.GONE
+                fileInfo?.visibility = View.VISIBLE
                 fileIcon?.apply {
-                    visibility = View.VISIBLE
                     setFileIcon()
                     ChatAttr.getInstance().widthItemUserFileIconMessage?.let {
                         layoutParams.width = it
                     }
-                    fileName?.apply {
-                        visibility = View.VISIBLE
-                        setFileName(item.file, true)
-                    }
-                    fileSize?.apply {
-                        visibility = View.VISIBLE
-                        setFileSize(item.file, true)
-                    }
                 }
+                fileName?.setFileName(item.file, true)
+                fileSize?.setFileSize(item.file, true)
             }
             TypeFile.IMAGE -> {
-                fileIcon?.visibility = View.GONE
-                fileName?.visibility = View.GONE
-                fileSize?.visibility = View.GONE
+                fileInfo?.visibility = View.GONE
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
@@ -152,9 +144,7 @@ class HolderUserUnionMessage(
                 }
             }
             TypeFile.GIF -> {
-                fileIcon?.visibility = View.GONE
-                fileName?.visibility = View.GONE
-                fileSize?.visibility = View.GONE
+                fileInfo?.visibility = View.GONE
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)

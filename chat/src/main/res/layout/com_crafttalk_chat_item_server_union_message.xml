@@ -22,8 +22,8 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="@id/server_message"
         app:layout_constraintTop_toTopOf="@id/server_message"
-        app:layout_constraintEnd_toEndOf="@id/barrier_content_end"
-        app:layout_constraintBottom_toBottomOf="@+id/bottom_content"
+        app:layout_constraintEnd_toEndOf="@id/border_content_end"
+        app:layout_constraintBottom_toBottomOf="@+id/border_content_bottom"
         tools:background="@drawable/com_crafttalk_chat_background_item_simple_server_message" />
 
     <TextView
@@ -34,60 +34,38 @@
         android:fontFamily="@font/com_crafttalk_chat_ubuntu_light"
         android:textFontWeight="300"
         android:paddingStart="@dimen/com_crafttalk_chat_message_content_padding_start"
-        android:paddingEnd="@dimen/com_crafttalk_chat_message_content_padding_end"
         android:paddingTop="@dimen/com_crafttalk_chat_message_content_padding_top"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/include_date"
         tools:text="Hello, my name is Bot" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/actions_list"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="true"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_marginTop="6dp"
-        android:paddingStart="@dimen/com_crafttalk_chat_message_content_padding_start"
-        android:paddingEnd="@dimen/com_crafttalk_chat_message_content_padding_end"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/server_message"
-        tools:visibility="gone" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_content_end"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:barrierDirection="end"
-        app:constraint_referenced_ids="server_message,actions_list" />
 
     <View
         android:id="@+id/border"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/com_crafttalk_chat_gray"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="@dimen/com_crafttalk_chat_message_content_padding_start"
-        android:layout_marginEnd="@dimen/com_crafttalk_chat_message_content_padding_end"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/barrier_content_end"
-        app:layout_constraintTop_toBottomOf="@id/actions_list" />
+        app:layout_constraintTop_toBottomOf="@id/server_message"
+        app:layout_constraintBottom_toTopOf="@id/barrier_attach_top" />
 
     <ImageView
         android:id="@+id/server_media"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:scaleType="fitXY"
         android:visibility="gone"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/com_crafttalk_chat_message_content_padding_start"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/border"
-        app:layout_constraintEnd_toEndOf="@id/border"
-        app:layout_constraintTop_toBottomOf="@id/border"
-        tools:layout_width="100dp"
-        tools:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/server_message"
+        tools:layout_width="200dp"
+        tools:layout_height="200dp"
         tools:src="@tools:sample/avatars"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/download_file"
@@ -109,41 +87,68 @@
         android:layout_height="0dp"
         layout="@layout/com_crafttalk_chat_include_media_warning"
         android:visibility="gone"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/com_crafttalk_chat_message_content_padding_start"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/border"
-        app:layout_constraintEnd_toEndOf="@id/border"
-        app:layout_constraintTop_toBottomOf="@id/border"
-        tools:layout_width="100dp"
-        tools:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/server_message"
+        tools:layout_width="200dp"
+        tools:layout_height="200dp"
         tools:visibility="gone" />
 
     <include
         android:id="@+id/file_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintWidth_max="128dp"
         layout="@layout/com_crafttalk_chat_include_file_info"
         android:visibility="gone"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/com_crafttalk_chat_message_content_padding_start"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/border"
-        app:layout_constraintEnd_toEndOf="@id/border"
-        app:layout_constraintTop_toBottomOf="@id/border"
-        tools:visibility="gone" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/server_message"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="end"
+        app:barrierAllowsGoneWidgets="false"
+        app:constraint_referenced_ids="server_message,server_media,download_file,server_media_warning,file_info" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_attach_top"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="top"
+        app:barrierAllowsGoneWidgets="false"
+        app:constraint_referenced_ids="server_media,download_file,server_media_warning,file_info" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier_attach_bottom"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:barrierDirection="bottom"
+        app:barrierAllowsGoneWidgets="false"
         app:constraint_referenced_ids="server_media,download_file,server_media_warning,file_info" />
 
     <View
-        android:id="@+id/bottom_content"
+        android:id="@+id/border_content_bottom"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/com_crafttalk_chat_message_content_padding_bottom"
         app:layout_constraintTop_toBottomOf="@id/barrier_attach_bottom" />
+
+    <View
+        android:id="@+id/border_content_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/com_crafttalk_chat_message_content_padding_end"
+        app:layout_constraintStart_toEndOf="@id/barrier_content_end" />
 
     <include
         android:layout_width="0dp"

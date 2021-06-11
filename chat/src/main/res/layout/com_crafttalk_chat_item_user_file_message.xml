@@ -30,7 +30,7 @@
         android:id="@+id/file_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintWidth_max="120dp"
+        app:layout_constraintWidth_max="128dp"
         app:layout_constraintHorizontal_bias="1"
         layout="@layout/com_crafttalk_chat_include_file_info"
         android:layout_marginTop="@dimen/com_crafttalk_chat_message_content_padding_top"

@@ -30,6 +30,7 @@
         android:id="@+id/user_gif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/include_date"
         tools:layout_width="150dp"
