@@ -25,4 +25,17 @@
 
     <string name="chat_file_provider_authorities">com.crafttalk.chat.fileprovider</string>
 
+    <string-array name="sample_phone_patterns">
+        <item>\\+[0-9]{13}</item>
+        <item>\\+[0-9]{12}</item>
+        <item>\\+[0-9]{11}</item>
+        <item>\\+[0-9]{9}</item>
+        <item>[0-9]{11}</item>
+        <item>\\+7 \\([0-9]{3}\\) [0-9]{3}-[0-9]{2}-[0-9]{2}</item>
+        <item>\\+7\\([0-9]{3}\\)-[0-9]{3}-[0-9]{2}-[0-9]{2}</item>
+        <item>\\+7 [0-9]{3} [0-9]{3} [0-9]{2} [0-9]{2}</item>
+        <item>\\+7 [0-9]{3} [0-9]{3}-[0-9]{2}-[0-9]{2}</item>
+        <item>[0-9] [0-9]{3} [0-9]{3}-[0-9]{2}-[0-9]{2}</item>
+    </string-array>
+
 </resources>

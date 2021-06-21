@@ -34,10 +34,10 @@ private constructor(
     private val widthScreenInPx = getSizeScreenInPx(context).first.toFloat()
     private val heightScreenInPx = getSizeScreenInPx(context).second.toFloat()
 
-    val locale: Locale? = attrArr.getString(R.styleable.ChatView_locale_language)?.let { language ->
+    val locale: Locale = attrArr.getString(R.styleable.ChatView_locale_language)?.let { language ->
         val country = attrArr.getString(R.styleable.ChatView_locale_country) ?: ""
         Locale(language, country)
-    }
+    } ?: Locale(context.getString(R.string.com_crafttalk_chat_default_language), context.getString(R.string.com_crafttalk_chat_default_country))
 
     val operatorPreviewMode = attrArr.getInt(R.styleable.ChatView_operator_preview_mode, 0).let { OperatorPreviewMode.values()[it] }
     val clickableLinkMode = attrArr.getInt(R.styleable.ChatView_clickable_link_mode, 0).let { ClickableLinkMode.values()[it] }

@@ -72,11 +72,7 @@ fun TextView.setDate(message: MessageModel) {
     if (message.isFirstMessageInDay) {
         // set content
         val formatYear = SimpleDateFormat("yyyy")
-        val formatTime = if (ChatAttr.getInstance().locale == null) {
-            SimpleDateFormat("dd MMMM")
-        } else {
-            SimpleDateFormat("dd MMMM", ChatAttr.getInstance().locale)
-        }
+        val formatTime = SimpleDateFormat("dd MMMM", ChatAttr.getInstance().locale)
 
         val nowYear = formatYear.format(System.currentTimeMillis())
         val currentYear = formatYear.format(message.timestamp)

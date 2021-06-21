@@ -30,7 +30,6 @@ fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
                     value
                         .replace("(", "")
                         .replace(")", "")
-                        .replace("+", "")
                         .replace("-", "")
                         .replace(" ", "")
                 )
