@@ -14,6 +14,7 @@ abstract class BaseViewModel: ViewModel() {
         when (responseCode) {
             200 -> uploadFileListener.successUpload()
             500 -> uploadFileListener.failUpload(responseMessage, TypeFailUpload.NOT_SUPPORT_TYPE)
+            408 -> uploadFileListener.failUpload(responseMessage, TypeFailUpload.TIMEOUT)
             413 -> uploadFileListener.failUpload(responseMessage, TypeFailUpload.LARGE)
             else -> uploadFileListener.failUpload(responseMessage, TypeFailUpload.DEFAULT)
         }

@@ -10,6 +10,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.helper.extensions.getDimensionOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getFloatOrNull
+import com.crafttalk.chat.presentation.helper.extensions.getIntOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getResourceIdOrNull
 import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
 import java.util.*
@@ -29,6 +30,10 @@ private constructor(
         attrArr.getString(R.styleable.ChatView_urlUploadNameSpace)?.let { ChatParams.urlUploadNameSpace = it }
         attrArr.getString(R.styleable.ChatView_urlUploadHost)?.let { ChatParams.urlUploadHost = it }
         attrArr.getString(R.styleable.ChatView_fileProviderAuthorities)?.let { ChatParams.fileProviderAuthorities = it }
+        attrArr.getIntOrNull(R.styleable.ChatView_fileConnectTimeout)?.let { ChatParams.fileConnectTimeout = it.toLong() }
+        attrArr.getIntOrNull(R.styleable.ChatView_fileReadTimeout)?.let { ChatParams.fileReadTimeout = it.toLong() }
+        attrArr.getIntOrNull(R.styleable.ChatView_fileWriteTimeout)?.let { ChatParams.fileWriteTimeout = it.toLong() }
+        attrArr.getIntOrNull(R.styleable.ChatView_fileCallTimeout)?.let { ChatParams.fileCallTimeout = it.toLong() }
     }
 
     private val widthScreenInPx = getSizeScreenInPx(context).first.toFloat()

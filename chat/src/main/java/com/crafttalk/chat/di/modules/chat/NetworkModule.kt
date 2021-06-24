@@ -22,7 +22,13 @@ class NetworkModule {
     fun provideRetrofitClientUpload(certificate: CertificatePinner?): Retrofit {
         val okHttpClient = OkHttpClient.Builder()
             .enableTls()
-            .apply { certificate?.let { certificatePinner(it) } }
+            .apply {
+                certificate?.let { certificatePinner(it) }
+                ChatParams.fileConnectTimeout?.let { connectTimeout(it, ChatParams.timeUnitTimeout) }
+                ChatParams.fileReadTimeout?.let { readTimeout(it, ChatParams.timeUnitTimeout) }
+                ChatParams.fileWriteTimeout?.let { writeTimeout(it, ChatParams.timeUnitTimeout) }
+                ChatParams.fileCallTimeout?.let { callTimeout(it, ChatParams.timeUnitTimeout) }
+            }
             .build()
         val gson = GsonBuilder()
             .setLenient()

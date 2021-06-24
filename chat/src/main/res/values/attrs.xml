@@ -18,6 +18,10 @@
         <attr name="urlUploadNameSpace" format="string"/>
         <attr name="urlUploadHost" format="string"/>
         <attr name="fileProviderAuthorities" format="string"/>
+        <attr name="fileConnectTimeout" format="integer"/>
+        <attr name="fileReadTimeout" format="integer"/>
+        <attr name="fileWriteTimeout" format="integer"/>
+        <attr name="fileCallTimeout" format="integer"/>
         <attr name="clickable_link_mode" format="enum">
             <enum name="ALL" value="0"/>
             <enum name="SECURE" value="1"/>

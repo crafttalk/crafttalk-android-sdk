@@ -67,14 +67,14 @@ class ShowImageDialog(
                         iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                         textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
                         backgroundColor = ChatAttr.getInstance().backgroundSuccessDownloadFileWarning
-                    ).show()
+                    )?.show()
                 } else {
                     WarningSnackbar.make(
                         it.image_show ?: it.gif_show,
                         null,
                         ChatAttr.getInstance().titleFailDownloadFileWarning,
                         null
-                    ).show()
+                    )?.show()
                 }
             }
         }

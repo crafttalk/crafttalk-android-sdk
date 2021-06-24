@@ -46,6 +46,9 @@ class FileRepository
                 Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
+                when (t.message) {
+                    TIMEOUT_CONST -> handleUploadFile(TIMEOUT_CODE, "")
+                }
                 Log.d("UPLOAD_TEST", "Fail upload! - ${t.message};")
             }
         })
@@ -75,6 +78,9 @@ class FileRepository
                 Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
+                when (t.message) {
+                    TIMEOUT_CONST -> handleUploadFile(TIMEOUT_CODE, "")
+                }
                 Log.d("UPLOAD_TEST", "Fail upload! - ${t.message};")
             }
         })
@@ -107,6 +113,11 @@ class FileRepository
                 uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
         }
+    }
+
+    companion object {
+        private const val TIMEOUT_CODE = 408
+        private const val TIMEOUT_CONST = "timeout"
     }
 
 }

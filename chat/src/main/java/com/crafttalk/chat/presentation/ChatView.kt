@@ -75,7 +75,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var permissionListener: ChatPermissionListener = object : ChatPermissionListener {
         override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
             permissions.forEachIndexed { index, permission ->
-                WarningSnackbar.make(chat_place, null, messages[index], null).show()
+                WarningSnackbar.make(chat_place, null, messages[index], null)?.show()
             }
         }
     }
@@ -92,7 +92,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                     textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
                     backgroundColor = ChatAttr.getInstance().backgroundSuccessDownloadFileWarning
-                ).show()
+                )?.show()
             }
         }
         override fun failDownload() {
@@ -104,7 +104,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     null,
                     ChatAttr.getInstance().titleFailDownloadFileWarning,
                     null
-                ).show()
+                )?.show()
             }
         }
     }
@@ -114,7 +114,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         object : UploadFileListener {
             override fun successUpload() {}
             override fun failUpload(message: String, type: TypeFailUpload) {
-                WarningSnackbar.make(chat_place, type).show()
+                WarningSnackbar.make(chat_place, type)?.show()
             }
         }
     }

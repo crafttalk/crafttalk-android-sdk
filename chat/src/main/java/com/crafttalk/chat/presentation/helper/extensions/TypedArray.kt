@@ -19,3 +19,8 @@ fun TypedArray.getFloatOrNull(@StyleableRes index: Int): Float? {
     val result = getFloat(index, -1f)
     return if (result == -1f) null else result
 }
+
+fun TypedArray.getIntOrNull(@StyleableRes index: Int): Int? {
+    val result = getInt(index, -1)
+    return if (result == -1) null else result
+}
