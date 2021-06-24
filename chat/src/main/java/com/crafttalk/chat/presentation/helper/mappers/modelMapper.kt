@@ -9,8 +9,26 @@ import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.MessageType.Companion.getMessageTypeByValueType
 import com.crafttalk.chat.presentation.helper.converters.convertToSpannableString
 import com.crafttalk.chat.presentation.model.*
+import com.crafttalk.chat.utils.ChatAttr
 
 fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageModel? {
+
+    val isImage = !localMessage.attachmentUrl.isNullOrEmpty() &&
+            !localMessage.attachmentName.isNullOrEmpty() &&
+            !localMessage.attachmentType.isNullOrEmpty() &&
+            (localMessage.attachmentType == "IMAGE" || localMessage.attachmentType.toLowerCase(ChatAttr.getInstance().locale).startsWith("image"))
+
+    val isGif = !localMessage.attachmentUrl.isNullOrEmpty() &&
+            !localMessage.attachmentName.isNullOrEmpty() &&
+            !localMessage.attachmentType.isNullOrEmpty() &&
+            (localMessage.attachmentType == "IMAGE" || localMessage.attachmentType.toLowerCase(ChatAttr.getInstance().locale).startsWith("image")) &&
+            localMessage.attachmentName.contains(".GIF", true)
+
+    val isFile = !localMessage.attachmentUrl.isNullOrEmpty() &&
+            !localMessage.attachmentName.isNullOrEmpty() &&
+            !localMessage.attachmentType.isNullOrEmpty() &&
+            localMessage.attachmentType == "FILE"
+
     return when {
         localMessage.messageType == MessageType.TRANSFER_TO_OPERATOR.valueType -> TransferMessageItem(
             localMessage.id,
@@ -31,13 +49,13 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             getMessageTypeByValueType(localMessage.messageType),
             localMessage.isRead
         )
-        (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "IMAGE") && (localMessage.attachmentName.contains(".GIF", true)) -> GifMessageItem(
+        (localMessage.message == null || localMessage.message.isEmpty()) && isGif -> GifMessageItem(
             localMessage.id,
             localMessage.idKey,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
-                localMessage.attachmentUrl,
-                localMessage.attachmentName,
+                localMessage.attachmentUrl!!,
+                localMessage.attachmentName!!,
                 size = localMessage.attachmentSize ?: 0,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
@@ -49,13 +67,13 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             getMessageTypeByValueType(localMessage.messageType),
             localMessage.isRead
         )
-        (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "IMAGE") -> ImageMessageItem(
+        (localMessage.message == null || localMessage.message.isEmpty()) && isImage -> ImageMessageItem(
             localMessage.id,
             localMessage.idKey,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
-                localMessage.attachmentUrl,
-                localMessage.attachmentName,
+                localMessage.attachmentUrl!!,
+                localMessage.attachmentName!!,
                 size = localMessage.attachmentSize ?: 0,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
@@ -67,12 +85,12 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             getMessageTypeByValueType(localMessage.messageType),
             localMessage.isRead
         )
-        (localMessage.message == null || localMessage.message.isEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && (localMessage.attachmentType == "FILE") -> FileMessageItem(
+        (localMessage.message == null || localMessage.message.isEmpty()) && isFile -> FileMessageItem(
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
-                localMessage.attachmentUrl,
-                localMessage.attachmentName,
+                localMessage.attachmentUrl!!,
+                localMessage.attachmentName!!,
                 size = localMessage.attachmentSize ?: 0
             ),
             localMessage.timestamp,
@@ -81,7 +99,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             getMessageTypeByValueType(localMessage.messageType),
             localMessage.isRead
         )
-        (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl != null && localMessage.attachmentName != null) && ((localMessage.attachmentType == "FILE") || (localMessage.attachmentType == "IMAGE")) -> UnionMessageItem(
+        (localMessage.message != null && localMessage.message.isNotEmpty()) && (!localMessage.attachmentUrl.isNullOrEmpty() && !localMessage.attachmentName.isNullOrEmpty() && !localMessage.attachmentType.isNullOrEmpty()) -> UnionMessageItem(
             localMessage.id,
             localMessage.idKey,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
@@ -94,11 +112,11 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
                 size = localMessage.attachmentSize ?: 0,
-                failLoading = (localMessage.attachmentType == "IMAGE") && (localMessage.height == null || localMessage.width == null),
+                failLoading = (isImage || isGif) && (localMessage.height == null || localMessage.width == null),
                 type = when {
-                    localMessage.attachmentType == "FILE" -> TypeFile.FILE
-                    (localMessage.attachmentType == "IMAGE") && (localMessage.attachmentName.contains(".GIF", true)) -> TypeFile.GIF
-                    (localMessage.attachmentType == "IMAGE") && !(localMessage.attachmentName.contains(".GIF", true)) -> TypeFile.IMAGE
+                    isFile -> TypeFile.FILE
+                    isGif -> TypeFile.GIF
+                    isImage -> TypeFile.IMAGE
                     else -> null
                 }
             ),
