@@ -6,11 +6,10 @@ import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFileContract
 import com.crafttalk.chat.presentation.helper.permission.checkPermission
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatParams
@@ -21,13 +20,13 @@ import java.util.*
 class FileViewerHelper {
 
     fun pickFiles(
+        pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>?,
         pickSettings: Pair<TypeFile, TypeMultiple>,
-        resultHandler: (List<Uri>) -> Unit,
         noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit,
         fragment: Fragment
     ) {
         fun pickFile() {
-            pickFilesFromGallery(pickSettings, fragment, resultHandler)
+            pickFile?.launch(pickSettings)
         }
         val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         checkPermission(
@@ -38,7 +37,7 @@ class FileViewerHelper {
     }
 
     fun pickImageFromCamera(
-        resultHandler: (Uri) -> Unit,
+        takePicture: ActivityResultLauncher<Uri>?,
         noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit,
         fragment: Fragment
     ) {
@@ -49,9 +48,7 @@ class FileViewerHelper {
                 ChatParams.fileProviderAuthorities!!,
                 createImageFile(fragment.requireContext(), IMAGE_JPG_FORMAT)
             )
-            fragment.registerForActivityResult(ActivityResultContracts.TakePicture()) {
-                resultHandler(fileUri)
-            }.launch(fileUri)
+            takePicture?.launch(fileUri)
         }
         val permissions = arrayOf(Manifest.permission.CAMERA)
         checkPermission(
@@ -59,30 +56,6 @@ class FileViewerHelper {
             fragment.requireContext(),
             { noPermission(permissions) { pickImage() } }
         ) { pickImage() }
-    }
-
-    private fun pickFilesFromGallery(
-        pickSettings: Pair<TypeFile, TypeMultiple>,
-        fragment: Fragment,
-        resultHandler: (List<Uri>) -> Unit
-    ) {
-        val getContent = fragment.registerForActivityResult(
-            PickFileContract()
-        ) {
-            if (it.size > PHOTOS_LIMIT) {
-                resultHandler(it.slice(0 until PHOTOS_LIMIT))
-                showPhotoLimitExceededMessage(fragment)
-            } else resultHandler(it)
-        }
-        getContent.launch(pickSettings)
-    }
-
-    private fun showPhotoLimitExceededMessage(fragment: Fragment) {
-        Toast.makeText(
-            fragment.requireContext(),
-            PHOTO_LIMIT_EXCEEDED,
-            Toast.LENGTH_SHORT
-        ).show()
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -93,7 +66,15 @@ class FileViewerHelper {
 
     companion object {
         private const val PHOTO_LIMIT_EXCEEDED = 1
-        private const val PHOTOS_LIMIT = 5
+        const val PHOTOS_LIMIT = 5
         private const val IMAGE_JPG_FORMAT = ".jpg"
+
+        fun showPhotoLimitExceededMessage(fragment: Fragment) {
+            Toast.makeText(
+                fragment.requireContext(),
+                PHOTO_LIMIT_EXCEEDED,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }

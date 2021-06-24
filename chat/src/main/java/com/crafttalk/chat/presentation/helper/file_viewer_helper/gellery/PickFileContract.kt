@@ -24,7 +24,6 @@ class PickFileContract : ActivityResultContract<Pair<TypeFile, TypeMultiple>, Li
             type = input.first.value
         }
 
-
     override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> {
         val imagesUriList = mutableListOf<Uri>()
         if (resultCode == Activity.RESULT_OK) {

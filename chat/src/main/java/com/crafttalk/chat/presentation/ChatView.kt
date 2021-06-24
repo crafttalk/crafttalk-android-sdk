@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,7 +21,8 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.activity.result.ActivityResultLauncher
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -41,6 +43,8 @@ import com.crafttalk.chat.presentation.feature.file_viewer.Option
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
+import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFileContract
+import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.TakePicture
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.presentation.model.TypeMultiple
@@ -114,7 +118,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         }
     }
-
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id: Long? = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -123,6 +126,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         }
     }
+    private var takePicture: ActivityResultLauncher<Uri>? = null
+    private var pickImage: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
+    private var pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
 
     fun setOnPermissionListener(listener: ChatPermissionListener) {
         this.permissionListener = listener
@@ -286,6 +292,23 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             .build()
             .inject(this)
         this.parentFragment = fragment
+
+        takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
+            uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
+        }
+        pickImage = fragment.registerForActivityResult(PickFileContract()) { listUri ->
+            if (listUri.size > FileViewerHelper.PHOTOS_LIMIT) {
+                viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.IMAGE) })
+                FileViewerHelper.showPhotoLimitExceededMessage(fragment)
+            } else viewModel.sendFiles(listUri.map { File(it, TypeFile.IMAGE) })
+        }
+        pickFile = fragment.registerForActivityResult(PickFileContract()) { listUri ->
+            if (listUri.size > FileViewerHelper.PHOTOS_LIMIT) {
+                viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.FILE) })
+                FileViewerHelper.showPhotoLimitExceededMessage(fragment)
+            } else viewModel.sendFiles(listUri.map { File(it, TypeFile.FILE) })
+        }
+
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         setAllListeners()
         setListMessages()
@@ -576,8 +599,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         when (option.id) {
             R.id.document -> {
                 fileViewerHelper.pickFiles(
+                    pickFile,
                     Pair(TypeFile.FILE, TypeMultiple.SINGLE),
-                    { viewModel.sendFiles(it.map { File(it, TypeFile.FILE) }) },
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
@@ -590,8 +613,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.image -> {
                 fileViewerHelper.pickFiles(
+                    pickFile,
                     Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
-                    { viewModel.sendFiles(it.map { File(it, TypeFile.IMAGE) }) },
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
@@ -604,7 +627,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.camera -> {
                 fileViewerHelper.pickImageFromCamera(
-                    { uri -> viewModel.sendFile(File(uri, TypeFile.IMAGE)) },
+                    takePicture,
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
