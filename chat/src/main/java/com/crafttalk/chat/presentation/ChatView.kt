@@ -177,7 +177,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
-        AppCompatResources.getDrawable(context, R.drawable.com_crafttalk_chat_background_count_unread_message)?.let { unwrappedDrawable ->
+        ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_background_count_unread_message)?.let { unwrappedDrawable ->
             val wrappedDrawable: Drawable = DrawableCompat.wrap(unwrappedDrawable)
             DrawableCompat.setTint(wrappedDrawable, chatAttr.colorMain)
             count_unread_message.background = wrappedDrawable
@@ -202,6 +202,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             warning_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
             upload_history_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
         }
+        send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
     }
 
     private fun setAllListeners() {
@@ -218,11 +219,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         entry_field.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if ((s ?: "").isEmpty()) {
-                    send_message.setImageResource(R.drawable.com_crafttalk_chat_ic_attach_file)
-                    send_message.rotation = 45f
+                    send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
                 } else {
-                    send_message.setImageResource(R.drawable.com_crafttalk_chat_ic_send)
-                    send_message.rotation = 0f
+                    send_message.setImageDrawable(ChatAttr.getInstance().drawableSendMessage)
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

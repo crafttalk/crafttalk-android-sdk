@@ -86,6 +86,8 @@ private constructor(
     val colorBordersOperatorAction = attrArr.getColor(R.styleable.ChatView_color_borders_operator_action, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_borders_server_action))
 
     val drawableProgressIndeterminate = attrArr.getDrawable(R.styleable.ChatView_drawable_progress_indeterminate)
+    val drawableAttachFile = attrArr.getDrawable(R.styleable.ChatView_drawable_attach_file) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_attach_file)
+    val drawableSendMessage = attrArr.getDrawable(R.styleable.ChatView_drawable_send_message) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_send)
     val drawableFileIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_file_icon)
 
     val sizeTextInternetConnectionWarning = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_warning, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_warning)).toFloat()

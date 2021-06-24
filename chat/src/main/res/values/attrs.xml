@@ -81,6 +81,8 @@
         <attr name="background_operator_file_message_download" format="reference"/>
 
         <attr name="drawable_progress_indeterminate" format="reference"/>
+        <attr name="drawable_attach_file" format="reference"/>
+        <attr name="drawable_send_message" format="reference"/>
         <attr name="drawable_file_icon" format="reference"/>
 
         <attr name="size_user_message" format="dimension"/>
