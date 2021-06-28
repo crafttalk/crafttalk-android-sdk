@@ -179,6 +179,11 @@ override fun onResume() {
 - fileProviderAuthorities - значение authorities для FileProvider
 - operator_preview_mode - может принимать CACHE_ONLY_LINK (по умолчанию) или ALWAYS_REQUEST. Этот атрибут определяет режим сохранения иконки оператора. 
 - clickable_link_mode - может принимать ALL (по умолчанию) или SECURE. Этот атрибут определяет, какие из ссылок будут кликабельными, а какие нет.
+- phone_patterns - определяет шаблоны, по которым определяются телефонные номера
+- fileConnectTimeout - устанавливает connectTimeout для отправки файлов (измеряется в секундах)
+- fileReadTimeout - устанавливает readTimeout для отправки файлов (измеряется в секундах)
+- fileWriteTimeout - устанавливает writeTimeout для отправки файлов (измеряется в секундах)
+- fileCallTimeout - устанавливает callTimeout для отправки файлов (измеряется в секундах)
 
 
 Атрибуты, настраивающие внешний вид:
@@ -225,6 +230,7 @@ override fun onResume() {
 - color_text_warning - устанавливает цвет текста, сообщающего о состоянии соединения
 - color_company - устанавливает цвет текста названия компании (имеет смысл, есть атрибут show_company_name выставлен в true)
 - color_text_date_grouping - устанавливает цвет текста даты, группирующей сообщения
+- color_text_phone - устанавливает цвет текста телефона в сообщении
 
 Ссылки на ресурсы:
 - resource_bg_user_message - устанавливает background для сообщений пользователя
@@ -232,6 +238,8 @@ override fun onResume() {
 
 Drawable:
 - drawable_progress_indeterminate - устанавливает цвет всех тробберов в чате
+- drawable_attach_file - устанавливает иконку элемента, предназначенного для прикрепления файлов
+- drawable_send_message - устанавливает иконку элемента, предназначенного для отправки сообщений
 - drawable_file_icon - устанавливает иконку в сообщеии, содержащем файлы
         
 Размеры текста:
