@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@id/upper_limiter"
-    android:layout_centerHorizontal="true">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_with_message"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_above="@id/lower_limit"
-        android:paddingTop="60dp"
-        android:clipToPadding="false"
-        app:stackFromEnd="false"
-        app:reverseLayout="true" />
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/upload_history_btn"
@@ -29,10 +14,13 @@
         android:textColor="@color/com_crafttalk_chat_white"
         android:background="@drawable/com_crafttalk_chat_background_upload_history"
         android:visibility="gone"
-        android:layout_centerHorizontal="true"
         android:paddingVertical="8dp"
         android:paddingHorizontal="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/upload_history_loading"
@@ -40,20 +28,40 @@
         android:layout_height="wrap_content"
         android:indeterminateDrawable="@drawable/com_crafttalk_chat_spinner_ring"
         android:indeterminateOnly="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_with_message"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:paddingTop="60dp"
+        android:clipToPadding="false"
+        app:stackFromEnd="false"
+        app:reverseLayout="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
+        tools:itemCount="1" />
 
     <ImageView
         android:id="@+id/scroll_to_down"
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:src="@drawable/com_crafttalk_chat_ic_scroll_down"
-        android:layout_alignEnd="@id/list_with_message"
-        android:layout_alignBottom="@id/lower_limit"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="52dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/list_with_message"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/count_unread_message"
@@ -62,102 +70,80 @@
         android:background="@drawable/com_crafttalk_chat_background_count_unread_message"
         android:textColor="#fff"
         android:gravity="center"
-        android:layout_alignBottom="@id/scroll_to_down"
-        android:layout_alignEnd="@id/scroll_to_down"
         android:visibility="gone"
-        tools:text="1+" />
+        app:layout_constraintBottom_toBottomOf="@id/scroll_to_down"
+        app:layout_constraintEnd_toEndOf="@id/scroll_to_down"
+        tools:text="1+"
+        tools:visibility="visible" />
 
-    <RelativeLayout
-        android:id="@+id/info_layout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/state_action_operator"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_above="@id/lower_limit"
-        android:background="#fff">
+        android:text="@string/com_crafttalk_chat_state_action_operator"
+        android:background="@color/com_crafttalk_chat_white_transparent_75"
+        android:gravity="start"
+        android:paddingStart="8dp"
+        android:paddingBottom="8dp"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
+        android:textFontWeight="700"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        tools:visibility="gone" />
 
-        <TextView
-            android:id="@+id/state_action_operator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/com_crafttalk_chat_state_action_operator"
-            android:paddingStart="8dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
-            android:textFontWeight="700"
-            android:layout_alignParentStart="true"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/company_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/com_crafttalk_chat_name_company"
-            android:gravity="right"
-            android:paddingEnd="8dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
-            android:textFontWeight="700"
-            android:layout_alignParentEnd="true"
-            android:visibility="gone" />
-
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/company_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/com_crafttalk_chat_name_company"
+        android:background="@color/com_crafttalk_chat_white_transparent_75"
+        android:gravity="right"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
+        android:textFontWeight="700"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        tools:visibility="gone" />
 
     <View
         android:id="@+id/lower_limit"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_above="@id/entry_place" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/entry_field"
+        tools:background="@color/com_crafttalk_chat_default_color_main" />
 
-    <RelativeLayout
-        android:id="@+id/entry_place"
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/entry_field"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:minHeight="48dp"
+        android:maxHeight="@dimen/com_crafttalk_chat_max_height_entry_field_message"
+        android:hint="@string/com_crafttalk_chat_entry_field_hint"
+        android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+        android:background="@null"
+        android:gravity="top"
+        android:paddingStart="15dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/send_message"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="" />
 
-        <EditText
-            android:id="@+id/entry_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/com_crafttalk_chat_entry_field_hint"
-            android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
-            android:maxHeight="@dimen/com_crafttalk_chat_max_height_entry_field_message"
-            android:minHeight="38dp"
-            android:layout_toStartOf="@id/send_message"
-            android:paddingStart="15dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="2dp"
-            android:background="@null" />
+    <ImageView
+        android:id="@+id/send_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/com_crafttalk_chat_ic_attach_file" />
 
-        <ImageView
-            android:id="@+id/send_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/com_crafttalk_chat_ic_attach_file"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="12dp"
-            android:rotation="45" />
-
-<!--        <ImageView-->
-<!--            android:id="@+id/like"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:src="@drawable/ic_like"-->
-<!--            android:padding="4dp"-->
-<!--            android:layout_toStartOf="@id/attach_file"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/attach_file"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:src="@drawable/ic_attach_file"-->
-<!--            android:padding="4dp"-->
-<!--            android:rotation="45"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            />-->
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

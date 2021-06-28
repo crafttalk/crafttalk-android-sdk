@@ -20,6 +20,7 @@
     <color name="com_crafttalk_chat_default_color_info">#AEB0B0</color>
 
     <color name="com_crafttalk_chat_white">#fff</color>
+    <color name="com_crafttalk_chat_white_transparent_75">#C0ffffff</color>
     <color name="com_crafttalk_chat_gray">#ddd</color>
     <color name="com_crafttalk_chat_gray_f5f5f5">#f5f5f5</color>
     <color name="com_crafttalk_chat_gray_8d8d8d">#8d8d8d</color>
