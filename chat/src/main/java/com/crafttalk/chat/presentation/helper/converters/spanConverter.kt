@@ -18,8 +18,9 @@ fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Conte
     val result = SpannableString(this)
     spanStructureList.forEach {
         when (it) {
-            is StrongTag -> result.setSpan(StyleSpan(Typeface.BOLD), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            is ItalicTag -> result.setSpan(StyleSpan(Typeface.ITALIC), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            is StrikeTag -> result.setSpan(StrikethroughSpan(), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            is StrongTag, is BTag -> result.setSpan(StyleSpan(Typeface.BOLD), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            is ItalicTag, is EmTag -> result.setSpan(StyleSpan(Typeface.ITALIC), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             is UrlTag -> {
                 result.setSpan(URLSpan(it.url), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 result.setSpan(ForegroundColorSpan(ChatAttr.getInstance().colorTextLink), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

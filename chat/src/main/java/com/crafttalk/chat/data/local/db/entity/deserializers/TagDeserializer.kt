@@ -14,8 +14,11 @@ class TagDeserializer(val gson: Gson): JsonDeserializer<List<Tag>> {
             val pointStart: Int = jsonObject.get("pointStart").asInt
             val pointEnd: Int = jsonObject.get("pointEnd").asInt
             when (name) {
+                "strike" -> result.add(StrikeTag(pointStart, pointEnd))
                 "strong" -> result.add(StrongTag(pointStart, pointEnd))
+                "b" -> result.add(BTag(pointStart, pointEnd))
                 "i" -> result.add(ItalicTag(pointStart, pointEnd))
+                "em" -> result.add(EmTag(pointStart, pointEnd))
                 "a" -> result.add(UrlTag(pointStart, pointEnd, jsonObject.get("url").asString))
                 "img" -> result.add(ImageTag(pointStart, pointEnd, jsonObject.get("url").asString, jsonObject.get("width").asInt, jsonObject.get("height").asInt))
                 "li" -> result.add(ItemListTag(pointStart, pointEnd, jsonObject.get("countNesting").asInt))

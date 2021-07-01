@@ -7,14 +7,26 @@ sealed class Tag(
     @Transient
     open var pointEnd: Int
 )
+data class StrikeTag(
+    override val pointStart: Int,
+    override var pointEnd: Int
+): Tag("strike", pointStart, pointEnd)
 data class StrongTag(
     override val pointStart: Int,
     override var pointEnd: Int
 ): Tag("strong", pointStart, pointEnd)
+data class BTag(
+    override val pointStart: Int,
+    override var pointEnd: Int
+): Tag("b", pointStart, pointEnd)
 data class ItalicTag(
     override val pointStart: Int,
     override var pointEnd: Int
 ): Tag("i", pointStart, pointEnd)
+data class EmTag(
+    override val pointStart: Int,
+    override var pointEnd: Int
+): Tag("em", pointStart, pointEnd)
 data class UrlTag(
     override val pointStart: Int,
     override var pointEnd: Int,

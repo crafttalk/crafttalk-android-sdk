@@ -123,31 +123,12 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
 
     fun addTag(tagName: String, listAttrs: List<AttrTag>, startIndex: Int, endIndex: Int) {
         when (tagName) {
-            "strong" -> {
-                listTag.add(
-                    StrongTag(
-                        startIndex + 1,
-                        endIndex
-                    )
-                )
-            }
-            "i" -> {
-                listTag.add(
-                    ItalicTag(
-                        startIndex + 1,
-                        endIndex
-                    )
-                )
-            }
-            "a" -> {
-                listTag.add(
-                    UrlTag(
-                        startIndex + 1,
-                        endIndex,
-                        listAttrs.find { it.attrName == "href" }?.value ?: ""
-                    )
-                )
-            }
+            "strike" -> listTag.add(StrikeTag(startIndex + 1, endIndex))
+            "strong" -> listTag.add(StrongTag(startIndex + 1, endIndex))
+            "b" -> listTag.add(BTag(startIndex + 1, endIndex))
+            "i" -> listTag.add(ItalicTag(startIndex + 1, endIndex))
+            "em" -> listTag.add(EmTag(startIndex + 1, endIndex))
+            "a" -> listTag.add(UrlTag(startIndex + 1, endIndex, listAttrs.find { it.attrName == "href" }?.value ?: ""))
             "img" -> {
                 listTag.add(
                     ImageTag(
@@ -222,17 +203,13 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
             ' ' -> {
                 if (isSelectTag) {
                     if ((isSingleTag || !isCloseTag) && !isReplaceTag) {
-                        when (tagName.toString()) {
-                            "a", "img" -> {
-                                try {
-                                    getAttrTag(index, isSingleTag)?.let {
-                                        isFillAttrTag = true
-                                        listAttrsTag.add(it)
-                                    }
-                                } catch (ex: StringIndexOutOfBoundsException) {
-                                    Log.e("FAIL_PARSE", "getAttrTag fail - ${ex.message}")
-                                }
+                        try {
+                            getAttrTag(index, isSingleTag)?.let {
+                                isFillAttrTag = true
+                                listAttrsTag.add(it)
                             }
+                        } catch (ex: StringIndexOutOfBoundsException) {
+                            Log.e("FAIL_PARSE", "getAttrTag fail - ${ex.message}")
                         }
                     }
                 } else {
