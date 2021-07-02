@@ -22,7 +22,12 @@ private constructor(
 ) {
 
     init {
-        attrArr.getInt(R.styleable.ChatView_auth, -1).let { if (it != -1) ChatParams.authType = AuthType.values()[it] }
+        if (ChatParams.authMode == null) {
+            ChatParams.authMode = attrArr.getInt(R.styleable.ChatView_auth, 0).let { AuthType.values()[it] }
+        }
+        if (ChatParams.initialMessageMode == null) {
+            ChatParams.initialMessageMode = attrArr.getInt(R.styleable.ChatView_initial_message_mode, 0).let { InitialMessageMode.values()[it] }
+        }
         attrArr.getInt(R.styleable.ChatView_timeDelayed, 0).let { ChatParams.timeDelayed = it.toLong() }
         attrArr.getString(R.styleable.ChatView_urlSocketNameSpace)?.let { ChatParams.urlSocketNameSpace = it }
         attrArr.getString(R.styleable.ChatView_urlSocketHost)?.let { ChatParams.urlSocketHost = it }
@@ -45,6 +50,7 @@ private constructor(
     } ?: Locale(context.getString(R.string.com_crafttalk_chat_default_language), context.getString(R.string.com_crafttalk_chat_default_country))
 
     val operatorPreviewMode = attrArr.getInt(R.styleable.ChatView_operator_preview_mode, 0).let { OperatorPreviewMode.values()[it] }
+    val operatorNameMode = attrArr.getInt(R.styleable.ChatView_operator_name_mode, 0).let { OperatorPreviewMode.values()[it] }
     val clickableLinkMode = attrArr.getInt(R.styleable.ChatView_clickable_link_mode, 0).let { ClickableLinkMode.values()[it] }
     val phonePatterns = attrArr.getTextArray(R.styleable.ChatView_phone_patterns) ?: context.resources.getTextArray(R.array.com_crafttalk_chat_phone_patterns)
 

@@ -22,7 +22,7 @@ class PersonRepository
     override fun getPersonPreview(personId: String, visitorToken: String): String? {
         try {
             when (ChatAttr.getInstance().operatorPreviewMode) {
-                OperatorPreviewMode.CACHE_ONLY_LINK -> {
+                OperatorPreviewMode.CACHE -> {
                     return personDao.getPersonPreview(personId)
                         ?: personApi.getPersonPreview(
                             personId = personId,

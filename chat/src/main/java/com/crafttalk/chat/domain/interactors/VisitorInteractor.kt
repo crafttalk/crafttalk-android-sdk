@@ -11,7 +11,7 @@ class VisitorInteractor
     private val visitorRepository: IVisitorRepository
 ) {
     fun getVisitor() : Visitor? {
-        return when (ChatParams.authType) {
+        return when (ChatParams.authMode) {
             AuthType.AUTH_WITH_FORM -> {
                 visitorRepository.getVisitorFromSharedPreferences()
             }

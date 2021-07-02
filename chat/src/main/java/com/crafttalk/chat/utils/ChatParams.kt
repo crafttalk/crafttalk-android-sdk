@@ -3,7 +3,8 @@ package com.crafttalk.chat.utils
 import java.util.concurrent.TimeUnit
 
 object ChatParams {
-    internal var authType: AuthType? = null
+    internal var authMode: AuthType? = null
+    internal var initialMessageMode: InitialMessageMode? = null
     internal var timeDelayed: Long = 0L
     internal var urlSocketNameSpace: String? = null
     internal var urlSocketHost: String? = null

@@ -1,6 +1,6 @@
 package com.crafttalk.chat.utils
 
 enum class OperatorPreviewMode {
-    CACHE_ONLY_LINK,
+    CACHE,
     ALWAYS_REQUEST
 }

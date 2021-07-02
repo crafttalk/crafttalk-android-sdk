@@ -7,6 +7,7 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.interactors.*
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams
+import com.crafttalk.chat.utils.InitialMessageMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,6 +47,7 @@ object Chat {
 
     private fun initParams(
         authType: AuthType,
+        initialMessageMode: InitialMessageMode,
         urlSocketHost: String,
         urlSocketNameSpace: String,
         urlSyncHistory: String,
@@ -54,7 +56,8 @@ object Chat {
         fileProviderAuthorities: String?,
         certificatePinning: String?
     ) {
-        ChatParams.authType = authType
+        ChatParams.authMode = authType
+        ChatParams.initialMessageMode = initialMessageMode
         ChatParams.urlSocketHost = urlSocketHost
         ChatParams.urlSocketNameSpace = urlSocketNameSpace
         ChatParams.urlSyncHistory = urlSyncHistory
@@ -73,9 +76,10 @@ object Chat {
         urlUploadHost: String? = null,
         urlUploadNameSpace: String? = null,
         fileProviderAuthorities: String? = null,
-        certificatePinning: String? = null
+        certificatePinning: String? = null,
+        initialMessageMode: InitialMessageMode = InitialMessageMode.SEND_ON_OPEN
     ) {
-        initParams(authType, urlSocketHost, urlSocketNameSpace, urlSyncHistory, urlUploadHost, urlUploadNameSpace, fileProviderAuthorities, certificatePinning)
+        initParams(authType, initialMessageMode, urlSocketHost, urlSocketNameSpace, urlSyncHistory, urlUploadHost, urlUploadNameSpace, fileProviderAuthorities, certificatePinning)
         initDI(context)
     }
 

@@ -18,7 +18,7 @@ class AuthInteractor
 ) {
 
     private fun dataPreparation(visitor: Visitor?): Visitor? {
-        when (ChatParams.authType) {
+        when (ChatParams.authMode) {
             AuthType.AUTH_WITH_FORM -> {
                 visitor?.let {  visitorInteractor.saveVisitor(it) }
             }
@@ -59,7 +59,7 @@ class AuthInteractor
             }
         }
 
-        when (ChatParams.authType) {
+        when (ChatParams.authMode) {
             AuthType.AUTH_WITH_FORM -> {
                 if (currentVisitor == null) {
                     firstLogInWithForm()
@@ -98,7 +98,7 @@ class AuthInteractor
         } catch (ex: Exception) {
             Log.e("FAIL logOut", "${ex.message}")
         }
-        when (ChatParams.authType) {
+        when (ChatParams.authMode) {
             AuthType.AUTH_WITH_FORM -> {
                 visitorInteractor.deleteVisitor()
             }

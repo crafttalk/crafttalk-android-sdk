@@ -15,13 +15,15 @@ import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
 import com.crafttalk.chat.utils.AuthType
-import com.crafttalk.chat.utils.ChatParams.authType
+import com.crafttalk.chat.utils.ChatParams.authMode
+import com.crafttalk.chat.utils.ChatParams.initialMessageMode
 import com.crafttalk.chat.utils.ChatParams.urlSocketHost
 import com.crafttalk.chat.utils.ChatParams.urlSocketNameSpace
 import com.crafttalk.chat.utils.ChatParams.urlSyncHistory
 import com.crafttalk.chat.utils.ChatStatus
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
+import com.crafttalk.chat.utils.InitialMessageMode
 import io.socket.client.Manager
 import io.socket.client.Socket
 import com.google.gson.Gson
@@ -291,21 +293,12 @@ class SocketApi constructor(
 
     private fun greet() {
         isMessageSent = true
-        socket!!.emit("visitor-message", "/start", 1, null, 0, null, null, null)
+        socket!!.emit("visitor-message", "/start", MessageType.VISITOR_MESSAGE.valueType, null, 0, null, null, null)
     }
 
     fun sendMessage(message: String) {
         if (isOnline) {
-            socket!!.emit(
-                "visitor-message",
-                message,
-                MessageType.VISITOR_MESSAGE.valueType,
-                null,
-                0,
-                null,
-                null,
-                null
-            )
+            socket!!.emit("visitor-message", message, MessageType.VISITOR_MESSAGE.valueType, null, 0, null, null, null)
         }
     }
 
