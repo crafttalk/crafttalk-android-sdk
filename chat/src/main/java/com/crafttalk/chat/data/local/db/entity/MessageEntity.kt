@@ -95,7 +95,7 @@ data class MessageEntity(
 
             return MessageEntity(
                 uuid = uuid,
-                id = messageSocket.id,
+                id = messageSocket.id!!,
                 messageType = messageSocket.messageType,
                 isReply = messageSocket.isReply,
                 parentMsgId = messageSocket.parentMessageId,

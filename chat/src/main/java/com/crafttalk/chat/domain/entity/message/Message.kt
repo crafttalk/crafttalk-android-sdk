@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class Message (
-    val id: String,
+    var id: String?,
     @SerializedName (value = "message_type")
     val messageType: Int,
     val isReply : Boolean,

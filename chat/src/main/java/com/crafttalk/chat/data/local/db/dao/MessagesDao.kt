@@ -8,6 +8,9 @@ import com.crafttalk.chat.data.local.db.entity.MessageEntity
 @Dao
 interface MessagesDao {
 
+    @Query("SELECT EXISTS (SELECT * FROM messages WHERE uuid = :uuid LIMIT 1)")
+    fun isNotEmpty(uuid: String): Boolean
+
     @Query("SELECT * FROM messages WHERE uuid = :uuid ORDER BY timestamp DESC")
     fun getMessages(uuid: String): DataSource.Factory<Int, MessageEntity>
 

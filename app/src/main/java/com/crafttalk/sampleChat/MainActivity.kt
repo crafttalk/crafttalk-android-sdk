@@ -8,39 +8,39 @@ import androidx.fragment.app.Fragment
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.utils.AuthType
+import com.crafttalk.chat.utils.InitialMessageMode
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity: AppCompatActivity() {
 
-    private val mOnNavigationItemSelectedListener = object:
-        BottomNavigationView.OnNavigationItemSelectedListener {
-            override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                val fragmentNow = supportFragmentManager.findFragmentById(R.id.fl_content)
+    private val mOnNavigationItemSelectedListener = object: BottomNavigationView.OnNavigationItemSelectedListener {
+        override fun onNavigationItemSelected(item: MenuItem): Boolean {
+            val fragmentNow = supportFragmentManager.findFragmentById(R.id.fl_content)
 
-                when (item.itemId) {
-                    R.id.navigation_home -> {
-                        if (fragmentNow !is HomeFragment) {
-                            loadFragment(HomeFragment())
-                        }
-                        return true
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    if (fragmentNow !is HomeFragment) {
+                        loadFragment(HomeFragment())
                     }
-                    R.id.navigation_chat -> {
-                        if (fragmentNow !is ChatFragment) {
-                            loadFragment(ChatFragment())
-                        }
-                        return true
-                    }
-                    R.id.navigation_settings -> {
-                        if (fragmentNow !is SettingsFragment) {
-                            loadFragment(SettingsFragment())
-                        }
-                        return true
-                    }
+                    return true
                 }
-                return false
+                R.id.navigation_chat -> {
+                    if (fragmentNow !is ChatFragment) {
+                        loadFragment(ChatFragment())
+                    }
+                    return true
+                }
+                R.id.navigation_settings -> {
+                    if (fragmentNow !is SettingsFragment) {
+                        loadFragment(SettingsFragment())
+                    }
+                    return true
+                }
             }
+            return false
         }
+    }
 
     private fun loadFragment(fragment: Fragment) {
         val ft = supportFragmentManager.beginTransaction()
@@ -61,14 +61,15 @@ class MainActivity: AppCompatActivity() {
             AuthType.AUTH_WITHOUT_FORM,
             getString(R.string.urlSocketHost),
             getString(R.string.urlSocketNameSpace),
-            getString(R.string.urlSyncHistory)
+            getString(R.string.urlSyncHistory),
+            initialMessageMode = InitialMessageMode.SEND_ON_OPEN
         )
+        Chat.createSession()
         Chat.setOnChatMessageListener(object : ChatMessageListener {
             override fun getNewMessages(countMessages: Int) {
                 Log.d("TEST_GET_MSG", "get new messages count - ${countMessages};")
             }
         })
-
     }
 
     override fun onResume() {
@@ -78,7 +79,12 @@ class MainActivity: AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        Chat.destroy()
+        Chat.drop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Chat.destroySession()
     }
 
 }

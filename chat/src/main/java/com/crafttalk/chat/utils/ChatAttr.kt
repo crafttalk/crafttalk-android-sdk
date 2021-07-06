@@ -25,9 +25,6 @@ private constructor(
         if (ChatParams.authMode == null) {
             ChatParams.authMode = attrArr.getInt(R.styleable.ChatView_auth, 0).let { AuthType.values()[it] }
         }
-        if (ChatParams.initialMessageMode == null) {
-            ChatParams.initialMessageMode = attrArr.getInt(R.styleable.ChatView_initial_message_mode, 0).let { InitialMessageMode.values()[it] }
-        }
         attrArr.getInt(R.styleable.ChatView_timeDelayed, 0).let { ChatParams.timeDelayed = it.toLong() }
         attrArr.getString(R.styleable.ChatView_urlSocketNameSpace)?.let { ChatParams.urlSocketNameSpace = it }
         attrArr.getString(R.styleable.ChatView_urlSocketHost)?.let { ChatParams.urlSocketHost = it }

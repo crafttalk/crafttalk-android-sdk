@@ -29,8 +29,16 @@ class ChatBehaviorRepository
 
     override fun getStatusChat(): ChatStatus = socketApi.chatStatus
 
-    override fun destroyChatSession() {
-        socketApi.destroy()
+    override fun createSessionChat() {
+        socketApi.initSocket()
+    }
+
+    override fun destroySessionChat() {
+        socketApi.destroySocket()
+    }
+
+    override fun dropChat() {
+        socketApi.dropChat()
     }
 
     override fun giveFeedbackOnOperator(countStars: Int) {

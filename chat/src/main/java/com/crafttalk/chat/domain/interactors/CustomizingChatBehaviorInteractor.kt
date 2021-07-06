@@ -45,8 +45,16 @@ class CustomizingChatBehaviorInteractor
         )
     }
 
-    fun destroyHostChat() {
-        chatBehaviorRepository.destroyChatSession()
+    fun createSessionChat() {
+        chatBehaviorRepository.createSessionChat()
+    }
+
+    fun destroySessionChat() {
+        chatBehaviorRepository.destroySessionChat()
+    }
+
+    fun dropChat() {
+        chatBehaviorRepository.dropChat()
     }
 
     fun giveFeedbackOnOperator(countStars: Int) {

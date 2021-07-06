@@ -83,6 +83,14 @@ object Chat {
         initDI(context)
     }
 
+    fun createSession() {
+        customizingChatBehaviorInteractor?.createSessionChat()
+    }
+
+    fun destroySession() {
+        customizingChatBehaviorInteractor?.destroySessionChat()
+    }
+
     fun wakeUp(visitor: Visitor?) {
         customizingChatBehaviorInteractor?.openApp()
         authInteractor?.logIn(
@@ -90,9 +98,9 @@ object Chat {
         )
     }
 
-    fun destroy() {
+    fun drop() {
         customizingChatBehaviorInteractor?.closeApp()
-        customizingChatBehaviorInteractor?.destroyHostChat()
+        customizingChatBehaviorInteractor?.dropChat()
     }
 
     fun logOut(context: Context) {
