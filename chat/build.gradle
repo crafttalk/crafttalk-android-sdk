@@ -99,7 +99,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingServiceVersion"
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalyticsVersion"
     // Pagination
-    implementation "android.arch.paging:runtime:$paginationVersion"
+    implementation "androidx.paging:paging-runtime:$paginationVersion"
     // Zooming photo
     implementation "com.github.chrisbanes:PhotoView:$photoViewVersion"
     // EncryptedSharedPreferences
