@@ -27,10 +27,7 @@ import com.crafttalk.chat.utils.InitialMessageMode
 import io.socket.client.Manager
 import io.socket.client.Socket
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
@@ -157,9 +154,7 @@ class SocketApi constructor(
                 greet()
             }
             if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                viewModelScope.launch {
-                    uploadNewMessages()
-                }
+                uploadNewMessages()
             }
         }
 
@@ -276,9 +271,7 @@ class SocketApi constructor(
                 greet()
             }
             if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                viewModelScope.launch {
-                    uploadNewMessages()
-                }
+                uploadNewMessages()
             }
         } else {
             try {
@@ -332,26 +325,22 @@ class SocketApi constructor(
 
     private fun updateDataInDatabase(messageSocket: MessageSocket) {
         when {
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() && messageSocket.attachmentType == "IMAGE") -> {
-                messageSocket.attachmentUrl?.let {
-                    getSizeMediaFile(context, it) { height, width ->
-                        viewModelScope.launch {
-                            dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
-                        }
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
+                messageSocket.attachmentUrl?.let { url ->
+                    getSizeMediaFile(context, url) { height, width ->
+                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
                     }
                 }
             }
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() && messageSocket.attachmentType == "FILE") -> {
-                messageSocket.attachmentUrl?.let {
-                    getWeightFile(it) { size ->
-                        viewModelScope.launch {
-                            dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, attachmentSize = size))
-                        }
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isFile -> {
+                messageSocket.attachmentUrl?.let { url ->
+                    getWeightFile(url) { size ->
+                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, attachmentSize = size))
                     }
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
+                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
@@ -359,7 +348,7 @@ class SocketApi constructor(
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
-                dao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
+                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
             }
         }
     }
@@ -374,10 +363,7 @@ class SocketApi constructor(
                 MessageType.VISITOR_MESSAGE.valueType -> {
                     if (messageFromHistory.isReply) {
                         // operator
-                        val messagesFromDb = dao.getMessageById(visitor.uuid, messageFromHistory.id!!)
-                        if (messagesFromDb == null) {
-                            updateDataInDatabase(messageFromHistory)
-                        }
+                        updateDataInDatabase(messageFromHistory)
                     }
                     else {
                         // user
@@ -408,13 +394,7 @@ class SocketApi constructor(
                         }
                     }
                 }
-                MessageType.TRANSFER_TO_OPERATOR.valueType -> {
-                    val messagesFromDb = dao.getMessageById(visitor.uuid, messageFromHistory.id!!)
-
-                    if (messagesFromDb == null) {
-                        updateDataInDatabase(messageFromHistory)
-                    }
-                }
+                MessageType.TRANSFER_TO_OPERATOR.valueType -> updateDataInDatabase(messageFromHistory)
                 MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
                     updateDataInDatabase(messageFromHistory)
                 }

@@ -17,12 +17,6 @@ interface MessagesDao {
     @Query("SELECT timestamp FROM messages WHERE uuid = :uuid ORDER BY idKey DESC LIMIT 1")
     fun getLastTime(uuid: String): Long
 
-    @Insert
-    fun insertMessage(message: MessageEntity)
-
-    @Insert
-    fun insertMessages(messageList: List<MessageEntity>)
-
     @Query("UPDATE messages SET message_type = :type WHERE uuid = :uuid AND id = :id")
     fun updateMessage(uuid: String, id: String, type: Int)
 
