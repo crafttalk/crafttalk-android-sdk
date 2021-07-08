@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
+import com.crafttalk.chat.data.local.db.dao.TransactionMessageDao
 import com.crafttalk.chat.data.local.db.database.ChatDatabase
 import dagger.Module
 import dagger.Provides
@@ -29,6 +30,12 @@ class DBModule {
     fun provideMessagesDao(
         chatDatabase: ChatDatabase
     ): MessagesDao = chatDatabase.messageDao()
+
+    @Provides
+    @Singleton
+    fun provideTransactionMessageDao(
+        chatDatabase: ChatDatabase
+    ): TransactionMessageDao = chatDatabase.transactionMessageDao()
 
     @Provides
     @Singleton

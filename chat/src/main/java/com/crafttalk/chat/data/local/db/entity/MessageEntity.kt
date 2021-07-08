@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
+import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
@@ -26,7 +27,7 @@ data class MessageEntity(
     @ColumnInfo(name = "attachment_url")
     val attachmentUrl: String?,
     @ColumnInfo(name = "attachment_type")
-    val attachmentType: String?,
+    val attachmentType: TypeFile?,
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String?,
     @ColumnInfo(name = "attachment_size")
@@ -104,7 +105,7 @@ data class MessageEntity(
                 spanStructureList = list,
                 actions = messageSocket.actions?.let { ActionEntity.map(it) },
                 attachmentUrl = messageSocket.attachmentUrl,
-                attachmentType = messageSocket.attachmentType,
+                attachmentType = messageSocket.attachmentTypeFile,
                 attachmentName = messageSocket.attachmentName,
                 attachmentSize = attachmentSize,
                 operatorId = messageSocket.operatorId,

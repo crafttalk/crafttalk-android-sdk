@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
+import com.crafttalk.chat.data.local.db.dao.TransactionMessageDao
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -34,7 +35,8 @@ import java.net.URISyntaxException
 import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
 
 class SocketApi constructor(
-    private val dao: MessagesDao,
+    private val messageDao: MessagesDao,
+    private val transactionMessageDao: TransactionMessageDao,
     private val gson: Gson,
     private val context: Context
 ) {
@@ -184,7 +186,7 @@ class SocketApi constructor(
                     }
                     MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
                 }
-                if (!messageJson.toString().contains(""""message":"\/start"""") && (messageSocket.id != null || !dao.isNotEmpty(visitor.uuid))) {
+                if (!messageJson.toString().contains(""""message":"\/start"""") && (messageSocket.id != null || !messageDao.isNotEmpty(visitor.uuid))) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
                             bufferMessages.add(messageSocket)
@@ -315,7 +317,7 @@ class SocketApi constructor(
 
     private fun uploadNewMessages() {
         viewModelScope.launch {
-            dao.getLastMessageTime(visitor.uuid)?.let { time ->
+            messageDao.getLastMessageTime(visitor.uuid)?.let { time ->
                 isUploadHistory = false
                 newMessagesStartTime = time
                 socket!!.emit("history-messages-requested", 0, visitor.token, urlSyncHistory)
@@ -344,7 +346,7 @@ class SocketApi constructor(
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
-                    dao.updateMessage(visitor.uuid, parentId, messageSocket.messageType)
+                    messageDao.updateMessage(visitor.uuid, parentId, messageSocket.messageType)
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
@@ -367,7 +369,7 @@ class SocketApi constructor(
                     }
                     else {
                         // user
-                        val messagesFromDb = dao.getMessageByContent(visitor.uuid, message, messageFromHistory.attachmentUrl)
+                        val messagesFromDb = messageDao.getMessageByContent(visitor.uuid, message, messageFromHistory.attachmentUrl)
                         val messageCheckObj = MessageEntity(
                             uuid = visitor.uuid,
                             id = messageFromHistory.id!!,
@@ -379,7 +381,7 @@ class SocketApi constructor(
                             spanStructureList = list,
                             actions = messageFromHistory.actions?.let { ActionEntity.map(it) },
                             attachmentUrl = messageFromHistory.attachmentUrl,
-                            attachmentType = messageFromHistory.attachmentType,
+                            attachmentType = messageFromHistory.attachmentTypeFile,
                             attachmentName = messageFromHistory.attachmentName,
                             attachmentSize = null,
                             operatorId = messageFromHistory.operatorId,

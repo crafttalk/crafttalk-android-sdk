@@ -5,6 +5,13 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'maven-publish'
 
+kapt {
+    javacOptions {
+        option("-source", "8")
+        option("-target", "8")
+    }
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"

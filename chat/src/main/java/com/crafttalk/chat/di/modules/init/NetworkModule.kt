@@ -6,6 +6,7 @@ import com.crafttalk.chat.data.api.rest.PersonApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.TLSSocketFactory.Companion.enableTls
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
+import com.crafttalk.chat.data.local.db.dao.TransactionMessageDao
 import com.crafttalk.chat.di.Notification
 import com.crafttalk.chat.utils.ChatParams.certificatePinning
 import com.crafttalk.chat.utils.ChatParams.urlSocketHost
@@ -56,8 +57,9 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSocketApi(messagesDao: MessagesDao, gson: Gson, context: Context) = SocketApi(
+    fun provideSocketApi(messagesDao: MessagesDao, transactionMessageDao: TransactionMessageDao, gson: Gson, context: Context) = SocketApi(
         messagesDao,
+        transactionMessageDao,
         gson,
         context
     )

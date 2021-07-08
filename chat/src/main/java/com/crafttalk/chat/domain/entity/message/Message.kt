@@ -1,5 +1,7 @@
 package com.crafttalk.chat.domain.entity.message
 
+import com.crafttalk.chat.domain.entity.file.TypeFile
+import com.crafttalk.chat.utils.ChatAttr
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -8,7 +10,7 @@ data class Message (
     @SerializedName (value = "message_type")
     val messageType: Int,
     val isReply : Boolean,
-    @SerializedName (value = "parent_message_id", alternate = arrayOf("parent_msg_id"))
+    @SerializedName (value = "parent_message_id", alternate = ["parent_msg_id"])
     val parentMessageId: String?,
     val timestamp: Long,
     var message: String?,
@@ -25,4 +27,31 @@ data class Message (
     val operatorName: String?,
     @SerializedName (value = "reply_to_message")
     val replyToMessage: Message?
-) : Serializable
+) : Serializable {
+
+    val isImage = !attachmentUrl.isNullOrEmpty() &&
+            !attachmentName.isNullOrEmpty() &&
+            !attachmentType.isNullOrEmpty() &&
+            (attachmentType == "IMAGE" || attachmentType.toLowerCase(
+                ChatAttr.getInstance().locale).startsWith("image"))
+
+    val isGif = !attachmentUrl.isNullOrEmpty() &&
+            !attachmentName.isNullOrEmpty() &&
+            !attachmentType.isNullOrEmpty() &&
+            (attachmentType == "IMAGE" || attachmentType.toLowerCase(
+                ChatAttr.getInstance().locale).startsWith("image")) &&
+            attachmentName.contains(".GIF", true)
+
+    val isFile = !attachmentUrl.isNullOrEmpty() &&
+            !attachmentName.isNullOrEmpty() &&
+            !attachmentType.isNullOrEmpty() &&
+            attachmentType == "FILE"
+
+    val attachmentTypeFile = when {
+        isFile -> TypeFile.FILE
+        isImage -> TypeFile.IMAGE
+        isGif -> TypeFile.GIF
+        else -> null
+    }
+
+}
