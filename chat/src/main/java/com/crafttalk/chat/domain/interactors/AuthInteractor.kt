@@ -51,11 +51,8 @@ class AuthInteractor
         }
 
         val getPersonPreview: (personId: String) -> String? =  { personId ->
-            if (personId.isEmpty()) null
-            else {
-                currentVisitor?.token?.let { token ->
-                    personInteractor.getPersonPreview(personId, token)
-                }
+            currentVisitor?.token?.let { token ->
+                personInteractor.getPersonPreview(personId, token)
             }
         }
 
@@ -71,6 +68,7 @@ class AuthInteractor
                         successAuthUxWrapper,
                         failAuthUxWrapper,
                         getPersonPreview,
+                        personInteractor::updatePersonName,
                         chatEventListener
                     )
                 }
@@ -83,6 +81,7 @@ class AuthInteractor
                     successAuthUxWrapper,
                     failAuthUxWrapper,
                     getPersonPreview,
+                    personInteractor::updatePersonName,
                     chatEventListener
                 )
             }

@@ -1,7 +1,7 @@
 package com.crafttalk.chat.domain.entity.message
 
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -33,13 +33,13 @@ data class Message (
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
             (attachmentType == "IMAGE" || attachmentType.toLowerCase(
-                ChatAttr.getInstance().locale).startsWith("image"))
+                ChatParams.locale!!).startsWith("image"))
 
     val isGif = !attachmentUrl.isNullOrEmpty() &&
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
             (attachmentType == "IMAGE" || attachmentType.toLowerCase(
-                ChatAttr.getInstance().locale).startsWith("image")) &&
+                ChatParams.locale!!).startsWith("image")) &&
             attachmentName.contains(".GIF", true)
 
     val isFile = !attachmentUrl.isNullOrEmpty() &&

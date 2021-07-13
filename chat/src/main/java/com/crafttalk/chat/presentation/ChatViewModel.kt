@@ -23,7 +23,7 @@ import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
 import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.model.MessageModel
-import com.crafttalk.chat.utils.ChatParams.timeDelayed
+import com.crafttalk.chat.utils.ChatAttr
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -103,7 +103,7 @@ class ChatViewModel
                 firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
                 chatEventListener = chatEventListener
             )
-        }, timeDelayed)
+        }, ChatAttr.getInstance().timeDelayed)
     }
 
     override fun onCleared() {
@@ -122,7 +122,7 @@ class ChatViewModel
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
             )
-        }, timeDelayed)
+        }, ChatAttr.getInstance().timeDelayed)
     }
 
     fun reload() {
@@ -135,7 +135,7 @@ class ChatViewModel
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
             )
-        }, timeDelayed)
+        }, ChatAttr.getInstance().timeDelayed)
     }
 
     fun uploadOldMessages() {

@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.initialization.ChatMessageListener
-import com.crafttalk.chat.utils.AuthType
-import com.crafttalk.chat.utils.InitialMessageMode
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -58,11 +56,12 @@ class MainActivity: AppCompatActivity() {
 
         Chat.init(
             this,
-            AuthType.AUTH_WITHOUT_FORM,
             getString(R.string.urlSocketHost),
             getString(R.string.urlSocketNameSpace),
             getString(R.string.urlSyncHistory),
-            initialMessageMode = InitialMessageMode.SEND_ON_OPEN
+            getString(R.string.urlUploadHost),
+            getString(R.string.urlUploadNameSpace),
+            fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
         )
         Chat.createSession()
         Chat.setOnChatMessageListener(object : ChatMessageListener {

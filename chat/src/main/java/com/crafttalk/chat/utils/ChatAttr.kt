@@ -10,10 +10,8 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.helper.extensions.getDimensionOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getFloatOrNull
-import com.crafttalk.chat.presentation.helper.extensions.getIntOrNull
 import com.crafttalk.chat.presentation.helper.extensions.getResourceIdOrNull
 import com.crafttalk.chat.presentation.helper.ui.getSizeScreenInPx
-import java.util.*
 
 class ChatAttr
 private constructor(
@@ -21,35 +19,10 @@ private constructor(
     context: Context
 ) {
 
-    init {
-        if (ChatParams.authMode == null) {
-            ChatParams.authMode = attrArr.getInt(R.styleable.ChatView_auth, 0).let { AuthType.values()[it] }
-        }
-        attrArr.getInt(R.styleable.ChatView_timeDelayed, 0).let { ChatParams.timeDelayed = it.toLong() }
-        attrArr.getString(R.styleable.ChatView_urlSocketNameSpace)?.let { ChatParams.urlSocketNameSpace = it }
-        attrArr.getString(R.styleable.ChatView_urlSocketHost)?.let { ChatParams.urlSocketHost = it }
-        attrArr.getString(R.styleable.ChatView_urlSyncHistory)?.let { ChatParams.urlSyncHistory = it }
-        attrArr.getString(R.styleable.ChatView_urlUploadNameSpace)?.let { ChatParams.urlUploadNameSpace = it }
-        attrArr.getString(R.styleable.ChatView_urlUploadHost)?.let { ChatParams.urlUploadHost = it }
-        attrArr.getString(R.styleable.ChatView_fileProviderAuthorities)?.let { ChatParams.fileProviderAuthorities = it }
-        attrArr.getIntOrNull(R.styleable.ChatView_fileConnectTimeout)?.let { ChatParams.fileConnectTimeout = it.toLong() }
-        attrArr.getIntOrNull(R.styleable.ChatView_fileReadTimeout)?.let { ChatParams.fileReadTimeout = it.toLong() }
-        attrArr.getIntOrNull(R.styleable.ChatView_fileWriteTimeout)?.let { ChatParams.fileWriteTimeout = it.toLong() }
-        attrArr.getIntOrNull(R.styleable.ChatView_fileCallTimeout)?.let { ChatParams.fileCallTimeout = it.toLong() }
-    }
-
     private val widthScreenInPx = getSizeScreenInPx(context).first.toFloat()
     private val heightScreenInPx = getSizeScreenInPx(context).second.toFloat()
 
-    val locale: Locale = attrArr.getString(R.styleable.ChatView_locale_language)?.let { language ->
-        val country = attrArr.getString(R.styleable.ChatView_locale_country) ?: ""
-        Locale(language, country)
-    } ?: Locale(context.getString(R.string.com_crafttalk_chat_default_language), context.getString(R.string.com_crafttalk_chat_default_country))
-
-    val operatorPreviewMode = attrArr.getInt(R.styleable.ChatView_operator_preview_mode, 0).let { OperatorPreviewMode.values()[it] }
-    val operatorNameMode = attrArr.getInt(R.styleable.ChatView_operator_name_mode, 0).let { OperatorPreviewMode.values()[it] }
-    val clickableLinkMode = attrArr.getInt(R.styleable.ChatView_clickable_link_mode, 0).let { ClickableLinkMode.values()[it] }
-    val phonePatterns = attrArr.getTextArray(R.styleable.ChatView_phone_patterns) ?: context.resources.getTextArray(R.array.com_crafttalk_chat_phone_patterns)
+    val timeDelayed = attrArr.getInt(R.styleable.ChatView_timeDelayed, 0).toLong()
 
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_main))
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_warning))

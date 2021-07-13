@@ -43,13 +43,7 @@
         app:drawable_progress_indeterminate="@drawable/spinner"
         app:show_internet_connection_state="false"
         app:show_upper_limiter="false"
-        app:auth="AUTH_WITHOUT_FORM"
         app:timeDelayed="1000"
-        app:layout_item_user_text_message="@layout/layout_item_user_text_message"
-        app:urlSocketHost="@string/urlSocketHost"
-        app:urlSocketNameSpace="@string/urlSocketNameSpace"
-        app:urlUploadHost="@string/urlUploadHost"
-        app:urlUploadNameSpace="@string/urlUploadNameSpace"
-        app:fileProviderAuthorities="@string/chat_file_provider_authorities" />
+        app:layout_item_user_text_message="@layout/layout_item_user_text_message" />
 
 </LinearLayout>

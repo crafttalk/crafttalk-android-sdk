@@ -10,6 +10,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.MediaFileDownloadMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -72,7 +73,7 @@ fun TextView.setDate(message: MessageModel) {
     if (message.isFirstMessageInDay) {
         // set content
         val formatYear = SimpleDateFormat("yyyy")
-        val formatTime = SimpleDateFormat("dd MMMM", ChatAttr.getInstance().locale)
+        val formatTime = SimpleDateFormat("dd MMMM", ChatParams.locale)
 
         val nowYear = formatYear.format(System.currentTimeMillis())
         val currentYear = formatYear.format(message.timestamp)

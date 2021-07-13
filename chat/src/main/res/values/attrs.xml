@@ -3,37 +3,7 @@
 
     <declare-styleable name="ChatView">
 
-        <attr name="auth" format="enum">
-            <enum name="AUTH_WITH_FORM" value="0"/>
-            <enum name="AUTH_WITHOUT_FORM" value="1"/>
-        </attr>
-        <attr name="operator_preview_mode" format="enum">
-            <enum name="CACHE" value="0"/>
-            <enum name="ALWAYS_REQUEST" value="1"/>
-        </attr>
-        <attr name="operator_name_mode" format="enum">
-            <enum name="CACHE" value="0"/>
-            <enum name="ALWAYS_REQUEST" value="1"/>
-        </attr>
         <attr name="timeDelayed" format="integer"/>
-        <attr name="urlSocketNameSpace" format="string"/>
-        <attr name="urlSocketHost" format="string"/>
-        <attr name="urlSyncHistory" format="string"/>
-        <attr name="urlUploadNameSpace" format="string"/>
-        <attr name="urlUploadHost" format="string"/>
-        <attr name="fileProviderAuthorities" format="string"/>
-        <attr name="fileConnectTimeout" format="integer"/>
-        <attr name="fileReadTimeout" format="integer"/>
-        <attr name="fileWriteTimeout" format="integer"/>
-        <attr name="fileCallTimeout" format="integer"/>
-        <attr name="clickable_link_mode" format="enum">
-            <enum name="ALL" value="0"/>
-            <enum name="SECURE" value="1"/>
-        </attr>
-        <attr name="phone_patterns" format="reference"/>
-
-        <attr name="locale_language" format="string"/>
-        <attr name="locale_country" format="string"/>
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>

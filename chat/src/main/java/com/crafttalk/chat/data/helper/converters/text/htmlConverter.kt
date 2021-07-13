@@ -4,7 +4,7 @@ import android.os.Build
 import android.text.Html
 import android.util.Log
 import com.crafttalk.chat.domain.entity.tags.*
-import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ClickableLinkMode
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -22,7 +22,7 @@ fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
     fun String.selectPhones(): String {
         setTagsByPatterns(
             this,
-            ChatAttr.getInstance().phonePatterns,
+            ChatParams.phonePatterns!!,
             { startPosition: Int, endPosition: Int, value: String ->
                 PhoneTag(
                     startPosition,
@@ -89,7 +89,7 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
             startIndex = input.indexOf(protocol, startIndex + 1, true)
         }
     }
-    when (ChatAttr.getInstance().clickableLinkMode) {
+    when (ChatParams.clickableLinkMode) {
         ClickableLinkMode.ALL -> {
             selectUrl(this, "http")
             selectUrl(this, "ws")

@@ -1,17 +1,17 @@
 package com.crafttalk.chat.initialization
 
 import android.content.Context
+import com.crafttalk.chat.R
 import com.crafttalk.chat.di.DaggerSdkComponent
 import com.crafttalk.chat.di.SdkComponent
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.interactors.*
-import com.crafttalk.chat.utils.AuthType
-import com.crafttalk.chat.utils.ChatParams
-import com.crafttalk.chat.utils.InitialMessageMode
+import com.crafttalk.chat.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.*
 
 object Chat {
 
@@ -45,16 +45,27 @@ object Chat {
         authInteractor = AuthInteractor(sdkComponent!!.getAuthRepository(), visitorInteractor!!, personInteractor!!, notificationInteractor!!)
     }
 
-    private fun initParams(
-        authType: AuthType,
-        initialMessageMode: InitialMessageMode,
+    fun init(
+        context: Context,
         urlSocketHost: String,
         urlSocketNameSpace: String,
         urlSyncHistory: String,
-        urlUploadHost: String?,
-        urlUploadNameSpace: String?,
-        fileProviderAuthorities: String?,
-        certificatePinning: String?
+        urlUploadHost: String,
+        urlUploadNameSpace: String,
+        authType: AuthType = AuthType.AUTH_WITHOUT_FORM,
+        initialMessageMode: InitialMessageMode? = InitialMessageMode.SEND_ON_OPEN,
+        operatorPreviewMode: OperatorPreviewMode = OperatorPreviewMode.CACHE,
+        operatorNameMode: OperatorNameMode = OperatorNameMode.IMMUTABLE,
+        clickableLinkMode: ClickableLinkMode = ClickableLinkMode.ALL,
+        localeLanguage: String = context.getString(R.string.com_crafttalk_chat_default_language),
+        localeCountry: String = context.getString(R.string.com_crafttalk_chat_default_country),
+        phonePatterns: Array<CharSequence> = context.resources.getTextArray(R.array.com_crafttalk_chat_phone_patterns),
+        fileProviderAuthorities: String? = null,
+        certificatePinning: String? = null,
+        fileConnectTimeout: Long? = null,
+        fileReadTimeout: Long? = null,
+        fileWriteTimeout: Long? = null,
+        fileCallTimeout: Long? = null
     ) {
         ChatParams.authMode = authType
         ChatParams.initialMessageMode = initialMessageMode
@@ -63,23 +74,17 @@ object Chat {
         ChatParams.urlSyncHistory = urlSyncHistory
         ChatParams.urlUploadHost = urlUploadHost
         ChatParams.urlUploadNameSpace = urlUploadNameSpace
+        ChatParams.operatorPreviewMode = operatorPreviewMode
+        ChatParams.operatorNameMode = operatorNameMode
+        ChatParams.clickableLinkMode = clickableLinkMode
+        ChatParams.locale = Locale(localeLanguage, localeCountry)
+        ChatParams.phonePatterns = phonePatterns
         ChatParams.fileProviderAuthorities = fileProviderAuthorities
         ChatParams.certificatePinning = certificatePinning
-    }
-
-    fun init(
-        context: Context,
-        authType: AuthType,
-        urlSocketHost: String,
-        urlSocketNameSpace: String,
-        urlSyncHistory: String,
-        urlUploadHost: String? = null,
-        urlUploadNameSpace: String? = null,
-        fileProviderAuthorities: String? = null,
-        certificatePinning: String? = null,
-        initialMessageMode: InitialMessageMode = InitialMessageMode.SEND_ON_OPEN
-    ) {
-        initParams(authType, initialMessageMode, urlSocketHost, urlSocketNameSpace, urlSyncHistory, urlUploadHost, urlUploadNameSpace, fileProviderAuthorities, certificatePinning)
+        ChatParams.fileConnectTimeout = fileConnectTimeout
+        ChatParams.fileReadTimeout = fileReadTimeout
+        ChatParams.fileWriteTimeout = fileWriteTimeout
+        ChatParams.fileCallTimeout = fileCallTimeout
         initDI(context)
     }
 
