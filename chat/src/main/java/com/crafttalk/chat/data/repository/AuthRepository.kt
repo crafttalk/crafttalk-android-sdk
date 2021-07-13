@@ -23,6 +23,7 @@ class AuthRepository
         successAuthUx: () -> Unit,
         failAuthUx: () -> Unit,
         getPersonPreview: (personId: String) -> String?,
+        updatePersonName: (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
     ) {
         socketApi.setVisitor(
@@ -32,6 +33,7 @@ class AuthRepository
             successAuthUx,
             failAuthUx,
             getPersonPreview,
+            updatePersonName,
             chatEventListener
         )
     }

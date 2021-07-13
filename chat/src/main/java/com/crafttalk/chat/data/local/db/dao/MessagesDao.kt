@@ -32,6 +32,9 @@ interface MessagesDao {
     @Query("UPDATE messages SET is_read = 1 WHERE uuid = :uuid AND id = :id")
     fun readMessage(uuid: String, id: String)
 
+    @Query("UPDATE messages SET operator_name = :currentPersonName WHERE operator_id = :personId")
+    fun updatePersonName(personId: String, currentPersonName: String)
+
     @Query("UPDATE messages SET operator_preview = :newPersonPicture WHERE (operator_id = :personId) AND ((operator_preview != :newPersonPicture) OR (operator_preview is null AND :newPersonPicture is not null) OR (operator_preview is not null AND :newPersonPicture is null))")
     fun updatePersonPreview(personId: String, newPersonPicture: String?)
 

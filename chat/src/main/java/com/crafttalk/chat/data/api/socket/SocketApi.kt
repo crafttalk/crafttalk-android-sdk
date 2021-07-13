@@ -48,6 +48,7 @@ class SocketApi constructor(
     private var successAuthUxFun: () -> Unit = {}
     private var failAuthUxFun: () -> Unit = {}
     private var getPersonPreview: (personId: String) -> String? = { null }
+    private var updatePersonName: (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
     private var newMessagesStartTime: Long? = null
     private var isUploadHistory: Boolean = false
     private var isAuthorized: Boolean = false
@@ -110,6 +111,7 @@ class SocketApi constructor(
         successAuthUx: () -> Unit,
         failAuthUx: () -> Unit,
         getPersonPreview: (personId: String) -> String?,
+        updatePersonName: (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
     ) {
         successAuthUi?.let { this.successAuthUiFun = it }
@@ -117,6 +119,7 @@ class SocketApi constructor(
         failAuthUi?.let { this.failAuthUiFun = it }
         this.failAuthUxFun = failAuthUx
         this.getPersonPreview = getPersonPreview
+        this.updatePersonName = updatePersonName
         chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
         socket?.let {
@@ -172,7 +175,6 @@ class SocketApi constructor(
         }
 
         socket.on("message") {
-            Log.d("TEST_NOTIFICATION", "GET_MESSAGE")
             viewModelScope.launch {
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
@@ -330,19 +332,19 @@ class SocketApi constructor(
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
                 messageSocket.attachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
-                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, height, width))
+                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, height, width), getPersonPreview, updatePersonName)
                     }
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isFile -> {
                 messageSocket.attachmentUrl?.let { url ->
                     getWeightFile(url) { size ->
-                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }, attachmentSize = size))
+                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, attachmentSize = size), getPersonPreview, updatePersonName)
                     }
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
+                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory), getPersonPreview, updatePersonName)
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
@@ -350,7 +352,7 @@ class SocketApi constructor(
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
-                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, messageSocket.operatorId?.let { getPersonPreview(it) }))
+                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory), getPersonPreview, updatePersonName)
             }
         }
     }
@@ -396,12 +398,8 @@ class SocketApi constructor(
                         }
                     }
                 }
-                MessageType.TRANSFER_TO_OPERATOR.valueType -> updateDataInDatabase(messageFromHistory)
-                MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> {
-                    updateDataInDatabase(messageFromHistory)
-                }
+                MessageType.TRANSFER_TO_OPERATOR.valueType, MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> updateDataInDatabase(messageFromHistory)
             }
-
         }
     }
 

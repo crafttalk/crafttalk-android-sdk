@@ -35,7 +35,7 @@ data class MessageEntity(
     @ColumnInfo(name = "operator_id")
     val operatorId: String?,
     @ColumnInfo(name = "operator_preview")
-    val operatorPreview: String?,
+    var operatorPreview: String?,
     @ColumnInfo(name = "operator_name")
     val operatorName: String?,
     @ColumnInfo(name = "height")
@@ -90,7 +90,7 @@ data class MessageEntity(
     companion object {
         private const val COUNT_MS = 1000
 
-        fun map(uuid: String, messageSocket: MessageSocket, isUploadHistory: Boolean, operatorPreview: String?, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
+        fun map(uuid: String, messageSocket: MessageSocket, isUploadHistory: Boolean, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertTextToNormalString(list)
 
@@ -109,7 +109,7 @@ data class MessageEntity(
                 attachmentName = messageSocket.attachmentName,
                 attachmentSize = attachmentSize,
                 operatorId = messageSocket.operatorId,
-                operatorPreview = operatorPreview,
+                operatorPreview = null,
                 operatorName = if (messageSocket.isReply) messageSocket.operatorName else "Вы",
                 height = height,
                 width = width,

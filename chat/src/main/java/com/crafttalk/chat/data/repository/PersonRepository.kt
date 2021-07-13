@@ -8,7 +8,8 @@ import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
 import com.crafttalk.chat.data.local.db.entity.PersonEntity
 import com.crafttalk.chat.domain.repository.IPersonRepository
-import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
+import com.crafttalk.chat.utils.OperatorNameMode
 import com.crafttalk.chat.utils.OperatorPreviewMode
 import java.lang.Exception
 import javax.inject.Inject
@@ -19,11 +20,24 @@ class PersonRepository
     private val messagesDao: MessagesDao,
     private val personApi: PersonApi
 ) : IPersonRepository {
+
+    override fun updatePersonName(personId: String?, currentPersonName: String?) {
+        personId ?: return
+        currentPersonName ?: return
+        if (personId.isEmpty()) return
+        when (ChatParams.operatorNameMode) {
+            OperatorNameMode.ACTUAL -> {
+                messagesDao.updatePersonName(personId, currentPersonName)
+            }
+        }
+    }
+
     override fun getPersonPreview(personId: String, visitorToken: String): String? {
-        try {
-            when (ChatAttr.getInstance().operatorPreviewMode) {
+        if (personId.isEmpty()) return null
+        return try {
+            when (ChatParams.operatorPreviewMode) {
                 OperatorPreviewMode.CACHE -> {
-                    return personDao.getPersonPreview(personId)
+                    personDao.getPersonPreview(personId)
                         ?: personApi.getPersonPreview(
                             personId = personId,
                             visitorToken = visitorToken
@@ -35,17 +49,19 @@ class PersonRepository
                         }
                 }
                 OperatorPreviewMode.ALWAYS_REQUEST -> {
-                    return personApi.getPersonPreview(
+                    personApi.getPersonPreview(
                         personId = personId,
                         visitorToken = visitorToken
                     ).toData().picture.apply {
                         messagesDao.updatePersonPreview(personId, this)
                     }
                 }
+                else -> null
             }
         } catch (ex: Exception) {
             Log.e("FAIL_REQUEST", "getPersonPreview fail: ${ex.message}")
-            return null
+            null
         }
     }
+
 }
