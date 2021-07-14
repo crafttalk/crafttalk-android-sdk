@@ -43,7 +43,6 @@
         app:drawable_progress_indeterminate="@drawable/spinner"
         app:show_internet_connection_state="false"
         app:show_upper_limiter="false"
-        app:timeDelayed="1000"
-        app:layout_item_user_text_message="@layout/layout_item_user_text_message" />
+        app:timeDelayed="1000" />
 
 </LinearLayout>
