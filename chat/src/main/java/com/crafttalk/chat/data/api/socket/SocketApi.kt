@@ -332,7 +332,9 @@ class SocketApi constructor(
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
                 messageSocket.attachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
-                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, height, width), getPersonPreview, updatePersonName)
+                        viewModelScope.launch {
+                            transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, height, width), getPersonPreview, updatePersonName)
+                        }
                     }
                 }
             }

@@ -29,25 +29,29 @@ data class Message (
     val replyToMessage: Message?
 ) : Serializable {
 
-    val isImage = !attachmentUrl.isNullOrEmpty() &&
+    val isImage: Boolean
+    get() = !attachmentUrl.isNullOrEmpty() &&
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
             (attachmentType == "IMAGE" || attachmentType.toLowerCase(
                 ChatParams.locale!!).startsWith("image"))
 
-    val isGif = !attachmentUrl.isNullOrEmpty() &&
+    val isGif: Boolean
+    get() = !attachmentUrl.isNullOrEmpty() &&
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
             (attachmentType == "IMAGE" || attachmentType.toLowerCase(
                 ChatParams.locale!!).startsWith("image")) &&
             attachmentName.contains(".GIF", true)
 
-    val isFile = !attachmentUrl.isNullOrEmpty() &&
+    val isFile: Boolean
+    get() = !attachmentUrl.isNullOrEmpty() &&
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
             attachmentType == "FILE"
 
-    val attachmentTypeFile = when {
+    val attachmentTypeFile: TypeFile?
+    get() = when {
         isFile -> TypeFile.FILE
         isImage -> TypeFile.IMAGE
         isGif -> TypeFile.GIF
