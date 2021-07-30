@@ -72,29 +72,46 @@ dependencies {
 <com.crafttalk.chat.presentation.ChatView
         android:id="@+id/chat_view"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"       
-        app:auth="AUTH_WITHOUT_FORM"
-        app:urlSocketHost="@string/urlSocketHost"
-        app:urlSocketNameSpace="@string/urlSocketNameSpace"
-        app:urlUploadHost="@string/urlUploadHost"
-        app:urlUploadNameSpace="@string/urlUploadNameSpace"
-	app:fileProviderAuthorities="@string/chat_file_provider_authorities" />
+        android:layout_width="match_parent" />
 ```
 
 
 #### Шаг 3.
 
-Необходимо инициализировать библиотеку, сделать это нужно как можно раньше (до любого другого вызова из библиотеки).
+Необходимо инициализировать библиотеку, сделать это нужно как можно раньше (до любого другого вызова из библиотеки). Также с помощью метода Chat.init можно задать поведение чат-бота.
 
 ```
 Chat.init(
-    this,
-    AuthType.AUTH_WITHOUT_FORM,
+    this,   
     getString(R.string.urlSocketHost),
     getString(R.string.urlSocketNameSpace),
-    getString(R.string.urlSyncHistory)
+    getString(R.string.urlSyncHistory),
+    getString(R.string.urlUploadHost),
+    getString(R.string.urlUploadNameSpace),
+    fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
 ) 
 ```
+
+- urlSocketHost - указывает, по какому host подключать сокет
+- urlSocketNameSpace - указывает, по какому nameSpace подключать сокет
+- urlSyncHistory - указывает, какое доменное имя будет использоваться при запросе истории
+- urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
+- urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
+- authType - может принимать AUTH_WITH_FORM или AUTH_WITHOUT_FORM. Это поле определяет, как будет проходить аутентификация для пользователя
+- initialMessageMode - может принимать SEND_ON_OPEN (по умолчанию), SEND_AFTER_AUTHORIZATION или null. Это поле определяет, в какой момент будет отправлено событие /start. SEND_ON_OPEN соответствует sendInitialMessageOnOpen, SEND_AFTER_AUTHORIZATION соответствует sendInitialMessageOnStartDialog, null - не отправлять вообще /start (соответствует showInitialMessage).
+- operatorPreviewMode - может принимать CACHE (по умолчанию) или ALWAYS_REQUEST. Это поле определяет режим сохранения иконки оператора.
+- operatorNameMode - может принимать IMMUTABLE (по умолчанию) или ACTUAL. Это поле определяет режим обновления имени оператора у старых сообщений, отправленным этим оператором.
+- clickableLinkMode - может принимать ALL (по умолчанию) или SECURE. Это поле определяет, какие из ссылок будут кликабельными, а какие нет.
+- localeLanguage - это поле используется при формировании локали
+- localeCountry - это поле используется при формировании локали
+- phonePatterns - определяет шаблоны, по которым определяются телефонные номера
+- fileProviderAuthorities - значение authorities для FileProvider
+- certificatePinning - указывает сертификат, использующийся для включения SSL Pinning
+- fileConnectTimeout - устанавливает connectTimeout для отправки файлов (измеряется в секундах)
+- fileReadTimeout - устанавливает readTimeout для отправки файлов (измеряется в секундах)
+- fileWriteTimeout - устанавливает writeTimeout для отправки файлов (измеряется в секундах)
+- fileCallTimeout - устанавливает callTimeout для отправки файлов (измеряется в секундах)
+
 
 #### Шаг 4.
 
@@ -118,31 +135,41 @@ Chat.init(
 
 Если аутентификация была успешной, то производится подписка пользователя на push уведомления, если тот ранее не был подписан. В противном случае пользователя отписывают от получение push уведомлений.
 
-##### Сокет
+##### Сессия
 
-Создания и уничтожения сокета, одна из самых важных шагов при интеграции ChatView.
+В рамках сессии пользователь решает свои вопросы, в пределах одной сессии 'живет' сокет.
 
-Создать сокет можно с помощью вызова метода wakeUp, при повторных вызовах сокет пересоздаваться не будет. При вызове метода wakeUp происходит аутентификация пользователя.
+Создать сессию можно с помощью вызова метода Chat.createSession, при повторных вызовах этого метода сокет пересоздаваться не будет, если не был вызван метод Chat.destroySession. Уничтожение сессии осуществляется с помощью вызова метода Chat.destroySession.
 
-Уничтожить сокет можно с помощью вызова метода destroy. Пока сокет 'живет' (между вызовами wakeUp и destroy) уведомления приходить не будут, так как пользователь находится в приложении и в этом нет смысла. Когда сокет 'мертв' (между вызовами destroy и wakeUp) уведомления приходить будут, так как пользователь закрывает приложение.
+Методы Chat.wakeUp и drop управляют активностью сокета (они определяют авторизован ли пользователь). При вызове метода Chat.wakeUp происходит 'активизация сокета' и дальнейшая авторизация пользователя, при повторном вызове авторизация повторно не происходит. При вызове метода Chat.drop происходит отключение сокета (пользователь находится в неавторизованном состоянии). Чтобы возобновить работу необходимо вызвать метод Chat.wakeUp, произойдет подключение с последующей авторизацией пользователя.
+
+Пока сокет 'активен' (между вызовами Chat.wakeUp и Chat.drop) уведомления приходить не будут, так как пользователь находится в приложении. Когда сокет 'спит' (между вызовами Chat.drop и Chat.wakeUp) уведомления приходить будут, так как пользователь закрывает приложение.
+
+Важно!!! Создание сессии должно происходить (вызов метода Chat.createSession) после инициализации чат-бота (вызов метода Chat.init).
+
+Важно!!! В случае если методы Chat.wakeUp и Chat.drop вызываются в том же фрагменте, где располагается сам чат-бот, то вызов метода chat_view.onResume должен идти после Chat.wakeUp.
 
 ```
-// для AUTH_WITHOUT_FORM
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    ...
+    Chat.createSession()
+}
+
 override fun onResume() {
     super.onResume()
     Chat.wakeUp(getVisitor(this))
+    ...
 }
 
-// для AUTH_WITH_FORM
-override fun onResume() {
-    super.onResume()
-    Chat.wakeUp(null)
-}
-
-// как для AUTH_WITHOUT_FORM, так и для AUTH_WITH_FORM
 override fun onStop() {
     super.onStop()
-    Chat.destroy()
+    Chat.drop()
+}
+
+override fun onDestroy() {
+    super.onDestroy()
+    Chat.destroySession()
 }
 ```
 
@@ -169,21 +196,7 @@ override fun onResume() {
 
 
 Атрибуты, настраивающие поведение:
-- auth - может принимать AUTH_WITH_FORM или AUTH_WITHOUT_FORM. Этот атрибут определяет, как будет проходить аутентификация для пользователя
 - timeDelayed - выставляет минимальное время отображения троббера
-- urlSocketNameSpace - указывает, по какому nameSpace подключать сокет
-- urlSocketHost - указывает, по какому host подключать сокет
-- urlSyncHistory - указывает, какое доменное имя будет использоваться при запросе истории
-- urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
-- urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
-- fileProviderAuthorities - значение authorities для FileProvider
-- operator_preview_mode - может принимать CACHE_ONLY_LINK (по умолчанию) или ALWAYS_REQUEST. Этот атрибут определяет режим сохранения иконки оператора. 
-- clickable_link_mode - может принимать ALL (по умолчанию) или SECURE. Этот атрибут определяет, какие из ссылок будут кликабельными, а какие нет.
-- phone_patterns - определяет шаблоны, по которым определяются телефонные номера
-- fileConnectTimeout - устанавливает connectTimeout для отправки файлов (измеряется в секундах)
-- fileReadTimeout - устанавливает readTimeout для отправки файлов (измеряется в секундах)
-- fileWriteTimeout - устанавливает writeTimeout для отправки файлов (измеряется в секундах)
-- fileCallTimeout - устанавливает callTimeout для отправки файлов (измеряется в секундах)
 
 
 Атрибуты, настраивающие внешний вид:
