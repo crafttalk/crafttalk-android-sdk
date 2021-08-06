@@ -10,7 +10,7 @@ import com.crafttalk.chat.data.helper.file.FileInfoHelper
 import com.crafttalk.chat.data.helper.file.RequestHelper
 import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.domain.entity.file.BodyStructureUploadFile
+import com.crafttalk.chat.domain.entity.file.NetworkBodyStructureUploadFile
 import com.crafttalk.chat.domain.entity.file.File as FileModel
 import com.crafttalk.chat.domain.repository.IFileRepository
 import okhttp3.MediaType
@@ -33,7 +33,7 @@ class FileRepository
     private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: String, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val request = fileApi.uploadFile(
             visitorToken = token,
-            body = BodyStructureUploadFile(
+            networkBody = NetworkBodyStructureUploadFile(
                 fileName = fileName,
                 uuid = uuid,
                 fileB64 = fileRequestBody

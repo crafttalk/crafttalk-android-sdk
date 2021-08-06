@@ -175,7 +175,7 @@ class ChatViewModel
 
     fun selectAction(messageId: String, actionId: String) {
         launchIO {
-            chatMessageInteractor.selectActionInMessage(messageId, actionId, {}, {})
+            chatMessageInteractor.selectActionInMessage(messageId, actionId)
         }
     }
 
@@ -187,13 +187,13 @@ class ChatViewModel
 
     fun updateData(idKey: Long, height: Int, width: Int) {
         launchIO {
-            chatMessageInteractor.updateSizeMessage(idKey, height, width, {}, {})
+            chatMessageInteractor.updateSizeMessage(idKey, height, width)
         }
     }
 
     fun sendMessage(message: String) {
         launchIO {
-            chatMessageInteractor.sendMessage(message, {}, {})
+            chatMessageInteractor.sendMessage(message)
         }
     }
 

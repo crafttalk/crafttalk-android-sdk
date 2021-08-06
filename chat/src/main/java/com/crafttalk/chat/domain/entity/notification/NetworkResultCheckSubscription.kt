@@ -1,5 +1,5 @@
 package com.crafttalk.chat.domain.entity.notification
 
-class ResultCheckSubscription(
+class NetworkResultCheckSubscription(
     val result: Boolean
 )

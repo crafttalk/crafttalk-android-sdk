@@ -5,7 +5,7 @@ import com.crafttalk.chat.utils.ChatParams
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class Message (
+data class NetworkMessage (
     var id: String?,
     @SerializedName (value = "message_type")
     val messageType: Int,
@@ -14,7 +14,7 @@ data class Message (
     val parentMessageId: String?,
     val timestamp: Long,
     var message: String?,
-    val actions: List<Action>?,
+    val actions: List<NetworkAction>?,
     @SerializedName (value = "attachment_url")
     var attachmentUrl: String?,
     @SerializedName (value = "attachment_type")
@@ -26,7 +26,7 @@ data class Message (
     @SerializedName (value = "operator_name")
     val operatorName: String?,
     @SerializedName (value = "reply_to_message")
-    val replyToMessage: Message?
+    val replyToMessage: NetworkMessage?
 ) : Serializable {
 
     val isImage: Boolean

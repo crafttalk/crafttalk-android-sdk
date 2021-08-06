@@ -1,7 +1,7 @@
 package com.crafttalk.chat.data.local.db.entity
 
 import androidx.room.ColumnInfo
-import com.crafttalk.chat.domain.entity.message.Action
+import com.crafttalk.chat.domain.entity.message.NetworkAction
 
 data class ActionEntity(
     @ColumnInfo(name = "action_id")
@@ -12,7 +12,7 @@ data class ActionEntity(
     val isSelected: Boolean
 ) {
     companion object {
-        fun map(actions: List<Action>): List<ActionEntity> {
+        fun map(actions: List<NetworkAction>): List<ActionEntity> {
             return actions.map {
                 ActionEntity(
                     it.actionId,

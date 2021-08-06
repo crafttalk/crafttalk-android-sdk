@@ -1,5 +1,6 @@
 package com.crafttalk.chat.domain.entity.notification
 
-class CheckSubscription(
+class NetworkSubscription(
+    val subscription: String,
     val uuid: String
 )

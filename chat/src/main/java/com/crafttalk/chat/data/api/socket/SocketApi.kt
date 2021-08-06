@@ -32,7 +32,7 @@ import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
-import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
+import com.crafttalk.chat.domain.entity.message.NetworkMessage
 
 class SocketApi constructor(
     private val messageDao: MessagesDao,
@@ -58,7 +58,7 @@ class SocketApi constructor(
     private var chatEventListener: ChatEventListener? = null
 
     var chatStatus = ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP
-    private val bufferMessages = mutableListOf<MessageSocket>()
+    private val bufferMessages = mutableListOf<NetworkMessage>()
 
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
@@ -179,7 +179,7 @@ class SocketApi constructor(
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
                 Log.d(TAG_SOCKET, "json message___ methon message - $messageJson")
-                val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), MessageSocket::class.java)
+                val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java)
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
@@ -206,7 +206,7 @@ class SocketApi constructor(
         socket.on("history-messages-loaded") {
             Log.d(TAG_SOCKET_EVENT, "history-messages-loaded, ${it.size}")
             viewModelScope.launch {
-                val listMessages = gson.fromJson(it[0].toString().replace("&amp;", "&"), Array<MessageSocket>::class.java)
+                val listMessages = gson.fromJson(it[0].toString().replace("&amp;", "&"), Array<NetworkMessage>::class.java)
 
 //                listMessages.forEach {
 //                    Log.d(TAG_SOCKET, "history: $it")
@@ -327,7 +327,7 @@ class SocketApi constructor(
         }
     }
 
-    private fun updateDataInDatabase(messageSocket: MessageSocket) {
+    private fun updateDataInDatabase(messageSocket: NetworkMessage) {
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
                 messageSocket.attachmentUrl?.let { url ->
@@ -359,8 +359,8 @@ class SocketApi constructor(
         }
     }
 
-    private fun marge(arrayMessages: Array<MessageSocket>) {
-        arrayMessages.sortWith(compareBy(MessageSocket::timestamp))
+    private fun marge(arrayMessages: Array<NetworkMessage>) {
+        arrayMessages.sortWith(compareBy(NetworkMessage::timestamp))
         arrayMessages.forEach { messageFromHistory ->
             val list = arrayListOf<Tag>()
             val message = messageFromHistory.message?.convertTextToNormalString(list)

@@ -1,7 +1,7 @@
 package com.crafttalk.chat.data.api.rest
 
 import com.crafttalk.chat.data.ApiParams
-import com.crafttalk.chat.domain.entity.file.BodyStructureUploadFile
+import com.crafttalk.chat.domain.entity.file.NetworkBodyStructureUploadFile
 import com.crafttalk.chat.utils.ChatParams
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -15,7 +15,7 @@ interface FileApi {
     fun uploadFile(
         @Path("clientId") clientId: String = ChatParams.urlUploadNameSpace!!,
         @Query("auth_token") visitorToken: String,
-        @Body body: BodyStructureUploadFile
+        @Body networkBody: NetworkBodyStructureUploadFile
     ): Call<String>
 
     @Multipart

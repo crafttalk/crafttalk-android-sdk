@@ -1,5 +1,5 @@
 package com.crafttalk.chat.domain.entity.notification
 
-class Unsubscription(
+class NetworkUnsubscription(
     val uuid: String
 )

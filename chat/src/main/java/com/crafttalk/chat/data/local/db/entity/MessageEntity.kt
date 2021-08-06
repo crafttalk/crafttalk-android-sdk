@@ -7,7 +7,7 @@ import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
-import com.crafttalk.chat.domain.entity.message.Message as MessageSocket
+import com.crafttalk.chat.domain.entity.message.NetworkMessage
 
 @Entity(tableName = "messages")
 data class MessageEntity(
@@ -90,7 +90,7 @@ data class MessageEntity(
     companion object {
         private const val COUNT_MS = 1000
 
-        fun map(uuid: String, messageSocket: MessageSocket, isUploadHistory: Boolean, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
+        fun map(uuid: String, messageSocket: NetworkMessage, isUploadHistory: Boolean, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = messageSocket.message?.convertTextToNormalString(list)
 

@@ -21,25 +21,13 @@ class ChatMessageInteractor
         }
     }
 
-    suspend fun sendMessage(message: String, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
-        try {
-            messageRepository.sendMessages(message)
-            success()
-        }
-        catch (ex: Throwable) {
-            fail(ex)
-        }
+    suspend fun sendMessage(message: String) {
+        messageRepository.sendMessages(message)
     }
 
-    suspend fun selectActionInMessage(messageId: String, actionId: String, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
-        try {
-            val uuid = visitorInteractor.getVisitor()?.uuid ?: return
-            messageRepository.selectAction(uuid, messageId, actionId)
-            success()
-        }
-        catch (ex: Throwable) {
-            fail(ex)
-        }
+    suspend fun selectActionInMessage(messageId: String, actionId: String) {
+        val uuid = visitorInteractor.getVisitor()?.uuid ?: return
+        messageRepository.selectAction(uuid, messageId, actionId)
     }
 
     fun syncMessages(isEmptyDB: Boolean) {
@@ -55,14 +43,8 @@ class ChatMessageInteractor
         }
     }
 
-    fun updateSizeMessage(idKey: Long, height: Int, width: Int, success: () -> Unit, fail: (ex: Throwable) -> Unit) {
-        try {
-            messageRepository.updateSizeMessage(idKey, height, width)
-            success()
-        }
-        catch (ex: Throwable) {
-            fail(ex)
-        }
+    fun updateSizeMessage(idKey: Long, height: Int, width: Int) {
+        messageRepository.updateSizeMessage(idKey, height, width)
     }
 
     fun readMessage(id: String) {

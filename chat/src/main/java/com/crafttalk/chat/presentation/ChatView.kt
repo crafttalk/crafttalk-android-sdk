@@ -262,27 +262,26 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     private fun setListMessages() {
-        adapterListMessages =
-            AdapterListMessages(
-                viewModel::openFile,
-                viewModel::openImage,
-                viewModel::openGif,
-                { fileName, fileUrl, fileType ->
-                    downloadResource(context, fileName, fileUrl, fileType, downloadFileListener,
-                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
-                        permissionListener.requestedPermissions(
-                            permissions,
-                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_download)),
-                            actionsAfterObtainingPermission
-                        )
-                    })
-                    { id -> downloadID = id }
-                },
-                viewModel::selectAction,
-                viewModel::updateData
-            ).apply {
-                list_with_message.adapter = this
-            }
+        adapterListMessages = AdapterListMessages(
+            viewModel::openFile,
+            viewModel::openImage,
+            viewModel::openGif,
+            { fileName, fileUrl, fileType ->
+                downloadResource(context, fileName, fileUrl, fileType, downloadFileListener,
+                { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
+                    permissionListener.requestedPermissions(
+                        permissions,
+                        arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_download)),
+                        actionsAfterObtainingPermission
+                    )
+                })
+                { id -> downloadID = id }
+            },
+            viewModel::selectAction,
+            viewModel::updateData
+        ).apply {
+            list_with_message.adapter = this
+        }
     }
 
     fun onCreate(fragment: Fragment, lifecycleOwner: LifecycleOwner) {
