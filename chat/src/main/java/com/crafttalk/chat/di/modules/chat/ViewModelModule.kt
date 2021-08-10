@@ -19,13 +19,13 @@ class ViewModelModule {
         authChatInteractor: AuthInteractor,
         chatMessageInteractor: ChatMessageInteractor,
         fileInteractor: FileInteractor,
-        customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor,
+        conditionInteractor: ConditionInteractor,
         context: Context
     ): ChatViewModelFactory = ChatViewModelFactory(
         authChatInteractor,
         chatMessageInteractor,
         fileInteractor,
-        customizingChatBehaviorInteractor,
+        conditionInteractor,
         context
     )
 

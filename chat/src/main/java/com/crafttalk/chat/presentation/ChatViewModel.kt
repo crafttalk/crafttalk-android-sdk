@@ -16,7 +16,7 @@ import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.domain.interactors.AuthInteractor
 import com.crafttalk.chat.domain.interactors.ChatMessageInteractor
-import com.crafttalk.chat.domain.interactors.CustomizingChatBehaviorInteractor
+import com.crafttalk.chat.domain.interactors.ConditionInteractor
 import com.crafttalk.chat.domain.interactors.FileInteractor
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
@@ -32,7 +32,7 @@ class ChatViewModel
     private val authChatInteractor: AuthInteractor,
     private val chatMessageInteractor: ChatMessageInteractor,
     private val fileInteractor: FileInteractor,
-    private val customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor,
+    private val conditionInteractor: ConditionInteractor,
     private val context: Context
 ) : BaseViewModel() {
 
@@ -90,8 +90,8 @@ class ChatViewModel
     var uploadFileListener: UploadFileListener? = null
 
     init {
-        customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
-        customizingChatBehaviorInteractor.goToChatScreen()
+        conditionInteractor.setInternetConnectionListener(internetConnectionListener)
+        conditionInteractor.goToChatScreen()
 
         Handler().postDelayed({
             authChatInteractor.logIn(
@@ -108,7 +108,7 @@ class ChatViewModel
 
     override fun onCleared() {
         super.onCleared()
-        customizingChatBehaviorInteractor.leaveChatScreen()
+        conditionInteractor.leaveChatScreen()
     }
 
     fun registration(vararg args: String) {
@@ -181,7 +181,7 @@ class ChatViewModel
 
     fun giveFeedbackOnOperator(countStars: Int) {
         launchIO {
-            customizingChatBehaviorInteractor.giveFeedbackOnOperator(countStars)
+            conditionInteractor.giveFeedbackOnOperator(countStars)
         }
     }
 

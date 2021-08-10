@@ -1,16 +1,16 @@
 package com.crafttalk.chat.data.repository
 
 import com.crafttalk.chat.data.api.socket.SocketApi
-import com.crafttalk.chat.domain.repository.IChatBehaviorRepository
+import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.ChatStatus
 import javax.inject.Inject
 
-class ChatBehaviorRepository
+class ConditionRepository
 @Inject constructor(
     private val socketApi: SocketApi
-) : IChatBehaviorRepository {
+) : IConditionRepository {
 
     override fun setInternetConnectionListener(listener: ChatInternetConnectionListener) {
         socketApi.setInternetConnectionListener(listener)

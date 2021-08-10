@@ -1,35 +1,35 @@
 package com.crafttalk.chat.domain.interactors
 
-import com.crafttalk.chat.domain.repository.IChatBehaviorRepository
+import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.ChatStatus
 import javax.inject.Inject
 
-class CustomizingChatBehaviorInteractor
+class ConditionInteractor
 @Inject constructor(
-    private val chatBehaviorRepository: IChatBehaviorRepository
+    private val conditionRepository: IConditionRepository
 ) {
 
     fun setInternetConnectionListener(listener: ChatInternetConnectionListener) {
-        chatBehaviorRepository.setInternetConnectionListener(listener)
+        conditionRepository.setInternetConnectionListener(listener)
     }
 
     fun setMessageListener(listener: ChatMessageListener) {
-        chatBehaviorRepository.setMessageListener(listener)
+        conditionRepository.setMessageListener(listener)
     }
 
     fun leaveChatScreen() {
-        chatBehaviorRepository.setStatusChat(ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP)
+        conditionRepository.setStatusChat(ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP)
     }
 
     fun goToChatScreen() {
-        chatBehaviorRepository.setStatusChat(ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
+        conditionRepository.setStatusChat(ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
     }
 
     fun openApp() {
-        chatBehaviorRepository.setStatusChat(
-            when (chatBehaviorRepository.getStatusChat()) {
+        conditionRepository.setStatusChat(
+            when (conditionRepository.getStatusChat()) {
                 ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP
                 ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP
             }
@@ -37,8 +37,8 @@ class CustomizingChatBehaviorInteractor
     }
 
     fun closeApp() {
-        chatBehaviorRepository.setStatusChat(
-            when (chatBehaviorRepository.getStatusChat()) {
+        conditionRepository.setStatusChat(
+            when (conditionRepository.getStatusChat()) {
                 ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP
                 ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP -> ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP
             }
@@ -46,19 +46,19 @@ class CustomizingChatBehaviorInteractor
     }
 
     fun createSessionChat() {
-        chatBehaviorRepository.createSessionChat()
+        conditionRepository.createSessionChat()
     }
 
     fun destroySessionChat() {
-        chatBehaviorRepository.destroySessionChat()
+        conditionRepository.destroySessionChat()
     }
 
     fun dropChat() {
-        chatBehaviorRepository.dropChat()
+        conditionRepository.dropChat()
     }
 
     fun giveFeedbackOnOperator(countStars: Int) {
-        chatBehaviorRepository.giveFeedbackOnOperator(countStars)
+        conditionRepository.giveFeedbackOnOperator(countStars)
     }
 
 }

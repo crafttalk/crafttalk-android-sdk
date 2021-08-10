@@ -27,7 +27,7 @@ interface SdkComponent {
         @BindsInstance fun context(context: Context): Builder
         fun build(): SdkComponent
     }
-    fun getChatBehaviorRepository(): IChatBehaviorRepository
+    fun getConditionRepository(): IConditionRepository
     fun getAuthRepository(): IAuthRepository
     fun getVisitorRepository(): IVisitorRepository
     fun getPersonRepository(): IPersonRepository

@@ -10,7 +10,7 @@ class ChatViewModelFactory constructor(
     private val authChatInteractor: AuthInteractor,
     private val chatMessageInteractor: ChatMessageInteractor,
     private val fileInteractor: FileInteractor,
-    private val customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor,
+    private val conditionInteractor: ConditionInteractor,
     private val context: Context
 ): ViewModelProvider.Factory {
 
@@ -19,7 +19,7 @@ class ChatViewModelFactory constructor(
             authChatInteractor,
             chatMessageInteractor,
             fileInteractor,
-            customizingChatBehaviorInteractor,
+            conditionInteractor,
             context
         ) as T
     }

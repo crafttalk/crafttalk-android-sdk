@@ -19,7 +19,7 @@ object Chat {
     private val scopeIO = CoroutineScope(Dispatchers.IO + job)
     private val scopeUI = CoroutineScope(Dispatchers.Main + job)
 
-    private var customizingChatBehaviorInteractor: CustomizingChatBehaviorInteractor? = null
+    private var conditionInteractor: ConditionInteractor? = null
     private var visitorInteractor: VisitorInteractor? = null
     private var authInteractor: AuthInteractor? = null
     private var notificationInteractor: NotificationInteractor? = null
@@ -29,7 +29,7 @@ object Chat {
     internal fun getSdkComponent(): SdkComponent = sdkComponent ?: throw IllegalStateException("You must call the init method before going to the chat.")
 
     fun setOnChatMessageListener(listener: ChatMessageListener) {
-        customizingChatBehaviorInteractor?.setMessageListener(listener)
+        conditionInteractor?.setMessageListener(listener)
     }
 
     private fun initDI(context: Context) {
@@ -38,7 +38,7 @@ object Chat {
                 .context(context)
                 .build()
         }
-        customizingChatBehaviorInteractor = CustomizingChatBehaviorInteractor(sdkComponent!!.getChatBehaviorRepository())
+        conditionInteractor = ConditionInteractor(sdkComponent!!.getConditionRepository())
         visitorInteractor = VisitorInteractor(sdkComponent!!.getVisitorRepository())
         personInteractor = PersonInteractor(sdkComponent!!.getPersonRepository())
         notificationInteractor = NotificationInteractor(sdkComponent!!.getNotificationRepository(), visitorInteractor!!)
@@ -89,23 +89,23 @@ object Chat {
     }
 
     fun createSession() {
-        customizingChatBehaviorInteractor?.createSessionChat()
+        conditionInteractor?.createSessionChat()
     }
 
     fun destroySession() {
-        customizingChatBehaviorInteractor?.destroySessionChat()
+        conditionInteractor?.destroySessionChat()
     }
 
     fun wakeUp(visitor: Visitor?) {
-        customizingChatBehaviorInteractor?.openApp()
+        conditionInteractor?.openApp()
         authInteractor?.logIn(
             visitor = visitor
         )
     }
 
     fun drop() {
-        customizingChatBehaviorInteractor?.closeApp()
-        customizingChatBehaviorInteractor?.dropChat()
+        conditionInteractor?.closeApp()
+        conditionInteractor?.dropChat()
     }
 
     fun logOut(context: Context) {
