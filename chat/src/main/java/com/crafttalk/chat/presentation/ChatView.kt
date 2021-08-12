@@ -232,7 +232,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 super.onScrolled(recyclerView, dx, dy)
                 val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
                 val indexFirstVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: return
-                viewModel.uploadHistoryVisible.value = indexFirstVisible != -1 && recyclerView.adapter?.itemCount != null && indexFirstVisible == recyclerView.adapter!!.itemCount - 1 && recyclerView.adapter!!.itemCount > 5
+                viewModel.uploadHistoryVisible.value = viewModel.isMergeHistoryAllowEvent || (indexFirstVisible != -1 && recyclerView.adapter?.itemCount != null && indexFirstVisible == recyclerView.adapter!!.itemCount - 1 && recyclerView.adapter!!.itemCount > 5)
                 if (indexLastVisible == -1) {
                     viewModel.scrollToDownVisible.value = false
                     return
@@ -433,6 +433,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 View.GONE
             }
         })
+        viewModel.mergeHistoryEvent.observe(lifecycleOwner, Observer {
+            if (!it) return@Observer
+            val indexFirstVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: return@Observer
+            val indexFirstMsg = (list_with_message.adapter?.itemCount ?: return@Observer) - 1
+            if (indexFirstVisible == indexFirstMsg) {
+                viewModel.isMergeHistoryAllowEvent = true
+                viewModel.uploadHistoryVisible.value = true
+            }
+        })
         viewModel.uploadHistoryVisible.observe(lifecycleOwner, Observer {
             if (it) {
                 upload_history_btn.visibility = View.VISIBLE
@@ -482,6 +491,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     override fun onClick(view: View) {
         when(view.id) {
             R.id.upload_history_btn -> {
+                viewModel.isMergeHistoryAllowEvent = false
+                viewModel.mergeHistoryEvent.value = false
                 upload_history_btn.visibility = View.GONE
                 startProgressBar(upload_history_loading)
                 viewModel.uploadOldMessages()
