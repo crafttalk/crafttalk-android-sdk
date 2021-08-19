@@ -14,10 +14,7 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
-import com.crafttalk.chat.domain.interactors.AuthInteractor
-import com.crafttalk.chat.domain.interactors.ChatMessageInteractor
-import com.crafttalk.chat.domain.interactors.ConditionInteractor
-import com.crafttalk.chat.domain.interactors.FileInteractor
+import com.crafttalk.chat.domain.interactors.*
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
@@ -33,6 +30,7 @@ class ChatViewModel
     private val chatMessageInteractor: ChatMessageInteractor,
     private val fileInteractor: FileInteractor,
     private val conditionInteractor: ConditionInteractor,
+    private val feedbackInteractor: FeedbackInteractor,
     private val context: Context
 ) : BaseViewModel() {
 
@@ -181,7 +179,7 @@ class ChatViewModel
 
     fun giveFeedbackOnOperator(countStars: Int) {
         launchIO {
-            conditionInteractor.giveFeedbackOnOperator(countStars)
+            feedbackInteractor.giveFeedbackOnOperator(countStars)
         }
     }
 

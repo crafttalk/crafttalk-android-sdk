@@ -17,4 +17,8 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindMessageRepository(messageRepository: MessageRepository): IMessageRepository
 
+    @ChatScope
+    @Binds
+    abstract fun bindFeedbackRepository(feedbackRepository: FeedbackRepository): IFeedbackRepository
+
 }
