@@ -1,9 +1,10 @@
 package com.crafttalk.chat.domain.entity.auth
 
-import com.crafttalk.chat.data.local.pref.Uuid
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
 import java.io.Serializable
+import java.util.*
+import kotlin.collections.HashMap
 
 class Visitor (
     val uuid: String,
@@ -73,11 +74,7 @@ class Visitor (
                 phone = DEFAULT_PHONE
             }
 
-            val uuid = Uuid.generateUUID(
-                true,
-                firstName,
-                lastName
-            )
+            val uuid = UUID.randomUUID().toString()
 
             return Visitor(
                 uuid,
