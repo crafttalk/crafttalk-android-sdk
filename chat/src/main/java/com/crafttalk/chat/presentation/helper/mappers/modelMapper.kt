@@ -16,8 +16,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.id,
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            localMessage.operatorPreview,
-            localMessage.isRead
+            localMessage.operatorPreview
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             localMessage.id,
@@ -28,8 +27,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
-            getMessageTypeByValueType(localMessage.messageType),
-            localMessage.isRead
+            getMessageTypeByValueType(localMessage.messageType)
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.GIF -> GifMessageItem(
             localMessage.id,
@@ -46,8 +44,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
-            getMessageTypeByValueType(localMessage.messageType),
-            localMessage.isRead
+            getMessageTypeByValueType(localMessage.messageType)
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.IMAGE -> ImageMessageItem(
             localMessage.id,
@@ -64,8 +61,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
-            getMessageTypeByValueType(localMessage.messageType),
-            localMessage.isRead
+            getMessageTypeByValueType(localMessage.messageType)
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.FILE -> FileMessageItem(
             localMessage.id,
@@ -78,8 +74,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
-            getMessageTypeByValueType(localMessage.messageType),
-            localMessage.isRead
+            getMessageTypeByValueType(localMessage.messageType)
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (!localMessage.attachmentUrl.isNullOrEmpty() && !localMessage.attachmentName.isNullOrEmpty() && localMessage.attachmentType != null) -> UnionMessageItem(
             localMessage.id,
@@ -100,8 +95,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
-            getMessageTypeByValueType(localMessage.messageType),
-            localMessage.isRead
+            getMessageTypeByValueType(localMessage.messageType)
         )
         else -> DefaultMessageItem(
             localMessage.id,

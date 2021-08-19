@@ -392,8 +392,7 @@ class SocketApi constructor(
                             operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
                             operatorPreview = null,
                             height = 0,
-                            width = 0,
-                            isRead = false
+                            width = 0
                         )
                         if (messageCheckObj !in messagesFromDb) {
                             updateDataInDatabase(messageFromHistory)

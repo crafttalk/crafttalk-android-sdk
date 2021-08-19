@@ -8,6 +8,7 @@ import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
 import com.crafttalk.chat.data.local.db.dao.TransactionMessageDao
 import com.crafttalk.chat.data.local.db.database.ChatDatabase
+import com.crafttalk.chat.data.local.db.migrations.Migration_1_2
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -23,7 +24,9 @@ class DBModule {
         context,
         ChatDatabase::class.java,
         "chat.db"
-    ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE).build()
+    ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
+        .addMigrations(Migration_1_2)
+        .build()
 
     @Provides
     @Singleton

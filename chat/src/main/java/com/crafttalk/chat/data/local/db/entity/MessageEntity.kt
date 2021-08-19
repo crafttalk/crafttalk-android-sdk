@@ -4,46 +4,69 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
+import com.crafttalk.chat.data.local.db.entity.MessageEntity.Companion.TABLE_NAME
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
 
-@Entity(tableName = "messages")
+@Entity(tableName = TABLE_NAME)
 data class MessageEntity(
+
+    @ColumnInfo(name = "uuid")
     val uuid: String,
+
+    @ColumnInfo(name = "id")
     var id: String,
+
     @ColumnInfo(name = "is_reply")
     val isReply: Boolean,
+
     @ColumnInfo(name = "message_type")
     val messageType: Int,
+
     @ColumnInfo(name = "parent_msg_id")
     val parentMsgId: String?,
+
+    @ColumnInfo(name = "timestamp")
     var timestamp: Long,
+
+    @ColumnInfo(name = "message")
     val message: String?,
-//    @ColumnInfo(name = "span_structure_list")
+
+    @ColumnInfo(name = "span_structure_list")
     val spanStructureList: List<Tag>,
+
+    @ColumnInfo(name = "actions")
     val actions: List<ActionEntity>?,
+
     @ColumnInfo(name = "attachment_url")
     val attachmentUrl: String?,
+
     @ColumnInfo(name = "attachment_type")
     val attachmentType: TypeFile?,
+
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String?,
+
     @ColumnInfo(name = "attachment_size")
     val attachmentSize: Long?,
+
     @ColumnInfo(name = "operator_id")
     val operatorId: String?,
+
     @ColumnInfo(name = "operator_preview")
     var operatorPreview: String?,
+
     @ColumnInfo(name = "operator_name")
     val operatorName: String?,
+
     @ColumnInfo(name = "height")
     val height: Int?,
+
     @ColumnInfo(name = "width")
-    val width: Int?,
-    @ColumnInfo(name = "is_read")
-    val isRead: Boolean
+    val width: Int?
+
 ) {
     @PrimaryKey(autoGenerate = true)
     var idKey: Long = 0
@@ -89,6 +112,8 @@ data class MessageEntity(
 
     companion object {
         private const val COUNT_MS = 1000
+        const val TABLE_NAME = "messages"
+        const val TABLE_NAME_BACKUP = "messages_backup"
 
         fun map(uuid: String, messageSocket: NetworkMessage, isUploadHistory: Boolean, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
             val list = arrayListOf<Tag>()

@@ -16,7 +16,7 @@ import com.crafttalk.chat.data.local.db.entity.converters.TypeFileConverter
 
 @Database(
     entities = [MessageEntity::class, PersonEntity::class, FileEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(ActionConverter::class, TypeFileConverter::class, SpanStructureListConverter::class)
