@@ -24,13 +24,13 @@ class SharedPreferencesModule {
                 .build()
             return EncryptedSharedPreferences.create(
                 context,
-                "dataVisitor",
+                "crafttalkChatInfo",
                 masterKey,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
         } else {
-            context.getSharedPreferences("dataVisitor", MODE_PRIVATE)
+            context.getSharedPreferences("crafttalkChatInfo", MODE_PRIVATE)
         }
     }
 

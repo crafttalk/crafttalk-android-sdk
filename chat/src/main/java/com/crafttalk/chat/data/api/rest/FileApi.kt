@@ -13,7 +13,7 @@ interface FileApi {
     @Headers("Content-Type: application/json")
     @POST("webchat/{clientId}/upload-file")
     fun uploadFile(
-        @Path("clientId") clientId: String = ChatParams.urlUploadNameSpace!!,
+        @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
         @Query("auth_token") visitorToken: String,
         @Body networkBody: NetworkBodyStructureUploadFile
     ): Call<String>
@@ -21,7 +21,7 @@ interface FileApi {
     @Multipart
     @POST("webchat/{clientId}/upload-file")
     fun uploadFile(
-        @Path("clientId") clientId: String = ChatParams.urlUploadNameSpace!!,
+        @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
         @Query("auth_token") visitorToken: String,
         @Part(ApiParams.FILE_NAME) fileName: RequestBody,
         @Part(ApiParams.UUID) uuid: RequestBody,

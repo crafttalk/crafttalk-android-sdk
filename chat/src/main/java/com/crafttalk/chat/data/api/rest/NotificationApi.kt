@@ -15,19 +15,19 @@ interface NotificationApi {
     @POST("webchat/{namespace}/set-user-subscription")
     fun subscribe(
         @Body body: NetworkSubscription,
-        @Path("namespace") clientId : String = ChatParams.urlSocketNameSpace!!
+        @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!
     ) : Call<Unit>
 
     @POST("webchat/{namespace}/delete-user-subscription")
     fun unsubscribe(
         @Body body: NetworkUnsubscription,
-        @Path("namespace") clientId : String = ChatParams.urlSocketNameSpace!!
+        @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!
     ) : Call<Unit>
 
     @POST("webchat/{namespace}/check-user-subscription")
     fun checkSubscription(
         @Body body: NetworkCheckSubscription,
-        @Path("namespace") clientId : String = ChatParams.urlSocketNameSpace!!
+        @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!
     ) : Call<NetworkResultCheckSubscription>
 
 }

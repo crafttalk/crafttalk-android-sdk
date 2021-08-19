@@ -41,7 +41,7 @@ class PersonRepository
                         ?: personApi.getPersonPreview(
                             personId = personId,
                             visitorToken = visitorToken
-                        ).toData().picture?.apply {
+                        ).toData()?.picture?.apply {
                             try {
                                 personDao.addPersonPreview(PersonEntity(personId, this))
                                 messagesDao.updatePersonPreview(personId, this)
@@ -52,7 +52,7 @@ class PersonRepository
                     personApi.getPersonPreview(
                         personId = personId,
                         visitorToken = visitorToken
-                    ).toData().picture.apply {
+                    ).toData()?.picture.apply {
                         messagesDao.updatePersonPreview(personId, this)
                     }
                 }

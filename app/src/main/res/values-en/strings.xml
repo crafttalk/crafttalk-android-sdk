@@ -7,17 +7,11 @@
     <string name="menu_item_2">Chat</string>
     <string name="menu_item_3">Settings</string>
 
-<!--    <string name="urlSocketHost">https://presale.craft-talk.com</string>-->
-<!--    <string name="urlSocketNameSpace">/webchat_presale</string>-->
-<!--    <string name="urlSyncHistory">presale.craft-talk.com</string>-->
-<!--    <string name="urlUploadHost">https://presale.craft-talk.com/</string>-->
-<!--    <string name="urlUploadNameSpace">webchat_presale</string>-->
+<!--    <string name="urlChatHost">https://presale.craft-talk.com</string>-->
+<!--    <string name="urlChatNameSpace">webchat_presale</string>-->
 
-    <string name="urlSocketHost">https://release.craft-talk.com</string>
-    <string name="urlSocketNameSpace">/webchat_test</string>
-    <string name="urlSyncHistory">release.craft-talk.com</string>
-    <string name="urlUploadHost">https://release.craft-talk.com/</string>
-    <string name="urlUploadNameSpace">webchat_test</string>
+    <string name="urlChatHost">https://release.craft-talk.com</string>
+    <string name="urlChatNameSpace">webchat_test</string>
 
     <string name="salt">C~kW]cq76(a?m[UbJ)drw+Wh6>W[3Wsj</string>
     <string name="default_notification_channel_id">0</string>

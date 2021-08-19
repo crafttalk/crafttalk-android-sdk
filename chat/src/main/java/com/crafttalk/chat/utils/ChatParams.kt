@@ -6,11 +6,8 @@ import java.util.concurrent.TimeUnit
 object ChatParams {
     internal var authMode: AuthType? = null
     internal var initialMessageMode: InitialMessageMode? = null
-    internal var urlSocketHost: String? = null
-    internal var urlSocketNameSpace: String? = null
-    internal var urlSyncHistory: String? = null
-    internal var urlUploadHost: String? = null
-    internal var urlUploadNameSpace: String? = null
+    internal var urlChatHost: String? = null
+    internal var urlChatNameSpace: String? = null
     internal var operatorPreviewMode: OperatorPreviewMode? = null
     internal var operatorNameMode: OperatorNameMode? = null
     internal var clickableLinkMode: ClickableLinkMode? = null

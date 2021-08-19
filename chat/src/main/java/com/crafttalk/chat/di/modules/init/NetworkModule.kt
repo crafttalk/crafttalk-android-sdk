@@ -7,9 +7,10 @@ import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.TLSSocketFactory.Companion.enableTls
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.TransactionMessageDao
-import com.crafttalk.chat.di.Notification
+import com.crafttalk.chat.di.Base
+import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ChatParams.certificatePinning
-import com.crafttalk.chat.utils.ChatParams.urlSocketHost
+import com.crafttalk.chat.utils.ChatParams.urlChatHost
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -27,33 +28,41 @@ class NetworkModule {
     fun provideCertificatePinner(): CertificatePinner? {
         return certificatePinning?.let {
             CertificatePinner.Builder()
-                .add(urlSocketHost!!.substringAfter("://"), it)
+                .add(urlChatHost!!.substringAfter("://"), it)
                 .build()
         }
     }
 
-    @Notification
     @Singleton
     @Provides
-    fun provideRetrofitClientNotification(gson: Gson, certificate: CertificatePinner?): Retrofit {
-        val okHttpClient = OkHttpClient.Builder()
-            .enableTls()
-            .apply { certificate?.let { certificatePinner(it) } }
-            .build()
-        return Retrofit.Builder()
-            .baseUrl(urlSocketHost!!)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
+    fun provideOkHttpClient(certificate: CertificatePinner?) = OkHttpClient
+        .Builder()
+        .enableTls()
+        .apply {
+            certificate?.let { certificatePinner(it) }
+            ChatParams.fileConnectTimeout?.let { connectTimeout(it, ChatParams.timeUnitTimeout) }
+            ChatParams.fileReadTimeout?.let { readTimeout(it, ChatParams.timeUnitTimeout) }
+            ChatParams.fileWriteTimeout?.let { writeTimeout(it, ChatParams.timeUnitTimeout) }
+            ChatParams.fileCallTimeout?.let { callTimeout(it, ChatParams.timeUnitTimeout) }
+        }
+        .build()
+
+    @Base
+    @Singleton
+    @Provides
+    fun provideBaseRetrofitClient(okHttpClient: OkHttpClient, gson: Gson) = Retrofit.Builder()
+        .baseUrl(urlChatHost!!)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
 
     @Singleton
     @Provides
-    fun provideNotificationApi(@Notification retrofit: Retrofit): NotificationApi = retrofit.create(NotificationApi::class.java)
+    fun provideNotificationApi(@Base retrofit: Retrofit): NotificationApi = retrofit.create(NotificationApi::class.java)
 
     @Singleton
     @Provides
-    fun providePersonApi(@Notification retrofit: Retrofit): PersonApi = retrofit.create(PersonApi::class.java)
+    fun providePersonApi(@Base retrofit: Retrofit): PersonApi = retrofit.create(PersonApi::class.java)
 
     @Singleton
     @Provides

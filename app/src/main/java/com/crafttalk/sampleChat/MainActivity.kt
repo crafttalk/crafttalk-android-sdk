@@ -56,11 +56,8 @@ class MainActivity: AppCompatActivity() {
 
         Chat.init(
             this,
-            getString(R.string.urlSocketHost),
-            getString(R.string.urlSocketNameSpace),
-            getString(R.string.urlSyncHistory),
-            getString(R.string.urlUploadHost),
-            getString(R.string.urlUploadNameSpace),
+            getString(R.string.urlChatHost),
+            getString(R.string.urlChatNameSpace),
             fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
         )
         Chat.createSession()

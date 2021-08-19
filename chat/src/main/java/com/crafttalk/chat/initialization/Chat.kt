@@ -47,11 +47,8 @@ object Chat {
 
     fun init(
         context: Context,
-        urlSocketHost: String,
-        urlSocketNameSpace: String,
-        urlSyncHistory: String,
-        urlUploadHost: String,
-        urlUploadNameSpace: String,
+        urlChatHost: String,
+        urlChatNameSpace: String,
         authType: AuthType = AuthType.AUTH_WITHOUT_FORM,
         initialMessageMode: InitialMessageMode? = InitialMessageMode.SEND_ON_OPEN,
         operatorPreviewMode: OperatorPreviewMode = OperatorPreviewMode.CACHE,
@@ -69,11 +66,8 @@ object Chat {
     ) {
         ChatParams.authMode = authType
         ChatParams.initialMessageMode = initialMessageMode
-        ChatParams.urlSocketHost = urlSocketHost
-        ChatParams.urlSocketNameSpace = urlSocketNameSpace
-        ChatParams.urlSyncHistory = urlSyncHistory
-        ChatParams.urlUploadHost = urlUploadHost
-        ChatParams.urlUploadNameSpace = urlUploadNameSpace
+        ChatParams.urlChatHost = urlChatHost
+        ChatParams.urlChatNameSpace = urlChatNameSpace
         ChatParams.operatorPreviewMode = operatorPreviewMode
         ChatParams.operatorNameMode = operatorNameMode
         ChatParams.clickableLinkMode = clickableLinkMode

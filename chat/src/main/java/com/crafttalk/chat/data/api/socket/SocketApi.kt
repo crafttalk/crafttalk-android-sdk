@@ -18,9 +18,6 @@ import com.crafttalk.chat.presentation.helper.ui.getWeightFile
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams.authMode
 import com.crafttalk.chat.utils.ChatParams.initialMessageMode
-import com.crafttalk.chat.utils.ChatParams.urlSocketHost
-import com.crafttalk.chat.utils.ChatParams.urlSocketNameSpace
-import com.crafttalk.chat.utils.ChatParams.urlSyncHistory
 import com.crafttalk.chat.utils.ChatStatus
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
@@ -33,6 +30,8 @@ import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import com.crafttalk.chat.utils.ChatParams.urlChatHost
+import com.crafttalk.chat.utils.ChatParams.urlChatNameSpace
 
 class SocketApi constructor(
     private val messageDao: MessagesDao,
@@ -67,8 +66,8 @@ class SocketApi constructor(
     fun initSocket() {
         if (socket == null) {
             socket = try {
-                val manager = Manager(URI(urlSocketHost))
-                manager.socket(urlSocketNameSpace).apply {
+                val manager = Manager(URI(urlChatHost))
+                manager.socket("/${urlChatNameSpace}").apply {
                     setAllListeners(this)
                 }
             } catch (e: URISyntaxException) {

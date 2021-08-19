@@ -4,8 +4,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(value = AnnotationRetention.RUNTIME)
-annotation class Upload
+annotation class Base
 
 @Qualifier
 @Retention(value = AnnotationRetention.RUNTIME)
-annotation class Notification
+annotation class Upload

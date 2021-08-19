@@ -11,7 +11,7 @@ interface PersonApi {
 
     @GET("webchat/{clientId}/get-operator/{personId}")
     fun getPersonPreview(
-        @Path("clientId") clientId: String = ChatParams.urlUploadNameSpace!!,
+        @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
         @Path("personId") personId : String,
         @Query("auth_token") visitorToken: String
     ) : Call<NetworkResultPersonPreview>
