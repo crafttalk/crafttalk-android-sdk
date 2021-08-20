@@ -36,4 +36,5 @@ interface ChatEventListener {
     fun operatorStartWriteMessage()
     fun operatorStopWriteMessage()
     fun finishDialog()
+    fun showUploadHistoryBtn()
 }

@@ -38,6 +38,8 @@ class ChatViewModel
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
     val uploadHistoryVisible = MutableLiveData(false)
+    var isMergeHistoryAllowEvent = false
+    val mergeHistoryEvent = MutableLiveData(false)
 
     val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
@@ -84,6 +86,8 @@ class ChatViewModel
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
         override fun finishDialog() { feedbackContainerVisible.postValue(true) }
+        override fun showUploadHistoryBtn() { mergeHistoryEvent.postValue(true) }
+
     }
     var uploadFileListener: UploadFileListener? = null
 

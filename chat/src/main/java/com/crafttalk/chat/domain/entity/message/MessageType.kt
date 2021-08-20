@@ -13,6 +13,7 @@ enum class MessageType(val valueType: Int) {
     UPDATE_NEGATIVE_REASON(19), // обновление негативной причины завершения диалога
     CLIENT_HOLD(23), // оператор отправил сообщение удержания (hold)   - ?
     TRANSFER_TO_OPERATOR(18), // техническое сообщение о подключении оператора
+    MERGE_HISTORY(25), // синхронизация сообщений до и после перехода на новую авторизацию
     DEFAULT(-1);
 
     companion object {
@@ -29,6 +30,8 @@ enum class MessageType(val valueType: Int) {
                 16 -> FINISH_DIALOG
                 19 -> UPDATE_NEGATIVE_REASON
                 23 -> CLIENT_HOLD
+                18 -> TRANSFER_TO_OPERATOR
+                25 -> MERGE_HISTORY
                 else -> DEFAULT
             }
         }

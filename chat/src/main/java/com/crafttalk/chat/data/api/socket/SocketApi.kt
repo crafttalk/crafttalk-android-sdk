@@ -182,10 +182,9 @@ class SocketApi constructor(
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
-                    MessageType.VISITOR_MESSAGE.valueType -> {
-                        chatEventListener?.operatorStopWriteMessage()
-                    }
+                    MessageType.VISITOR_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
+                    MessageType.MERGE_HISTORY.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
                 if (!messageJson.toString().contains(""""message":"\/start"""") && (messageSocket.id != null || !messageDao.isNotEmpty(visitor.uuid))) {
                     when {

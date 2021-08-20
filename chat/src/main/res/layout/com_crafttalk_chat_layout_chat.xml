@@ -6,6 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_with_message"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:paddingTop="60dp"
+        android:clipToPadding="false"
+        app:stackFromEnd="false"
+        app:reverseLayout="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
+        tools:itemCount="1" />
+
     <TextView
         android:id="@+id/upload_history_btn"
         android:layout_width="wrap_content"
@@ -34,22 +50,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_with_message"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:paddingTop="60dp"
-        android:clipToPadding="false"
-        app:stackFromEnd="false"
-        app:reverseLayout="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/lower_limit"
-        tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
-        tools:itemCount="1" />
 
     <ImageView
         android:id="@+id/scroll_to_down"
