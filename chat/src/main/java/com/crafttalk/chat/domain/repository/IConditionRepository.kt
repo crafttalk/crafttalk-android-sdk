@@ -13,5 +13,14 @@ interface IConditionRepository {
     fun destroySessionChat()
     fun dropChat()
 
-    fun giveFeedbackOnOperator(countStars: Int)
+    // проверка вся ли история загружена
+    fun getFlagAllHistoryLoaded(): Boolean
+    fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean)
+
+    fun getCurrentReadMessageTime(): Long
+    fun saveCurrentReadMessageTime(currentReadMessageTime: Long)
+
+    // провека наличия сообщения в бд
+    suspend fun getStatusExistenceMessages(uuid: String): Boolean
+
 }

@@ -25,7 +25,20 @@ fun getSizeMediaFile(context: Context, url: String, resultSize: (height: Int?, w
         })
 }
 
-fun getWeightFile(urlPath: String, resultSize: (size: Long) -> Unit) {
+fun getSizeMediaFile(context: Context, url: String): Pair<Int, Int>? {
+    return try {
+        val resource = Glide.with(context)
+            .asBitmap()
+            .load(url)
+            .submit()
+            .get()
+        Pair(resource.height, resource.width)
+    } catch (ex: Exception) {
+        null
+    }
+}
+
+fun getWeightFile(urlPath: String): Long? {
     val CONTENT_DISPOSITION = "content-disposition"
     val template = "size="
 
@@ -38,7 +51,7 @@ fun getWeightFile(urlPath: String, resultSize: (size: Long) -> Unit) {
         if (size == -1) {
             val contentDisposition = urlConnection.getHeaderField(CONTENT_DISPOSITION)
             if (contentDisposition == null) {
-                resultSize(-1)
+                null
             } else {
                 val startIndex = contentDisposition.indexOf(template) + template.length
                 val indexEndComma = contentDisposition.indexOf(",", startIndex)
@@ -48,14 +61,14 @@ fun getWeightFile(urlPath: String, resultSize: (size: Long) -> Unit) {
                     startIndex != -1 && indexEndComma != -1 && indexEndBracket == -1 -> contentDisposition.substring(startIndex, indexEndComma)
                     startIndex != -1 && indexEndComma == -1 && indexEndBracket != -1 -> contentDisposition.substring(startIndex, indexEndBracket)
                     startIndex != -1 && indexEndComma == -1 && indexEndBracket == -1 -> contentDisposition.substring(startIndex)
-                    else -> "-1"
-                }).toLong()
-                resultSize(alternativeSize)
+                    else -> null
+                })?.toLong()
+                alternativeSize
             }
         } else {
-            resultSize(size.toLong())
+            size.toLong()
         }
     } catch (ex: Exception) {
-        resultSize(-1)
+        null
     }
 }

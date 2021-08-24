@@ -21,6 +21,7 @@ import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
 import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -34,10 +35,13 @@ class ChatViewModel
     private val context: Context
 ) : BaseViewModel() {
 
+    var currentReadMessageTime = conditionInteractor.getCurrentReadMessageTime()
+    var isAllHistoryLoaded = conditionInteractor.checkFlagAllHistoryLoaded()
+
     var countUnreadMessages = MutableLiveData(0)
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
-    val uploadHistoryVisible = MutableLiveData(false)
+    val uploadHistoryBtnVisible = MutableLiveData(false)
     var isMergeHistoryAllowEvent = false
     val mergeHistoryEvent = MutableLiveData(false)
 
@@ -49,7 +53,7 @@ class ChatViewModel
             ?.mapByPage { groupPageByDate(it) } ?: return
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder<Int, MessageModel>(
             dataSource,
-            PAGE_SIZE
+            ChatParams.pageSize
         ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
             override fun onZeroItemsLoaded() {
                 super.onZeroItemsLoaded()
@@ -101,6 +105,13 @@ class ChatViewModel
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
                     uploadMessages()
                 },
+                sync = {
+                    messageInteractor.syncMessages(
+                        currentReadMessageTime,
+                        { newTimeMark -> currentReadMessageTime = newTimeMark },
+                        {}
+                    )
+                },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
                 chatEventListener = chatEventListener
@@ -109,8 +120,9 @@ class ChatViewModel
     }
 
     override fun onCleared() {
-        super.onCleared()
         conditionInteractor.leaveChatScreen()
+        currentReadMessageTime.run(conditionInteractor::saveCurrentReadMessageTime)
+        super.onCleared()
     }
 
     fun registration(vararg args: String) {
@@ -120,6 +132,13 @@ class ChatViewModel
                 successAuthUi = {
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
                     uploadMessages()
+                },
+                sync = {
+                    messageInteractor.syncMessages(
+                        currentReadMessageTime,
+                        { newTimeMark -> currentReadMessageTime = newTimeMark },
+                        {}
+                    )
                 },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
@@ -134,6 +153,12 @@ class ChatViewModel
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
                     uploadMessages()
                 },
+                sync = {
+                    messageInteractor.syncMessages(currentReadMessageTime,
+                        { newTimeMark -> currentReadMessageTime = newTimeMark },
+                        {}
+                    )
+                },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
             )
@@ -142,7 +167,10 @@ class ChatViewModel
 
     fun uploadOldMessages() {
         launchIO {
-            chatMessageInteractor.syncMessages(false)
+            messageInteractor.uploadHistoryMessages {
+                isAllHistoryLoaded = true
+                uploadHistoryBtnVisible.postValue(false)
+            }
         }
     }
 
@@ -177,7 +205,7 @@ class ChatViewModel
 
     fun selectAction(messageId: String, actionId: String) {
         launchIO {
-            chatMessageInteractor.selectActionInMessage(messageId, actionId)
+            messageInteractor.selectActionInMessage(messageId, actionId)
         }
     }
 
@@ -187,15 +215,15 @@ class ChatViewModel
         }
     }
 
-    fun updateData(idKey: Long, height: Int, width: Int) {
+    fun updateData(id: String, height: Int, width: Int) {
         launchIO {
-            chatMessageInteractor.updateSizeMessage(idKey, height, width)
+            messageInteractor.updateSizeMessage(id, height, width)
         }
     }
 
     fun sendMessage(message: String) {
         launchIO {
-            chatMessageInteractor.sendMessage(message)
+            messageInteractor.sendMessage(message)
         }
     }
 
@@ -251,7 +279,6 @@ class ChatViewModel
     }
 
     companion object {
-        const val PAGE_SIZE = 20
         const val MAX_COUNT_UNREAD_MESSAGES = 1
     }
 

@@ -57,8 +57,13 @@ class ConditionInteractor
         conditionRepository.dropChat()
     }
 
-    fun giveFeedbackOnOperator(countStars: Int) {
-        conditionRepository.giveFeedbackOnOperator(countStars)
-    }
+    fun checkFlagAllHistoryLoaded() =
+        conditionRepository.getFlagAllHistoryLoaded()
+
+    fun getCurrentReadMessageTime() =
+        conditionRepository.getCurrentReadMessageTime()
+
+    fun saveCurrentReadMessageTime(currentReadMessageTime: Long) =
+        conditionRepository.saveCurrentReadMessageTime(currentReadMessageTime)
 
 }

@@ -2,14 +2,11 @@ package com.crafttalk.chat.data.api.socket
 
 import android.content.Context
 import android.util.Log
-import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
-import com.crafttalk.chat.data.local.db.dao.TransactionMessageDao
-import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
-import com.crafttalk.chat.domain.entity.tags.Tag
+import com.crafttalk.chat.domain.entity.message.NetworkMessage
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
@@ -18,24 +15,25 @@ import com.crafttalk.chat.presentation.helper.ui.getWeightFile
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams.authMode
 import com.crafttalk.chat.utils.ChatParams.initialMessageMode
+import com.crafttalk.chat.utils.ChatParams.urlChatHost
+import com.crafttalk.chat.utils.ChatParams.urlChatNameSpace
 import com.crafttalk.chat.utils.ChatStatus
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
 import com.crafttalk.chat.utils.InitialMessageMode
+import com.google.gson.Gson
 import io.socket.client.Manager
 import io.socket.client.Socket
-import com.google.gson.Gson
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
-import com.crafttalk.chat.domain.entity.message.NetworkMessage
-import com.crafttalk.chat.utils.ChatParams.urlChatHost
-import com.crafttalk.chat.utils.ChatParams.urlChatNameSpace
 
 class SocketApi constructor(
     private val messageDao: MessagesDao,
-    private val transactionMessageDao: TransactionMessageDao,
     private val gson: Gson,
     private val context: Context
 ) {
@@ -44,12 +42,11 @@ class SocketApi constructor(
     private lateinit var visitor: Visitor
     private var successAuthUiFun: () -> Unit = {}
     private var failAuthUiFun: () -> Unit = {}
-    private var successAuthUxFun: () -> Unit = {}
-    private var failAuthUxFun: () -> Unit = {}
-    private var getPersonPreview: (personId: String) -> String? = { null }
-    private var updatePersonName: (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
-    private var newMessagesStartTime: Long? = null
-    private var isUploadHistory: Boolean = false
+    private var successAuthUxFun: suspend () -> Unit = {}
+    private var failAuthUxFun: suspend () -> Unit = {}
+    private var syncMessages: suspend () -> Unit = {}
+    private var getPersonPreview: suspend (personId: String) -> String? = { null }
+    private var updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
     private var isAuthorized: Boolean = false
 
     private var chatInternetConnectionListener: ChatInternetConnectionListener? = null
@@ -107,23 +104,23 @@ class SocketApi constructor(
         visitor: Visitor,
         successAuthUi: (() -> Unit)?,
         failAuthUi: (() -> Unit)?,
-        successAuthUx: () -> Unit,
-        failAuthUx: () -> Unit,
-        getPersonPreview: (personId: String) -> String?,
-        updatePersonName: (personId: String?, currentPersonName: String?) -> Unit,
+        successAuthUx: suspend () -> Unit,
+        failAuthUx: suspend () -> Unit,
+        sync: suspend () -> Unit,
+        getPersonPreview: suspend (personId: String) -> String?,
+        updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
     ) {
         successAuthUi?.let { this.successAuthUiFun = it }
         this.successAuthUxFun = successAuthUx
         failAuthUi?.let { this.failAuthUiFun = it }
         this.failAuthUxFun = failAuthUx
+        this.syncMessages = sync
         this.getPersonPreview = getPersonPreview
         this.updatePersonName = updatePersonName
         chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
-        socket?.let {
-            connectUser(it)
-        }
+        socket?.run(::connectUser)
     }
 
     private fun setAllListeners(socket: Socket) {
@@ -310,11 +307,6 @@ class SocketApi constructor(
         socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, null, null)
     }
 
-    fun sync(timestamp: Long) {
-        isUploadHistory = true
-        socket!!.emit("history-messages-requested", timestamp, visitor.token, urlSyncHistory)
-    }
-
     private fun uploadNewMessages() {
         viewModelScope.launch {
             messageDao.getLastMessageTime(visitor.uuid)?.let { time ->
@@ -325,26 +317,40 @@ class SocketApi constructor(
         }
     }
 
-    private fun updateDataInDatabase(messageSocket: NetworkMessage) {
+    private suspend fun updateDataInDatabase(messageSocket: NetworkMessage) {
+        val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
                 messageSocket.attachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
-                            transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, height, width), getPersonPreview, updatePersonName)
+                            messageDao.insertMessage(MessageEntity.map(
+                                uuid = visitor.uuid,
+                                networkMessage = messageSocket,
+                                operatorPreview = operatorPreview,
+                                mediaFileHeight = height,
+                                mediaFileWidth = width
+                            ))
                         }
                     }
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isFile -> {
                 messageSocket.attachmentUrl?.let { url ->
-                    getWeightFile(url) { size ->
-                        transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory, attachmentSize = size), getPersonPreview, updatePersonName)
-                    }
+                    messageDao.insertMessage(MessageEntity.map(
+                        uuid = visitor.uuid,
+                        networkMessage = messageSocket,
+                        operatorPreview = operatorPreview,
+                        fileSize= getWeightFile(url)
+                    ))
                 }
             }
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (!messageSocket.attachmentUrl.isNullOrEmpty() || !messageSocket.message.isNullOrEmpty()) -> {
-                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory), getPersonPreview, updatePersonName)
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isText -> {
+                messageDao.insertMessage(MessageEntity.map(
+                    uuid = visitor.uuid,
+                    networkMessage = messageSocket,
+                    operatorPreview = operatorPreview
+                ))
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
@@ -352,9 +358,14 @@ class SocketApi constructor(
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
-                transactionMessageDao.insertMessage(MessageEntity.map(visitor.uuid, messageSocket, isUploadHistory), getPersonPreview, updatePersonName)
+                messageDao.insertMessage(MessageEntity.mapOperatorJoinMessage(
+                    uuid = visitor.uuid,
+                    networkMessage = messageSocket,
+                    operatorPreview = operatorPreview
+                ))
             }
         }
+        updatePersonName(messageSocket.operatorId, messageSocket.operatorName)
     }
 
     private fun marge(arrayMessages: Array<NetworkMessage>) {

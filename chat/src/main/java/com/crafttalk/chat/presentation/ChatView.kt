@@ -334,7 +334,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 if (pagedList.size != 0) {
                     lastOldMessageId = pagedList[0]?.id
                 }
-                viewModel.uploadHistoryVisible.value = false
+                viewModel.uploadHistoryBtnVisible.value = false
                 isFirstUploadMessages = false
             })
         })
@@ -438,10 +438,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             val indexFirstMsg = (list_with_message.adapter?.itemCount ?: return@Observer) - 1
             if (indexFirstVisible == indexFirstMsg) {
                 viewModel.isMergeHistoryAllowEvent = true
-                viewModel.uploadHistoryVisible.value = true
+                viewModel.uploadHistoryBtnVisible.value = true
             }
         })
-        viewModel.uploadHistoryVisible.observe(lifecycleOwner, Observer {
+        viewModel.uploadHistoryBtnVisible.observe(lifecycleOwner, Observer {
             if (it) {
                 upload_history_btn.visibility = View.VISIBLE
             } else {

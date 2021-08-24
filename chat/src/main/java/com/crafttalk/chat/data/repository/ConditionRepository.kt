@@ -1,6 +1,8 @@
 package com.crafttalk.chat.data.repository
 
+import android.content.SharedPreferences
 import com.crafttalk.chat.data.api.socket.SocketApi
+import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
@@ -9,6 +11,8 @@ import javax.inject.Inject
 
 class ConditionRepository
 @Inject constructor(
+    private val messagesDao: MessagesDao,
+    private val pref: SharedPreferences,
     private val socketApi: SocketApi
 ) : IConditionRepository {
 
@@ -41,8 +45,28 @@ class ConditionRepository
         socketApi.dropChat()
     }
 
-    override fun giveFeedbackOnOperator(countStars: Int) {
-        socketApi.giveFeedbackOnOperator(countStars)
+    override fun getFlagAllHistoryLoaded(): Boolean {
+        return pref.getBoolean("isAllHistoryLoaded", false)
+    }
+
+    override fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean) {
+        val prefEditor = pref.edit()
+        prefEditor.putBoolean("isAllHistoryLoaded", isAllHistoryLoaded)
+        prefEditor.apply()
+    }
+
+    override fun getCurrentReadMessageTime(): Long {
+        return pref.getLong("currentReadMessageTime", 0)
+    }
+
+    override fun saveCurrentReadMessageTime(currentReadMessageTime: Long) {
+        val prefEditor = pref.edit()
+        prefEditor.putLong("currentReadMessageTime", currentReadMessageTime)
+        prefEditor.apply()
+    }
+
+    override suspend fun getStatusExistenceMessages(uuid: String): Boolean {
+        return messagesDao.isNotEmpty(uuid)
     }
 
 }
