@@ -20,6 +20,8 @@ interface MessagesDao {
     @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE uuid = :uuid ORDER BY timestamp DESC LIMIT 1")
     fun getLastTime(uuid: String): Long?
 
+    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE uuid = :uuid AND id = :id")
+    fun getMessageById(uuid: String, id: String): MessageEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessages(messages: List<MessageEntity>)
@@ -27,18 +29,11 @@ interface MessagesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertMessage(message: MessageEntity)
 
-
     @Query("UPDATE ${MessageEntity.TABLE_NAME} SET message_type = :type WHERE uuid = :uuid AND id = :id")
     fun updateMessage(uuid: String, id: String, type: Int)
 
     @Query("UPDATE ${MessageEntity.TABLE_NAME} SET height = :height, width = :width WHERE uuid = :uuid AND id = :id")
     fun updateSizeMessage(uuid: String, id: String, height: Int, width: Int)
-
-    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE uuid = :uuid AND id = :id")
-    fun getMessageById(uuid: String, id: String): MessageEntity?
-
-    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE (uuid = :uuid) AND (message = :textMessage OR attachment_url = :attachmentUrl)")
-    fun getMessageByContent(uuid: String, textMessage: String?, attachmentUrl: String?): List<MessageEntity>
 
     @Query("UPDATE ${MessageEntity.TABLE_NAME} SET operator_name = :currentPersonName WHERE operator_id = :personId")
     fun updatePersonName(personId: String, currentPersonName: String)

@@ -155,7 +155,7 @@ class SocketApi constructor(
                 greet()
             }
             if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                uploadNewMessages()
+                syncChat()
             }
         }
 
@@ -194,28 +194,6 @@ class SocketApi constructor(
                         messageSocket.id = System.currentTimeMillis().toString()
                     }
                     updateDataInDatabase(messageSocket)
-                }
-            }
-        }
-
-        socket.on("history-messages-loaded") {
-            Log.d(TAG_SOCKET_EVENT, "history-messages-loaded, ${it.size}")
-            viewModelScope.launch {
-                val listMessages = gson.fromJson(it[0].toString().replace("&amp;", "&"), Array<NetworkMessage>::class.java)
-
-//                listMessages.forEach {
-//                    Log.d(TAG_SOCKET, "history: $it")
-//                }
-
-                if (listMessages.isNotEmpty()) {
-                    marge(listMessages)
-                    if (listMessages.isNotEmpty() && newMessagesStartTime != null && listMessages[0].timestamp > newMessagesStartTime!!) {
-                        newMessagesStartTime = listMessages[0].timestamp
-                        socket.emit("history-messages-requested", newMessagesStartTime, visitor.token, urlSyncHistory)
-                    } else {
-                        newMessagesStartTime = null
-                    }
-                    isUploadHistory = false
                 }
             }
         }
@@ -270,7 +248,7 @@ class SocketApi constructor(
                 greet()
             }
             if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                uploadNewMessages()
+                syncChat()
             }
         } else {
             try {
@@ -307,13 +285,9 @@ class SocketApi constructor(
         socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, null, null)
     }
 
-    private fun uploadNewMessages() {
+    private fun syncChat() {
         viewModelScope.launch {
-            messageDao.getLastMessageTime(visitor.uuid)?.let { time ->
-                isUploadHistory = false
-                newMessagesStartTime = time
-                socket!!.emit("history-messages-requested", 0, visitor.token, urlSyncHistory)
-            }
+            syncMessages()
         }
     }
 
@@ -366,51 +340,6 @@ class SocketApi constructor(
             }
         }
         updatePersonName(messageSocket.operatorId, messageSocket.operatorName)
-    }
-
-    private fun marge(arrayMessages: Array<NetworkMessage>) {
-        arrayMessages.sortWith(compareBy(NetworkMessage::timestamp))
-        arrayMessages.forEach { messageFromHistory ->
-            val list = arrayListOf<Tag>()
-            val message = messageFromHistory.message?.convertTextToNormalString(list)
-
-            when (messageFromHistory.messageType) {
-                MessageType.VISITOR_MESSAGE.valueType -> {
-                    if (messageFromHistory.isReply) {
-                        // operator
-                        updateDataInDatabase(messageFromHistory)
-                    }
-                    else {
-                        // user
-                        val messagesFromDb = messageDao.getMessageByContent(visitor.uuid, message, messageFromHistory.attachmentUrl)
-                        val messageCheckObj = MessageEntity(
-                            uuid = visitor.uuid,
-                            id = messageFromHistory.id!!,
-                            messageType = messageFromHistory.messageType,
-                            isReply = messageFromHistory.isReply,
-                            parentMsgId = messageFromHistory.parentMessageId,
-                            timestamp = messageFromHistory.timestamp,
-                            message = message,
-                            spanStructureList = list,
-                            actions = messageFromHistory.actions?.let { ActionEntity.map(it) },
-                            attachmentUrl = messageFromHistory.attachmentUrl,
-                            attachmentType = messageFromHistory.attachmentTypeFile,
-                            attachmentName = messageFromHistory.attachmentName,
-                            attachmentSize = null,
-                            operatorId = messageFromHistory.operatorId,
-                            operatorName = if (messageFromHistory.operatorName == null || !messageFromHistory.isReply) "Вы" else messageFromHistory.operatorName,
-                            operatorPreview = null,
-                            height = 0,
-                            width = 0
-                        )
-                        if (messageCheckObj !in messagesFromDb) {
-                            updateDataInDatabase(messageFromHistory)
-                        }
-                    }
-                }
-                MessageType.TRANSFER_TO_OPERATOR.valueType, MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType -> updateDataInDatabase(messageFromHistory)
-            }
-        }
     }
 
 }
