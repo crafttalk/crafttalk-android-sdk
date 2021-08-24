@@ -8,7 +8,7 @@ import com.crafttalk.chat.domain.interactors.*
 @Suppress("UNCHECKED_CAST")
 class ChatViewModelFactory constructor(
     private val authChatInteractor: AuthInteractor,
-    private val chatMessageInteractor: ChatMessageInteractor,
+    private val messageInteractor: MessageInteractor,
     private val fileInteractor: FileInteractor,
     private val conditionInteractor: ConditionInteractor,
     private val feedbackInteractor: FeedbackInteractor,
@@ -18,7 +18,7 @@ class ChatViewModelFactory constructor(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return ChatViewModel(
             authChatInteractor,
-            chatMessageInteractor,
+            messageInteractor,
             fileInteractor,
             conditionInteractor,
             feedbackInteractor,

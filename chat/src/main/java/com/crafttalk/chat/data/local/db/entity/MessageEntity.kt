@@ -114,32 +114,134 @@ data class MessageEntity(
         const val TABLE_NAME = "messages"
         const val TABLE_NAME_BACKUP = "messages_backup"
 
-        fun map(uuid: String, messageSocket: NetworkMessage, isUploadHistory: Boolean, height: Int? = null, width: Int? = null, attachmentSize: Long? = null): MessageEntity {
+        fun map(
+            uuid: String,
+            networkMessage: NetworkMessage,
+            operatorPreview: String?,
+            fileSize: Long? = null,
+            mediaFileHeight: Int? = null,
+            mediaFileWidth: Int? = null
+        ): MessageEntity {
             val list = arrayListOf<Tag>()
-            val message = messageSocket.message?.convertTextToNormalString(list)
+            val message = networkMessage.message?.convertTextToNormalString(list)
 
             return MessageEntity(
                 uuid = uuid,
-                id = messageSocket.id!!,
-                messageType = messageSocket.messageType,
-                isReply = messageSocket.isReply,
-                parentMsgId = messageSocket.parentMessageId,
-                timestamp = messageSocket.timestamp,
+                id = networkMessage.id!!,
+                messageType = networkMessage.messageType,
+                isReply = networkMessage.isReply,
+                parentMsgId = networkMessage.parentMessageId,
+                timestamp = networkMessage.timestamp,
                 message = message,
                 spanStructureList = list,
-                actions = messageSocket.actions?.let { ActionEntity.map(it) },
-                attachmentUrl = messageSocket.attachmentUrl,
-                attachmentType = messageSocket.attachmentTypeFile,
-                attachmentName = messageSocket.attachmentName,
-                attachmentSize = attachmentSize,
-                operatorId = messageSocket.operatorId,
-                operatorPreview = null,
-                operatorName = if (messageSocket.isReply) messageSocket.operatorName else "Вы",
-                height = height,
-                width = width,
-                isRead = isUploadHistory
+                actions = networkMessage.actions?.let { ActionEntity.map(it) },
+                attachmentUrl = networkMessage.attachmentUrl,
+                attachmentType = networkMessage.attachmentTypeFile,
+                attachmentName = networkMessage.attachmentName,
+                attachmentSize = fileSize,
+                operatorId = networkMessage.operatorId,
+                operatorPreview = operatorPreview,
+                operatorName = if (networkMessage.isReply) networkMessage.operatorName else "Вы",
+                height = mediaFileHeight,
+                width = mediaFileWidth
             )
         }
+
+        fun mapOperatorMessage(
+            uuid: String,
+            networkMessage: NetworkMessage,
+            actionsSelected: List<String>,
+            operatorPreview: String?,
+            fileSize: Long? = null,
+            mediaFileHeight: Int? = null,
+            mediaFileWidth: Int? = null
+        ): MessageEntity {
+            val list = arrayListOf<Tag>()
+            val message = networkMessage.message?.convertTextToNormalString(list)
+
+            return MessageEntity(
+                uuid = uuid,
+                id = networkMessage.id!!,
+                messageType = networkMessage.messageType,
+                isReply = true,
+                parentMsgId = networkMessage.parentMessageId,
+                timestamp = networkMessage.timestamp,
+                message = message,
+                spanStructureList = list,
+                actions = networkMessage.actions?.let { ActionEntity.map(it, actionsSelected) },
+                attachmentUrl = networkMessage.attachmentUrl,
+                attachmentType = networkMessage.attachmentTypeFile,
+                attachmentName = networkMessage.attachmentName,
+                attachmentSize = fileSize,
+                operatorId = networkMessage.operatorId,
+                operatorPreview = operatorPreview,
+                operatorName = networkMessage.operatorName,
+                height = mediaFileHeight,
+                width = mediaFileWidth
+            )
+        }
+
+        fun mapUserMessage(
+            uuid: String,
+            networkMessage: NetworkMessage,
+            status: Int,
+            operatorPreview: String?,
+            fileSize: Long? = null,
+            mediaFileHeight: Int? = null,
+            mediaFileWidth: Int? = null
+        ): MessageEntity {
+            val list = arrayListOf<Tag>()
+            val message = networkMessage.message?.convertTextToNormalString(list)
+
+            return MessageEntity(
+                uuid = uuid,
+                id = networkMessage.idFromChannel!!,
+                messageType = status,
+                isReply = false,
+                parentMsgId = networkMessage.parentMessageId,
+                timestamp = networkMessage.timestamp,
+                message = message,
+                spanStructureList = list,
+                actions = null,
+                attachmentUrl = networkMessage.attachmentUrl,
+                attachmentType = networkMessage.attachmentTypeFile,
+                attachmentName = networkMessage.attachmentName,
+                attachmentSize = fileSize,
+                operatorId = networkMessage.operatorId,
+                operatorPreview = operatorPreview,
+                operatorName = "Вы",
+                height = mediaFileHeight,
+                width = mediaFileWidth
+            )
+        }
+
+        fun mapOperatorJoinMessage(
+            uuid: String,
+            networkMessage: NetworkMessage,
+            operatorPreview: String?
+        ): MessageEntity {
+            return MessageEntity(
+                uuid = uuid,
+                id = networkMessage.id!!,
+                messageType = networkMessage.messageType,
+                isReply = true,
+                parentMsgId = networkMessage.parentMessageId,
+                timestamp = networkMessage.timestamp,
+                message = null,
+                spanStructureList = listOf(),
+                actions = null,
+                attachmentUrl = null,
+                attachmentType = null,
+                attachmentName = null,
+                attachmentSize = null,
+                operatorId = networkMessage.operatorId,
+                operatorPreview = operatorPreview,
+                operatorName = networkMessage.operatorName,
+                height = null,
+                width = null
+            )
+        }
+
     }
 
 }

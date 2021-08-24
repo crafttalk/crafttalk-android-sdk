@@ -33,8 +33,8 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
-                localMessage.attachmentUrl!!,
-                localMessage.attachmentName!!,
+                url = localMessage.attachmentUrl!!,
+                name = localMessage.attachmentName!!,
                 size = localMessage.attachmentSize ?: 0,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
@@ -49,8 +49,8 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
-                localMessage.attachmentUrl!!,
-                localMessage.attachmentName!!,
+                url = localMessage.attachmentUrl!!,
+                name = localMessage.attachmentName!!,
                 size = localMessage.attachmentSize ?: 0,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
@@ -65,8 +65,8 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
-                localMessage.attachmentUrl!!,
-                localMessage.attachmentName!!,
+                url = localMessage.attachmentUrl!!,
+                name = localMessage.attachmentName!!,
                 size = localMessage.attachmentSize ?: 0
             ),
             localMessage.timestamp,
@@ -81,8 +81,8 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
             localMessage.hasSelectedAction(),
             FileModel(
-                localMessage.attachmentUrl,
-                localMessage.attachmentName,
+                url = localMessage.attachmentUrl,
+                name = localMessage.attachmentName,
                 height = localMessage.height ?: 0,
                 width = localMessage.width ?: 0,
                 size = localMessage.attachmentSize ?: 0,

@@ -48,11 +48,7 @@ class RequestHelper
 
     fun generateJsonRequestBody(uri: Uri, type: TypeFile): String? {
         return when(type) {
-            TypeFile.FILE -> {
-                context.contentResolver.openInputStream(uri)?.let {
-                    convertToBase64(it)
-                }
-            }
+            TypeFile.FILE -> context.contentResolver.openInputStream(uri)?.run(::convertToBase64)
             TypeFile.IMAGE -> {
                 generateJsonRequestBody(
                     MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
@@ -62,6 +58,6 @@ class RequestHelper
         }
     }
 
-    fun generateJsonRequestBody(bitmap: Bitmap): String? = convertToBase64(bitmap)
+    fun generateJsonRequestBody(bitmap: Bitmap): String = convertToBase64(bitmap)
 
 }

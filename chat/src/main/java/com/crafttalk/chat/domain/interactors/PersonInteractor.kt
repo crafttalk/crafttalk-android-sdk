@@ -7,6 +7,6 @@ class PersonInteractor
 @Inject constructor(
     private val personRepository: IPersonRepository
 ) {
-    fun updatePersonName(personId: String?, currentPersonName: String?) = personRepository.updatePersonName(personId, currentPersonName)
-    fun getPersonPreview(personId: String, visitorToken: String): String? = personRepository.getPersonPreview(personId, visitorToken)
+    suspend fun updatePersonName(personId: String?, currentPersonName: String?) = personRepository.updatePersonName(personId, currentPersonName)
+    suspend fun getPersonPreview(personId: String, visitorToken: String): String? = personRepository.getPersonPreview(personId, visitorToken)
 }

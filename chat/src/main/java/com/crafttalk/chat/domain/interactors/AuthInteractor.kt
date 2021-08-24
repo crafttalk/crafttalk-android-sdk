@@ -19,12 +19,8 @@ class AuthInteractor
 
     private fun dataPreparation(visitor: Visitor?): Visitor? {
         when (ChatParams.authMode) {
-            AuthType.AUTH_WITH_FORM -> {
-                visitor?.let {  visitorInteractor.saveVisitor(it) }
-            }
-            AuthType.AUTH_WITHOUT_FORM -> {
-                visitor?.let { visitorInteractor.setVisitor(it) }
-            }
+            AuthType.AUTH_WITH_FORM -> visitor?.run(visitorInteractor::saveVisitor)
+            AuthType.AUTH_WITHOUT_FORM -> visitor?.run(visitorInteractor::setVisitor)
         }
         return visitorInteractor.getVisitor()
     }
@@ -33,24 +29,25 @@ class AuthInteractor
         visitor: Visitor? = null,
         successAuthUi: (() -> Unit)? = null,
         failAuthUi: (() -> Unit)? = null,
-        successAuthUx: () -> Unit = {},
-        failAuthUx: () -> Unit = {},
+        successAuthUx: suspend () -> Unit = {},
+        failAuthUx: suspend () -> Unit = {},
+        sync: suspend () -> Unit = {},
         firstLogInWithForm: () -> Unit = {},
         chatEventListener: ChatEventListener? = null
     ) {
         val currentVisitor = dataPreparation(visitor)
 
-        val successAuthUxWrapper = {
+        val successAuthUxWrapper = suspend {
             successAuthUx()
             notificationInteractor.subscribeNotification()
         }
 
-        val failAuthUxWrapper = {
+        val failAuthUxWrapper = suspend {
             failAuthUx()
             notificationInteractor.unsubscribeNotification()
         }
 
-        val getPersonPreview: (personId: String) -> String? =  { personId ->
+        val getPersonPreview: suspend (personId: String) -> String? = { personId ->
             currentVisitor?.token?.let { token ->
                 personInteractor.getPersonPreview(personId, token)
             }
@@ -67,6 +64,7 @@ class AuthInteractor
                         failAuthUi,
                         successAuthUxWrapper,
                         failAuthUxWrapper,
+                        sync,
                         getPersonPreview,
                         personInteractor::updatePersonName,
                         chatEventListener
@@ -80,6 +78,7 @@ class AuthInteractor
                     failAuthUi,
                     successAuthUxWrapper,
                     failAuthUxWrapper,
+                    sync,
                     getPersonPreview,
                     personInteractor::updatePersonName,
                     chatEventListener

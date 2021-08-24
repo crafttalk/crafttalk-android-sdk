@@ -12,6 +12,7 @@ data class ActionEntity(
     val isSelected: Boolean
 ) {
     companion object {
+
         fun map(actions: List<NetworkAction>): List<ActionEntity> {
             return actions.map {
                 ActionEntity(
@@ -21,5 +22,16 @@ data class ActionEntity(
                 )
             }
         }
+
+        fun map(actions: List<NetworkAction>, actionsSelected: List<String>): List<ActionEntity> {
+            return actions.map {
+                ActionEntity(
+                    it.actionId,
+                    it.actionText,
+                    actionsSelected.contains(it.actionId)
+                )
+            }
+        }
+
     }
 }

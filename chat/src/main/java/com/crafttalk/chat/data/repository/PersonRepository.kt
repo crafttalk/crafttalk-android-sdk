@@ -21,7 +21,7 @@ class PersonRepository
     private val personApi: PersonApi
 ) : IPersonRepository {
 
-    override fun updatePersonName(personId: String?, currentPersonName: String?) {
+    override suspend fun updatePersonName(personId: String?, currentPersonName: String?) {
         personId ?: return
         currentPersonName ?: return
         if (personId.isEmpty()) return
@@ -32,7 +32,7 @@ class PersonRepository
         }
     }
 
-    override fun getPersonPreview(personId: String, visitorToken: String): String? {
+    override suspend fun getPersonPreview(personId: String, visitorToken: String): String? {
         if (personId.isEmpty()) return null
         return try {
             when (ChatParams.operatorPreviewMode) {

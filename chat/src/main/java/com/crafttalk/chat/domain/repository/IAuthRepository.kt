@@ -9,10 +9,11 @@ interface IAuthRepository {
         visitor: Visitor,
         successAuthUi: (() -> Unit)?,
         failAuthUi: (() -> Unit)?,
-        successAuthUx: () -> Unit,
-        failAuthUx: () -> Unit,
-        getPersonPreview: (personId: String) -> String?,
-        updatePersonName: (personId: String?, currentPersonName: String?) -> Unit,
+        successAuthUx: suspend () -> Unit,
+        failAuthUx: suspend () -> Unit,
+        sync: suspend () -> Unit,
+        getPersonPreview: suspend (personId: String) -> String?,
+        updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
     )
     fun logOut(uuid: String, filesDir: File)

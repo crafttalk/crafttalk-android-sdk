@@ -27,7 +27,7 @@ import kotlin.math.min
 class ChatViewModel
 @Inject constructor(
     private val authChatInteractor: AuthInteractor,
-    private val chatMessageInteractor: ChatMessageInteractor,
+    private val messageInteractor: MessageInteractor,
     private val fileInteractor: FileInteractor,
     private val conditionInteractor: ConditionInteractor,
     private val feedbackInteractor: FeedbackInteractor,
@@ -44,7 +44,7 @@ class ChatViewModel
     val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
-        val dataSource = chatMessageInteractor.getAllMessages()
+        val dataSource = messageInteractor.getAllMessages()
             ?.map<MessageModel> { (messageModelMapper(it, context)) }
             ?.mapByPage { groupPageByDate(it) } ?: return
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder<Int, MessageModel>(

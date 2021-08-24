@@ -105,7 +105,7 @@ class FileRepository
         val fileName = "createPhoto${System.currentTimeMillis()}.jpg"
         when (type) {
             TypeUpload.JSON -> {
-                val fileRequestBody = fileRequestHelper.generateJsonRequestBody(bitmap) ?: return
+                val fileRequestBody = fileRequestHelper.generateJsonRequestBody(bitmap)
                 uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {

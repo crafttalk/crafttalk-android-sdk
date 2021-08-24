@@ -33,9 +33,7 @@ class HolderUserFileMessage(
     }
 
     override fun onClick(view: View) {
-        fileUrl?.let{
-            clickHandler(it)
-        }
+        fileUrl?.run(clickHandler)
     }
 
     override fun bindTo(item: FileMessageItem) {

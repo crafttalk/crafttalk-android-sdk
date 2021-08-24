@@ -17,14 +17,14 @@ class ViewModelModule {
     @ChatScope
     fun provideChatViewModelFactory(
         authChatInteractor: AuthInteractor,
-        chatMessageInteractor: ChatMessageInteractor,
+        messageInteractor: MessageInteractor,
         fileInteractor: FileInteractor,
         conditionInteractor: ConditionInteractor,
         feedbackInteractor: FeedbackInteractor,
         context: Context
     ): ChatViewModelFactory = ChatViewModelFactory(
         authChatInteractor,
-        chatMessageInteractor,
+        messageInteractor,
         fileInteractor,
         conditionInteractor,
         feedbackInteractor,
