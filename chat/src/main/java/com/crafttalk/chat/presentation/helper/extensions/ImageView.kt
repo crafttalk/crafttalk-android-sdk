@@ -94,9 +94,9 @@ fun ImageView.settingMediaFile(isUnionMessageItem: Boolean = false) {
 
 @SuppressLint("ResourceAsColor")
 fun ImageView.loadMediaFile(
-    idKey: Long,
+    id: String,
     mediaFile: FileModel,
-    updateData: (idKey: Long, height: Int, width: Int) -> Unit,
+    updateData: (id: String, height: Int, width: Int) -> Unit,
     isUserMessage: Boolean,
     isUnionMessage: Boolean,
     warningContainer: ViewGroup? = null,
@@ -200,7 +200,7 @@ fun ImageView.loadMediaFile(
                     this@loadMediaFile.visibility = View.VISIBLE
                     if (mediaFile.failLoading) {
                         resource ?: return false
-                        updateData(idKey, resource.intrinsicHeight, resource.intrinsicWidth)
+                        updateData(id, resource.intrinsicHeight, resource.intrinsicWidth)
                     }
                     return false
                 }

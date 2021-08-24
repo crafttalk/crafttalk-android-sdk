@@ -22,7 +22,7 @@ class HolderOperatorUnionMessage(
     view: View,
     private val selectAction: (messageId: String, actionId: String) -> Unit,
     private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
-    private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
+    private val updateData: (id: String, height: Int, width: Int) -> Unit,
     private val clickGifHandler: (gifName: String, gifUrl: String) -> Unit,
     private val clickImageHandler: (imageName: String, imageUrl: String) -> Unit,
     private val clickDocumentHandler: (fileUrl: String) -> Unit
@@ -154,7 +154,7 @@ class HolderOperatorUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, false, true, warningContainer)
+                    loadMediaFile(item.id, item.file, updateData, false, true, warningContainer)
                 }
             }
             TypeFile.GIF -> {
@@ -162,7 +162,7 @@ class HolderOperatorUnionMessage(
                 media?.apply {
                     visibility = View.VISIBLE
                     settingMediaFile(true)
-                    loadMediaFile(item.idKey, item.file, updateData, false, true, warningContainer, true)
+                    loadMediaFile(item.id, item.file, updateData, false, true, warningContainer, true)
                 }
             }
         }

@@ -16,7 +16,7 @@ import com.crafttalk.chat.utils.ChatAttr
 class HolderOperatorImageMessage(
     view: View,
     private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
-    private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
+    private val updateData: (id: String, height: Int, width: Int) -> Unit,
     private val clickHandler: (imageName: String, imageUrl: String) -> Unit
 ) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
@@ -69,7 +69,7 @@ class HolderOperatorImageMessage(
         status?.setStatusMessage(item)
         img?.apply {
             settingMediaFile()
-            loadMediaFile(item.idKey, item.image, updateData, false, false, warningContainer)
+            loadMediaFile(item.id, item.image, updateData, false, false, warningContainer)
         }
         downloadImage?.settingDownloadBtn(false, failLoading)
         // set bg

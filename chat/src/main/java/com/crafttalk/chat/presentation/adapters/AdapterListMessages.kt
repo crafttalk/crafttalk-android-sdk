@@ -18,7 +18,7 @@ class AdapterListMessages(
     private val openGif: (activity: Activity, gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
     private val downloadFile: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val selectAction: (messageId: String, actionId: String) -> Unit,
-    private val updateData: (idKey: Long, height: Int, width: Int) -> Unit
+    private val updateData: (id: String, height: Int, width: Int) -> Unit
 ) : BaseAdapterWithPagination<MessageModel>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<out MessageModel> {

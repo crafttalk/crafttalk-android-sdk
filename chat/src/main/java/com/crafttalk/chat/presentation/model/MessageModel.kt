@@ -49,7 +49,6 @@ data class TextMessageItem(
 
 data class ImageMessageItem(
     override val id: String,
-    val idKey: Long,
     override val role: Role,
     val image: FileModel,
     override val timestamp: Long,
@@ -68,7 +67,6 @@ data class ImageMessageItem(
 
 data class GifMessageItem(
     override val id: String,
-    val idKey: Long,
     override val role: Role,
     val gif: FileModel,
     override val timestamp: Long,
@@ -105,7 +103,6 @@ data class FileMessageItem(
 
 data class UnionMessageItem(
     override val id: String,
-    val idKey: Long,
     override val role: Role,
     val message: SpannableString,
     val actions: List<ActionItem>?,

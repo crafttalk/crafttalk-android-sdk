@@ -8,9 +8,8 @@ object Migration_1_2: Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
 
         database.execSQL("CREATE TABLE ${MessageEntity.TABLE_NAME_BACKUP}(" +
-                " idKey INTEGER NOT NULL PRIMARY KEY," +
                 " uuid TEXT NOT NULL," +
-                " id TEXT NOT NULL," +
+                " id TEXT NOT NULL PRIMARY KEY," +
                 " is_reply INTEGER NOT NULL," +
                 " message_type INTEGER NOT NULL," +
                 " parent_msg_id TEXT," +
@@ -30,7 +29,6 @@ object Migration_1_2: Migration(1, 2) {
                 ")")
 
         database.execSQL("INSERT INTO ${MessageEntity.TABLE_NAME_BACKUP} SELECT" +
-                " idKey," +
                 " uuid," +
                 " id," +
                 " is_reply," +
@@ -54,9 +52,8 @@ object Migration_1_2: Migration(1, 2) {
         database.execSQL("DROP TABLE ${MessageEntity.TABLE_NAME}")
 
         database.execSQL("CREATE TABLE ${MessageEntity.TABLE_NAME}(" +
-                " idKey INTEGER NOT NULL PRIMARY KEY," +
                 " uuid TEXT NOT NULL," +
-                " id TEXT NOT NULL," +
+                " id TEXT NOT NULL PRIMARY KEY," +
                 " is_reply INTEGER NOT NULL," +
                 " message_type INTEGER NOT NULL," +
                 " parent_msg_id TEXT," +
@@ -76,7 +73,6 @@ object Migration_1_2: Migration(1, 2) {
                 ")")
 
         database.execSQL("INSERT INTO ${MessageEntity.TABLE_NAME} SELECT" +
-                " idKey," +
                 " uuid," +
                 " id," +
                 " is_reply," +

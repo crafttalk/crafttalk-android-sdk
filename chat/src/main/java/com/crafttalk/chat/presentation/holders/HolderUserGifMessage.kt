@@ -16,7 +16,7 @@ import com.crafttalk.chat.utils.ChatAttr
 class HolderUserGifMessage(
     view: View,
     private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
-    private val updateData: (idKey: Long, height: Int, width: Int) -> Unit,
+    private val updateData: (id: String, height: Int, width: Int) -> Unit,
     private val clickHandler: (gifName: String, gifUrl: String) -> Unit
 ) : BaseViewHolder<GifMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
@@ -69,7 +69,7 @@ class HolderUserGifMessage(
         status?.setStatusMessage(item)
         gif?.apply {
             settingMediaFile()
-            loadMediaFile(item.idKey, item.gif, updateData, true, false, warningContainer, true)
+            loadMediaFile(item.id, item.gif, updateData, true, false, warningContainer, true)
         }
         downloadGif?.settingDownloadBtn(true, failLoading)
         // set bg

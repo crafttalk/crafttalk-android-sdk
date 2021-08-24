@@ -31,7 +31,6 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.GIF -> GifMessageItem(
             localMessage.id,
-            localMessage.idKey,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 localMessage.attachmentUrl!!,
@@ -48,7 +47,6 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.IMAGE -> ImageMessageItem(
             localMessage.id,
-            localMessage.idKey,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 localMessage.attachmentUrl!!,
@@ -78,7 +76,6 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (!localMessage.attachmentUrl.isNullOrEmpty() && !localMessage.attachmentName.isNullOrEmpty() && localMessage.attachmentType != null) -> UnionMessageItem(
             localMessage.id,
-            localMessage.idKey,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             localMessage.message.convertToSpannableString(localMessage.spanStructureList, context),
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },

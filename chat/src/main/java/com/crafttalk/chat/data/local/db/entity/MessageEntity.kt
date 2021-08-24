@@ -16,6 +16,7 @@ data class MessageEntity(
     @ColumnInfo(name = "uuid")
     val uuid: String,
 
+    @PrimaryKey
     @ColumnInfo(name = "id")
     var id: String,
 
@@ -29,7 +30,7 @@ data class MessageEntity(
     val parentMsgId: String?,
 
     @ColumnInfo(name = "timestamp")
-    var timestamp: Long,
+    val timestamp: Long,
 
     @ColumnInfo(name = "message")
     val message: String?,
@@ -56,7 +57,7 @@ data class MessageEntity(
     val operatorId: String?,
 
     @ColumnInfo(name = "operator_preview")
-    var operatorPreview: String?,
+    val operatorPreview: String?,
 
     @ColumnInfo(name = "operator_name")
     val operatorName: String?,
@@ -68,8 +69,6 @@ data class MessageEntity(
     val width: Int?
 
 ) {
-    @PrimaryKey(autoGenerate = true)
-    var idKey: Long = 0
 
     fun hasSelectedAction(): Boolean {
         return if (actions == null) {
