@@ -96,9 +96,17 @@ class ChatViewModel
     init {
         customizingChatBehaviorInteractor.setInternetConnectionListener(internetConnectionListener)
         customizingChatBehaviorInteractor.goToChatScreen()
+    }
 
+    override fun onCleared() {
+        super.onCleared()
+        customizingChatBehaviorInteractor.leaveChatScreen()
+    }
+
+    fun onStartChatView(visitor: Visitor?) {
         Handler().postDelayed({
             authChatInteractor.logIn(
+                visitor = visitor,
                 successAuthUi = {
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
                     uploadMessages()
@@ -108,11 +116,6 @@ class ChatViewModel
                 chatEventListener = chatEventListener
             )
         }, ChatAttr.getInstance().timeDelayed)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        customizingChatBehaviorInteractor.leaveChatScreen()
     }
 
     fun registration(vararg args: String) {

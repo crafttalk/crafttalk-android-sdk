@@ -32,6 +32,7 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
+import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
@@ -262,36 +263,35 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     private fun setListMessages() {
-        adapterListMessages =
-            AdapterListMessages(
-                viewModel::openFile,
-                viewModel::openImage,
-                viewModel::openGif,
-                { fileName, fileUrl, fileType ->
-                    downloadResource(context, fileName, fileUrl, fileType, downloadFileListener,
+        adapterListMessages = AdapterListMessages(
+            viewModel::openFile,
+            viewModel::openImage,
+            viewModel::openGif,
+            { fileName, fileUrl, fileType ->
+                downloadResource(
+                    context,
+                    fileName,
+                    fileUrl,
+                    fileType,
+                    downloadFileListener,
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
                             arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_download)),
                             actionsAfterObtainingPermission
                         )
-                    })
+                    },
                     { id -> downloadID = id }
-                },
-                viewModel::selectAction,
-                viewModel::updateData
-            ).apply {
-                list_with_message.adapter = this
-            }
+                )
+            },
+            viewModel::selectAction,
+            viewModel::updateData
+        ).apply {
+            list_with_message.adapter = this
+        }
     }
 
-    fun onCreate(fragment: Fragment, lifecycleOwner: LifecycleOwner) {
-        Chat.getSdkComponent().createChatComponent()
-            .parentFragment(fragment)
-            .build()
-            .inject(this)
-        this.parentFragment = fragment
-
+    fun onViewCreated(fragment: Fragment) {
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
             uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
         }
@@ -307,6 +307,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 FileViewerHelper.showPhotoLimitExceededMessage(fragment)
             } else viewModel.sendFiles(listUri.map { File(it, TypeFile.FILE) })
         }
+    }
+
+    fun onStart(
+        fragment: Fragment,
+        lifecycleOwner: LifecycleOwner,
+        visitor: Visitor? = null
+    ) {
+        Chat.getSdkComponent().createChatComponent()
+            .parentFragment(fragment)
+            .build()
+            .inject(this)
+        this.parentFragment = fragment
+
+        viewModel.onStartChatView(visitor)
 
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         setAllListeners()
