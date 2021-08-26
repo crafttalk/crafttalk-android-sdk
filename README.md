@@ -180,7 +180,12 @@ override fun onDestroy() {
 ```
 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    chatView.onCreate(this, viewLifecycleOwner)      
+    chat_view.onViewCreated(this)     
+}
+
+override fun onStart() {
+    super.onStart()
+    chatView.onStart(this, viewLifecycleOwner)    
 }
 
 override fun onResume() {
