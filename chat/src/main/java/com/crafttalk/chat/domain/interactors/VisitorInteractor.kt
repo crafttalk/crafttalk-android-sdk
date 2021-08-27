@@ -24,5 +24,12 @@ class VisitorInteractor
     }
     fun setVisitor(visitor: Visitor?) = visitorRepository.setVisitorFromClient(visitor)
     fun saveVisitor(visitor: Visitor) = visitorRepository.saveVisitor(visitor)
-    fun deleteVisitor() = visitorRepository.deleteVisitor()
+
+    fun clearDataVisitor() {
+        when (ChatParams.authMode) {
+            AuthType.AUTH_WITH_FORM -> visitorRepository.deleteVisitor()
+            AuthType.AUTH_WITHOUT_FORM -> visitorRepository.setVisitorFromClient(null)
+        }
+    }
+
 }

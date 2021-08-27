@@ -46,27 +46,44 @@ class ConditionRepository
     }
 
     override fun getFlagAllHistoryLoaded(): Boolean {
-        return pref.getBoolean("isAllHistoryLoaded", false)
+        return pref.getBoolean(FIELD_IS_ALL_HISTORY_LOADED, false)
     }
 
     override fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean) {
         val prefEditor = pref.edit()
-        prefEditor.putBoolean("isAllHistoryLoaded", isAllHistoryLoaded)
+        prefEditor.putBoolean(FIELD_IS_ALL_HISTORY_LOADED, isAllHistoryLoaded)
+        prefEditor.apply()
+    }
+
+    override fun deleteFlagAllHistoryLoaded() {
+        val prefEditor = pref.edit()
+        prefEditor.remove(FIELD_IS_ALL_HISTORY_LOADED)
         prefEditor.apply()
     }
 
     override fun getCurrentReadMessageTime(): Long {
-        return pref.getLong("currentReadMessageTime", 0)
+        return pref.getLong(FIELD_CURRENT_READ_MESSAGE_TIME, 0)
     }
 
     override fun saveCurrentReadMessageTime(currentReadMessageTime: Long) {
         val prefEditor = pref.edit()
-        prefEditor.putLong("currentReadMessageTime", currentReadMessageTime)
+        prefEditor.putLong(FIELD_CURRENT_READ_MESSAGE_TIME, currentReadMessageTime)
+        prefEditor.apply()
+    }
+
+    override fun deleteCurrentReadMessageTime() {
+        val prefEditor = pref.edit()
+        prefEditor.remove(FIELD_CURRENT_READ_MESSAGE_TIME)
         prefEditor.apply()
     }
 
     override suspend fun getStatusExistenceMessages(uuid: String): Boolean {
         return messagesDao.isNotEmpty(uuid)
+    }
+
+    companion object {
+        private const val FIELD_IS_ALL_HISTORY_LOADED = "isAllHistoryLoaded"
+        private const val FIELD_CURRENT_READ_MESSAGE_TIME = "currentReadMessageTime"
     }
 
 }

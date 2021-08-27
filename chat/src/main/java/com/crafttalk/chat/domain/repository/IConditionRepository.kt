@@ -16,9 +16,11 @@ interface IConditionRepository {
     // проверка вся ли история загружена
     fun getFlagAllHistoryLoaded(): Boolean
     fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean)
+    fun deleteFlagAllHistoryLoaded()
 
     fun getCurrentReadMessageTime(): Long
     fun saveCurrentReadMessageTime(currentReadMessageTime: Long)
+    fun deleteCurrentReadMessageTime()
 
     // провека наличия сообщения в бд
     suspend fun getStatusExistenceMessages(uuid: String): Boolean

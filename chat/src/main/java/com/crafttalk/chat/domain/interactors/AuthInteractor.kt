@@ -13,6 +13,7 @@ class AuthInteractor
 @Inject constructor(
     private val authRepository: IAuthRepository,
     private val visitorInteractor: VisitorInteractor,
+    private val conditionInteractor: ConditionInteractor,
     private val personInteractor: PersonInteractor,
     private val notificationInteractor: NotificationInteractor
 ) {
@@ -96,14 +97,8 @@ class AuthInteractor
         } catch (ex: Exception) {
             Log.e("FAIL logOut", "${ex.message}")
         }
-        when (ChatParams.authMode) {
-            AuthType.AUTH_WITH_FORM -> {
-                visitorInteractor.deleteVisitor()
-            }
-            AuthType.AUTH_WITHOUT_FORM -> {
-                visitorInteractor.setVisitor(null)
-            }
-        }
+        conditionInteractor.clearDataChatState()
+        visitorInteractor.clearDataVisitor()
     }
 
 }

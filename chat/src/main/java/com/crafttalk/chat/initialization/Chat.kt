@@ -42,7 +42,7 @@ object Chat {
         visitorInteractor = VisitorInteractor(sdkComponent!!.getVisitorRepository())
         personInteractor = PersonInteractor(sdkComponent!!.getPersonRepository())
         notificationInteractor = NotificationInteractor(sdkComponent!!.getNotificationRepository(), visitorInteractor!!)
-        authInteractor = AuthInteractor(sdkComponent!!.getAuthRepository(), visitorInteractor!!, personInteractor!!, notificationInteractor!!)
+        authInteractor = AuthInteractor(sdkComponent!!.getAuthRepository(), visitorInteractor!!, conditionInteractor!!, personInteractor!!, notificationInteractor!!)
     }
 
     fun init(

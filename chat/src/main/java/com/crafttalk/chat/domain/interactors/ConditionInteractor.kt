@@ -66,4 +66,9 @@ class ConditionInteractor
     fun saveCurrentReadMessageTime(currentReadMessageTime: Long) =
         conditionRepository.saveCurrentReadMessageTime(currentReadMessageTime)
 
+    fun clearDataChatState() {
+        conditionRepository.deleteFlagAllHistoryLoaded()
+        conditionRepository.deleteCurrentReadMessageTime()
+    }
+
 }

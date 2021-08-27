@@ -19,7 +19,7 @@ class NetworkModule {
     @Upload
     @ChatScope
     @Provides
-    fun provideRetrofitClientUpload(okHttpClient: OkHttpClient) = Retrofit
+    fun provideRetrofitClientUpload(okHttpClient: OkHttpClient): Retrofit = Retrofit
         .Builder()
         .baseUrl(ChatParams.urlChatHost!!)
         .client(okHttpClient)
