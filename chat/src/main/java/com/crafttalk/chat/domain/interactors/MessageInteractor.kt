@@ -31,7 +31,10 @@ class MessageInteractor
         messageRepository.selectAction(uuid, messageId, actionId)
     }
 
-    suspend fun uploadHistoryMessages(eventAllHistoryLoaded: () -> Unit) {
+    suspend fun uploadHistoryMessages(
+        eventAllHistoryLoaded: () -> Unit,
+        uploadHistoryComplete: () -> Unit
+    ) {
         val visitor = visitorInteractor.getVisitor() ?: return
         if (conditionRepository.getStatusExistenceMessages(visitor.uuid) && !conditionRepository.getFlagAllHistoryLoaded()) {
             messageRepository.getTimeFirstMessage(visitor.uuid)?.let { firstMessageTime ->
@@ -41,12 +44,18 @@ class MessageInteractor
                 }, { personId ->
                     personInteractor.getPersonPreview(personId, visitor.token)
                 }, messageRepository::getFileInfo)
+                uploadHistoryComplete()
             }
         }
     }
 
     // при переходе на холд добавить вызов метода, обновляющего состояния у сообщений, находящихся в статусе "отправляется"
-    suspend fun syncMessages(currentReadMessageTime: Long, updateReadPoint: (newTimeMark: Long) -> Unit, syncComplete: () -> Unit) {
+    suspend fun syncMessages(
+        currentReadMessageTime: Long,
+        updateReadPoint: (newTimeMark: Long) -> Unit,
+        eventAllHistoryLoaded: () -> Unit,
+        syncComplete: () -> Unit
+    ) {
         val visitor = visitorInteractor.getVisitor() ?: return
         if (conditionRepository.getStatusExistenceMessages(visitor.uuid)) {
             messageRepository.getTimeLastMessage(visitor.uuid)?.let { lastMessageTime ->
@@ -59,7 +68,7 @@ class MessageInteractor
         } else {
             if (currentReadMessageTime == 0L) {
                 val messages = messageRepository.uploadMessages(visitor.uuid, null, 0, updateReadPoint, {
-//                    eventAllHistoryLoaded()
+                    eventAllHistoryLoaded()
                     conditionRepository.saveFlagAllHistoryLoaded(true)
                 }, { personId ->
                     personInteractor.getPersonPreview(personId, visitor.token)
@@ -67,10 +76,7 @@ class MessageInteractor
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
                 syncComplete()
             } else {
-                val messages = messageRepository.uploadMessages(visitor.uuid, currentReadMessageTime, 0, updateReadPoint, {
-//                    eventAllHistoryLoaded()
-                    conditionRepository.saveFlagAllHistoryLoaded(true)
-                }, { personId ->
+                val messages = messageRepository.uploadMessages(visitor.uuid, currentReadMessageTime, 0, updateReadPoint, {}, { personId ->
                     personInteractor.getPersonPreview(personId, visitor.token)
                 }, messageRepository::getFileInfo)
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)

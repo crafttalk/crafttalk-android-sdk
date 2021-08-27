@@ -23,6 +23,12 @@ interface ChatInternetConnectionListener {
     fun reconnect() // has internet
 }
 
+interface MergeHistoryListener {
+    fun showDialog()
+    fun startMerge()
+    fun endMerge()
+}
+
 interface StateStartingProgressListener {
     fun start()
     fun stop()

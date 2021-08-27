@@ -58,7 +58,13 @@ class MessageRepository
 
                 if (startTime == null) {
                     fullPullMessages.addAll(listMessages)
-                    if (listMessages.isEmpty()) {
+//                    Раскоментить когда исправиться задача ...
+//                    val countRealMessages = listMessages.filter {
+//                        it.messageType == MessageType.VISITOR_MESSAGE.valueType &&
+//                        it.isContainsContent &&
+//                        it.selectedAction.isNullOrBlank()
+//                    }.size
+                    if (listMessages.isEmpty() /*|| countRealMessages < ChatParams.countDownloadedMessages*/) {
                         allMessageLoaded()
                     }
                     break
@@ -129,11 +135,6 @@ class MessageRepository
                 addAll(userMessagesWithContent)
                 addAll(messagesAboutJoin)
             }
-
-//            Раскоментить когда исправиться задача ...
-//            if (resultMessages.size < ChatParams.countDownloadedMessages) {
-//                allMessageLoaded()
-//            }
 
             resultMessages.apply {
                 messagesDao.insertMessages(this)

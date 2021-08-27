@@ -142,6 +142,17 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.clientInternetConnectionListener = listener
     }
 
+    fun setMergeHistoryListener(listener: MergeHistoryListener) {
+        viewModel.mergeHistoryListener = listener
+    }
+
+    fun mergeHistory() {
+        viewModel.mergeHistoryListener?.startMerge()
+        viewModel.uploadOldMessages {
+            viewModel.mergeHistoryListener?.endMerge()
+        }
+    }
+
     fun setOnUploadFileListener(listener: UploadFileListener) {
         viewModel.uploadFileListener = listener
     }
@@ -200,7 +211,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         chatAttr.drawableProgressIndeterminate?.let {
             loading.indeterminateDrawable = it
             warning_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
-            upload_history_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
         }
         send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
     }
@@ -231,8 +241,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
-                val indexFirstVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: return
-                viewModel.uploadHistoryVisible.value = viewModel.isMergeHistoryAllowEvent || (indexFirstVisible != -1 && recyclerView.adapter?.itemCount != null && indexFirstVisible == recyclerView.adapter!!.itemCount - 1 && recyclerView.adapter!!.itemCount > 5)
                 if (indexLastVisible == -1) {
                     viewModel.scrollToDownVisible.value = false
                     return
@@ -241,7 +249,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         })
         close_feedback.setOnClickListener(this)
-        upload_history_btn.setOnClickListener(this)
         setFeedbackListeners()
     }
 
@@ -334,7 +341,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 if (pagedList.size != 0) {
                     lastOldMessageId = pagedList[0]?.id
                 }
-                viewModel.uploadHistoryBtnVisible.value = false
                 isFirstUploadMessages = false
             })
         })
@@ -432,23 +438,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 View.GONE
             }
         })
-        viewModel.mergeHistoryEvent.observe(lifecycleOwner, Observer {
-            if (!it) return@Observer
-            val indexFirstVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: return@Observer
-            val indexFirstMsg = (list_with_message.adapter?.itemCount ?: return@Observer) - 1
-            if (indexFirstVisible == indexFirstMsg) {
-                viewModel.isMergeHistoryAllowEvent = true
-                viewModel.uploadHistoryBtnVisible.value = true
-            }
-        })
-        viewModel.uploadHistoryBtnVisible.observe(lifecycleOwner, Observer {
-            if (it) {
-                upload_history_btn.visibility = View.VISIBLE
-            } else {
-                upload_history_btn.visibility = View.GONE
-                stopProgressBar(upload_history_loading)
-            }
-        })
         viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
             when (state) {
                 InternetConnectionState.NO_INTERNET -> {
@@ -489,16 +478,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     override fun onClick(view: View) {
         when(view.id) {
-            R.id.upload_history_btn -> {
-                viewModel.isMergeHistoryAllowEvent = false
-                viewModel.mergeHistoryEvent.value = false
-                upload_history_btn.visibility = View.GONE
-                startProgressBar(upload_history_loading)
-                viewModel.uploadOldMessages()
-                Handler().postDelayed({
-                    stopProgressBar(upload_history_loading)
-                }, 5000)
-            }
             R.id.sign_in -> {
                 if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)

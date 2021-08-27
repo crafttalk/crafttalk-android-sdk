@@ -41,9 +41,6 @@ class ChatViewModel
     var countUnreadMessages = MutableLiveData(0)
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
-    val uploadHistoryBtnVisible = MutableLiveData(false)
-    var isMergeHistoryAllowEvent = false
-    val mergeHistoryEvent = MutableLiveData(false)
 
     val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
@@ -55,19 +52,23 @@ class ChatViewModel
             dataSource,
             ChatParams.pageSize
         ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
-            override fun onZeroItemsLoaded() {
-                super.onZeroItemsLoaded()
-                launchIO {
-                    chatMessageInteractor.syncMessages(true)
+            override fun onItemAtEndLoaded(itemAtEnd: MessageModel) {
+                super.onItemAtEndLoaded(itemAtEnd)
+                if (!isAllHistoryLoaded) {
+                    uploadOldMessages()
                 }
             }
         })
         uploadMessagesForUser.postValue(pagedListBuilder.build())
     }
+    private val eventAllHistoryLoaded: () -> Unit = {
+        isAllHistoryLoaded = true
+    }
 
     val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
     val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
     var clientInternetConnectionListener: ChatInternetConnectionListener? = null
+    var mergeHistoryListener: MergeHistoryListener? = null
     private val internetConnectionListener = object : ChatInternetConnectionListener {
         override fun connect() {
             launchUI { clientInternetConnectionListener?.connect() }
@@ -90,8 +91,7 @@ class ChatViewModel
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
         override fun finishDialog() { feedbackContainerVisible.postValue(true) }
-        override fun showUploadHistoryBtn() { mergeHistoryEvent.postValue(true) }
-
+        override fun showUploadHistoryBtn() { mergeHistoryListener?.showDialog() }
     }
     var uploadFileListener: UploadFileListener? = null
 
@@ -107,9 +107,10 @@ class ChatViewModel
                 },
                 sync = {
                     messageInteractor.syncMessages(
-                        currentReadMessageTime,
-                        { newTimeMark -> currentReadMessageTime = newTimeMark },
-                        {}
+                        currentReadMessageTime = currentReadMessageTime,
+                        updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
+                        eventAllHistoryLoaded = eventAllHistoryLoaded,
+                        syncComplete = {}
                     )
                 },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
@@ -135,9 +136,10 @@ class ChatViewModel
                 },
                 sync = {
                     messageInteractor.syncMessages(
-                        currentReadMessageTime,
-                        { newTimeMark -> currentReadMessageTime = newTimeMark },
-                        {}
+                        currentReadMessageTime = currentReadMessageTime,
+                        updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
+                        eventAllHistoryLoaded = eventAllHistoryLoaded,
+                        syncComplete = {}
                     )
                 },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
@@ -154,9 +156,11 @@ class ChatViewModel
                     uploadMessages()
                 },
                 sync = {
-                    messageInteractor.syncMessages(currentReadMessageTime,
-                        { newTimeMark -> currentReadMessageTime = newTimeMark },
-                        {}
+                    messageInteractor.syncMessages(
+                        currentReadMessageTime = currentReadMessageTime,
+                        updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
+                        eventAllHistoryLoaded = eventAllHistoryLoaded,
+                        syncComplete = {}
                     )
                 },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
@@ -165,12 +169,12 @@ class ChatViewModel
         }, ChatAttr.getInstance().timeDelayed)
     }
 
-    fun uploadOldMessages() {
+    fun uploadOldMessages(uploadHistoryComplete: () -> Unit = {}) {
         launchIO {
-            messageInteractor.uploadHistoryMessages {
-                isAllHistoryLoaded = true
-                uploadHistoryBtnVisible.postValue(false)
-            }
+            messageInteractor.uploadHistoryMessages(
+                eventAllHistoryLoaded = eventAllHistoryLoaded,
+                uploadHistoryComplete = uploadHistoryComplete
+            )
         }
     }
 
