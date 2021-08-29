@@ -38,12 +38,13 @@ class MessageRepository
 
     override suspend fun uploadMessages(
         uuid: String,
+        token: String,
         startTime: Long?,
         endTime: Long,
         updateReadPoint: (newPosition: Long) -> Unit,
         allMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
-        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?
+        getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?
     ): List<MessageEntity> {
 
         return try {
@@ -91,9 +92,10 @@ class MessageRepository
             val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }
 
             val operatorMessagesWithContent = fullPullMessages.filter { it.isReply && it.messageType == MessageType.VISITOR_MESSAGE.valueType && it.isContainsContent }.map { networkMessage ->
-                val fileInfo = getFileInfo(context, networkMessage)
+                val fileInfo = getFileInfo(context, token, networkMessage)
                 MessageEntity.mapOperatorMessage(
                     uuid = uuid,
+                    token = token,
                     networkMessage = networkMessage,
                     actionsSelected = actionSelectionMessages,
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
@@ -110,9 +112,10 @@ class MessageRepository
                     statusesConcreteMessage.contains(MessageType.RECEIVED_BY_MEDIATO.valueType) -> MessageType.RECEIVED_BY_MEDIATO.valueType
                     else -> MessageType.VISITOR_MESSAGE.valueType
                 }
-                val fileInfo = getFileInfo(context, networkMessage)
+                val fileInfo = getFileInfo(context, token, networkMessage)
                 MessageEntity.mapUserMessage(
                     uuid = uuid,
+                    token = token,
                     networkMessage = networkMessage,
                     status = newStatus,
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
@@ -153,10 +156,14 @@ class MessageRepository
         }
     }
 
-    override suspend fun getFileInfo(context: Context, networkMessage: NetworkMessage): TransferFileInfo? {
+    override suspend fun getFileInfo(
+        context: Context,
+        token: String,
+        networkMessage: NetworkMessage
+    ): TransferFileInfo? {
         return when {
             (MessageType.VISITOR_MESSAGE.valueType == networkMessage.messageType) && (networkMessage.isImage || networkMessage.isGif) -> {
-                networkMessage.attachmentUrl?.let { url ->
+                networkMessage.getCorrectAttachmentUrl(token)?.let { url ->
                     val pair = getSizeMediaFile(context, url)
                     TransferFileInfo(
                         height = pair?.first,
@@ -165,7 +172,7 @@ class MessageRepository
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == networkMessage.messageType) && networkMessage.isFile -> {
-                networkMessage.attachmentUrl?.let { url ->
+                networkMessage.getCorrectAttachmentUrl(token)?.let { url ->
                     TransferFileInfo(
                         size = getWeightFile(url)
                     )

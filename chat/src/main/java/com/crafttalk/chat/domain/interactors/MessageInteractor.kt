@@ -38,12 +38,21 @@ class MessageInteractor
         val visitor = visitorInteractor.getVisitor() ?: return
         if (conditionRepository.getStatusExistenceMessages(visitor.uuid) && !conditionRepository.getFlagAllHistoryLoaded()) {
             messageRepository.getTimeFirstMessage(visitor.uuid)?.let { firstMessageTime ->
-                messageRepository.uploadMessages(visitor.uuid, null, firstMessageTime, {}, {
-                    eventAllHistoryLoaded()
-                    conditionRepository.saveFlagAllHistoryLoaded(true)
-                }, { personId ->
-                    personInteractor.getPersonPreview(personId, visitor.token)
-                }, messageRepository::getFileInfo)
+                messageRepository.uploadMessages(
+                    uuid = visitor.uuid,
+                    token = visitor.token,
+                    startTime = null,
+                    endTime = firstMessageTime,
+                    updateReadPoint = {},
+                    returnedEmptyPool = {
+                        eventAllHistoryLoaded()
+                        conditionRepository.saveFlagAllHistoryLoaded(true)
+                    },
+                    getPersonPreview = { personId ->
+                        personInteractor.getPersonPreview(personId, visitor.token)
+                    },
+                    getFileInfo = messageRepository::getFileInfo
+                )
                 uploadHistoryComplete()
             }
         }
@@ -59,26 +68,53 @@ class MessageInteractor
         val visitor = visitorInteractor.getVisitor() ?: return
         if (conditionRepository.getStatusExistenceMessages(visitor.uuid)) {
             messageRepository.getTimeLastMessage(visitor.uuid)?.let { lastMessageTime ->
-                val messages = messageRepository.uploadMessages(visitor.uuid, lastMessageTime + 1, 0, updateReadPoint, {}, { personId ->
-                    personInteractor.getPersonPreview(personId, visitor.token)
-                }, messageRepository::getFileInfo)
+                val messages = messageRepository.uploadMessages(
+                    uuid = visitor.uuid,
+                    token = visitor.token,
+                    startTime = lastMessageTime + 1,
+                    endTime = 0,
+                    updateReadPoint = updateReadPoint,
+                    returnedEmptyPool = {},
+                    getPersonPreview = { personId ->
+                        personInteractor.getPersonPreview(personId, visitor.token)
+                    },
+                    getFileInfo = messageRepository::getFileInfo
+                )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
                 syncComplete()
             }
         } else {
             if (currentReadMessageTime == 0L) {
-                val messages = messageRepository.uploadMessages(visitor.uuid, null, 0, updateReadPoint, {
-                    eventAllHistoryLoaded()
-                    conditionRepository.saveFlagAllHistoryLoaded(true)
-                }, { personId ->
-                    personInteractor.getPersonPreview(personId, visitor.token)
-                }, messageRepository::getFileInfo)
+                val messages = messageRepository.uploadMessages(
+                    uuid = visitor.uuid,
+                    token = visitor.token,
+                    startTime = null,
+                    endTime = 0,
+                    updateReadPoint = updateReadPoint,
+                    returnedEmptyPool = {
+                        eventAllHistoryLoaded()
+                        conditionRepository.saveFlagAllHistoryLoaded(true)
+                    },
+                    getPersonPreview = { personId ->
+                        personInteractor.getPersonPreview(personId, visitor.token)
+                    },
+                    getFileInfo = messageRepository::getFileInfo
+                )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
                 syncComplete()
             } else {
-                val messages = messageRepository.uploadMessages(visitor.uuid, currentReadMessageTime, 0, updateReadPoint, {}, { personId ->
-                    personInteractor.getPersonPreview(personId, visitor.token)
-                }, messageRepository::getFileInfo)
+                val messages = messageRepository.uploadMessages(
+                    uuid = visitor.uuid,
+                    token = visitor.token,
+                    startTime = currentReadMessageTime,
+                    endTime = 0,
+                    updateReadPoint = updateReadPoint,
+                    returnedEmptyPool = {},
+                    getPersonPreview = { personId ->
+                        personInteractor.getPersonPreview(personId, visitor.token)
+                    },
+                    getFileInfo = messageRepository::getFileInfo
+                )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
                 syncComplete()
             }

@@ -89,4 +89,8 @@ data class NetworkMessage (
         else -> null
     }
 
+    fun getCorrectAttachmentUrl(token: String) = attachmentUrl
+        ?.replaceBefore("/file//", ChatParams.urlChatHost!!)
+        ?.replace("/file//", "/webchat/file/${token}/${ChatParams.urlChatNameSpace!!}/")
+
 }

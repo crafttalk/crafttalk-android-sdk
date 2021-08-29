@@ -19,12 +19,13 @@ interface IMessageRepository {
     // загрузка определенного пула сообщений
     suspend fun uploadMessages(
         uuid: String,
+        token: String,
         startTime: Long?,
         endTime: Long,
         updateReadPoint: (newTimeMark: Long) -> Unit,
         returnedEmptyPool: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
-        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?
+        getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?
     ): List<MessageEntity>
 
     suspend fun updatePersonNames(
@@ -32,7 +33,11 @@ interface IMessageRepository {
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit
     )
 
-    suspend fun getFileInfo(context: Context, networkMessage: NetworkMessage): TransferFileInfo?
+    suspend fun getFileInfo(
+        context: Context,
+        token: String,
+        networkMessage: NetworkMessage
+    ): TransferFileInfo?
 
     suspend fun sendMessages(message: String)
     suspend fun selectAction(uuid: String, messageId: String, actionId: String)
