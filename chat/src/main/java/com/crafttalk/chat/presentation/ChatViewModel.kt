@@ -98,9 +98,12 @@ class ChatViewModel
     init {
         conditionInteractor.setInternetConnectionListener(internetConnectionListener)
         conditionInteractor.goToChatScreen()
+    }
 
+    fun onStartChatView(visitor: Visitor?) {
         Handler().postDelayed({
             authChatInteractor.logIn(
+                visitor = visitor,
                 successAuthUi = {
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
                     uploadMessages()

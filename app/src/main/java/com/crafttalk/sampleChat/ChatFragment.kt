@@ -24,8 +24,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        chat_view.onCreate(this, viewLifecycleOwner)
+        chat_view.onViewCreated(this)
         chat_view.setOnPermissionListener(object : ChatPermissionListener {
             override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
                 callbackResult = { isGranted ->
@@ -38,6 +37,11 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 requestPermission?.launch(permissions[0])
             }
         })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        chat_view.onStart(this, viewLifecycleOwner)
         chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
             override fun connect() { status_connection.visibility = View.GONE }
             override fun failConnect() { status_connection.visibility = View.VISIBLE }
