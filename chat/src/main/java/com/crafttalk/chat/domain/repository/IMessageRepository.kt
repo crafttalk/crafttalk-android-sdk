@@ -28,6 +28,8 @@ interface IMessageRepository {
         getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?
     ): List<MessageEntity>
 
+    suspend fun mergeNewMessages()
+
     suspend fun updatePersonNames(
         messages: List<MessageEntity>,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit

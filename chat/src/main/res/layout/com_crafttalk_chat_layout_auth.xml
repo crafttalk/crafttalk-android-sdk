@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_below="@id/upper_limiter"
     android:layout_centerHorizontal="true"
-    android:layout_margin="16dp"
+    android:padding="16dp"
     android:orientation="vertical">
 
     <TextView

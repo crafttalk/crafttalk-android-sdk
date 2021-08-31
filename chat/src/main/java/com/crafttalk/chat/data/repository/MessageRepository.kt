@@ -139,12 +139,14 @@ class MessageRepository
                 addAll(messagesAboutJoin)
             }
 
-            resultMessages.apply {
-                messagesDao.insertMessages(this)
-            }
+            resultMessages.apply(messagesDao::insertMessages)
         } catch (ex: Exception) {
             listOf()
         }
+    }
+
+    override suspend fun mergeNewMessages() {
+        socketApi.mergeNewMessages()
     }
 
     override suspend fun updatePersonNames(

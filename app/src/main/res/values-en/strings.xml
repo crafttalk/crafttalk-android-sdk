@@ -16,6 +16,7 @@
     <string name="salt">C~kW]cq76(a?m[UbJ)drw+Wh6>W[3Wsj</string>
     <string name="default_notification_channel_id">0</string>
     <string name="internet_connection_warning">Waiting for network…</string>
+    <string name="synchronization">Synchronization</string>
 
     <string name="chat_file_provider_authorities">com.crafttalk.chat.fileprovider</string>
 

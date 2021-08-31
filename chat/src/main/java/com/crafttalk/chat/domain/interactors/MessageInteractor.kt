@@ -62,8 +62,7 @@ class MessageInteractor
     suspend fun syncMessages(
         currentReadMessageTime: Long,
         updateReadPoint: (newTimeMark: Long) -> Unit,
-        eventAllHistoryLoaded: () -> Unit,
-        syncComplete: () -> Unit
+        eventAllHistoryLoaded: () -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
         if (conditionRepository.getStatusExistenceMessages(visitor.uuid)) {
@@ -81,7 +80,7 @@ class MessageInteractor
                     getFileInfo = messageRepository::getFileInfo
                 )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
-                syncComplete()
+                messageRepository.mergeNewMessages()
             }
         } else {
             if (currentReadMessageTime == 0L) {
@@ -101,7 +100,7 @@ class MessageInteractor
                     getFileInfo = messageRepository::getFileInfo
                 )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
-                syncComplete()
+                messageRepository.mergeNewMessages()
             } else {
                 val messages = messageRepository.uploadMessages(
                     uuid = visitor.uuid,
@@ -116,7 +115,7 @@ class MessageInteractor
                     getFileInfo = messageRepository::getFileInfo
                 )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
-                syncComplete()
+                messageRepository.mergeNewMessages()
             }
         }
     }

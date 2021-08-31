@@ -28,6 +28,14 @@
                 android:paddingStart="16dp"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/chat_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/synchronization"
+                android:paddingStart="16dp"
+                android:visibility="gone" />
+
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -42,6 +50,7 @@
         app:color_user_message_status="#fff"
         app:drawable_progress_indeterminate="@drawable/spinner"
         app:show_internet_connection_state="false"
+        app:show_chat_state="false"
         app:show_upper_limiter="false"
         app:timeDelayed="1000" />
 

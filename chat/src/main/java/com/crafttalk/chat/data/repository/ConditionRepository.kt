@@ -26,7 +26,7 @@ class ConditionRepository
 
     override fun setStatusChat(newStatus: ChatStatus) {
         if (newStatus in listOf(ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP, ChatStatus.ON_CHAT_SCREEN_BACKGROUND_APP)) {
-            socketApi.cleanBufferMessages()
+            socketApi.resetNewMessagesCounter()
         }
         socketApi.chatStatus = newStatus
     }

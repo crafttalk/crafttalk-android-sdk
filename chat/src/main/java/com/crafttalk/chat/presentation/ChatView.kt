@@ -143,6 +143,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.clientInternetConnectionListener = listener
     }
 
+    fun setOnChatStateListener(listener: ChatStateListener) {
+        viewModel.chatStateListener = listener
+    }
+
     fun setMergeHistoryListener(listener: MergeHistoryListener) {
         viewModel.mergeHistoryListener = listener
     }
@@ -198,6 +202,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         company_name.text = chatAttr.companyName
         company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
         warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
+        infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
         upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
         feedback_title.apply {
             setTextColor(ChatAttr.getInstance().colorFeedbackTitle)
@@ -298,7 +303,19 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
     }
 
-    fun onViewCreated(fragment: Fragment) {
+    fun onViewCreated(
+        fragment: Fragment,
+        lifecycleOwner: LifecycleOwner
+    ) {
+        Chat.getSdkComponent().createChatComponent()
+            .parentFragment(fragment)
+            .build()
+            .inject(this)
+        this.parentFragment = fragment
+
+        if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
+        context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
             uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
         }
@@ -314,25 +331,126 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 FileViewerHelper.showPhotoLimitExceededMessage(fragment)
             } else viewModel.sendFiles(listUri.map { File(it, TypeFile.FILE) })
         }
-    }
 
-    fun onStart(
-        fragment: Fragment,
-        lifecycleOwner: LifecycleOwner,
-        visitor: Visitor? = null
-    ) {
-        Chat.getSdkComponent().createChatComponent()
-            .parentFragment(fragment)
-            .build()
-            .inject(this)
-        this.parentFragment = fragment
-
-        viewModel.onStartChatView(visitor)
-
-        if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         setAllListeners()
         setListMessages()
-        context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+
+        viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
+            when (state) {
+                InternetConnectionState.NO_INTERNET -> {
+                    if (ChatAttr.getInstance().showChatState) {
+                        infoChatState.visibility = View.INVISIBLE
+                    }
+                    if (ChatAttr.getInstance().showInternetConnectionState) {
+                        warningConnection.visibility = View.VISIBLE
+                    }
+                    sign_in.isClickable = true
+                }
+                InternetConnectionState.HAS_INTERNET, InternetConnectionState.RECONNECT -> {
+                    if (ChatAttr.getInstance().showInternetConnectionState) {
+                        warningConnection.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        })
+        viewModel.displayableUIObject.observe(lifecycleOwner, Observer {
+            Log.d("CHAT_VIEW", "displayableUIObject - ${it};")
+            when (it) {
+                DisplayableUIObject.NOTHING -> {
+                    chat_place.visibility = View.GONE
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.GONE
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        startProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.start()
+                }
+                DisplayableUIObject.SYNCHRONIZATION -> {
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.GONE
+                    chat_place.visibility = View.VISIBLE
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        stopProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.stop()
+                    if (ChatAttr.getInstance().showChatState) {
+                        infoChatState.visibility = View.VISIBLE
+                    }
+//                    list_with_message.scrollToPosition(viewModel.currentReadMessageTime)
+                }
+                DisplayableUIObject.CHAT -> {
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.GONE
+                    chat_place.visibility = View.VISIBLE
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        stopProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.stop()
+                    if (ChatAttr.getInstance().showChatState) {
+                        infoChatState.visibility = View.INVISIBLE
+                    }
+//                    list_with_message.scrollToPosition(viewModel.currentReadMessageTime)
+                }
+                DisplayableUIObject.FORM_AUTH -> {
+                    chat_place.visibility = View.GONE
+                    warning.visibility = View.GONE
+                    auth_form.visibility = View.VISIBLE
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        stopProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.stop()
+                }
+                DisplayableUIObject.WARNING -> {
+                    chat_place.visibility = View.GONE
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.VISIBLE
+                    warning_refresh.visibility = View.VISIBLE
+                    stopProgressBar(warning_loading)
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        stopProgressBar(loading)
+                    }
+                    stateStartingProgressListener?.stop()
+                    if (ChatAttr.getInstance().showChatState) {
+                        infoChatState.visibility = View.INVISIBLE
+                    }
+                }
+                DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE -> {
+                    state_action_operator.visibility = View.VISIBLE
+                }
+                DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE -> {
+                    state_action_operator.visibility = View.GONE
+                }
+            }
+        })
+
+        viewModel.countUnreadMessages.observe(lifecycleOwner, Observer {
+            if (it <= 0) {
+                count_unread_message.visibility = View.GONE
+            } else {
+                count_unread_message.text = if (it < 10) it.toString() else "9+"
+                count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
+            }
+        })
+        viewModel.scrollToDownVisible.observe(lifecycleOwner, Observer {
+            if (it) {
+                scroll_to_down.visibility = View.VISIBLE
+                if (viewModel.countUnreadMessages.value != 0) {
+                    count_unread_message.visibility = View.VISIBLE
+                } else {
+                    count_unread_message.visibility = View.GONE
+                }
+            } else {
+                count_unread_message.visibility = View.GONE
+                scroll_to_down.visibility = View.GONE
+            }
+        })
+        viewModel.feedbackContainerVisible.observe(lifecycleOwner, Observer {
+            user_feedback.visibility = if (it) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
 
         viewModel.uploadMessagesForUser.observe(lifecycleOwner, Observer { liveDataPagedList ->
             liveDataPagedList ?: return@Observer
@@ -359,115 +477,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 isFirstUploadMessages = false
             })
         })
-        viewModel.firstUploadMessages.observe(lifecycleOwner, Observer {
-            it ?: return@Observer
-            chat_place.visibility = View.VISIBLE
-            if (ChatAttr.getInstance().showStartingProgress) {
-                stopProgressBar(loading)
-            }
-            stateStartingProgressListener?.stop()
-            stopProgressBar(warning_loading)
-
-            list_with_message.scrollToPosition(it)
-        })
-        viewModel.scrollToDownVisible.observe(lifecycleOwner, Observer {
-            if (it) {
-                scroll_to_down.visibility = View.VISIBLE
-                if (viewModel.countUnreadMessages.value != 0) {
-                    count_unread_message.visibility = View.VISIBLE
-                } else {
-                    count_unread_message.visibility = View.GONE
-                }
-            } else {
-                count_unread_message.visibility = View.GONE
-                scroll_to_down.visibility = View.GONE
-            }
-        })
-        viewModel.countUnreadMessages.observe(lifecycleOwner, Observer {
-            if (it <= 0) {
-                count_unread_message.visibility = View.GONE
-            } else {
-                count_unread_message.text = if (it < 10) it.toString() else "9+"
-                count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
-            }
-        })
     }
 
-    fun onResume(lifecycleOwner: LifecycleOwner) {
-        viewModel.displayableUIObject.observe(lifecycleOwner, Observer {
-            Log.d("CHAT_VIEW", "displayableUIObject - ${it};")
-            when (it) {
-                DisplayableUIObject.NOTHING -> {
-                    chat_place.visibility = View.GONE
-                    auth_form.visibility = View.GONE
-                    warning.visibility = View.GONE
-                    if (ChatAttr.getInstance().showInternetConnectionState) {
-                        warningConnection.visibility = View.INVISIBLE
-                    }
-                    stopProgressBar(warning_loading)
-                    if (ChatAttr.getInstance().showStartingProgress) {
-                        startProgressBar(loading)
-                    }
-                    stateStartingProgressListener?.start()
-                }
-                DisplayableUIObject.CHAT -> {
-                    auth_form.visibility = View.GONE
-                    warning.visibility = View.GONE
-                }
-                DisplayableUIObject.FORM_AUTH -> {
-                    chat_place.visibility = View.GONE
-                    warning.visibility = View.GONE
-                    auth_form.visibility = View.VISIBLE
-                    if (ChatAttr.getInstance().showStartingProgress) {
-                        stopProgressBar(loading)
-                    }
-                    stateStartingProgressListener?.stop()
-                    stopProgressBar(warning_loading)
-                }
-                DisplayableUIObject.WARNING -> {
-                    chat_place.visibility = View.GONE
-                    auth_form.visibility = View.GONE
-                    if (ChatAttr.getInstance().showInternetConnectionState) {
-                        warningConnection.visibility = View.INVISIBLE
-                    }
-                    warning.visibility = View.VISIBLE
-                    warning_refresh.visibility = View.VISIBLE
-                    if (ChatAttr.getInstance().showStartingProgress) {
-                        stopProgressBar(loading)
-                    }
-                    stateStartingProgressListener?.stop()
-                    stopProgressBar(warning_loading)
-                }
-                DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE -> {
-                    state_action_operator.visibility = View.VISIBLE
-                }
-                DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE -> {
-                    state_action_operator.visibility = View.GONE
-                }
-            }
-        })
-        viewModel.feedbackContainerVisible.observe(lifecycleOwner, Observer {
-            user_feedback.visibility = if (it) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
-        })
-        viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
-            when (state) {
-                InternetConnectionState.NO_INTERNET -> {
-                    if (ChatAttr.getInstance().showInternetConnectionState) {
-                        warningConnection.visibility = View.VISIBLE
-                    }
-                    sign_in.isClickable = true
-                }
-                InternetConnectionState.HAS_INTERNET, InternetConnectionState.RECONNECT -> {
-                    if (ChatAttr.getInstance().showInternetConnectionState) {
-                        warningConnection.visibility = View.INVISIBLE
-                    }
-                }
-            }
-        })
+    fun onStart(
+        visitor: Visitor? = null
+    ) {
+        viewModel.onStartChatView(visitor)
     }
 
     private fun checkerObligatoryFields(fields: List<EditText>): Boolean {

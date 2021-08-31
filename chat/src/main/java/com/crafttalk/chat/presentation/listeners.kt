@@ -23,6 +23,11 @@ interface ChatInternetConnectionListener {
     fun reconnect() // has internet
 }
 
+interface ChatStateListener {
+    fun startSynchronization()
+    fun endSynchronization()
+}
+
 interface MergeHistoryListener {
     fun showDialog()
     fun startMerge()
@@ -43,4 +48,5 @@ interface ChatEventListener {
     fun operatorStopWriteMessage()
     fun finishDialog()
     fun showUploadHistoryBtn()
+    fun synchronized()
 }

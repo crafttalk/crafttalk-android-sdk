@@ -24,10 +24,7 @@ import com.crafttalk.chat.utils.InitialMessageMode
 import com.google.gson.Gson
 import io.socket.client.Manager
 import io.socket.client.Socket
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
@@ -48,13 +45,15 @@ class SocketApi constructor(
     private var getPersonPreview: suspend (personId: String) -> String? = { null }
     private var updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
     private var isAuthorized: Boolean = false
+    private var isSynchronized: Boolean = false
+    private val bufferNewMessages = mutableListOf<MessageEntity>()
 
     private var chatInternetConnectionListener: ChatInternetConnectionListener? = null
     private var chatMessageListener: ChatMessageListener? = null
     private var chatEventListener: ChatEventListener? = null
 
     var chatStatus = ChatStatus.NOT_ON_CHAT_SCREEN_BACKGROUND_APP
-    private val bufferMessages = mutableListOf<NetworkMessage>()
+    private var countNewMessages = 0
 
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
@@ -73,6 +72,7 @@ class SocketApi constructor(
                     failAuthUxFun()
                 }
                 isAuthorized = false
+                isSynchronized = false
                 null
             }
         }
@@ -96,8 +96,8 @@ class SocketApi constructor(
         this.chatMessageListener = listener
     }
 
-    fun cleanBufferMessages() {
-        bufferMessages.clear()
+    fun resetNewMessagesCounter() {
+        countNewMessages = 0
     }
 
     fun setVisitor(
@@ -138,6 +138,7 @@ class SocketApi constructor(
         socket.on("hide") {
             Log.d(TAG_SOCKET_EVENT, "hide")
             isAuthorized = false
+            isSynchronized = false
             failAuthUiFun()
             viewModelScope.launch {
                 failAuthUxFun()
@@ -186,8 +187,8 @@ class SocketApi constructor(
                 if (!messageJson.toString().contains(""""message":"\/start"""") && (messageSocket.id != null || !messageDao.isNotEmpty(visitor.uuid))) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
-                            bufferMessages.add(messageSocket)
-                            chatMessageListener?.getNewMessages(bufferMessages.size)
+                            countNewMessages++
+                            chatMessageListener?.getNewMessages(countNewMessages)
                         }
                     }
                     if (messageSocket.id == null) {
@@ -205,24 +206,29 @@ class SocketApi constructor(
         socket.on(Socket.EVENT_DISCONNECT) {
             Log.d(TAG_SOCKET_EVENT, "EVENT_DISCONNECT")
             isAuthorized = false
+            isSynchronized = false
             chatInternetConnectionListener?.lossConnection()
         }
         socket.on(Socket.EVENT_CONNECT_ERROR) {
             Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_ERROR")
             isAuthorized = false
+            isSynchronized = false
             chatInternetConnectionListener?.failConnect()
         }
         socket.on(Socket.EVENT_RECONNECT_ERROR) {
             Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECT_ERROR")
             isAuthorized = false
+            isSynchronized = false
         }
         socket.on(Socket.EVENT_RECONNECT_FAILED) {
             Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECT_FAILED")
             isAuthorized = false
+            isSynchronized = false
         }
         socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
             Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_TIMEOUT")
             isAuthorized = false
+            isSynchronized = false
             failAuthUiFun()
             viewModelScope.launch {
                 failAuthUxFun()
@@ -285,6 +291,13 @@ class SocketApi constructor(
         socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, null, null)
     }
 
+    fun mergeNewMessages() {
+        isSynchronized = true
+        messageDao.insertMessages(bufferNewMessages)
+        bufferNewMessages.clear()
+        chatEventListener?.synchronized()
+    }
+
     private fun syncChat() {
         viewModelScope.launch {
             syncMessages()
@@ -298,7 +311,7 @@ class SocketApi constructor(
                 messageSocket.getCorrectAttachmentUrl(visitor.token)?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
-                            messageDao.insertMessage(MessageEntity.map(
+                            insertMessage(MessageEntity.map(
                                 uuid = visitor.uuid,
                                 networkMessage = messageSocket,
                                 operatorPreview = operatorPreview,
@@ -312,7 +325,7 @@ class SocketApi constructor(
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isFile -> {
                 messageSocket.getCorrectAttachmentUrl(visitor.token)?.let { url ->
-                    messageDao.insertMessage(MessageEntity.map(
+                    insertMessage(MessageEntity.map(
                         uuid = visitor.uuid,
                         networkMessage = messageSocket,
                         operatorPreview = operatorPreview,
@@ -322,7 +335,7 @@ class SocketApi constructor(
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isText -> {
-                messageDao.insertMessage(MessageEntity.map(
+                insertMessage(MessageEntity.map(
                     uuid = visitor.uuid,
                     networkMessage = messageSocket,
                     operatorPreview = operatorPreview
@@ -334,7 +347,7 @@ class SocketApi constructor(
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
-                messageDao.insertMessage(MessageEntity.mapOperatorJoinMessage(
+                insertMessage(MessageEntity.mapOperatorJoinMessage(
                     uuid = visitor.uuid,
                     networkMessage = messageSocket,
                     operatorPreview = operatorPreview
@@ -342,6 +355,13 @@ class SocketApi constructor(
             }
         }
         updatePersonName(messageSocket.operatorId, messageSocket.operatorName)
+    }
+
+    private fun insertMessage(message: MessageEntity) {
+        if (isSynchronized)
+            messageDao.insertMessage(message)
+        else
+            bufferNewMessages.add(message)
     }
 
 }

@@ -9,6 +9,7 @@
     <string name="com_crafttalk_chat_auth_sign_in">Start chat</string>
 
     <!--    Chat-->
+    <string name="com_crafttalk_chat_stete_synchronization">Synchronization</string>
     <string name="com_crafttalk_chat_internet_connection_warning">Waiting for network…</string>
     <string name="com_crafttalk_chat_name_company">by CraftTalk</string>
     <string name="com_crafttalk_chat_state_action_operator">Operator write message…</string>

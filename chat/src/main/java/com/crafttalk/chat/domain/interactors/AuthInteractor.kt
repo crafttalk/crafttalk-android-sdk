@@ -20,8 +20,8 @@ class AuthInteractor
 
     private fun dataPreparation(visitor: Visitor?): Visitor? {
         return when (ChatParams.authMode) {
-            AuthType.AUTH_WITH_FORM -> visitor?.apply {  visitorInteractor.saveVisitor(this) }
-            AuthType.AUTH_WITHOUT_FORM -> visitor?.apply { visitorInteractor.setVisitor(this) }
+            AuthType.AUTH_WITH_FORM -> visitor?.apply(visitorInteractor::saveVisitor)
+            AuthType.AUTH_WITHOUT_FORM -> visitor?.apply(visitorInteractor::setVisitor)
             else -> null
         } ?: visitorInteractor.getVisitor()
     }

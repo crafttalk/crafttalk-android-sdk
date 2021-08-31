@@ -42,7 +42,6 @@ class ChatViewModel
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
 
-    val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
         val dataSource = messageInteractor.getAllMessages()
@@ -64,11 +63,21 @@ class ChatViewModel
     private val eventAllHistoryLoaded: () -> Unit = {
         isAllHistoryLoaded = true
     }
+    private val sync: suspend () -> Unit = {
+        launchUI { chatStateListener?.startSynchronization() }
+        displayableUIObject.postValue(DisplayableUIObject.SYNCHRONIZATION)
+        messageInteractor.syncMessages(
+            currentReadMessageTime = currentReadMessageTime,
+            updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
+            eventAllHistoryLoaded = eventAllHistoryLoaded
+        )
+    }
 
     val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
     val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
     var clientInternetConnectionListener: ChatInternetConnectionListener? = null
     var mergeHistoryListener: MergeHistoryListener? = null
+    var chatStateListener: ChatStateListener? = null
     private val internetConnectionListener = object : ChatInternetConnectionListener {
         override fun connect() {
             launchUI { clientInternetConnectionListener?.connect() }
@@ -92,6 +101,10 @@ class ChatViewModel
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
         override fun finishDialog() { feedbackContainerVisible.postValue(true) }
         override fun showUploadHistoryBtn() { mergeHistoryListener?.showDialog() }
+        override fun synchronized() {
+            launchUI { chatStateListener?.endSynchronization() }
+            displayableUIObject.postValue(DisplayableUIObject.CHAT)
+        }
     }
     var uploadFileListener: UploadFileListener? = null
 
@@ -104,18 +117,8 @@ class ChatViewModel
         Handler().postDelayed({
             authChatInteractor.logIn(
                 visitor = visitor,
-                successAuthUi = {
-                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
-                    uploadMessages()
-                },
-                sync = {
-                    messageInteractor.syncMessages(
-                        currentReadMessageTime = currentReadMessageTime,
-                        updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
-                        eventAllHistoryLoaded = eventAllHistoryLoaded,
-                        syncComplete = {}
-                    )
-                },
+                successAuthUi = ::uploadMessages,
+                sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
                 chatEventListener = chatEventListener
@@ -133,18 +136,8 @@ class ChatViewModel
         Handler().postDelayed({
             authChatInteractor.logIn(
                 visitor = Visitor.map(args),
-                successAuthUi = {
-                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
-                    uploadMessages()
-                },
-                sync = {
-                    messageInteractor.syncMessages(
-                        currentReadMessageTime = currentReadMessageTime,
-                        updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
-                        eventAllHistoryLoaded = eventAllHistoryLoaded,
-                        syncComplete = {}
-                    )
-                },
+                successAuthUi = ::uploadMessages,
+                sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
             )
@@ -154,18 +147,8 @@ class ChatViewModel
     fun reload() {
         Handler().postDelayed({
             authChatInteractor.logIn(
-                successAuthUi = {
-                    displayableUIObject.postValue(DisplayableUIObject.CHAT)
-                    uploadMessages()
-                },
-                sync = {
-                    messageInteractor.syncMessages(
-                        currentReadMessageTime = currentReadMessageTime,
-                        updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
-                        eventAllHistoryLoaded = eventAllHistoryLoaded,
-                        syncComplete = {}
-                    )
-                },
+                successAuthUi = ::uploadMessages,
+                sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 chatEventListener = chatEventListener
             )

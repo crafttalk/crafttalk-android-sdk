@@ -149,6 +149,7 @@ private constructor(
     val companyName = attrArr.getString(R.styleable.ChatView_company_name) ?: context.getString(R.string.com_crafttalk_chat_name_company)
     val showCompanyName = attrArr.getBoolean(R.styleable.ChatView_show_company_name, false)
     val showInternetConnectionState = attrArr.getBoolean(R.styleable.ChatView_show_internet_connection_state, true)
+    val showChatState = attrArr.getBoolean(R.styleable.ChatView_show_chat_state, true)
     val showUpperLimiter = attrArr.getBoolean(R.styleable.ChatView_show_upper_limiter, true)
     val showStartingProgress = attrArr.getBoolean(R.styleable.ChatView_show_starting_progress, true)
 

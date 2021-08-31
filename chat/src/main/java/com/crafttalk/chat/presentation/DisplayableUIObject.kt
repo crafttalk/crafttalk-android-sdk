@@ -2,6 +2,7 @@ package com.crafttalk.chat.presentation
 
 enum class DisplayableUIObject {
     NOTHING,
+    SYNCHRONIZATION,
     CHAT,
     FORM_AUTH,
     WARNING,
