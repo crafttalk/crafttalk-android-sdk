@@ -45,6 +45,8 @@ class ConditionInteractor
         )
     }
 
+    fun getStatusChat() = conditionRepository.getStatusChat()
+
     fun createSessionChat() {
         conditionRepository.createSessionChat()
     }

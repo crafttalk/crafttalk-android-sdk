@@ -18,11 +18,12 @@ class AuthRepository
 
     override fun logIn(
         visitor: Visitor,
-        successAuthUi: (() -> Unit)?,
-        failAuthUi: (() -> Unit)?,
+        successAuthUi: () -> Unit,
+        failAuthUi: () -> Unit,
         successAuthUx: suspend () -> Unit,
         failAuthUx: suspend () -> Unit,
         sync: suspend () -> Unit,
+        updateCurrentReadMessageTime: (Long) -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
@@ -34,6 +35,7 @@ class AuthRepository
             successAuthUx,
             failAuthUx,
             sync,
+            updateCurrentReadMessageTime,
             getPersonPreview,
             updatePersonName,
             chatEventListener

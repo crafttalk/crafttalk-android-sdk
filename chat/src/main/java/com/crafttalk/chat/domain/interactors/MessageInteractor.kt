@@ -60,7 +60,6 @@ class MessageInteractor
 
     // при переходе на холд добавить вызов метода, обновляющего состояния у сообщений, находящихся в статусе "отправляется"
     suspend fun syncMessages(
-        currentReadMessageTime: Long,
         updateReadPoint: (newTimeMark: Long) -> Unit,
         eventAllHistoryLoaded: () -> Unit
     ) {
@@ -83,7 +82,7 @@ class MessageInteractor
                 messageRepository.mergeNewMessages()
             }
         } else {
-            if (currentReadMessageTime == 0L) {
+//            if (remoteReadMessageTime == 0L) {
                 val messages = messageRepository.uploadMessages(
                     uuid = visitor.uuid,
                     token = visitor.token,
@@ -101,22 +100,22 @@ class MessageInteractor
                 )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
                 messageRepository.mergeNewMessages()
-            } else {
-                val messages = messageRepository.uploadMessages(
-                    uuid = visitor.uuid,
-                    token = visitor.token,
-                    startTime = currentReadMessageTime,
-                    endTime = 0,
-                    updateReadPoint = updateReadPoint,
-                    returnedEmptyPool = {},
-                    getPersonPreview = { personId ->
-                        personInteractor.getPersonPreview(personId, visitor.token)
-                    },
-                    getFileInfo = messageRepository::getFileInfo
-                )
-                messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
-                messageRepository.mergeNewMessages()
-            }
+//            } else {
+//                val messages = messageRepository.uploadMessages(
+//                    uuid = visitor.uuid,
+//                    token = visitor.token,
+//                    startTime = remoteReadMessageTime,
+//                    endTime = 0,
+//                    updateReadPoint = updateReadPoint,
+//                    returnedEmptyPool = {},
+//                    getPersonPreview = { personId ->
+//                        personInteractor.getPersonPreview(personId, visitor.token)
+//                    },
+//                    getFileInfo = messageRepository::getFileInfo
+//                )
+//                messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
+//                messageRepository.mergeNewMessages()
+//            }
         }
     }
 

@@ -133,6 +133,8 @@ class MessageRepository
                 )
             }
 
+            userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp?.run(updateReadPoint)
+
             val resultMessages = mutableListOf<MessageEntity>().apply {
                 addAll(operatorMessagesWithContent)
                 addAll(userMessagesWithContent)

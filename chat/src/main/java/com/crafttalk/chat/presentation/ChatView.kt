@@ -479,10 +479,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         })
     }
 
-    fun onStart(
+    fun onResume(
         visitor: Visitor? = null
     ) {
         viewModel.onStartChatView(visitor)
+    }
+
+    fun onStop() {
+        viewModel.onStop()
     }
 
     private fun checkerObligatoryFields(fields: List<EditText>): Boolean {

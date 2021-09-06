@@ -97,6 +97,10 @@ object Chat {
         )
     }
 
+    fun wakeUp() {
+        conditionInteractor?.openApp()
+    }
+
     fun drop() {
         conditionInteractor?.closeApp()
         conditionInteractor?.dropChat()

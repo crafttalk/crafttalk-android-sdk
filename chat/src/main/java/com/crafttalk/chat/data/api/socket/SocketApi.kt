@@ -42,6 +42,7 @@ class SocketApi constructor(
     private var successAuthUxFun: suspend () -> Unit = {}
     private var failAuthUxFun: suspend () -> Unit = {}
     private var syncMessages: suspend () -> Unit = {}
+    private var updateCurrentReadMessageTime: (newReadPoint: Long) -> Unit = {}
     private var getPersonPreview: suspend (personId: String) -> String? = { null }
     private var updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
     private var isAuthorized: Boolean = false
@@ -102,20 +103,22 @@ class SocketApi constructor(
 
     fun setVisitor(
         visitor: Visitor,
-        successAuthUi: (() -> Unit)?,
-        failAuthUi: (() -> Unit)?,
+        successAuthUi: () -> Unit,
+        failAuthUi: () -> Unit,
         successAuthUx: suspend () -> Unit,
         failAuthUx: suspend () -> Unit,
         sync: suspend () -> Unit,
+        updateCurrentReadMessageTime: (newTimeMark: Long) -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
     ) {
-        successAuthUi?.let { this.successAuthUiFun = it }
+        this.successAuthUiFun = successAuthUi
         this.successAuthUxFun = successAuthUx
-        failAuthUi?.let { this.failAuthUiFun = it }
+        this.failAuthUiFun = failAuthUi
         this.failAuthUxFun = failAuthUx
         this.syncMessages = sync
+        this.updateCurrentReadMessageTime = updateCurrentReadMessageTime
         this.getPersonPreview = getPersonPreview
         this.updatePersonName = updatePersonName
         chatEventListener?.let { this.chatEventListener = it }
@@ -155,9 +158,7 @@ class SocketApi constructor(
             if ((initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
                 greet()
             }
-            if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                syncChat()
-            }
+            syncChat()
         }
 
         socket.on("authorization-required") {
@@ -175,7 +176,7 @@ class SocketApi constructor(
             viewModelScope.launch {
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
-                Log.d(TAG_SOCKET, "json message___ methon message - $messageJson")
+                Log.d(TAG_SOCKET_EVENT, "json message___ methon message - $messageJson")
                 val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java)
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
@@ -193,6 +194,9 @@ class SocketApi constructor(
                     }
                     if (messageSocket.id == null) {
                         messageSocket.id = System.currentTimeMillis().toString()
+                    }
+                    if (!messageSocket.isReply) {
+                        updateCurrentReadMessageTime(messageSocket.timestamp)
                     }
                     updateDataInDatabase(messageSocket)
                 }
@@ -253,9 +257,7 @@ class SocketApi constructor(
             if (initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 greet()
             }
-            if (chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                syncChat()
-            }
+            syncChat()
         } else {
             try {
                 socket.emit(

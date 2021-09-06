@@ -6,6 +6,7 @@ import com.crafttalk.chat.domain.repository.IAuthRepository
 import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.chat.utils.ChatParams
+import com.crafttalk.chat.utils.ChatStatus
 import java.io.File
 import javax.inject.Inject
 
@@ -28,15 +29,29 @@ class AuthInteractor
 
     fun logIn(
         visitor: Visitor? = null,
-        successAuthUi: (() -> Unit)? = null,
-        failAuthUi: (() -> Unit)? = null,
+        successAuthUi: () -> Unit = {},
+        failAuthUi: () -> Unit = {},
         successAuthUx: suspend () -> Unit = {},
         failAuthUx: suspend () -> Unit = {},
         sync: suspend () -> Unit = {},
+        updateCurrentReadMessageTime: (Long) -> Unit = {},
         firstLogInWithForm: () -> Unit = {},
         chatEventListener: ChatEventListener? = null
     ) {
         val currentVisitor = dataPreparation(visitor)
+        val status = conditionInteractor.getStatusChat()
+
+        val successAuthUiWrapper = {
+            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                successAuthUi()
+            }
+        }
+
+        val failAuthUiWrapper = {
+            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                failAuthUi()
+            }
+        }
 
         val successAuthUxWrapper = suspend {
             successAuthUx()
@@ -48,7 +63,19 @@ class AuthInteractor
             notificationInteractor.unsubscribeNotification()
         }
 
-        val getPersonPreview: suspend (personId: String) -> String? = { personId ->
+        val syncWrapper = suspend {
+            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                sync()
+            }
+        }
+
+        val updateCurrentReadMessageTimeWrapper: (Long) -> Unit = {
+            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                updateCurrentReadMessageTime(it)
+            }
+        }
+
+        val getPersonPreviewWrapper: suspend (personId: String) -> String? = { personId ->
             currentVisitor?.token?.let { token ->
                 personInteractor.getPersonPreview(personId, token)
             }
@@ -60,29 +87,31 @@ class AuthInteractor
                     firstLogInWithForm()
                 } else {
                     authRepository.logIn(
-                        currentVisitor,
-                        successAuthUi,
-                        failAuthUi,
-                        successAuthUxWrapper,
-                        failAuthUxWrapper,
-                        sync,
-                        getPersonPreview,
-                        personInteractor::updatePersonName,
-                        chatEventListener
+                        visitor = currentVisitor,
+                        successAuthUi = successAuthUiWrapper,
+                        failAuthUi = failAuthUiWrapper,
+                        successAuthUx = successAuthUxWrapper,
+                        failAuthUx = failAuthUxWrapper,
+                        sync = syncWrapper,
+                        updateCurrentReadMessageTime = updateCurrentReadMessageTimeWrapper,
+                        getPersonPreview = getPersonPreviewWrapper,
+                        updatePersonName = personInteractor::updatePersonName,
+                        chatEventListener = chatEventListener
                     )
                 }
             }
             AuthType.AUTH_WITHOUT_FORM -> {
                 authRepository.logIn(
-                    currentVisitor!!,
-                    successAuthUi,
-                    failAuthUi,
-                    successAuthUxWrapper,
-                    failAuthUxWrapper,
-                    sync,
-                    getPersonPreview,
-                    personInteractor::updatePersonName,
-                    chatEventListener
+                    visitor = currentVisitor!!,
+                    successAuthUi = successAuthUiWrapper,
+                    failAuthUi = failAuthUiWrapper,
+                    successAuthUx = successAuthUxWrapper,
+                    failAuthUx = failAuthUxWrapper,
+                    sync = syncWrapper,
+                    updateCurrentReadMessageTime = updateCurrentReadMessageTimeWrapper,
+                    getPersonPreview = getPersonPreviewWrapper,
+                    updatePersonName = personInteractor::updatePersonName,
+                    chatEventListener = chatEventListener
                 )
             }
         }

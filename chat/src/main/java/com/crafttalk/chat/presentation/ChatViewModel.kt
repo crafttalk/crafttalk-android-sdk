@@ -45,9 +45,9 @@ class ChatViewModel
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
         val dataSource = messageInteractor.getAllMessages()
-            ?.map<MessageModel> { (messageModelMapper(it, context)) }
+            ?.map { (messageModelMapper(it, context)) }
             ?.mapByPage { groupPageByDate(it) } ?: return
-        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder<Int, MessageModel>(
+        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder(
             dataSource,
             ChatParams.pageSize
         ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
@@ -67,10 +67,14 @@ class ChatViewModel
         launchUI { chatStateListener?.startSynchronization() }
         displayableUIObject.postValue(DisplayableUIObject.SYNCHRONIZATION)
         messageInteractor.syncMessages(
-            currentReadMessageTime = currentReadMessageTime,
-            updateReadPoint = { newTimeMark -> currentReadMessageTime = newTimeMark },
+            updateReadPoint = updateCurrentReadMessageTime,
             eventAllHistoryLoaded = eventAllHistoryLoaded
         )
+    }
+    private val updateCurrentReadMessageTime: (Long) -> Unit = { newTimeMark ->
+        if (newTimeMark > currentReadMessageTime) {
+            currentReadMessageTime = newTimeMark
+        }
     }
 
     val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
@@ -121,15 +125,19 @@ class ChatViewModel
                 sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
+                updateCurrentReadMessageTime = updateCurrentReadMessageTime,
                 chatEventListener = chatEventListener
             )
         }, ChatAttr.getInstance().timeDelayed)
     }
 
-    override fun onCleared() {
-        conditionInteractor.leaveChatScreen()
+    fun onStop() {
         currentReadMessageTime.run(conditionInteractor::saveCurrentReadMessageTime)
+    }
+
+    override fun onCleared() {
         super.onCleared()
+        conditionInteractor.leaveChatScreen()
     }
 
     fun registration(vararg args: String) {
@@ -139,6 +147,7 @@ class ChatViewModel
                 successAuthUi = ::uploadMessages,
                 sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
+                updateCurrentReadMessageTime = updateCurrentReadMessageTime,
                 chatEventListener = chatEventListener
             )
         }, ChatAttr.getInstance().timeDelayed)
@@ -150,6 +159,7 @@ class ChatViewModel
                 successAuthUi = ::uploadMessages,
                 sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
+                updateCurrentReadMessageTime = updateCurrentReadMessageTime,
                 chatEventListener = chatEventListener
             )
         }, ChatAttr.getInstance().timeDelayed)

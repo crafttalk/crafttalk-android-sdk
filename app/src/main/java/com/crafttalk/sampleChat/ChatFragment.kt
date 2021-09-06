@@ -50,9 +50,14 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-        chat_view.onStart()
+    override fun onResume() {
+        super.onResume()
+        chat_view.onResume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        chat_view.onStop()
     }
 
     private fun showWarning(warningText: String) {

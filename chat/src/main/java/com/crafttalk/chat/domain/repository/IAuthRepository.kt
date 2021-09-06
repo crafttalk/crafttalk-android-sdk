@@ -7,11 +7,12 @@ import java.io.File
 interface IAuthRepository {
     fun logIn(
         visitor: Visitor,
-        successAuthUi: (() -> Unit)?,
-        failAuthUi: (() -> Unit)?,
+        successAuthUi: () -> Unit,
+        failAuthUi: () -> Unit,
         successAuthUx: suspend () -> Unit,
         failAuthUx: suspend () -> Unit,
         sync: suspend () -> Unit,
+        updateCurrentReadMessageTime: (Long) -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
