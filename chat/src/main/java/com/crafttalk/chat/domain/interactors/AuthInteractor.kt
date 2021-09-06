@@ -34,7 +34,7 @@ class AuthInteractor
         successAuthUx: suspend () -> Unit = {},
         failAuthUx: suspend () -> Unit = {},
         sync: suspend () -> Unit = {},
-        updateCurrentReadMessageTime: (Long) -> Unit = {},
+        updateCurrentReadMessageTime: (Long) -> Boolean = { false },
         firstLogInWithForm: () -> Unit = {},
         chatEventListener: ChatEventListener? = null
     ) {

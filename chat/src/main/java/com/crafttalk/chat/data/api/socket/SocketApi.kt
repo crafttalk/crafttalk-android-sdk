@@ -195,9 +195,6 @@ class SocketApi constructor(
                     if (messageSocket.id == null) {
                         messageSocket.id = System.currentTimeMillis().toString()
                     }
-                    if (!messageSocket.isReply) {
-                        updateCurrentReadMessageTime(messageSocket.timestamp)
-                    }
                     updateDataInDatabase(messageSocket)
                 }
             }
@@ -295,6 +292,7 @@ class SocketApi constructor(
 
     fun mergeNewMessages() {
         isSynchronized = true
+        bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp?.run(updateCurrentReadMessageTime)
         messageDao.insertMessages(bufferNewMessages)
         bufferNewMessages.clear()
         chatEventListener?.synchronized()
@@ -360,10 +358,14 @@ class SocketApi constructor(
     }
 
     private fun insertMessage(message: MessageEntity) {
-        if (isSynchronized)
+        if (isSynchronized) {
+            if (!message.isReply) {
+                updateCurrentReadMessageTime(message.timestamp)
+            }
             messageDao.insertMessage(message)
-        else
+        } else {
             bufferNewMessages.add(message)
+        }
     }
 
 }

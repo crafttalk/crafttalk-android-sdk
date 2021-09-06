@@ -38,7 +38,7 @@ class ChatViewModel
     var currentReadMessageTime = conditionInteractor.getCurrentReadMessageTime()
     var isAllHistoryLoaded = conditionInteractor.checkFlagAllHistoryLoaded()
 
-    var countUnreadMessages = MutableLiveData(0)
+    var countUnreadMessages = MutableLiveData<Int>()
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
 
@@ -71,9 +71,12 @@ class ChatViewModel
             eventAllHistoryLoaded = eventAllHistoryLoaded
         )
     }
-    private val updateCurrentReadMessageTime: (Long) -> Unit = { newTimeMark ->
+    private val updateCurrentReadMessageTime: (Long) -> Boolean = { newTimeMark ->
         if (newTimeMark > currentReadMessageTime) {
             currentReadMessageTime = newTimeMark
+            true
+        } else {
+            false
         }
     }
 
@@ -275,6 +278,12 @@ class ChatViewModel
                 0 -> firstUploadMessages.postValue(0)
                 else -> firstUploadMessages.postValue(indexLastReadMessage - 1)
             }
+        }
+    }
+
+    fun updateCountUnreadMessages() {
+        launchIO {
+            messageInteractor.getCountUnreadMessages(currentReadMessageTime)?.run(countUnreadMessages::postValue)
         }
     }
 

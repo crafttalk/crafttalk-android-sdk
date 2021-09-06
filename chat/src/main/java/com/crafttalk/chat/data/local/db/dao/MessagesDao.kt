@@ -14,6 +14,9 @@ interface MessagesDao {
     @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE uuid = :uuid LIMIT 1)")
     fun isNotEmpty(uuid: String): Boolean
 
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE uuid = :uuid AND timestamp > :currentReadMessageTime")
+    fun getCountUnreadMessages(uuid: String, currentReadMessageTime: Long): Int?
+
     @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE uuid = :uuid ORDER BY timestamp ASC LIMIT 1")
     fun getFirstTime(uuid: String): Long?
 

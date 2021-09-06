@@ -22,6 +22,11 @@ class MessageInteractor
         return visitorUid?.run(messageRepository::getMessages)
     }
 
+    fun getCountUnreadMessages(currentReadMessageTime: Long): Int? {
+        val uuid = visitorInteractor.getVisitor()?.uuid ?: return null
+        return messageRepository.getCountUnreadMessages(uuid, currentReadMessageTime)
+    }
+
     suspend fun sendMessage(message: String) {
         messageRepository.sendMessages(message)
     }
@@ -43,7 +48,7 @@ class MessageInteractor
                     token = visitor.token,
                     startTime = null,
                     endTime = firstMessageTime,
-                    updateReadPoint = {},
+                    updateReadPoint = { false },
                     returnedEmptyPool = {
                         eventAllHistoryLoaded()
                         conditionRepository.saveFlagAllHistoryLoaded(true)
@@ -60,7 +65,7 @@ class MessageInteractor
 
     // при переходе на холд добавить вызов метода, обновляющего состояния у сообщений, находящихся в статусе "отправляется"
     suspend fun syncMessages(
-        updateReadPoint: (newTimeMark: Long) -> Unit,
+        updateReadPoint: (newTimeMark: Long) -> Boolean,
         eventAllHistoryLoaded: () -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return

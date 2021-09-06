@@ -10,6 +10,8 @@ interface IMessageRepository {
 
     fun getMessages(uuid: String): DataSource.Factory<Int, MessageEntity>
 
+    fun getCountUnreadMessages(uuid: String, currentReadMessageTime: Long): Int?
+
     // получение времени первого сообщения
     suspend fun getTimeFirstMessage(uuid: String): Long?
 
@@ -22,7 +24,7 @@ interface IMessageRepository {
         token: String,
         startTime: Long?,
         endTime: Long,
-        updateReadPoint: (newTimeMark: Long) -> Unit,
+        updateReadPoint: (newTimeMark: Long) -> Boolean,
         returnedEmptyPool: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?

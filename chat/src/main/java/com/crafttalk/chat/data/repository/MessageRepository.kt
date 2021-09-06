@@ -28,6 +28,10 @@ class MessageRepository
         return messagesDao.getMessages(uuid)
     }
 
+    override fun getCountUnreadMessages(uuid: String, currentReadMessageTime: Long): Int? {
+        return messagesDao.getCountUnreadMessages(uuid, currentReadMessageTime)
+    }
+
     override suspend fun getTimeFirstMessage(uuid: String): Long? {
         return messagesDao.getFirstTime(uuid)
     }
@@ -41,7 +45,7 @@ class MessageRepository
         token: String,
         startTime: Long?,
         endTime: Long,
-        updateReadPoint: (newPosition: Long) -> Unit,
+        updateReadPoint: (newPosition: Long) -> Boolean,
         allMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?
