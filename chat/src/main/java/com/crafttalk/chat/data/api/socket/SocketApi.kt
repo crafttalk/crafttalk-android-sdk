@@ -185,7 +185,7 @@ class SocketApi constructor(
                     MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
                     MessageType.MERGE_HISTORY.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
-                if (!messageJson.toString().contains(""""message":"\/start"""") && (messageSocket.id != null || !messageDao.isNotEmpty(visitor.uuid))) {
+                if (!messageJson.toString().contains(""""message":"\/start"""") && (messageSocket.id != null || !messageDao.isNotEmpty())) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
                             countNewMessages++
@@ -343,7 +343,7 @@ class SocketApi constructor(
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
-                    messageDao.updateMessage(visitor.uuid, parentId, messageSocket.messageType)
+                    messageDao.updateMessage(parentId, messageSocket.messageType)
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {

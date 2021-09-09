@@ -17,5 +17,5 @@ interface IAuthRepository {
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
     )
-    fun logOut(uuid: String, filesDir: File)
+    fun logOut(filesDir: File)
 }

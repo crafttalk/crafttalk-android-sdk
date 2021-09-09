@@ -8,15 +8,15 @@ import com.crafttalk.chat.domain.transfer.TransferFileInfo
 
 interface IMessageRepository {
 
-    fun getMessages(uuid: String): DataSource.Factory<Int, MessageEntity>
+    fun getMessages(): DataSource.Factory<Int, MessageEntity>
 
-    fun getCountUnreadMessages(uuid: String, currentReadMessageTime: Long): Int?
+    fun getCountUnreadMessages(currentReadMessageTime: Long): Int?
 
     // получение времени первого сообщения
-    suspend fun getTimeFirstMessage(uuid: String): Long?
+    suspend fun getTimeFirstMessage(): Long?
 
     // получение времени последнего сообщения
-    suspend fun getTimeLastMessage(uuid: String): Long?
+    suspend fun getTimeLastMessage(): Long?
 
     // загрузка определенного пула сообщений
     suspend fun uploadMessages(
@@ -44,8 +44,8 @@ interface IMessageRepository {
     ): TransferFileInfo?
 
     suspend fun sendMessages(message: String)
-    suspend fun selectAction(uuid: String, messageId: String, actionId: String)
+    suspend fun selectAction(messageId: String, actionId: String)
 
-    fun updateSizeMessage(uuid: String, id: String, height: Int, width: Int)
+    fun updateSizeMessage(id: String, height: Int, width: Int)
 
 }

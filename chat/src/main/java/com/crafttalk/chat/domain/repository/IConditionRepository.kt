@@ -23,6 +23,6 @@ interface IConditionRepository {
     fun deleteCurrentReadMessageTime()
 
     // провека наличия сообщения в бд
-    suspend fun getStatusExistenceMessages(uuid: String): Boolean
+    suspend fun getStatusExistenceMessages(): Boolean
 
 }

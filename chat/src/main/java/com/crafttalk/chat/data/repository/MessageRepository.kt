@@ -1,7 +1,6 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
-import androidx.paging.DataSource
 import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.toData
@@ -24,21 +23,17 @@ class MessageRepository
     private var messageApi: MessageApi
 ) : IMessageRepository {
 
-    override fun getMessages(uuid: String): DataSource.Factory<Int, MessageEntity> {
-        return messagesDao.getMessages(uuid)
-    }
+    override fun getMessages() = messagesDao
+        .getMessages()
 
-    override fun getCountUnreadMessages(uuid: String, currentReadMessageTime: Long): Int? {
-        return messagesDao.getCountUnreadMessages(uuid, currentReadMessageTime)
-    }
+    override fun getCountUnreadMessages(currentReadMessageTime: Long) = messagesDao
+        .getCountUnreadMessages(currentReadMessageTime)
 
-    override suspend fun getTimeFirstMessage(uuid: String): Long? {
-        return messagesDao.getFirstTime(uuid)
-    }
+    override suspend fun getTimeFirstMessage() = messagesDao
+        .getFirstTime()
 
-    override suspend fun getTimeLastMessage(uuid: String): Long? {
-        return messagesDao.getLastTime(uuid)
-    }
+    override suspend fun getTimeLastMessage() = messagesDao
+        .getLastTime()
 
     override suspend fun uploadMessages(
         uuid: String,
@@ -194,9 +189,9 @@ class MessageRepository
         socketApi.sendMessage(message)
     }
 
-    override suspend fun selectAction(uuid: String, messageId: String, actionId: String) {
+    override suspend fun selectAction(messageId: String, actionId: String) {
         socketApi.selectAction(actionId)
-        messagesDao.getMessageById(uuid, messageId)?.let {
+        messagesDao.getMessageById(messageId)?.let {
             val updatedActions = it.actions?.map { action ->
                 ActionEntity(
                     action.actionId,
@@ -204,12 +199,12 @@ class MessageRepository
                     action.actionId == actionId
                 )
             }
-            messagesDao.selectAction(uuid, messageId, updatedActions)
+            messagesDao.selectAction(messageId, updatedActions)
         }
     }
 
-    override fun updateSizeMessage(uuid: String, id: String, height: Int, width: Int) {
-        messagesDao.updateSizeMessage(uuid, id, height, width)
+    override fun updateSizeMessage(id: String, height: Int, width: Int) {
+        messagesDao.updateSizeMessage(id, height, width)
     }
 
 }

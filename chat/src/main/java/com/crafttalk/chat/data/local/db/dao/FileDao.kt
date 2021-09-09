@@ -8,13 +8,13 @@ import com.crafttalk.chat.data.local.db.entity.FileEntity
 @Dao
 interface FileDao {
 
-    @Query("SELECT file_name FROM files WHERE uuid = :uuid")
-    fun getFilesNames(uuid: String): List<String>
+    @Query("SELECT file_name FROM files")
+    fun getFilesNames(): List<String>
 
     @Insert
     fun addFile(file: FileEntity)
 
-    @Query("DELETE FROM files WHERE file_name = :fileName AND uuid = :uuid")
-    fun deleteFile(uuid: String, fileName: String)
+    @Query("DELETE FROM files WHERE file_name = :fileName")
+    fun deleteFile(fileName: String)
 
 }

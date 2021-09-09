@@ -42,12 +42,12 @@ class AuthRepository
         )
     }
 
-    override fun logOut(uuid: String, filesDir: File) {
-        fileDao.getFilesNames(uuid).forEach { fileName ->
-            fileDao.deleteFile(uuid, fileName)
+    override fun logOut(filesDir: File) {
+        fileDao.getFilesNames().forEach { fileName ->
+            fileDao.deleteFile(fileName)
             File(filesDir, fileName).delete()
         }
-        messageDao.deleteAllMessages(uuid)
+        messageDao.deleteAllMessages()
     }
 
 }

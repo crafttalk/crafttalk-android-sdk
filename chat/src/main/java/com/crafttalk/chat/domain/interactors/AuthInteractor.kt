@@ -120,9 +120,7 @@ class AuthInteractor
     fun logOut(filesDir: File) {
         try {
             notificationInteractor.unsubscribeNotification()
-            visitorInteractor.getVisitor()?.uuid?.let { uuid ->
-                authRepository.logOut(uuid, filesDir)
-            }
+            authRepository.logOut(filesDir)
         } catch (ex: Exception) {
             Log.e("FAIL logOut", "${ex.message}")
         }

@@ -77,8 +77,8 @@ class ConditionRepository
         prefEditor.apply()
     }
 
-    override suspend fun getStatusExistenceMessages(uuid: String): Boolean {
-        return messagesDao.isNotEmpty(uuid)
+    override suspend fun getStatusExistenceMessages(): Boolean {
+        return messagesDao.isNotEmpty()
     }
 
     companion object {

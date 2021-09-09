@@ -19,21 +19,18 @@ class MessageInteractor
         val currentVisitorUid = visitorInteractor.getVisitor()?.uuid
         if (visitorUid == currentVisitorUid) return null
         visitorUid = currentVisitorUid
-        return visitorUid?.run(messageRepository::getMessages)
+        return messageRepository.getMessages()
     }
 
-    fun getCountUnreadMessages(currentReadMessageTime: Long): Int? {
-        val uuid = visitorInteractor.getVisitor()?.uuid ?: return null
-        return messageRepository.getCountUnreadMessages(uuid, currentReadMessageTime)
-    }
+    fun getCountUnreadMessages(currentReadMessageTime: Long) = messageRepository
+        .getCountUnreadMessages(currentReadMessageTime)
 
     suspend fun sendMessage(message: String) {
         messageRepository.sendMessages(message)
     }
 
     suspend fun selectActionInMessage(messageId: String, actionId: String) {
-        val uuid = visitorInteractor.getVisitor()?.uuid ?: return
-        messageRepository.selectAction(uuid, messageId, actionId)
+        messageRepository.selectAction(messageId, actionId)
     }
 
     suspend fun uploadHistoryMessages(
@@ -41,8 +38,8 @@ class MessageInteractor
         uploadHistoryComplete: () -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
-        if (conditionRepository.getStatusExistenceMessages(visitor.uuid) && !conditionRepository.getFlagAllHistoryLoaded()) {
-            messageRepository.getTimeFirstMessage(visitor.uuid)?.let { firstMessageTime ->
+        if (conditionRepository.getStatusExistenceMessages() && !conditionRepository.getFlagAllHistoryLoaded()) {
+            messageRepository.getTimeFirstMessage()?.let { firstMessageTime ->
                 messageRepository.uploadMessages(
                     uuid = visitor.uuid,
                     token = visitor.token,
@@ -69,8 +66,8 @@ class MessageInteractor
         eventAllHistoryLoaded: () -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
-        if (conditionRepository.getStatusExistenceMessages(visitor.uuid)) {
-            messageRepository.getTimeLastMessage(visitor.uuid)?.let { lastMessageTime ->
+        if (conditionRepository.getStatusExistenceMessages()) {
+            messageRepository.getTimeLastMessage()?.let { lastMessageTime ->
                 val messages = messageRepository.uploadMessages(
                     uuid = visitor.uuid,
                     token = visitor.token,
@@ -125,8 +122,7 @@ class MessageInteractor
     }
 
     fun updateSizeMessage(id: String, height: Int, width: Int) {
-        val currentVisitorUid = visitorInteractor.getVisitor()?.uuid ?: return
-        messageRepository.updateSizeMessage(currentVisitorUid, id, height, width)
+        messageRepository.updateSizeMessage(id, height, width)
     }
 
 }
