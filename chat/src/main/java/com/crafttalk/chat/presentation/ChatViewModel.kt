@@ -281,6 +281,13 @@ class ChatViewModel
         }
     }
 
+    fun readMessage(lastTimestamp: Long?) {
+        val isReadNewMessage = lastTimestamp?.run(updateCurrentReadMessageTime) ?: false
+        if (isReadNewMessage) {
+            updateCountUnreadMessages()
+        }
+    }
+
     fun updateCountUnreadMessages() {
         launchIO {
             messageInteractor.getCountUnreadMessages(currentReadMessageTime)?.run(countUnreadMessages::postValue)

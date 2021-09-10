@@ -52,4 +52,8 @@ class AdapterListMessages(
         }
     }
 
+    fun getMessageTimestampByPosition(position: Int): Long? {
+        return getItem(position)?.timestamp
+    }
+
 }

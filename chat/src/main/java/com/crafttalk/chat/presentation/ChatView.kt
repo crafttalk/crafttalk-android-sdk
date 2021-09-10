@@ -27,7 +27,6 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -247,11 +246,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
+
+                viewModel.readMessage(adapterListMessages.getMessageTimestampByPosition(indexLastVisible))
+
                 if (indexLastVisible == -1) {
                     viewModel.scrollToDownVisible.value = false
                     return
                 }
-                viewModel.updateValueCountUnreadMessages(indexLastVisible)
             }
         })
         close_feedback.setOnClickListener(this)
@@ -335,7 +336,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         setAllListeners()
         setListMessages()
 
-        viewModel.internetConnectionState.observe(lifecycleOwner, Observer { state ->
+        viewModel.internetConnectionState.observe(lifecycleOwner) { state ->
             when (state) {
                 InternetConnectionState.NO_INTERNET -> {
                     if (ChatAttr.getInstance().showChatState) {
@@ -352,8 +353,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     }
                 }
             }
-        })
-        viewModel.displayableUIObject.observe(lifecycleOwner, Observer {
+        }
+        viewModel.displayableUIObject.observe(lifecycleOwner) {
             Log.d("CHAT_VIEW", "displayableUIObject - ${it};")
             when (it) {
                 DisplayableUIObject.NOTHING -> {
@@ -421,17 +422,17 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     state_action_operator.visibility = View.GONE
                 }
             }
-        })
+        }
 
-        viewModel.countUnreadMessages.observe(lifecycleOwner, Observer {
+        viewModel.countUnreadMessages.observe(lifecycleOwner) {
             if (it <= 0) {
                 count_unread_message.visibility = View.GONE
             } else {
                 count_unread_message.text = if (it < 10) it.toString() else "9+"
                 count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
             }
-        })
-        viewModel.scrollToDownVisible.observe(lifecycleOwner, Observer {
+        }
+        viewModel.scrollToDownVisible.observe(lifecycleOwner) {
             if (it) {
                 scroll_to_down.visibility = View.VISIBLE
                 if (viewModel.countUnreadMessages.value != 0) {
@@ -443,17 +444,17 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 count_unread_message.visibility = View.GONE
                 scroll_to_down.visibility = View.GONE
             }
-        })
-        viewModel.feedbackContainerVisible.observe(lifecycleOwner, Observer {
+        }
+        viewModel.feedbackContainerVisible.observe(lifecycleOwner) {
             user_feedback.visibility = if (it) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
-        })
+        }
 
-        viewModel.uploadMessagesForUser.observe(lifecycleOwner, Observer { liveDataPagedList ->
-            liveDataPagedList ?: return@Observer
+        viewModel.uploadMessagesForUser.observe(lifecycleOwner) { liveDataPagedList ->
+            liveDataPagedList ?: return@observe
             liveDataMessages?.removeObservers(lifecycleOwner)
             liveDataMessages = liveDataPagedList
             isFirstUploadMessages = true
@@ -476,7 +477,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 isFirstUploadMessages = false
             })
-        })
+        }
     }
 
     fun onResume(
