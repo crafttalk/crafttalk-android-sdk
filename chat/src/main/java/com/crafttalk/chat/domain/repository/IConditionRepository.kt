@@ -19,7 +19,9 @@ interface IConditionRepository {
     fun deleteFlagAllHistoryLoaded()
 
     fun getCurrentReadMessageTime(): Long
+    fun getCountUnreadMessages(): Int
     fun saveCurrentReadMessageTime(currentReadMessageTime: Long)
+    fun saveCountUnreadMessages(countUnreadMessages: Int)
     fun deleteCurrentReadMessageTime()
 
     // провека наличия сообщения в бд

@@ -65,9 +65,19 @@ class ConditionRepository
         return pref.getLong(FIELD_CURRENT_READ_MESSAGE_TIME, 0)
     }
 
+    override fun getCountUnreadMessages(): Int {
+        return pref.getInt(FIELD_COUNT_UNREAD_MESSAGES, 0)
+    }
+
     override fun saveCurrentReadMessageTime(currentReadMessageTime: Long) {
         val prefEditor = pref.edit()
         prefEditor.putLong(FIELD_CURRENT_READ_MESSAGE_TIME, currentReadMessageTime)
+        prefEditor.apply()
+    }
+
+    override fun saveCountUnreadMessages(countUnreadMessages: Int) {
+        val prefEditor = pref.edit()
+        prefEditor.putInt(FIELD_COUNT_UNREAD_MESSAGES, countUnreadMessages)
         prefEditor.apply()
     }
 
@@ -84,6 +94,7 @@ class ConditionRepository
     companion object {
         private const val FIELD_IS_ALL_HISTORY_LOADED = "isAllHistoryLoaded"
         private const val FIELD_CURRENT_READ_MESSAGE_TIME = "currentReadMessageTime"
+        private const val FIELD_COUNT_UNREAD_MESSAGES = "countUnreadMessages"
     }
 
 }

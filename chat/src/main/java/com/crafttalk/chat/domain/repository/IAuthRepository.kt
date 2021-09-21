@@ -12,7 +12,8 @@ interface IAuthRepository {
         successAuthUx: suspend () -> Unit,
         failAuthUx: suspend () -> Unit,
         sync: suspend () -> Unit,
-        updateCurrentReadMessageTime: (Long) -> Unit,
+        updateCurrentReadMessageTime: (newTimeMark: Long) -> Unit,
+        updateCountUnreadMessages: (Int, Boolean) -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?

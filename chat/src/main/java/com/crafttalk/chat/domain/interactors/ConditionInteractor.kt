@@ -65,8 +65,25 @@ class ConditionInteractor
     fun getCurrentReadMessageTime() =
         conditionRepository.getCurrentReadMessageTime()
 
-    fun saveCurrentReadMessageTime(currentReadMessageTime: Long) =
+    fun getCountUnreadMessages() =
+        conditionRepository.getCountUnreadMessages()
+
+    fun getInitialLoadKey(): Int {
+        val countUnreadMessages = conditionRepository.getCountUnreadMessages()
+        return if (countUnreadMessages > 0) {
+            countUnreadMessages - 1
+        } else {
+            0
+        }
+    }
+
+    fun saveCurrentReadMessageTime(currentReadMessageTime: Long) {
         conditionRepository.saveCurrentReadMessageTime(currentReadMessageTime)
+    }
+
+    fun saveCountUnreadMessages(countUnreadMessages: Int) {
+        conditionRepository.saveCountUnreadMessages(countUnreadMessages)
+    }
 
     fun clearDataChatState() {
         conditionRepository.deleteFlagAllHistoryLoaded()

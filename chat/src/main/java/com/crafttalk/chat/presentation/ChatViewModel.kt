@@ -23,7 +23,6 @@ import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ChatParams
 import javax.inject.Inject
-import kotlin.math.min
 
 class ChatViewModel
 @Inject constructor(
@@ -37,6 +36,7 @@ class ChatViewModel
 
     var currentReadMessageTime = conditionInteractor.getCurrentReadMessageTime()
     var isAllHistoryLoaded = conditionInteractor.checkFlagAllHistoryLoaded()
+    var initialLoadKey = conditionInteractor.getInitialLoadKey()
 
     var countUnreadMessages = MutableLiveData<Int>()
     val scrollToDownVisible = MutableLiveData(false)
@@ -44,12 +44,15 @@ class ChatViewModel
 
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
+        val config = PagedList.Config.Builder()
+            .setPageSize(ChatParams.pageSize)
+            .build()
         val dataSource = messageInteractor.getAllMessages()
-            ?.map { (messageModelMapper(it, context)) }
-            ?.mapByPage { groupPageByDate(it) } ?: return
+            .map { (messageModelMapper(it, context)) }
+            .mapByPage { groupPageByDate(it) }
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder(
             dataSource,
-            ChatParams.pageSize
+            config
         ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
             override fun onItemAtEndLoaded(itemAtEnd: MessageModel) {
                 super.onItemAtEndLoaded(itemAtEnd)
@@ -57,8 +60,17 @@ class ChatViewModel
                     uploadOldMessages()
                 }
             }
-        })
+        }).setInitialLoadKey(initialLoadKey)
         uploadMessagesForUser.postValue(pagedListBuilder.build())
+    }
+    private fun syncMessagesAcrossDevices(indexLastUserMessage: Int) {
+        initialLoadKey = indexLastUserMessage
+        uploadMessages()
+    }
+    private fun deliverMessagesToUser() {
+        if (uploadMessagesForUser.value == null) {
+            uploadMessages()
+        }
     }
     private val eventAllHistoryLoaded: () -> Unit = {
         isAllHistoryLoaded = true
@@ -68,6 +80,7 @@ class ChatViewModel
         displayableUIObject.postValue(DisplayableUIObject.SYNCHRONIZATION)
         messageInteractor.syncMessages(
             updateReadPoint = updateCurrentReadMessageTime,
+            syncMessagesAcrossDevices = ::syncMessagesAcrossDevices,
             eventAllHistoryLoaded = eventAllHistoryLoaded
         )
     }
@@ -124,7 +137,7 @@ class ChatViewModel
         Handler().postDelayed({
             authChatInteractor.logIn(
                 visitor = visitor,
-                successAuthUi = ::uploadMessages,
+                successAuthUi = ::deliverMessagesToUser,
                 sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
@@ -136,6 +149,7 @@ class ChatViewModel
 
     fun onStop() {
         currentReadMessageTime.run(conditionInteractor::saveCurrentReadMessageTime)
+        countUnreadMessages.value?.run(conditionInteractor::saveCountUnreadMessages)
     }
 
     override fun onCleared() {
@@ -147,7 +161,7 @@ class ChatViewModel
         Handler().postDelayed({
             authChatInteractor.logIn(
                 visitor = Visitor.map(args),
-                successAuthUi = ::uploadMessages,
+                successAuthUi = ::deliverMessagesToUser,
                 sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 updateCurrentReadMessageTime = updateCurrentReadMessageTime,
@@ -159,7 +173,7 @@ class ChatViewModel
     fun reload() {
         Handler().postDelayed({
             authChatInteractor.logIn(
-                successAuthUi = ::uploadMessages,
+                successAuthUi = ::deliverMessagesToUser,
                 sync = sync,
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
                 updateCurrentReadMessageTime = updateCurrentReadMessageTime,
@@ -242,45 +256,6 @@ class ChatViewModel
         }}
     }
 
-    fun updateValueCountUnreadMessages(indexLastVisibleItem: Int) {
-        launchIO {
-            val list = uploadMessagesForUser.value?.value?.toList()?.filterNotNull() ?: return@launchIO
-
-            when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
-                -1 -> {
-                    countUnreadMessages.postValue(min(list.size, indexLastVisibleItem))
-                    scrollToDownVisible.postValue(indexLastVisibleItem >= MAX_COUNT_UNREAD_MESSAGES)
-                    for (i in indexLastVisibleItem until list.size) {
-                        chatMessageInteractor.readMessage(list[i].id)
-                    }
-                }
-                0 -> {
-                    countUnreadMessages.postValue(0)
-                    scrollToDownVisible.postValue(indexLastVisibleItem >= MAX_COUNT_UNREAD_MESSAGES)
-                }
-                else -> {
-                    countUnreadMessages.postValue(min(indexLastReadMessage, indexLastVisibleItem))
-                    scrollToDownVisible.postValue(indexLastVisibleItem >= MAX_COUNT_UNREAD_MESSAGES)
-                    for (i in indexLastVisibleItem until indexLastReadMessage) {
-                        chatMessageInteractor.readMessage(list[i].id)
-                    }
-                }
-            }
-        }
-    }
-
-    fun setValueCountUnreadMessages() {
-        launchIO {
-            val list = uploadMessagesForUser.value?.value?.toList()?.filterNotNull() ?: return@launchIO
-
-            when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
-                -1 -> firstUploadMessages.postValue(list.size - 1)
-                0 -> firstUploadMessages.postValue(0)
-                else -> firstUploadMessages.postValue(indexLastReadMessage - 1)
-            }
-        }
-    }
-
     fun readMessage(lastTimestamp: Long?) {
         val isReadNewMessage = lastTimestamp?.run(updateCurrentReadMessageTime) ?: false
         if (isReadNewMessage) {
@@ -288,14 +263,19 @@ class ChatViewModel
         }
     }
 
-    fun updateCountUnreadMessages() {
+    fun updateCountUnreadMessages(actionUiAfter: (Int) -> Unit = {}) {
         launchIO {
-            messageInteractor.getCountUnreadMessages(currentReadMessageTime)?.run(countUnreadMessages::postValue)
+            val unreadMessagesCount = messageInteractor.getCountUnreadMessages(currentReadMessageTime)
+            unreadMessagesCount?.run(countUnreadMessages::postValue)
+            launchUI {
+                unreadMessagesCount?.run(actionUiAfter)
+            }
         }
     }
 
     companion object {
-        const val MAX_COUNT_UNREAD_MESSAGES = 1
+        const val MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL = 1
+        const val DELAY_RENDERING_SCROLL_BTN = 100L
     }
 
 }

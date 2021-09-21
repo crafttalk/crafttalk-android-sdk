@@ -36,6 +36,8 @@ import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.initialization.Chat
+import com.crafttalk.chat.presentation.ChatViewModel.Companion.DELAY_RENDERING_SCROLL_BTN
+import com.crafttalk.chat.presentation.ChatViewModel.Companion.MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL
 import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnackbar
 import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
@@ -47,6 +49,7 @@ import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFil
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.TakePicture
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.MessageModel
+import com.crafttalk.chat.presentation.model.Role
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.TypeFailUpload
@@ -245,14 +248,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         list_with_message.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
+                list_with_message.postDelayed({
+                    val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return@postDelayed
 
-                viewModel.readMessage(adapterListMessages.getMessageTimestampByPosition(indexLastVisible))
-
-                if (indexLastVisible == -1) {
-                    viewModel.scrollToDownVisible.value = false
-                    return
-                }
+                    if (indexLastVisible == -1) {
+                        viewModel.scrollToDownVisible.value = false
+                        return@postDelayed
+                    }
+                    viewModel.scrollToDownVisible.value = indexLastVisible >= MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL
+                    viewModel.readMessage(adapterListMessages.getMessageTimestampByPosition(indexLastVisible))
+                }, DELAY_RENDERING_SCROLL_BTN)
             }
         })
         close_feedback.setOnClickListener(this)
@@ -435,7 +440,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.scrollToDownVisible.observe(lifecycleOwner) {
             if (it) {
                 scroll_to_down.visibility = View.VISIBLE
-                if (viewModel.countUnreadMessages.value != 0) {
+                if (viewModel.countUnreadMessages.value != null && viewModel.countUnreadMessages.value != 0) {
                     count_unread_message.visibility = View.VISIBLE
                 } else {
                     count_unread_message.visibility = View.GONE
@@ -458,31 +463,37 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             liveDataMessages?.removeObservers(lifecycleOwner)
             liveDataMessages = liveDataPagedList
             isFirstUploadMessages = true
-            var lastOldMessageId: String? = null
-            liveDataMessages?.observe(lifecycleOwner, Observer { pagedList ->
-                pagedList ?: return@Observer
+            liveDataMessages?.observe(lifecycleOwner, { pagedList ->
+                pagedList ?: return@observe
 
                 val countItemsLastVersion = adapterListMessages.itemCount
-                adapterListMessages.submitList(pagedList)
-
-                if (isFirstUploadMessages) {
-                    viewModel.setValueCountUnreadMessages()
-                } else {
-                    if (scroll_to_down.visibility == View.GONE && countItemsLastVersion < pagedList.size && pagedList[0]?.id != null && lastOldMessageId != pagedList[0]?.id) {
-                        list_with_message.smoothScrollToPosition(0)
+                adapterListMessages.submitList(pagedList) {
+                    if (isFirstUploadMessages) {
+                        viewModel.initialLoadKey.run(list_with_message::scrollToPosition)
+                        viewModel.updateCountUnreadMessages()
+                    } else {
+                        val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+                        if (
+                            (indexLastVisible != null &&
+                            indexLastVisible != -1 &&
+                            indexLastVisible < MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL &&
+                            countItemsLastVersion != pagedList.size) ||
+                            pagedList.subList(0, pagedList.size - countItemsLastVersion).any { it != null && it.role == Role.USER }
+                        ) {
+                            viewModel.updateCountUnreadMessages { countUnreadMessages ->
+                                scroll(countUnreadMessages)
+                            }
+                        } else {
+                            viewModel.updateCountUnreadMessages()
+                        }
                     }
-                }
-                if (pagedList.size != 0) {
-                    lastOldMessageId = pagedList[0]?.id
                 }
                 isFirstUploadMessages = false
             })
         }
     }
 
-    fun onResume(
-        visitor: Visitor? = null
-    ) {
+    fun onResume(visitor: Visitor? = null) {
         viewModel.onStartChatView(visitor)
     }
 
@@ -532,6 +543,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 when {
                     message.isNotEmpty() -> {
                         hideSoftKeyboard(this)
+                        scroll(0)
                         viewModel.sendMessage(message)
                         entry_field.text.clear()
                     }
@@ -554,12 +566,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 viewModel.reload()
             }
             R.id.scroll_to_down -> {
-                val countUnreadMessages = viewModel.countUnreadMessages.value
-                val position = when {
-                    countUnreadMessages == null || countUnreadMessages <= 0 -> 0
-                    else -> countUnreadMessages - 1
-                }
-                list_with_message.smoothScrollToPosition(position)
+                val countUnreadMessages = viewModel.countUnreadMessages.value ?: return
+                scroll(countUnreadMessages)
             }
             R.id.close_feedback -> {
                 viewModel.feedbackContainerVisible.value = false
@@ -574,6 +582,28 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             R.id.feedback_star_3 -> giveFeedback(3)
             R.id.feedback_star_4 -> giveFeedback(4)
             R.id.feedback_star_5 -> giveFeedback(5)
+        }
+    }
+
+    private fun scroll(countUnreadMessages: Int) {
+        fun scrollToDesiredPosition(position: Int, actionScroll: (position: Int) -> Unit) {
+            if ( adapterListMessages.currentList?.getOrNull(position) == null) {
+                list_with_message.smoothScrollToPosition(position)
+            } else {
+                actionScroll(position)
+            }
+        }
+        val isExist = (adapterListMessages.currentList ?: return).getOrNull(countUnreadMessages) != null
+        val position = when {
+            countUnreadMessages <= 0 -> 0
+            else -> countUnreadMessages - 1
+        }
+        val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
+
+        when {
+            isExist && indexLastVisible >= 20 -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
+            isExist && indexLastVisible < 20 -> scrollToDesiredPosition(position, list_with_message::smoothScrollToPosition)
+            !isExist -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
         }
     }
 

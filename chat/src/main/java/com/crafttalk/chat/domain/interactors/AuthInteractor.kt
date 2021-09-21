@@ -39,16 +39,15 @@ class AuthInteractor
         chatEventListener: ChatEventListener? = null
     ) {
         val currentVisitor = dataPreparation(visitor)
-        val status = conditionInteractor.getStatusChat()
 
         val successAuthUiWrapper = {
-            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+            if (conditionInteractor.getStatusChat() == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 successAuthUi()
             }
         }
 
         val failAuthUiWrapper = {
-            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+            if (conditionInteractor.getStatusChat() == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 failAuthUi()
             }
         }
@@ -64,14 +63,31 @@ class AuthInteractor
         }
 
         val syncWrapper = suspend {
-            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+            if (conditionInteractor.getStatusChat() == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 sync()
             }
         }
 
-        val updateCurrentReadMessageTimeWrapper: (Long) -> Unit = {
-            if (status == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                updateCurrentReadMessageTime(it)
+        val updateCurrentReadMessageTimeWrapper: (newTimeMark: Long) -> Unit = { newTimeMark ->
+            when (conditionInteractor.getStatusChat()) {
+                ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP -> updateCurrentReadMessageTime(newTimeMark)
+                ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP -> {
+                    val currentReadMessageTime = conditionInteractor.getCurrentReadMessageTime()
+                    if (newTimeMark > currentReadMessageTime) {
+                        conditionInteractor.saveCurrentReadMessageTime(newTimeMark)
+                    }
+                }
+            }
+        }
+
+        val updateCountUnreadMessagesWrapper: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit = { countNewUnreadMessages, hasUserMessage ->
+            if (conditionInteractor.getStatusChat() ==  ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) {
+                if (hasUserMessage) {
+                    conditionInteractor.saveCountUnreadMessages(countNewUnreadMessages)
+                } else {
+                    val oldCountUnreadMessages = conditionInteractor.getCountUnreadMessages()
+                    conditionInteractor.saveCountUnreadMessages(oldCountUnreadMessages + countNewUnreadMessages)
+                }
             }
         }
 
@@ -94,6 +110,7 @@ class AuthInteractor
                         failAuthUx = failAuthUxWrapper,
                         sync = syncWrapper,
                         updateCurrentReadMessageTime = updateCurrentReadMessageTimeWrapper,
+                        updateCountUnreadMessages = updateCountUnreadMessagesWrapper,
                         getPersonPreview = getPersonPreviewWrapper,
                         updatePersonName = personInteractor::updatePersonName,
                         chatEventListener = chatEventListener
@@ -109,6 +126,7 @@ class AuthInteractor
                     failAuthUx = failAuthUxWrapper,
                     sync = syncWrapper,
                     updateCurrentReadMessageTime = updateCurrentReadMessageTimeWrapper,
+                    updateCountUnreadMessages = updateCountUnreadMessagesWrapper,
                     getPersonPreview = getPersonPreviewWrapper,
                     updatePersonName = personInteractor::updatePersonName,
                     chatEventListener = chatEventListener

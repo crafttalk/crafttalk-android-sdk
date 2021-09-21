@@ -41,12 +41,13 @@ class MessageRepository
         startTime: Long?,
         endTime: Long,
         updateReadPoint: (newPosition: Long) -> Boolean,
+        syncMessagesAcrossDevices: (indexLastUserMessage: Int) -> Unit,
         allMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?
     ): List<MessageEntity> {
 
-        return try {
+        try {
             val fullPullMessages= mutableListOf<NetworkMessage>()
 
             var lastTimestamp = endTime
@@ -132,7 +133,8 @@ class MessageRepository
                 )
             }
 
-            userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp?.run(updateReadPoint)
+            val maxTimestampUserMessage = userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp
+            maxTimestampUserMessage?.run(updateReadPoint)
 
             val resultMessages = mutableListOf<MessageEntity>().apply {
                 addAll(operatorMessagesWithContent)
@@ -140,9 +142,15 @@ class MessageRepository
                 addAll(messagesAboutJoin)
             }
 
-            resultMessages.apply(messagesDao::insertMessages)
+            messagesDao.insertMessages(resultMessages)
+
+            maxTimestampUserMessage?.let { timestampLastUserMessage ->
+                resultMessages.filter { it.timestamp > timestampLastUserMessage }.size.run(syncMessagesAcrossDevices)
+            }
+
+            return resultMessages
         } catch (ex: Exception) {
-            listOf()
+            return listOf()
         }
     }
 

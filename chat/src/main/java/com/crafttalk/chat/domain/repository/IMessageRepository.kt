@@ -25,6 +25,7 @@ interface IMessageRepository {
         startTime: Long?,
         endTime: Long,
         updateReadPoint: (newTimeMark: Long) -> Boolean,
+        syncMessagesAcrossDevices: (indexLastUserMessage: Int) -> Unit,
         returnedEmptyPool: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?

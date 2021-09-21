@@ -43,6 +43,7 @@ class SocketApi constructor(
     private var failAuthUxFun: suspend () -> Unit = {}
     private var syncMessages: suspend () -> Unit = {}
     private var updateCurrentReadMessageTime: (newReadPoint: Long) -> Unit = {}
+    private var updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit = { _,_ -> }
     private var getPersonPreview: suspend (personId: String) -> String? = { null }
     private var updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
     private var isAuthorized: Boolean = false
@@ -109,6 +110,7 @@ class SocketApi constructor(
         failAuthUx: suspend () -> Unit,
         sync: suspend () -> Unit,
         updateCurrentReadMessageTime: (newTimeMark: Long) -> Unit,
+        updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
         chatEventListener: ChatEventListener?
@@ -119,6 +121,7 @@ class SocketApi constructor(
         this.failAuthUxFun = failAuthUx
         this.syncMessages = sync
         this.updateCurrentReadMessageTime = updateCurrentReadMessageTime
+        this.updateCountUnreadMessages = updateCountUnreadMessages
         this.getPersonPreview = getPersonPreview
         this.updatePersonName = updatePersonName
         chatEventListener?.let { this.chatEventListener = it }
@@ -292,7 +295,9 @@ class SocketApi constructor(
 
     fun mergeNewMessages() {
         isSynchronized = true
-        bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp?.run(updateCurrentReadMessageTime)
+        val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp
+        maxUserTimestamp?.run(updateCurrentReadMessageTime)
+        updateCountUnreadMessages(bufferNewMessages.filter { it.timestamp > (maxUserTimestamp ?: 0) }.size, maxUserTimestamp != null)
         messageDao.insertMessages(bufferNewMessages)
         bufferNewMessages.clear()
         chatEventListener?.synchronized()
@@ -361,6 +366,9 @@ class SocketApi constructor(
         if (isSynchronized) {
             if (!message.isReply) {
                 updateCurrentReadMessageTime(message.timestamp)
+                updateCountUnreadMessages(0, true)
+            } else {
+                updateCountUnreadMessages(1, false)
             }
             messageDao.insertMessage(message)
         } else {

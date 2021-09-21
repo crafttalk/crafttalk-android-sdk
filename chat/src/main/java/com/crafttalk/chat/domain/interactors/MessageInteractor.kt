@@ -13,17 +13,12 @@ class MessageInteractor
     private val visitorInteractor: VisitorInteractor,
     private val personInteractor: PersonInteractor
 ) {
-    private var visitorUid: String? = null
 
-    fun getAllMessages(): DataSource.Factory<Int, MessageEntity>? {
-        val currentVisitorUid = visitorInteractor.getVisitor()?.uuid
-        if (visitorUid == currentVisitorUid) return null
-        visitorUid = currentVisitorUid
-        return messageRepository.getMessages()
-    }
+    fun getAllMessages(): DataSource.Factory<Int, MessageEntity> =
+        messageRepository.getMessages()
 
-    fun getCountUnreadMessages(currentReadMessageTime: Long) = messageRepository
-        .getCountUnreadMessages(currentReadMessageTime)
+    fun getCountUnreadMessages(currentReadMessageTime: Long) =
+        messageRepository.getCountUnreadMessages(currentReadMessageTime)
 
     suspend fun sendMessage(message: String) {
         messageRepository.sendMessages(message)
@@ -46,6 +41,7 @@ class MessageInteractor
                     startTime = null,
                     endTime = firstMessageTime,
                     updateReadPoint = { false },
+                    syncMessagesAcrossDevices = {},
                     returnedEmptyPool = {
                         eventAllHistoryLoaded()
                         conditionRepository.saveFlagAllHistoryLoaded(true)
@@ -63,6 +59,7 @@ class MessageInteractor
     // при переходе на холд добавить вызов метода, обновляющего состояния у сообщений, находящихся в статусе "отправляется"
     suspend fun syncMessages(
         updateReadPoint: (newTimeMark: Long) -> Boolean,
+        syncMessagesAcrossDevices: (indexLastUserMessage: Int) -> Unit,
         eventAllHistoryLoaded: () -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
@@ -74,6 +71,7 @@ class MessageInteractor
                     startTime = lastMessageTime + 1,
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
+                    syncMessagesAcrossDevices = syncMessagesAcrossDevices,
                     returnedEmptyPool = {},
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)
@@ -91,6 +89,7 @@ class MessageInteractor
                     startTime = null,
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
+                    syncMessagesAcrossDevices = syncMessagesAcrossDevices,
                     returnedEmptyPool = {
                         eventAllHistoryLoaded()
                         conditionRepository.saveFlagAllHistoryLoaded(true)
@@ -109,6 +108,7 @@ class MessageInteractor
 //                    startTime = remoteReadMessageTime,
 //                    endTime = 0,
 //                    updateReadPoint = updateReadPoint,
+//                    syncMessagesAcrossDevices = syncMessagesAcrossDevices,
 //                    returnedEmptyPool = {},
 //                    getPersonPreview = { personId ->
 //                        personInteractor.getPersonPreview(personId, visitor.token)
