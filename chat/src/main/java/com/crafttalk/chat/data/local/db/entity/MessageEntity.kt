@@ -150,7 +150,6 @@ data class MessageEntity(
 
         fun mapOperatorMessage(
             uuid: String,
-            token: String,
             networkMessage: NetworkMessage,
             actionsSelected: List<String>,
             operatorPreview: String?,
@@ -171,7 +170,7 @@ data class MessageEntity(
                 message = message,
                 spanStructureList = list,
                 actions = networkMessage.actions?.let { ActionEntity.map(it, actionsSelected) },
-                attachmentUrl = networkMessage.getCorrectAttachmentUrl(token),
+                attachmentUrl = networkMessage.attachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
                 attachmentName = networkMessage.attachmentName,
                 attachmentSize = fileSize,
@@ -185,7 +184,6 @@ data class MessageEntity(
 
         fun mapUserMessage(
             uuid: String,
-            token: String,
             networkMessage: NetworkMessage,
             status: Int,
             operatorPreview: String?,
@@ -206,7 +204,7 @@ data class MessageEntity(
                 message = message,
                 spanStructureList = list,
                 actions = null,
-                attachmentUrl = networkMessage.getCorrectAttachmentUrl(token),
+                attachmentUrl = networkMessage.attachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
                 attachmentName = networkMessage.attachmentName,
                 attachmentSize = fileSize,

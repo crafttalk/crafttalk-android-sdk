@@ -21,14 +21,13 @@ interface IMessageRepository {
     // загрузка определенного пула сообщений
     suspend fun uploadMessages(
         uuid: String,
-        token: String,
         startTime: Long?,
         endTime: Long,
         updateReadPoint: (newTimeMark: Long) -> Boolean,
-        syncMessagesAcrossDevices: (indexLastUserMessage: Int) -> Unit,
+        syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         returnedEmptyPool: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
-        getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?
+        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?
     ): List<MessageEntity>
 
     suspend fun mergeNewMessages()
@@ -40,7 +39,6 @@ interface IMessageRepository {
 
     suspend fun getFileInfo(
         context: Context,
-        token: String,
         networkMessage: NetworkMessage
     ): TransferFileInfo?
 

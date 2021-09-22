@@ -56,6 +56,7 @@ class MainActivity: AppCompatActivity() {
 
         Chat.init(
             this,
+            getString(R.string.urlChatScheme),
             getString(R.string.urlChatHost),
             getString(R.string.urlChatNameSpace),
             fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)

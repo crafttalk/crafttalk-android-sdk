@@ -1,9 +1,7 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
-import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
-import com.crafttalk.chat.data.helper.network.toData
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.domain.repository.IMessageRepository
@@ -14,13 +12,15 @@ import com.crafttalk.chat.domain.entity.message.NetworkMessage
 import com.crafttalk.chat.domain.transfer.TransferFileInfo
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
+import com.crafttalk.chat.utils.ChatParams
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withTimeoutOrNull
 
 class MessageRepository
 @Inject constructor(
     private val context: Context,
     private val messagesDao: MessagesDao,
-    private val socketApi: SocketApi,
-    private var messageApi: MessageApi
+    private val socketApi: SocketApi
 ) : IMessageRepository {
 
     override fun getMessages() = messagesDao
@@ -37,14 +37,13 @@ class MessageRepository
 
     override suspend fun uploadMessages(
         uuid: String,
-        token: String,
         startTime: Long?,
         endTime: Long,
         updateReadPoint: (newPosition: Long) -> Boolean,
-        syncMessagesAcrossDevices: (indexLastUserMessage: Int) -> Unit,
+        syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         allMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
-        getFileInfo: suspend (context: Context, token: String, networkMessage: NetworkMessage) -> TransferFileInfo?
+        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?
     ): List<MessageEntity> {
 
         try {
@@ -52,10 +51,15 @@ class MessageRepository
 
             var lastTimestamp = endTime
             while (true) {
-                val listMessages = messageApi.uploadMessages(
-                    uuid = uuid,
-                    timestamp = lastTimestamp
-                ).toData() ?: break
+                val listMessages = withTimeoutOrNull(ChatParams.uploadPoolMessagesTimeout) {
+                    async {
+                        socketApi.uploadMessages(
+                            timestamp = lastTimestamp
+                        )
+                    }.await()
+                }
+                socketApi.closeHistoryListener()
+                listMessages ?: break
 
                 if (startTime == null) {
                     fullPullMessages.addAll(listMessages)
@@ -92,10 +96,9 @@ class MessageRepository
             val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }
 
             val operatorMessagesWithContent = fullPullMessages.filter { it.isReply && it.messageType == MessageType.VISITOR_MESSAGE.valueType && it.isContainsContent }.map { networkMessage ->
-                val fileInfo = getFileInfo(context, token, networkMessage)
+                val fileInfo = getFileInfo(context, networkMessage)
                 MessageEntity.mapOperatorMessage(
                     uuid = uuid,
-                    token = token,
                     networkMessage = networkMessage,
                     actionsSelected = actionSelectionMessages,
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
@@ -112,10 +115,9 @@ class MessageRepository
                     statusesConcreteMessage.contains(MessageType.RECEIVED_BY_MEDIATO.valueType) -> MessageType.RECEIVED_BY_MEDIATO.valueType
                     else -> MessageType.VISITOR_MESSAGE.valueType
                 }
-                val fileInfo = getFileInfo(context, token, networkMessage)
+                val fileInfo = getFileInfo(context, networkMessage)
                 MessageEntity.mapUserMessage(
                     uuid = uuid,
-                    token = token,
                     networkMessage = networkMessage,
                     status = newStatus,
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
@@ -169,12 +171,11 @@ class MessageRepository
 
     override suspend fun getFileInfo(
         context: Context,
-        token: String,
         networkMessage: NetworkMessage
     ): TransferFileInfo? {
         return when {
             (MessageType.VISITOR_MESSAGE.valueType == networkMessage.messageType) && (networkMessage.isImage || networkMessage.isGif) -> {
-                networkMessage.getCorrectAttachmentUrl(token)?.let { url ->
+                networkMessage.attachmentUrl?.let { url ->
                     val pair = getSizeMediaFile(context, url)
                     TransferFileInfo(
                         height = pair?.first,
@@ -183,7 +184,7 @@ class MessageRepository
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == networkMessage.messageType) && networkMessage.isFile -> {
-                networkMessage.getCorrectAttachmentUrl(token)?.let { url ->
+                networkMessage.attachmentUrl?.let { url ->
                     TransferFileInfo(
                         size = getWeightFile(url)
                     )

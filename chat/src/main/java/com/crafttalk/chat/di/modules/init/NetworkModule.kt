@@ -8,8 +8,6 @@ import com.crafttalk.chat.data.helper.network.TLSSocketFactory.Companion.enableT
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.di.Base
 import com.crafttalk.chat.utils.ChatParams
-import com.crafttalk.chat.utils.ChatParams.certificatePinning
-import com.crafttalk.chat.utils.ChatParams.urlChatHost
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -25,9 +23,9 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideCertificatePinner(): CertificatePinner? {
-        return certificatePinning?.let {
+        return ChatParams.certificatePinning?.let {
             CertificatePinner.Builder()
-                .add(urlChatHost!!.substringAfter("://"), it)
+                .add(ChatParams.urlChatHost!!, it)
                 .build()
         }
     }
@@ -50,7 +48,7 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideBaseRetrofitClient(okHttpClient: OkHttpClient, gson: Gson) = Retrofit.Builder()
-        .baseUrl(urlChatHost!!)
+        .baseUrl("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()

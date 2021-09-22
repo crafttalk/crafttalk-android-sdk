@@ -63,8 +63,8 @@ class ChatViewModel
         }).setInitialLoadKey(initialLoadKey)
         uploadMessagesForUser.postValue(pagedListBuilder.build())
     }
-    private fun syncMessagesAcrossDevices(indexLastUserMessage: Int) {
-        initialLoadKey = indexLastUserMessage
+    private fun syncMessagesAcrossDevices(indexFirstUnreadMessage: Int) {
+        initialLoadKey = indexFirstUnreadMessage
         uploadMessages()
     }
     private fun deliverMessagesToUser() {

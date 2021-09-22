@@ -47,6 +47,7 @@ object Chat {
 
     fun init(
         context: Context,
+        urlChatScheme: String,
         urlChatHost: String,
         urlChatNameSpace: String,
         authType: AuthType = AuthType.AUTH_WITHOUT_FORM,
@@ -57,6 +58,7 @@ object Chat {
         localeLanguage: String = context.getString(R.string.com_crafttalk_chat_default_language),
         localeCountry: String = context.getString(R.string.com_crafttalk_chat_default_country),
         phonePatterns: Array<CharSequence> = context.resources.getTextArray(R.array.com_crafttalk_chat_phone_patterns),
+        uploadPoolMessagesTimeout: Long? = null,
         fileProviderAuthorities: String? = null,
         certificatePinning: String? = null,
         fileConnectTimeout: Long? = null,
@@ -66,6 +68,7 @@ object Chat {
     ) {
         ChatParams.authMode = authType
         ChatParams.initialMessageMode = initialMessageMode
+        ChatParams.urlChatScheme = urlChatScheme
         ChatParams.urlChatHost = urlChatHost
         ChatParams.urlChatNameSpace = urlChatNameSpace
         ChatParams.operatorPreviewMode = operatorPreviewMode
@@ -73,6 +76,7 @@ object Chat {
         ChatParams.clickableLinkMode = clickableLinkMode
         ChatParams.locale = Locale(localeLanguage, localeCountry)
         ChatParams.phonePatterns = phonePatterns
+        uploadPoolMessagesTimeout?.let { ChatParams.uploadPoolMessagesTimeout = it }
         ChatParams.fileProviderAuthorities = fileProviderAuthorities
         ChatParams.certificatePinning = certificatePinning
         ChatParams.fileConnectTimeout = fileConnectTimeout

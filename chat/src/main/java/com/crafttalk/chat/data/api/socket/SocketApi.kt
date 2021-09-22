@@ -13,10 +13,7 @@ import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
 import com.crafttalk.chat.utils.AuthType
-import com.crafttalk.chat.utils.ChatParams.authMode
-import com.crafttalk.chat.utils.ChatParams.initialMessageMode
-import com.crafttalk.chat.utils.ChatParams.urlChatHost
-import com.crafttalk.chat.utils.ChatParams.urlChatNameSpace
+import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ChatStatus
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
@@ -25,6 +22,7 @@ import com.google.gson.Gson
 import io.socket.client.Manager
 import io.socket.client.Socket
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
@@ -64,8 +62,8 @@ class SocketApi constructor(
     fun initSocket() {
         if (socket == null) {
             socket = try {
-                val manager = Manager(URI(urlChatHost))
-                manager.socket("/${urlChatNameSpace}").apply {
+                val manager = Manager(URI("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}"))
+                manager.socket("/${ChatParams.urlChatNameSpace}").apply {
                     setAllListeners(this)
                 }
             } catch (e: URISyntaxException) {
@@ -158,7 +156,7 @@ class SocketApi constructor(
             viewModelScope.launch {
                 successAuthUxFun()
             }
-            if ((initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
+            if ((ChatParams.initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
                 greet()
             }
             syncChat()
@@ -254,7 +252,7 @@ class SocketApi constructor(
             viewModelScope.launch {
                 successAuthUxFun()
             }
-            if (initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+            if (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
                 greet()
             }
             syncChat()
@@ -263,7 +261,7 @@ class SocketApi constructor(
                 socket.emit(
                     "me",
                     visitor.getJsonObject(),
-                    authMode == AuthType.AUTH_WITHOUT_FORM
+                    ChatParams.authMode == AuthType.AUTH_WITHOUT_FORM
                 )
             } catch (ex: Throwable) {
                 failAuthUiFun()
@@ -303,6 +301,28 @@ class SocketApi constructor(
         chatEventListener?.synchronized()
     }
 
+    suspend fun uploadMessages(
+        timestamp: Long
+    ): List<NetworkMessage>? {
+        val channel = Channel<List<NetworkMessage>?>()
+
+        socket?.on("history-messages-loaded") {
+            viewModelScope.launch {
+                val listMessages = gson.fromJson(it[0].toString().replace("&amp;", "&"), Array<NetworkMessage>::class.java)
+                channel.send(listMessages.toList())
+            }
+        }
+        socket?.emit("history-messages-requested", timestamp, visitor.token, ChatParams.urlChatHost) ?: channel.send(null)
+
+        return viewModelScope.async {
+            channel.receive()
+        }.await()
+    }
+
+    fun closeHistoryListener() {
+        socket?.off("history-messages-loaded")
+    }
+
     private fun syncChat() {
         viewModelScope.launch {
             syncMessages()
@@ -313,7 +333,7 @@ class SocketApi constructor(
         val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
-                messageSocket.getCorrectAttachmentUrl(visitor.token)?.let { url ->
+                messageSocket.attachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
                             insertMessage(MessageEntity.map(
@@ -329,7 +349,7 @@ class SocketApi constructor(
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isFile -> {
-                messageSocket.getCorrectAttachmentUrl(visitor.token)?.let { url ->
+                messageSocket.attachmentUrl?.let { url ->
                     insertMessage(MessageEntity.map(
                         uuid = visitor.uuid,
                         networkMessage = messageSocket,

@@ -49,7 +49,6 @@ import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFil
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.TakePicture
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.MessageModel
-import com.crafttalk.chat.presentation.model.Role
 import com.crafttalk.chat.presentation.model.TypeMultiple
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.TypeFailUpload
@@ -382,7 +381,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     if (ChatAttr.getInstance().showChatState) {
                         infoChatState.visibility = View.VISIBLE
                     }
-//                    list_with_message.scrollToPosition(viewModel.currentReadMessageTime)
                 }
                 DisplayableUIObject.CHAT -> {
                     auth_form.visibility = View.GONE
@@ -395,7 +393,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     if (ChatAttr.getInstance().showChatState) {
                         infoChatState.visibility = View.INVISIBLE
                     }
-//                    list_with_message.scrollToPosition(viewModel.currentReadMessageTime)
                 }
                 DisplayableUIObject.FORM_AUTH -> {
                     chat_place.visibility = View.GONE
@@ -474,11 +471,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     } else {
                         val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
                         if (
-                            (indexLastVisible != null &&
+                            indexLastVisible != null &&
                             indexLastVisible != -1 &&
                             indexLastVisible < MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL &&
-                            countItemsLastVersion != pagedList.size) ||
-                            pagedList.subList(0, pagedList.size - countItemsLastVersion).any { it != null && it.role == Role.USER }
+                            countItemsLastVersion != pagedList.size
                         ) {
                             viewModel.updateCountUnreadMessages { countUnreadMessages ->
                                 scroll(countUnreadMessages)
@@ -487,8 +483,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                             viewModel.updateCountUnreadMessages()
                         }
                     }
+                    isFirstUploadMessages = false
                 }
-                isFirstUploadMessages = false
             })
         }
     }
@@ -587,7 +583,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     private fun scroll(countUnreadMessages: Int) {
         fun scrollToDesiredPosition(position: Int, actionScroll: (position: Int) -> Unit) {
-            if ( adapterListMessages.currentList?.getOrNull(position) == null) {
+            if (adapterListMessages.currentList?.getOrNull(position) == null) {
                 list_with_message.smoothScrollToPosition(position)
             } else {
                 actionScroll(position)

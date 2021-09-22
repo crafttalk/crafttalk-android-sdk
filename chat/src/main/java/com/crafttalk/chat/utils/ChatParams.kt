@@ -8,6 +8,7 @@ object ChatParams {
     internal var pageSize = 20
     internal var countDownloadedMessages = 20
     internal var initialMessageMode: InitialMessageMode? = null
+    internal var urlChatScheme: String? = null
     internal var urlChatHost: String? = null
     internal var urlChatNameSpace: String? = null
     internal var operatorPreviewMode: OperatorPreviewMode? = null
@@ -15,6 +16,7 @@ object ChatParams {
     internal var clickableLinkMode: ClickableLinkMode? = null
     internal var locale: Locale? = null
     internal var phonePatterns: Array<CharSequence>? = null
+    internal var uploadPoolMessagesTimeout: Long = 5000
     internal var fileProviderAuthorities: String? = null
     internal var certificatePinning: String? = null
     internal var fileConnectTimeout: Long? = null

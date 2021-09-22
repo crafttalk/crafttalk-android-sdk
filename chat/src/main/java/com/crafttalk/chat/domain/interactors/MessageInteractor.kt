@@ -37,7 +37,6 @@ class MessageInteractor
             messageRepository.getTimeFirstMessage()?.let { firstMessageTime ->
                 messageRepository.uploadMessages(
                     uuid = visitor.uuid,
-                    token = visitor.token,
                     startTime = null,
                     endTime = firstMessageTime,
                     updateReadPoint = { false },
@@ -59,19 +58,25 @@ class MessageInteractor
     // при переходе на холд добавить вызов метода, обновляющего состояния у сообщений, находящихся в статусе "отправляется"
     suspend fun syncMessages(
         updateReadPoint: (newTimeMark: Long) -> Boolean,
-        syncMessagesAcrossDevices: (indexLastUserMessage: Int) -> Unit,
+        syncMessagesAcrossDevices: (indexFirstUnreadMessage: Int) -> Unit,
         eventAllHistoryLoaded: () -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
+        val syncMessagesAcrossDevicesWrapper: (countUnreadMessages: Int) -> Unit = { countUnreadMessages ->
+            syncMessagesAcrossDevices(
+                if (countUnreadMessages > 0) countUnreadMessages - 1
+                else 0
+            )
+        }
+
         if (conditionRepository.getStatusExistenceMessages()) {
             messageRepository.getTimeLastMessage()?.let { lastMessageTime ->
                 val messages = messageRepository.uploadMessages(
                     uuid = visitor.uuid,
-                    token = visitor.token,
                     startTime = lastMessageTime + 1,
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
-                    syncMessagesAcrossDevices = syncMessagesAcrossDevices,
+                    syncMessagesAcrossDevices = syncMessagesAcrossDevicesWrapper,
                     returnedEmptyPool = {},
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)
@@ -85,7 +90,6 @@ class MessageInteractor
 //            if (remoteReadMessageTime == 0L) {
                 val messages = messageRepository.uploadMessages(
                     uuid = visitor.uuid,
-                    token = visitor.token,
                     startTime = null,
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
