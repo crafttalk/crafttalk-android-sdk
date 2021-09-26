@@ -336,13 +336,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         pickImage = fragment.registerForActivityResult(PickFileContract()) { listUri ->
             if (listUri.size > FileViewerHelper.PHOTOS_LIMIT) {
                 viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.IMAGE) })
-                FileViewerHelper.showPhotoLimitExceededMessage(fragment)
+                FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.PHOTOS_LIMIT_EXCEEDED)
             } else viewModel.sendFiles(listUri.map { File(it, TypeFile.IMAGE) })
         }
         pickFile = fragment.registerForActivityResult(PickFileContract()) { listUri ->
-            if (listUri.size > FileViewerHelper.PHOTOS_LIMIT) {
-                viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.FILE) })
-                FileViewerHelper.showPhotoLimitExceededMessage(fragment)
+            if (listUri.size > FileViewerHelper.DOCUMENTS_LIMIT) {
+                viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.DOCUMENTS_LIMIT).map { File(it, TypeFile.FILE) })
+                FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.DOCUMENTS_LIMIT_EXCEEDED)
             } else viewModel.sendFiles(listUri.map { File(it, TypeFile.FILE) })
         }
 
@@ -693,7 +693,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.image -> {
                 fileViewerHelper.pickFiles(
-                    pickFile,
+                    pickImage,
                     Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(

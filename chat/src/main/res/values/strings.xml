@@ -41,6 +41,7 @@
     <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_gallery">Изображение</string>
     <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_camera">Камера</string>
     <string name="com_crafttalk_chat_bottom_sheet_file_viewer_document_from_gallery">Документ</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_warning">Нельзя прикрепить больше чем %d</string>
 
     <!--    FeedBack-->
     <string name="com_crafttalk_chat_feedback_title">Диалог завершен. Оцените качество обслуживания.</string>

@@ -41,6 +41,7 @@
     <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_gallery">Image</string>
     <string name="com_crafttalk_chat_bottom_sheet_file_viewer_image_from_camera">Camera</string>
     <string name="com_crafttalk_chat_bottom_sheet_file_viewer_document_from_gallery">Document</string>
+    <string name="com_crafttalk_chat_bottom_sheet_file_viewer_warning">You cannot attach more than %d</string>
 
     <!--    FeedBack-->
     <string name="com_crafttalk_chat_feedback_title">The dialogue is over. Rate the quality of service.</string>

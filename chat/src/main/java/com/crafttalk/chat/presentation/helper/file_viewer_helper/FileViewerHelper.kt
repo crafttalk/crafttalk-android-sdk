@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.helper.permission.checkPermission
 import com.crafttalk.chat.presentation.model.TypeMultiple
@@ -58,6 +59,15 @@ class FileViewerHelper {
         ) { pickImage() }
     }
 
+    fun getUriForFile(context: Context, file: File): Uri = FileProvider
+        .getUriForFile(
+            context,
+            ChatParams.fileProviderAuthorities!!,
+            file
+        )
+
+    fun getMimeType(context: Context, uri: Uri): String? = context.contentResolver.getType(uri)
+
     @SuppressLint("SimpleDateFormat")
     private fun createImageFile(context: Context, format: String): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
@@ -65,16 +75,22 @@ class FileViewerHelper {
     }
 
     companion object {
-        private const val PHOTO_LIMIT_EXCEEDED = 1
+        const val PHOTOS_LIMIT_EXCEEDED = 1
+        const val DOCUMENTS_LIMIT_EXCEEDED = 1
         const val PHOTOS_LIMIT = 5
+        const val DOCUMENTS_LIMIT = 5
         private const val IMAGE_JPG_FORMAT = ".jpg"
 
-        fun showPhotoLimitExceededMessage(fragment: Fragment) {
+        fun showFileLimitExceededMessage(fragment: Fragment, limit: Int) {
             Toast.makeText(
                 fragment.requireContext(),
-                PHOTO_LIMIT_EXCEEDED,
+                fragment.resources.getString(
+                    R.string.com_crafttalk_chat_bottom_sheet_file_viewer_warning,
+                    limit
+                ),
                 Toast.LENGTH_SHORT
             ).show()
         }
+
     }
 }
