@@ -7,6 +7,7 @@ import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
 import com.crafttalk.chat.domain.transfer.TransferFileInfo
@@ -28,6 +29,12 @@ class MessageRepository
 
     override fun getCountUnreadMessages(currentReadMessageTime: Long) = messagesDao
         .getCountUnreadMessages(currentReadMessageTime)
+
+    override fun getCountUnreadMessagesRange(
+        currentReadMessageTime: Long,
+        timestampLastMessage: Long
+    ) = messagesDao
+        .getCountUnreadMessagesRange(currentReadMessageTime, timestampLastMessage)
 
     override suspend fun getTimeFirstMessage() = messagesDao
         .getFirstTime()
@@ -214,6 +221,13 @@ class MessageRepository
 
     override fun updateSizeMessage(id: String, height: Int, width: Int) {
         messagesDao.updateSizeMessage(id, height, width)
+    }
+
+    override fun updateTypeDownloadProgressOfMessageWithAttachment(
+        id: String,
+        typeDownloadProgress: TypeDownloadProgress
+    ) {
+        messagesDao.updateTypeDownloadProgress(id, typeDownloadProgress)
     }
 
 }

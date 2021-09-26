@@ -2,16 +2,14 @@ package com.crafttalk.chat.presentation
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.domain.entity.file.File
+import com.crafttalk.chat.domain.entity.file.File as DomainFile
+import java.io.File as IOFile
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.domain.interactors.*
@@ -22,6 +20,7 @@ import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ChatParams
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class ChatViewModel
@@ -41,6 +40,7 @@ class ChatViewModel
     var countUnreadMessages = MutableLiveData<Int>()
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
+    val openDocument = MutableLiveData<Pair<IOFile?, Boolean>?>()
 
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
@@ -191,14 +191,25 @@ class ChatViewModel
         }
     }
 
-    fun openFile(context: Context, fileUrl: String) {
-        val intentView = Intent(Intent.ACTION_VIEW).apply {
-            data = fileUrl.toUri()
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        val intentChooser = Intent.createChooser(intentView, context.getString(R.string.com_crafttalk_chat_string_chooser_open_file_action_view))
-        if (intentView.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intentChooser)
+    fun downloadOrOpenDocument(
+        id: String,
+        documentName: String,
+        documentUrl: String
+    ) {
+        launchIO {
+            fileInteractor.downloadDocument(
+                id = id,
+                documentName = documentName,
+                documentUrl = documentUrl,
+                directory = context.filesDir,
+                openDocument = { documentFile ->
+                    delay(ChatAttr.getInstance().delayDownloadDocument)
+                    openDocument.postValue(Pair(documentFile, true))
+                },
+                downloadedFail = {
+                    openDocument.postValue(Pair(null, false))
+                }
+            )
         }
     }
 
@@ -244,13 +255,13 @@ class ChatViewModel
         }
     }
 
-    fun sendFile(file: File) {
+    fun sendFile(file: DomainFile) {
         launchIO { fileInteractor.uploadFile(file) { responseCode, responseMessage ->
             uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
         }}
     }
 
-    fun sendFiles(fileList: List<File>) {
+    fun sendFiles(fileList: List<DomainFile>) {
         launchIO { fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
             uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
         }}
@@ -263,9 +274,9 @@ class ChatViewModel
         }
     }
 
-    fun updateCountUnreadMessages(actionUiAfter: (Int) -> Unit = {}) {
+    fun updateCountUnreadMessages(timestampLastMessage: Long? = null, actionUiAfter: (Int) -> Unit = {}) {
         launchIO {
-            val unreadMessagesCount = messageInteractor.getCountUnreadMessages(currentReadMessageTime)
+            val unreadMessagesCount = messageInteractor.getCountUnreadMessages(currentReadMessageTime, timestampLastMessage)
             unreadMessagesCount?.run(countUnreadMessages::postValue)
             launchUI {
                 unreadMessagesCount?.run(actionUiAfter)

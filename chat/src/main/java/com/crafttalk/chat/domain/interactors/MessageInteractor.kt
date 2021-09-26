@@ -17,8 +17,13 @@ class MessageInteractor
     fun getAllMessages(): DataSource.Factory<Int, MessageEntity> =
         messageRepository.getMessages()
 
-    fun getCountUnreadMessages(currentReadMessageTime: Long) =
-        messageRepository.getCountUnreadMessages(currentReadMessageTime)
+    fun getCountUnreadMessages(currentReadMessageTime: Long, timestampLastMessage: Long?): Int? {
+        return if (timestampLastMessage == null) {
+            messageRepository.getCountUnreadMessages(currentReadMessageTime)
+        } else {
+            messageRepository.getCountUnreadMessagesRange(currentReadMessageTime, timestampLastMessage)
+        }
+    }
 
     suspend fun sendMessage(message: String) {
         messageRepository.sendMessages(message)

@@ -6,6 +6,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
@@ -25,7 +26,7 @@ class HolderOperatorUnionMessage(
     private val updateData: (id: String, height: Int, width: Int) -> Unit,
     private val clickGifHandler: (gifName: String, gifUrl: String) -> Unit,
     private val clickImageHandler: (imageName: String, imageUrl: String) -> Unit,
-    private val clickDocumentHandler: (fileUrl: String) -> Unit
+    private val clickDocumentHandler: (id: String, documentName: String, documentUrl: String) -> Unit
 ) : BaseViewHolder<UnionMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
     private val warningContainer: ViewGroup? = view.findViewById(R.id.server_media_warning)
@@ -34,6 +35,7 @@ class HolderOperatorUnionMessage(
     private val message: TextView? = view.findViewById(R.id.server_message)
     private val listActions: RecyclerView? = view.findViewById(R.id.actions_list)
     private val fileIcon: ImageView? = view.findViewById(R.id.file_icon)
+    private val progressDownload: ProgressBar? = view.findViewById(R.id.progress_download)
     private val fileName: TextView? = view.findViewById(R.id.file_name)
     private val fileSize: TextView? = view.findViewById(R.id.file_size)
     private val media: ImageView? = view.findViewById(R.id.server_media)
@@ -44,7 +46,9 @@ class HolderOperatorUnionMessage(
     private val status: ImageView? = view.findViewById(R.id.status)
     private val date: TextView? = view.findViewById(R.id.date)
 
-    private var fileUrl: String? = null
+    private var id: String? = null
+    private var attachmentFileName: String? = null
+    private var attachmentFileUrl: String? = null
     private var mediaFileName: String? = null
     private var fileType: TypeFile? = null
     private var failLoading: Boolean = false
@@ -58,15 +62,16 @@ class HolderOperatorUnionMessage(
     override fun onClick(view: View) {
         when (view.id) {
             R.id.file_icon -> {
-                fileUrl?.let {
-                    if (!failLoading)
-                        clickDocumentHandler(it)
-                }
+                val correctId = id ?: return
+                val correctDocumentName = attachmentFileName ?: return
+                val correctDocumentUrl = attachmentFileUrl ?: return
+                if (!failLoading)
+                    clickDocumentHandler(correctId, correctDocumentName, correctDocumentUrl)
             }
             R.id.server_media -> {
                 if (!failLoading) {
                     val name = mediaFileName ?: return
-                    val url = fileUrl ?: return
+                    val url = attachmentFileUrl ?: return
                     when (fileType) {
                         TypeFile.IMAGE -> clickImageHandler(name, url)
                         TypeFile.GIF -> clickGifHandler(name, url)
@@ -75,14 +80,16 @@ class HolderOperatorUnionMessage(
             }
             R.id.download_file -> {
                 val name = mediaFileName ?: return
-                val url = fileUrl ?: return
+                val url = attachmentFileUrl ?: return
                 download(name, url, fileType ?: TypeFile.IMAGE)
             }
         }
     }
 
     override fun bindTo(item: UnionMessageItem) {
-        fileUrl = item.file.url
+        id = item.id
+        attachmentFileName = item.file.name
+        attachmentFileUrl = item.file.url
         mediaFileName = item.file.name
         fileType = item.file.type
         failLoading = item.file.failLoading
@@ -140,12 +147,8 @@ class HolderOperatorUnionMessage(
                 media?.visibility = View.GONE
                 warningContainer?.visibility = View.GONE
                 fileInfo?.visibility = View.VISIBLE
-                fileIcon?.apply {
-                    setFileIcon()
-                    ChatAttr.getInstance().widthItemOperatorFileIconMessage?.let {
-                        layoutParams.width = it
-                    }
-                }
+                progressDownload?.setProgressDownloadFile(item.typeDownloadProgress)
+                fileIcon?.setFileIcon(item.typeDownloadProgress)
                 fileName?.setFileName(item.file, false)
                 fileSize?.setFileSize(item.file, false)
             }

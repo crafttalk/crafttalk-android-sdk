@@ -11,14 +11,20 @@ import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.data.local.db.entity.PersonEntity
 import com.crafttalk.chat.data.local.db.entity.converters.ActionConverter
 import com.crafttalk.chat.data.local.db.entity.converters.SpanStructureListConverter
+import com.crafttalk.chat.data.local.db.entity.converters.TypeDownloadProgressConverter
 import com.crafttalk.chat.data.local.db.entity.converters.TypeFileConverter
 
 @Database(
     entities = [MessageEntity::class, PersonEntity::class, FileEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
-@TypeConverters(ActionConverter::class, TypeFileConverter::class, SpanStructureListConverter::class)
+@TypeConverters(
+    ActionConverter::class,
+    TypeFileConverter::class,
+    TypeDownloadProgressConverter::class,
+    SpanStructureListConverter::class
+)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun messageDao(): MessagesDao
     abstract fun personDao(): PersonDao

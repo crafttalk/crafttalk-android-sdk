@@ -4,6 +4,7 @@ import androidx.paging.DataSource
 import androidx.room.*
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 
 @Dao
 interface MessagesDao {
@@ -16,6 +17,9 @@ interface MessagesDao {
 
     @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime")
     fun getCountUnreadMessages(currentReadMessageTime: Long): Int?
+
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND timestamp <= :timestampLastMessage")
+    fun getCountUnreadMessagesRange(currentReadMessageTime: Long, timestampLastMessage: Long): Int?
 
     @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} ORDER BY timestamp ASC LIMIT 1")
     fun getFirstTime(): Long?
@@ -37,6 +41,9 @@ interface MessagesDao {
 
     @Query("UPDATE ${MessageEntity.TABLE_NAME} SET height = :height, width = :width WHERE id = :id")
     fun updateSizeMessage(id: String, height: Int, width: Int)
+
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET attachment_download_progress_type = :typeDownloadProgress WHERE id = :id")
+    fun updateTypeDownloadProgress(id: String, typeDownloadProgress: TypeDownloadProgress)
 
     @Query("UPDATE ${MessageEntity.TABLE_NAME} SET operator_name = :currentPersonName WHERE operator_id = :personId")
     fun updatePersonName(personId: String, currentPersonName: String)

@@ -4,6 +4,7 @@ import android.content.Context
 import com.crafttalk.chat.R
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.MessageType.Companion.getMessageTypeByValueType
@@ -69,6 +70,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 name = localMessage.attachmentName!!,
                 size = localMessage.attachmentSize ?: 0
             ),
+            localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED,
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
@@ -89,6 +91,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 failLoading = (localMessage.attachmentType in listOf( TypeFile.IMAGE, TypeFile.GIF)) && (localMessage.height == null || localMessage.width == null),
                 type = localMessage.attachmentType
             ),
+            localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED,
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,

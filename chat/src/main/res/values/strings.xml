@@ -51,6 +51,7 @@
     <!--    Download file-->
     <string name="com_crafttalk_chat_download_file_success">Файл успешно скачен</string>
     <string name="com_crafttalk_chat_download_file_fail">Файл не удалось скачать</string>
+    <string name="com_crafttalk_chat_open_file_fail">Файл не удалось открыть</string>
     <string name="com_crafttalk_chat_download">Загрузить</string>
 
     <string name="com_crafttalk_chat_string_chooser_open_file_action_view">Выберите приложение для просмотра этого файла:</string>

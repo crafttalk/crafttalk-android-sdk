@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.entity.MessageEntity.Companion.TABLE_NAME
+import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
@@ -46,6 +47,9 @@ data class MessageEntity(
 
     @ColumnInfo(name = "attachment_type")
     val attachmentType: TypeFile?,
+
+    @ColumnInfo(name = "attachment_download_progress_type")
+    val attachmentDownloadProgressType: TypeDownloadProgress?,
 
     @ColumnInfo(name = "attachment_name")
     val attachmentName: String?,
@@ -138,6 +142,7 @@ data class MessageEntity(
                 actions = networkMessage.actions?.let { ActionEntity.map(it) },
                 attachmentUrl = correctAttachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
+                attachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
                 attachmentName = networkMessage.attachmentName,
                 attachmentSize = fileSize,
                 operatorId = networkMessage.operatorId,
@@ -172,6 +177,7 @@ data class MessageEntity(
                 actions = networkMessage.actions?.let { ActionEntity.map(it, actionsSelected) },
                 attachmentUrl = networkMessage.attachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
+                attachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
                 attachmentName = networkMessage.attachmentName,
                 attachmentSize = fileSize,
                 operatorId = networkMessage.operatorId,
@@ -206,6 +212,7 @@ data class MessageEntity(
                 actions = null,
                 attachmentUrl = networkMessage.attachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
+                attachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
                 attachmentName = networkMessage.attachmentName,
                 attachmentSize = fileSize,
                 operatorId = networkMessage.operatorId,
@@ -233,6 +240,7 @@ data class MessageEntity(
                 actions = null,
                 attachmentUrl = null,
                 attachmentType = null,
+                attachmentDownloadProgressType = null,
                 attachmentName = null,
                 attachmentSize = null,
                 operatorId = networkMessage.operatorId,

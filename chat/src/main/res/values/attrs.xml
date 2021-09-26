@@ -4,6 +4,7 @@
     <declare-styleable name="ChatView">
 
         <attr name="timeDelayed" format="integer"/>
+        <attr name="delay_download_document" format="integer"/>
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
@@ -61,7 +62,9 @@
         <attr name="drawable_progress_indeterminate" format="reference"/>
         <attr name="drawable_attach_file" format="reference"/>
         <attr name="drawable_send_message" format="reference"/>
-        <attr name="drawable_file_icon" format="reference"/>
+        <attr name="drawable_document_not_downloaded_icon" format="reference"/>
+        <attr name="drawable_document_downloading_icon" format="reference"/>
+        <attr name="drawable_document_downloaded_icon" format="reference"/>
 
         <attr name="size_user_message" format="dimension"/>
         <attr name="size_operator_message" format="dimension"/>

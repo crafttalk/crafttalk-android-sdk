@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.crafttalk.chat.R
+import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
@@ -209,10 +210,14 @@ fun ImageView.loadMediaFile(
         .into(this)
 }
 
-fun ImageView.setFileIcon() {
-    ChatAttr.getInstance().drawableFileIcon?.let {
-        Glide.with(context)
-            .load(it)
-            .into(this)
-    }
+fun ImageView.setFileIcon(typeDownloadProgress: TypeDownloadProgress) {
+    Glide.with(context)
+        .load(
+            when (typeDownloadProgress) {
+                TypeDownloadProgress.NOT_DOWNLOADED -> ChatAttr.getInstance().drawableDocumentNotDownloadedIcon ?: R.drawable.com_crafttalk_chat_ic_file_download
+                TypeDownloadProgress.DOWNLOADING -> ChatAttr.getInstance().drawableDocumentDownloadingIcon ?: R.drawable.com_crafttalk_chat_ic_file_downloading
+                TypeDownloadProgress.DOWNLOADED -> ChatAttr.getInstance().drawableDocumentDownloadedIcon ?: R.drawable.com_crafttalk_chat_ic_file_downloaded
+            }
+        )
+        .into(this)
 }

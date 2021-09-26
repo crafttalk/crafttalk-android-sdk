@@ -23,6 +23,7 @@ private constructor(
     private val heightScreenInPx = getSizeScreenInPx(context).second.toFloat()
 
     val timeDelayed = attrArr.getInt(R.styleable.ChatView_timeDelayed, 0).toLong()
+    val delayDownloadDocument = attrArr.getInt(R.styleable.ChatView_delay_download_document, 1000).toLong()
 
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_main))
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_warning))
@@ -69,7 +70,9 @@ private constructor(
     val drawableProgressIndeterminate = attrArr.getDrawable(R.styleable.ChatView_drawable_progress_indeterminate)
     val drawableAttachFile = attrArr.getDrawable(R.styleable.ChatView_drawable_attach_file) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_attach_file)
     val drawableSendMessage = attrArr.getDrawable(R.styleable.ChatView_drawable_send_message) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_send)
-    val drawableFileIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_file_icon)
+    val drawableDocumentNotDownloadedIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_document_not_downloaded_icon)
+    val drawableDocumentDownloadingIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_document_downloading_icon)
+    val drawableDocumentDownloadedIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_document_downloaded_icon)
 
     val sizeTextInternetConnectionWarning = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_warning, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_warning)).toFloat()
     val sizeTextInfoText = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_info, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_info)).toFloat()

@@ -10,11 +10,26 @@
         android:id="@+id/file_icon"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/com_crafttalk_chat_ic_file"
+        android:src="@drawable/com_crafttalk_chat_ic_file_downloaded"
+        android:scaleType="centerInside"
+        app:layout_constraintStart_toStartOf="@id/progress_download"
+        app:layout_constraintEnd_toEndOf="@id/progress_download"
+        app:layout_constraintTop_toTopOf="@id/progress_download"
+        app:layout_constraintBottom_toBottomOf="@id/progress_download"
+        tools:tint="@color/com_crafttalk_chat_black" />
+
+    <ProgressBar
+        android:id="@+id/progress_download"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
         app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/file_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/file_name"
-        app:layout_constraintBottom_toBottomOf="@id/file_size" />
+        android:indeterminateTint="@color/com_crafttalk_chat_white"
+        tools:visibility="visible"
+        tools:indeterminateTint="@color/com_crafttalk_chat_black" />
 
     <TextView
         android:id="@+id/file_name"
@@ -23,9 +38,10 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:singleLine="true"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
+        android:paddingTop="4dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/file_icon"
+        app:layout_constraintStart_toEndOf="@id/progress_download"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="test.pdf" />
 
@@ -37,8 +53,9 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:layout_marginTop="4dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@id/file_icon"
+        android:layout_marginStart="4dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintStart_toEndOf="@id/progress_download"
         app:layout_constraintTop_toBottomOf="@id/file_name"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="750 Кб" />

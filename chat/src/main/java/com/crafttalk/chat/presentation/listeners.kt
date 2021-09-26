@@ -14,6 +14,7 @@ interface UploadFileListener {
 interface DownloadFileListener {
     fun successDownload()
     fun failDownload()
+    fun failDownload(title: String) {}
 }
 
 interface ChatInternetConnectionListener {

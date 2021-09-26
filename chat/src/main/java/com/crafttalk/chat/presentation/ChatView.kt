@@ -2,10 +2,7 @@ package com.crafttalk.chat.presentation
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
@@ -105,6 +102,18 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     chat_place,
                     null,
                     ChatAttr.getInstance().titleFailDownloadFileWarning,
+                    null
+                )?.show()
+            }
+        }
+        override fun failDownload(title: String) {
+            if (ShowImageDialog.isOpen()) {
+                ShowImageDialog.showWarning(false)
+            } else {
+                WarningSnackbar.make(
+                    chat_place,
+                    null,
+                    title,
                     null
                 )?.show()
             }
@@ -281,7 +290,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     private fun setListMessages() {
         adapterListMessages = AdapterListMessages(
-            viewModel::openFile,
+            viewModel::downloadOrOpenDocument,
             viewModel::openImage,
             viewModel::openGif,
             { fileName, fileUrl, fileType ->
@@ -454,6 +463,28 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 View.GONE
             }
         }
+        viewModel.openDocument.observe(lifecycleOwner) {
+            it ?: return@observe
+            val (file, isSuccess) = it
+            if (!isSuccess) downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_open_file_fail))
+            file ?: return@observe
+            viewModel.openDocument.value = null
+
+            val uri: Uri = fileViewerHelper.getUriForFile(context, file)
+            val documentIntent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, fileViewerHelper.getMimeType(context, uri))
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
+
+            try {
+                val intentChooser = Intent.createChooser(documentIntent, context.getString(R.string.com_crafttalk_chat_string_chooser_open_file_action_view))
+                if (documentIntent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(intentChooser)
+                }
+            } catch (ex: ActivityNotFoundException) {
+                downloadFileListener.failDownload()
+            }
+        }
 
         viewModel.uploadMessagesForUser.observe(lifecycleOwner) { liveDataPagedList ->
             liveDataPagedList ?: return@observe
@@ -476,7 +507,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                             indexLastVisible < MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL &&
                             countItemsLastVersion != pagedList.size
                         ) {
-                            viewModel.updateCountUnreadMessages { countUnreadMessages ->
+                            viewModel.updateCountUnreadMessages(pagedList.getOrNull(0)?.timestamp) { countUnreadMessages ->
                                 scroll(countUnreadMessages)
                             }
                         } else {

@@ -4,14 +4,14 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.crafttalk.chat.data.ApiParams
 import com.crafttalk.chat.data.ContentTypeValue
-import com.crafttalk.chat.domain.entity.file.TypeUpload
 import com.crafttalk.chat.data.api.rest.FileApi
 import com.crafttalk.chat.data.helper.file.FileInfoHelper
 import com.crafttalk.chat.data.helper.file.RequestHelper
 import com.crafttalk.chat.data.local.db.dao.FileDao
+import com.crafttalk.chat.data.local.db.entity.FileEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.NetworkBodyStructureUploadFile
-import com.crafttalk.chat.domain.entity.file.File as FileModel
+import com.crafttalk.chat.domain.entity.file.TypeUpload
 import com.crafttalk.chat.domain.repository.IFileRepository
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -19,8 +19,12 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.*
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
 import javax.inject.Inject
-import com.crafttalk.chat.data.local.db.entity.FileEntity
+import com.crafttalk.chat.domain.entity.file.File as FileModel
 
 class FileRepository
 @Inject constructor(
@@ -115,9 +119,47 @@ class FileRepository
         }
     }
 
+    override suspend fun downloadDocument(documentUrl: String, documentFile: File, alternativeFile: File, downloadedSuccess: suspend () -> Unit, downloadedFail: () -> Unit) {
+        val correctFile = try {
+            documentFile.createNewFile()
+            documentFile
+        } catch (ex: IOException) {
+            try {
+                alternativeFile.createNewFile()
+                alternativeFile
+            } catch (ex: IOException) {
+                downloadedFail()
+                return
+            }
+        }
+        try {
+            val url = URL(documentUrl)
+            val urlConnection = url.openConnection() as HttpURLConnection
+            urlConnection.connect()
+            val inputStream = urlConnection.inputStream
+            val fileOutputStream = FileOutputStream(correctFile)
+
+            val buffer = ByteArray(MEGABYTE)
+            var bufferLength: Int
+            while (inputStream.read(buffer).also { bufferLength = it } > 0) {
+                fileOutputStream.write(buffer, 0, bufferLength)
+            }
+            fileOutputStream.close()
+
+            downloadedSuccess()
+        } catch (ex: FileNotFoundException) {
+            downloadedFail()
+        } catch (ex: MalformedURLException) {
+            downloadedFail()
+        } catch (ex: IOException) {
+            downloadedFail()
+        }
+    }
+
     companion object {
         private const val TIMEOUT_CODE = 408
         private const val TIMEOUT_CONST = "timeout"
+        private const val MEGABYTE = 1024 * 1024
     }
 
 }
