@@ -1,9 +1,11 @@
 package com.crafttalk.chat.domain.interactors
 
+import android.util.Log
 import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ChatMessageInteractor
 @Inject constructor(
@@ -13,7 +15,18 @@ class ChatMessageInteractor
     private var visitorUid: String? = null
 
     fun getAllMessages(): DataSource.Factory<Int, MessageEntity>? {
+
+        thread {
+            val res = messageRepository.getMessagesList()
+            Log.d("TEST_WHITE_SCREEN", "uploadMessages getAllMessages res: ${res.size};")
+            res.forEach {
+                Log.d("TEST_WHITE_SCREEN", "entity: ${it};")
+            }
+        }
+
+        Log.d("TEST_WHITE_SCREEN", "uploadMessages getAllMessages visitorUid: ${visitorUid};")
         val currentVisitorUid = visitorInteractor.getVisitor()?.uuid
+        Log.d("TEST_WHITE_SCREEN", "uploadMessages getAllMessages currentVisitorUid: ${currentVisitorUid}; ${visitorUid};")
         if (visitorUid == currentVisitorUid) return null
         visitorUid = currentVisitorUid
         return visitorUid?.let { uuid ->

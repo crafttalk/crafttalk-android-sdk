@@ -18,6 +18,10 @@ class MessageRepository
         return dao.getMessages(uuid)
     }
 
+    override fun getMessagesList(): List<MessageEntity> {
+        return dao.getMessagesList()
+    }
+
     override suspend fun sendMessages(message: String) {
         socketApi.sendMessage(message)
     }

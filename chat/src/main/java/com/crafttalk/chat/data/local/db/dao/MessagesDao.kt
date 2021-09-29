@@ -14,6 +14,9 @@ interface MessagesDao {
     @Query("SELECT * FROM messages WHERE uuid = :uuid ORDER BY timestamp DESC")
     fun getMessages(uuid: String): DataSource.Factory<Int, MessageEntity>
 
+    @Query("SELECT * FROM messages ORDER BY timestamp DESC")
+    fun getMessagesList(): List<MessageEntity>
+
     @Query("SELECT timestamp FROM messages WHERE uuid = :uuid ORDER BY idKey DESC LIMIT 1")
     fun getLastTime(uuid: String): Long
 

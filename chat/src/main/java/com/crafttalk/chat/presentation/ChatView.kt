@@ -339,7 +339,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 val countItemsLastVersion = adapterListMessages.itemCount
                 adapterListMessages.submitList(pagedList)
 
-                Log.d("TEST_WHITE_SCREEN", "liveDataMessages observe isFirstUploadMessages: ${isFirstUploadMessages};")
+                Log.d("TEST_WHITE_SCREEN", "liveDataMessages observe isFirstUploadMessages: ${isFirstUploadMessages}; countItemsLastVersion: ${countItemsLastVersion}; pagedList: ${pagedList.size};")
+                pagedList.forEach {
+                    Log.d("TEST_WHITE_SCREEN", "item: ${it};")
+                }
+
                 if (isFirstUploadMessages) {
                     viewModel.setValueCountUnreadMessages()
                 } else {
