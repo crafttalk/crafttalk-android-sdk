@@ -161,11 +161,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.mergeHistoryListener = listener
     }
 
-    fun mergeHistory() {
-        viewModel.mergeHistoryListener?.startMerge()
-        viewModel.uploadOldMessages {
-            viewModel.mergeHistoryListener?.endMerge()
-        }
+    private fun mergeHistory() {
+        viewModel.mergeHistoryListener.startMerge()
+        viewModel.uploadOldMessages(
+            uploadHistoryComplete = viewModel.mergeHistoryListener::endMerge,
+            executeAnyway = true
+        )
     }
 
     fun setOnUploadFileListener(listener: UploadFileListener) {
@@ -269,6 +270,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         })
         close_feedback.setOnClickListener(this)
+        upload_history_btn.setOnClickListener(this)
         setFeedbackListeners()
     }
 
@@ -485,6 +487,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 downloadFileListener.failDownload()
             }
         }
+        viewModel.mergeHistoryBtnVisible.observe(lifecycleOwner) {
+            if (it) {
+                upload_history_btn.visibility = View.VISIBLE
+            } else {
+                upload_history_btn.visibility = View.GONE
+            }
+        }
+        viewModel.mergeHistoryProgressVisible.observe(lifecycleOwner) {
+            if (it) {
+                startProgressBar(upload_history_loading)
+            } else {
+                stopProgressBar(upload_history_loading)
+            }
+        }
 
         viewModel.uploadMessagesForUser.observe(lifecycleOwner) { liveDataPagedList ->
             liveDataPagedList ?: return@observe
@@ -551,6 +567,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     override fun onClick(view: View) {
         when(view.id) {
+            R.id.upload_history_btn -> {
+                mergeHistory()
+            }
             R.id.sign_in -> {
                 if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)

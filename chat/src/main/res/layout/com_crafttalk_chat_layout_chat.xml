@@ -22,6 +22,35 @@
         tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
         tools:itemCount="1" />
 
+    <TextView
+        android:id="@+id/upload_history_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/com_crafttalk_chat_upload_history"
+        android:textColor="@color/com_crafttalk_chat_white"
+        android:background="@drawable/com_crafttalk_chat_background_upload_history"
+        android:visibility="gone"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/upload_history_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/com_crafttalk_chat_spinner_ring"
+        android:indeterminateOnly="true"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
     <ImageView
         android:id="@+id/scroll_to_down"
         android:layout_width="52dp"

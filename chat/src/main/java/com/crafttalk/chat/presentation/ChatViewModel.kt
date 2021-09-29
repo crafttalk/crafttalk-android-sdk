@@ -41,6 +41,8 @@ class ChatViewModel
     val scrollToDownVisible = MutableLiveData(false)
     val feedbackContainerVisible = MutableLiveData(false)
     val openDocument = MutableLiveData<Pair<IOFile?, Boolean>?>()
+    val mergeHistoryBtnVisible = MutableLiveData(false)
+    val mergeHistoryProgressVisible = MutableLiveData(false)
 
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
@@ -96,7 +98,20 @@ class ChatViewModel
     val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
     val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
     var clientInternetConnectionListener: ChatInternetConnectionListener? = null
-    var mergeHistoryListener: MergeHistoryListener? = null
+    var mergeHistoryListener: MergeHistoryListener = object : MergeHistoryListener {
+        override fun showDialog() {
+            mergeHistoryProgressVisible.postValue(false)
+            mergeHistoryBtnVisible.postValue(true)
+        }
+        override fun startMerge() {
+            mergeHistoryBtnVisible.postValue(false)
+            mergeHistoryProgressVisible.postValue(true)
+        }
+        override fun endMerge() {
+            mergeHistoryProgressVisible.postValue(false)
+            mergeHistoryBtnVisible.postValue(false)
+        }
+    }
     var chatStateListener: ChatStateListener? = null
     private val internetConnectionListener = object : ChatInternetConnectionListener {
         override fun connect() {
@@ -120,7 +135,7 @@ class ChatViewModel
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
         override fun finishDialog() { feedbackContainerVisible.postValue(true) }
-        override fun showUploadHistoryBtn() { mergeHistoryListener?.showDialog() }
+        override fun showUploadHistoryBtn() { mergeHistoryListener.showDialog() }
         override fun synchronized() {
             launchUI { chatStateListener?.endSynchronization() }
             displayableUIObject.postValue(DisplayableUIObject.CHAT)
@@ -182,11 +197,12 @@ class ChatViewModel
         }, ChatAttr.getInstance().timeDelayed)
     }
 
-    fun uploadOldMessages(uploadHistoryComplete: () -> Unit = {}) {
+    fun uploadOldMessages(uploadHistoryComplete: () -> Unit = {}, executeAnyway: Boolean = false) {
         launchIO {
             messageInteractor.uploadHistoryMessages(
                 eventAllHistoryLoaded = eventAllHistoryLoaded,
-                uploadHistoryComplete = uploadHistoryComplete
+                uploadHistoryComplete = uploadHistoryComplete,
+                executeAnyway = executeAnyway
             )
         }
     }

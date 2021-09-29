@@ -35,28 +35,35 @@ class MessageInteractor
 
     suspend fun uploadHistoryMessages(
         eventAllHistoryLoaded: () -> Unit,
-        uploadHistoryComplete: () -> Unit
+        uploadHistoryComplete: () -> Unit,
+        executeAnyway: Boolean
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
-        if (conditionRepository.getStatusExistenceMessages() && !conditionRepository.getFlagAllHistoryLoaded()) {
-            messageRepository.getTimeFirstMessage()?.let { firstMessageTime ->
-                messageRepository.uploadMessages(
-                    uuid = visitor.uuid,
-                    startTime = null,
-                    endTime = firstMessageTime,
-                    updateReadPoint = { false },
-                    syncMessagesAcrossDevices = {},
-                    returnedEmptyPool = {
-                        eventAllHistoryLoaded()
-                        conditionRepository.saveFlagAllHistoryLoaded(true)
-                    },
-                    getPersonPreview = { personId ->
-                        personInteractor.getPersonPreview(personId, visitor.token)
-                    },
-                    getFileInfo = messageRepository::getFileInfo
-                )
-                uploadHistoryComplete()
-            }
+        val statusExistenceMessages = conditionRepository.getStatusExistenceMessages()
+        val flagAllHistoryLoaded = conditionRepository.getFlagAllHistoryLoaded()
+
+        when {
+            !statusExistenceMessages && executeAnyway -> uploadHistoryComplete()
+            statusExistenceMessages && (!flagAllHistoryLoaded || executeAnyway) -> messageRepository
+                .getTimeFirstMessage()
+                ?.let { firstMessageTime ->
+                    messageRepository.uploadMessages(
+                        uuid = visitor.uuid,
+                        startTime = null,
+                        endTime = firstMessageTime,
+                        updateReadPoint = { false },
+                        syncMessagesAcrossDevices = {},
+                        returnedEmptyPool = {
+                            eventAllHistoryLoaded()
+                            conditionRepository.saveFlagAllHistoryLoaded(true)
+                        },
+                        getPersonPreview = { personId ->
+                            personInteractor.getPersonPreview(personId, visitor.token)
+                        },
+                        getFileInfo = messageRepository::getFileInfo
+                    )
+                    uploadHistoryComplete()
+                }
         }
     }
 
