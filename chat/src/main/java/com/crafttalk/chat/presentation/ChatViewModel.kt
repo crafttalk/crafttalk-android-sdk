@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -46,6 +47,7 @@ class ChatViewModel
     val firstUploadMessages = MutableLiveData<Int?>(null)
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     private fun uploadMessages() {
+        Log.d("TEST_WHITE_SCREEN", "uploadMessages start;")
         val dataSource = chatMessageInteractor.getAllMessages()
             ?.map<MessageModel> { (messageModelMapper(it, context)) }
             ?.mapByPage { groupPageByDate(it) } ?: return
@@ -60,6 +62,7 @@ class ChatViewModel
                 }
             }
         })
+        Log.d("TEST_WHITE_SCREEN", "uploadMessagesForUser postValue pagedListBuilder: ${pagedListBuilder};")
         uploadMessagesForUser.postValue(pagedListBuilder.build())
     }
 
@@ -109,6 +112,7 @@ class ChatViewModel
                 visitor = visitor,
                 successAuthUi = {
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
+                    Log.d("TEST_WHITE_SCREEN", "successAuthUi onStartChatView;")
                     uploadMessages()
                 },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
@@ -124,6 +128,7 @@ class ChatViewModel
                 visitor = Visitor.map(args),
                 successAuthUi = {
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
+                    Log.d("TEST_WHITE_SCREEN", "successAuthUi registration;")
                     uploadMessages()
                 },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
@@ -137,6 +142,7 @@ class ChatViewModel
             authChatInteractor.logIn(
                 successAuthUi = {
                     displayableUIObject.postValue(DisplayableUIObject.CHAT)
+                    Log.d("TEST_WHITE_SCREEN", "successAuthUi reload;")
                     uploadMessages()
                 },
                 failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
@@ -246,6 +252,8 @@ class ChatViewModel
     fun setValueCountUnreadMessages() {
         launchIO {
             val list = uploadMessagesForUser.value?.value?.toList()?.filterNotNull() ?: return@launchIO
+
+            Log.d("TEST_WHITE_SCREEN", "setValueCountUnreadMessages: ${list.indexOfFirst { it.isReadMessage }};")
 
             when (val indexLastReadMessage = list.indexOfFirst { it.isReadMessage }) {
                 -1 -> firstUploadMessages.postValue(list.size - 1)

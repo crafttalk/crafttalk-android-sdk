@@ -339,6 +339,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 val countItemsLastVersion = adapterListMessages.itemCount
                 adapterListMessages.submitList(pagedList)
 
+                Log.d("TEST_WHITE_SCREEN", "liveDataMessages observe isFirstUploadMessages: ${isFirstUploadMessages};")
                 if (isFirstUploadMessages) {
                     viewModel.setValueCountUnreadMessages()
                 } else {
@@ -354,6 +355,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             })
         })
         viewModel.firstUploadMessages.observe(lifecycleOwner, Observer {
+            Log.d("TEST_WHITE_SCREEN", "firstUploadMessages observe: ${it};")
             it ?: return@Observer
             chat_place.visibility = View.VISIBLE
             if (ChatAttr.getInstance().showStartingProgress) {

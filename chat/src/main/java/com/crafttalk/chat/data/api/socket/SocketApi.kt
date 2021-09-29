@@ -151,6 +151,7 @@ class SocketApi constructor(
         socket.on("authorized") {
             Log.d(TAG_SOCKET_EVENT, "authorized")
             isAuthorized = true
+            Log.d("TEST_WHITE_SCREEN", "successAuthUiFun authorized;")
             successAuthUiFun()
             viewModelScope.launch {
                 successAuthUxFun()
@@ -257,15 +258,20 @@ class SocketApi constructor(
     }
 
     private fun connectUser(socket: Socket) {
+        Log.d("TEST_WHITE_SCREEN", "connectUser socket connected: ${socket.connected()};")
         if (!socket.connected()) {
+            Log.d("TEST_WHITE_SCREEN", "connectUser socket connect;")
             socket.connect()
         } else {
+            Log.d("TEST_WHITE_SCREEN", "connectUser authenticationUser;")
             authenticationUser(socket)
         }
     }
 
     private fun authenticationUser(socket: Socket) {
+        Log.d("TEST_WHITE_SCREEN", "authenticationUser isAuthorized: ${isAuthorized}; socket connected: ${socket.connected()};")
         if (isAuthorized && socket.connected()) {
+            Log.d("TEST_WHITE_SCREEN", "successAuthUiFun authenticationUser;")
             successAuthUiFun()
             viewModelScope.launch {
                 successAuthUxFun()
