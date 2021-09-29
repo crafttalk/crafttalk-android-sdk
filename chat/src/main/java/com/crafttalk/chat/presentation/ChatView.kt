@@ -468,7 +468,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.openDocument.observe(lifecycleOwner) {
             it ?: return@observe
             val (file, isSuccess) = it
-            if (!isSuccess) downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_open_file_fail))
+            if (!isSuccess) {
+                downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_download_file_fail))
+                return@observe
+            }
             file ?: return@observe
             viewModel.openDocument.value = null
 
@@ -482,9 +485,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 val intentChooser = Intent.createChooser(documentIntent, context.getString(R.string.com_crafttalk_chat_string_chooser_open_file_action_view))
                 if (documentIntent.resolveActivity(context.packageManager) != null) {
                     context.startActivity(intentChooser)
+                } else {
+                    downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_open_file_fail))
                 }
             } catch (ex: ActivityNotFoundException) {
-                downloadFileListener.failDownload()
+                downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_open_file_fail))
             }
         }
         viewModel.mergeHistoryBtnVisible.observe(lifecycleOwner) {

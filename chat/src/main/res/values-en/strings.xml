@@ -52,7 +52,7 @@
     <!--    Download file-->
     <string name="com_crafttalk_chat_download_file_success">File downloaded successfully</string>
     <string name="com_crafttalk_chat_download_file_fail">File could not be downloaded</string>
-    <string name="com_crafttalk_chat_open_file_fail">File could not be  opened</string>
+    <string name="com_crafttalk_chat_open_file_fail">File could not be opened</string>
     <string name="com_crafttalk_chat_download">Download</string>
 
     <string name="com_crafttalk_chat_string_chooser_open_file_action_view">Select an application to view this file:</string>
