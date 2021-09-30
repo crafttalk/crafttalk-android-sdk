@@ -70,7 +70,7 @@ dependencies {
 
 ```
 <com.crafttalk.chat.presentation.ChatView
-        android:id="@+id/chat_view"
+        android:id="@+id/chatView"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 ```
@@ -83,20 +83,16 @@ dependencies {
 ```
 Chat.init(
     this,   
-    getString(R.string.urlSocketHost),
-    getString(R.string.urlSocketNameSpace),
-    getString(R.string.urlSyncHistory),
-    getString(R.string.urlUploadHost),
-    getString(R.string.urlUploadNameSpace),
+    getString(R.string.urlChatScheme),
+    getString(R.string.urlChatHost),
+    getString(R.string.urlChatNameSpace),   
     fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
 ) 
 ```
 
-- urlSocketHost - указывает, по какому host подключать сокет
-- urlSocketNameSpace - указывает, по какому nameSpace подключать сокет
-- urlSyncHistory - указывает, какое доменное имя будет использоваться при запросе истории
-- urlUploadHost - указывает, по какому baseUrl будут грузиться файлы     
-- urlUploadNameSpace - указывает, по какому nameSpace будут грузиться файлы
+- urlChatScheme - указывает, какая схема будет использоваться при подключении
+- urlChatHost - указывает, какое доменное имя будет использоваться при подключении
+- urlChatNameSpace - указывает, по какому nameSpace будет происходить подключение
 - authType - может принимать AUTH_WITH_FORM или AUTH_WITHOUT_FORM. Это поле определяет, как будет проходить аутентификация для пользователя
 - initialMessageMode - может принимать SEND_ON_OPEN (по умолчанию), SEND_AFTER_AUTHORIZATION или null. Это поле определяет, в какой момент будет отправлено событие /start. SEND_ON_OPEN соответствует sendInitialMessageOnOpen, SEND_AFTER_AUTHORIZATION соответствует sendInitialMessageOnStartDialog, null - не отправлять вообще /start (соответствует showInitialMessage).
 - operatorPreviewMode - может принимать CACHE (по умолчанию) или ALWAYS_REQUEST. Это поле определяет режим сохранения иконки оператора.
@@ -147,7 +143,9 @@ Chat.init(
 
 Важно!!! Создание сессии должно происходить (вызов метода Chat.createSession) после инициализации чат-бота (вызов метода Chat.init).
 
-Важно!!! В случае если методы Chat.wakeUp и Chat.drop вызываются в том же фрагменте, где располагается сам чат-бот, то вызов метода chat_view.onResume должен идти после Chat.wakeUp.
+Важно!!! В случае если методы Chat.wakeUp и Chat.drop вызываются в том же фрагменте, где располагается сам чат-бот, то вызов метода chatView.onResume должен идти после Chat.wakeUp.
+
+Важно!!! Также существует метод Chat.wakeUp без аргументов. Этот метод стоит использовать, когда Chat.wakeUp вызывается на экране чата, в таком случае этот метод должен вызываться перед вызовом chatView.onResume.
 
 ```
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,17 +178,17 @@ override fun onDestroy() {
 ```
 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    chat_view.onViewCreated(this)     
-}
-
-override fun onStart() {
-    super.onStart()
-    chatView.onStart(this, viewLifecycleOwner)    
+    chatView.onViewCreated(this, viewLifecycleOwner)     
 }
 
 override fun onResume() {
     super.onResume()
-    chatView.onResume(viewLifecycleOwner)
+    chatView.onResume()
+}
+
+override fun onStop() {
+    super.onStop()
+    chatView.onStop()
 }
 ```
 
@@ -202,6 +200,7 @@ override fun onResume() {
 
 Атрибуты, настраивающие поведение:
 - timeDelayed - выставляет минимальное время отображения троббера
+- delay_download_document - минимальное время, отображения иконки, установленной через атрибут drawable_document_downloading_icon
 
 
 Атрибуты, настраивающие внешний вид:
@@ -258,7 +257,9 @@ Drawable:
 - drawable_progress_indeterminate - устанавливает цвет всех тробберов в чате
 - drawable_attach_file - устанавливает иконку элемента, предназначенного для прикрепления файлов
 - drawable_send_message - устанавливает иконку элемента, предназначенного для отправки сообщений
-- drawable_file_icon - устанавливает иконку в сообщеии, содержащем файлы
+- drawable_document_not_downloaded_icon - устанавливает иконку для файла, который еще не был скачан, в сообщении, содержащем файл
+- drawable_document_downloading_icon - устанавливает иконку для файла, который скачивается, в сообщении, содержащем файл
+- drawable_document_downloaded_icon - устанавливает иконку для файла, который уже скачан, в сообщении, содержащем файл
         
 Размеры текста:
 - size_user_message - устанавливает размер текста пользовательского сообщения
@@ -325,6 +326,7 @@ Drawable:
 - show_starting_progress - указывает о необходимости отобразить троббер при загрузки чата (значение по умолчанию true)
 - show_user_message_author - указывает о необходимости отобразить имя автора пользователя
 - show_user_message_status - указывает о необходимости отобразить статус пользовательского сообщения
+- show_chat_state - указывает о необходимости отобразить дефолтную панель с состоянием синхронизации
 
 Кнопка для скачивания файлов:
 - show_file_message_download - указывает о необходимости отобразить кнопку для скачивания файлов
@@ -393,8 +395,8 @@ chatView.setOnPermissionListener(object : ChatPermissionListener {
 
 ```
 chatView.setOnUploadFileListener(object : UploadFileListener {
-    override fun successUpload() {}
-    override fun failUpload(message: String, type: TypeFailUpload) {}
+    override fun successUpload() { ... }
+    override fun failUpload(message: String, type: TypeFailUpload) { ... }
 })
 ```
 
@@ -404,7 +406,9 @@ chatView.setOnUploadFileListener(object : UploadFileListener {
 
 ```
 chatView.setOnDownloadFileListener(object : DownloadFileListener {
-    override fun failDownload() {}  
+    override fun successDownload() { ... }
+    override fun failDownload() { ... }
+    override fun failDownload(title: String) { ... }
 })
 ```
 
@@ -418,6 +422,29 @@ chatView.setOnInternetConnectionListener(object : ChatInternetConnectionListener
     override fun failConnect() { status_connection.visibility = View.VISIBLE }
     override fun lossConnection() { status_connection.visibility = View.VISIBLE }
     override fun reconnect() { status_connection.visibility = View.GONE }
+})
+```
+
+#### ChatStateListener
+
+Этот listener устанавливается через ChatView с помощью метода setOnChatStateListener. Этот listener позволяет самостоятельно реализовать Toolbar. Для этого необходимо выставить show_chat_state="false" и show_upper_limiter="false". Рекомендуется установить show_chat_state = "false", если show_internet_connection_state выставлен как "false".
+
+```
+chatView.setOnChatStateListener(object : ChatStateListener {
+    override fun startSynchronization() { ... }
+    override fun endSynchronization() { ... }  
+})
+```
+
+#### MergeHistoryListener
+
+Этот listener устанавливается через ChatView с помощью метода setMergeHistoryListener. Этот listener позволяет самостоятельно обработать слияние истории двух пользователей. Метод ChatView.mergeHistory позволяет слить истории двух пользователей в одну.
+
+```
+chatView.setMergeHistoryListener(object : MergeHistoryListener {
+    override fun showDialog() { ... }
+    override fun startMerge() { ... }
+    override fun endMerge() { ... }
 })
 ```
 
