@@ -35,7 +35,7 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.4.0'
     implementation project(":chat")
-//    implementation 'com.github.crafttalk:crafttalk-android-sdk:1.1.14'
+//    implementation 'com.github.crafttalk:crafttalk-android-sdk:1.2.3'
 
 //    Multidex
     implementation "androidx.multidex:multidex:2.0.1"

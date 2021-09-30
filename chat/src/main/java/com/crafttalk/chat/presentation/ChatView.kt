@@ -161,7 +161,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.mergeHistoryListener = listener
     }
 
-    private fun mergeHistory() {
+    fun mergeHistory() {
         viewModel.mergeHistoryListener.startMerge()
         viewModel.uploadOldMessages(
             uploadHistoryComplete = viewModel.mergeHistoryListener::endMerge,
