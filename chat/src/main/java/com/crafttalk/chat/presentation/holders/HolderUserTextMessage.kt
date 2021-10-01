@@ -45,6 +45,7 @@ class HolderUserTextMessage(
             text = item.message
             // set color
             setTextColor(ChatAttr.getInstance().colorTextUserMessage)
+            setLinkTextColor(ChatAttr.getInstance().colorTextLinkUserMessage)
             // set dimension
             setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextUserMessage)
             // set font

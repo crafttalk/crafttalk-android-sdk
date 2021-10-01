@@ -14,7 +14,7 @@ import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatAttr
 
-fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Context): SpannableString {
+fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: List<Tag>, context: Context): SpannableString {
     val result = SpannableString(this)
     spanStructureList.forEach {
         when (it) {
@@ -23,7 +23,15 @@ fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Conte
             is ItalicTag, is EmTag -> result.setSpan(StyleSpan(Typeface.ITALIC), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             is UrlTag -> {
                 result.setSpan(URLSpan(it.url), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                result.setSpan(ForegroundColorSpan(ChatAttr.getInstance().colorTextLink), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                result.setSpan(
+                    ForegroundColorSpan(
+                        if (authorIsUser) ChatAttr.getInstance().colorTextLinkUserMessage
+                        else ChatAttr.getInstance().colorTextLinkOperatorMessage
+                    ),
+                    it.pointStart,
+                    it.pointEnd + 1,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
             }
             is ImageTag -> {
                 // load bitmap use it.url
@@ -51,7 +59,15 @@ fun String.convertToSpannableString(spanStructureList: List<Tag>, context: Conte
                         context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${it.phone}")))
                     }
                 }, it.pointStart, it.pointEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                result.setSpan(ForegroundColorSpan(ChatAttr.getInstance().colorTextPhone), it.pointStart, it.pointEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                result.setSpan(
+                    ForegroundColorSpan(
+                        if (authorIsUser) ChatAttr.getInstance().colorTextPhoneUserMessage
+                        else ChatAttr.getInstance().colorTextPhoneOperatorMessage
+                    ),
+                    it.pointStart,
+                    it.pointEnd,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
             }
         }
     }

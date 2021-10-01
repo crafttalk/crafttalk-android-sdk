@@ -22,7 +22,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
-            localMessage.message.convertToSpannableString(localMessage.spanStructureList, context),
+            localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
             localMessage.hasSelectedAction(),
             localMessage.timestamp,
@@ -79,7 +79,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (!localMessage.attachmentUrl.isNullOrEmpty() && !localMessage.attachmentName.isNullOrEmpty() && localMessage.attachmentType != null) -> UnionMessageItem(
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
-            localMessage.message.convertToSpannableString(localMessage.spanStructureList, context),
+            localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
             localMessage.hasSelectedAction(),
             FileModel(

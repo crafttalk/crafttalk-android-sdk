@@ -59,6 +59,7 @@ class HolderOperatorTextMessage(
             }
             // set color
             setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
+            setLinkTextColor(ChatAttr.getInstance().colorTextLinkOperatorMessage)
             // set dimension
             setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
             // set font

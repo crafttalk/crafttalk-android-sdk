@@ -44,8 +44,10 @@
         <attr name="color_text_warning" format="color"/>
         <attr name="color_company" format="color"/>
         <attr name="color_text_date_grouping" format="color"/>
-        <attr name="color_text_link" format="color"/>
-        <attr name="color_text_phone" format="color"/>
+        <attr name="color_text_link_operator_message" format="color"/>
+        <attr name="color_text_link_user_message" format="color"/>
+        <attr name="color_text_phone_operator_message" format="color"/>
+        <attr name="color_text_phone_user_message" format="color"/>
 
         <attr name="media_file_download_mode" format="enum">
             <enum name="ONLY_IN_VIEWER" value="0"/>

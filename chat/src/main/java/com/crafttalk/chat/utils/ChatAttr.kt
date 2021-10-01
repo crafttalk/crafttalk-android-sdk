@@ -56,8 +56,10 @@ private constructor(
     val colorUserImageMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_image_message_status, colorUserMessageStatus)
     val colorUserTextMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_text_message_status, colorUserMessageStatus)
     val colorTextDateGrouping = attrArr.getColor(R.styleable.ChatView_color_text_date_grouping, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_info))
-    val colorTextLink = attrArr.getColor(R.styleable.ChatView_color_text_link, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_link))
-    val colorTextPhone = attrArr.getColor(R.styleable.ChatView_color_text_phone, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_phone))
+    val colorTextLinkOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_text_link_operator_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_link_server_message))
+    val colorTextLinkUserMessage = attrArr.getColor(R.styleable.ChatView_color_text_link_user_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_link_user_message))
+    val colorTextPhoneOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_text_phone_operator_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_phone_server_message))
+    val colorTextPhoneUserMessage = attrArr.getColor(R.styleable.ChatView_color_text_phone_user_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_phone_user_message))
 
     val colorBackgroundUserMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_bg_user_message))
     val colorBackgroundUserMediaFileMessage = attrArr.getColor(R.styleable.ChatView_color_bg_user_media_file_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_bg_user_message))

@@ -31,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="start"
+        android:autoLink="email"
         android:paddingStart="@dimen/com_crafttalk_chat_message_content_padding_start"
         android:paddingTop="@dimen/com_crafttalk_chat_message_content_padding_top"
         android:paddingEnd="@dimen/com_crafttalk_chat_message_content_padding_end"
