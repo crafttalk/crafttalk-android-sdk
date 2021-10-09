@@ -123,6 +123,7 @@ class MessageRepository
                     else -> MessageType.VISITOR_MESSAGE.valueType
                 }
                 val fileInfo = getFileInfo(context, networkMessage)
+                val repliedFileInfo = networkMessage.replyToMessage?.let { getFileInfo(context, it) }
                 MessageEntity.mapUserMessage(
                     uuid = uuid,
                     networkMessage = networkMessage,
@@ -130,7 +131,10 @@ class MessageRepository
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
                     fileSize = fileInfo?.size,
                     mediaFileHeight = fileInfo?.height,
-                    mediaFileWidth = fileInfo?.width
+                    mediaFileWidth = fileInfo?.width,
+                    repliedMessageFileSize = repliedFileInfo?.size,
+                    repliedMessageMediaFileHeight = repliedFileInfo?.height,
+                    repliedMessageMediaFileWidth = repliedFileInfo?.width,
                 )
             }
 
@@ -201,8 +205,9 @@ class MessageRepository
         }
     }
 
-    override suspend fun sendMessages(message: String) {
-        socketApi.sendMessage(message)
+    override suspend fun sendMessages(message: String, repliedMessageId: String?) {
+        val repliedMessage = repliedMessageId?.let { messagesDao.getMessageById(it) }?.let { NetworkMessage.map(it) }
+        socketApi.sendMessage(message, repliedMessage)
     }
 
     override suspend fun selectAction(messageId: String, actionId: String) {

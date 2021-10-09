@@ -45,7 +45,7 @@ interface IMessageRepository {
         networkMessage: NetworkMessage
     ): TransferFileInfo?
 
-    suspend fun sendMessages(message: String)
+    suspend fun sendMessages(message: String, repliedMessageId: String?)
     suspend fun selectAction(messageId: String, actionId: String)
 
     fun updateSizeMessage(id: String, height: Int, width: Int)

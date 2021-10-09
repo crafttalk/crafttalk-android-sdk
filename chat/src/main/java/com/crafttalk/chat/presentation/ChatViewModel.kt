@@ -267,7 +267,10 @@ class ChatViewModel
 
     fun sendMessage(message: String) {
         launchIO {
-            messageInteractor.sendMessage(message)
+            messageInteractor.sendMessage(
+                message = message,
+                repliedMessageId = null
+            )
         }
     }
 

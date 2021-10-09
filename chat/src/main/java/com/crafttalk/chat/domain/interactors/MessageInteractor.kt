@@ -25,8 +25,8 @@ class MessageInteractor
         }
     }
 
-    suspend fun sendMessage(message: String) {
-        messageRepository.sendMessages(message)
+    suspend fun sendMessage(message: String, repliedMessageId: String?) {
+        messageRepository.sendMessages(message, repliedMessageId)
     }
 
     suspend fun selectActionInMessage(messageId: String, actionId: String) {

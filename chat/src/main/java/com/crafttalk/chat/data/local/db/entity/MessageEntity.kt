@@ -28,49 +28,82 @@ data class MessageEntity(
     val messageType: Int,
 
     @ColumnInfo(name = "parent_msg_id")
-    val parentMsgId: String?,
+    val parentMsgId: String? = null,
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,
 
     @ColumnInfo(name = "message")
-    val message: String?,
+    val message: String? = null,
 
     @ColumnInfo(name = "span_structure_list")
-    val spanStructureList: List<Tag>,
+    val spanStructureList: List<Tag> = listOf(),
 
     @ColumnInfo(name = "actions")
-    val actions: List<ActionEntity>?,
+    val actions: List<ActionEntity>? = null,
 
     @ColumnInfo(name = "attachment_url")
-    val attachmentUrl: String?,
+    val attachmentUrl: String? = null,
 
     @ColumnInfo(name = "attachment_type")
-    val attachmentType: TypeFile?,
+    val attachmentType: TypeFile? = null,
 
     @ColumnInfo(name = "attachment_download_progress_type")
-    val attachmentDownloadProgressType: TypeDownloadProgress?,
+    val attachmentDownloadProgressType: TypeDownloadProgress? = null,
 
     @ColumnInfo(name = "attachment_name")
-    val attachmentName: String?,
+    val attachmentName: String? = null,
 
     @ColumnInfo(name = "attachment_size")
-    val attachmentSize: Long?,
+    val attachmentSize: Long? = null,
 
     @ColumnInfo(name = "operator_id")
-    val operatorId: String?,
+    val operatorId: String? = null,
 
     @ColumnInfo(name = "operator_preview")
-    val operatorPreview: String?,
+    val operatorPreview: String? = null,
 
     @ColumnInfo(name = "operator_name")
-    val operatorName: String?,
+    val operatorName: String? = null,
 
     @ColumnInfo(name = "height")
-    val height: Int?,
+    val height: Int? = null,
 
     @ColumnInfo(name = "width")
-    val width: Int?
+    val width: Int? = null,
+
+    @ColumnInfo(name = "replied_message_id")
+    val repliedMessageId: String? = null,
+
+    @ColumnInfo(name = "replied_message_text")
+    val repliedMessageText: String? = null,
+
+    @ColumnInfo(name = "replied_message_span_structure_list")
+    val repliedTextSpanStructureList: List<Tag> = listOf(),
+
+    @ColumnInfo(name = "replied_message_attachment_url")
+    val repliedMessageAttachmentUrl: String? = null,
+
+    @ColumnInfo(name = "replied_message_attachment_type")
+    val repliedMessageAttachmentType: TypeFile? = null,
+
+    @ColumnInfo(name = "replied_message_attachment_name")
+    val repliedMessageAttachmentName: String? = null,
+
+    @ColumnInfo(name = "replied_message_attachment_size")
+    val repliedMessageAttachmentSize: Long? = null,
+
+    @ColumnInfo(name = "replied_message_attachment_download_progress_type")
+    val repliedMessageAttachmentDownloadProgressType: TypeDownloadProgress? = null,
+
+    @ColumnInfo(name = "replied_message_attachment_height")
+    val repliedMessageAttachmentHeight: Int? = null,
+
+    @ColumnInfo(name = "replied_message_attachment_width")
+    val repliedMessageAttachmentWidth: Int? = null,
+
+    @ColumnInfo(name = "dialog_id")
+    val dialogId: String? = null,
 
 ) {
 
@@ -122,13 +155,17 @@ data class MessageEntity(
             uuid: String,
             networkMessage: NetworkMessage,
             operatorPreview: String?,
-            correctAttachmentUrl: String? = null,
             fileSize: Long? = null,
             mediaFileHeight: Int? = null,
-            mediaFileWidth: Int? = null
+            mediaFileWidth: Int? = null,
+            repliedMessageFileSize: Long? = null,
+            repliedMessageMediaFileHeight: Int? = null,
+            repliedMessageMediaFileWidth: Int? = null,
         ): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = networkMessage.message?.convertTextToNormalString(list)
+            val repliedList = arrayListOf<Tag>()
+            val repliedMessage = networkMessage.replyToMessage?.message?.convertTextToNormalString(repliedList)
 
             return MessageEntity(
                 uuid = uuid,
@@ -140,7 +177,7 @@ data class MessageEntity(
                 message = message,
                 spanStructureList = list,
                 actions = networkMessage.actions?.let { ActionEntity.map(it) },
-                attachmentUrl = correctAttachmentUrl,
+                attachmentUrl = networkMessage.attachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
                 attachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
                 attachmentName = networkMessage.attachmentName,
@@ -149,7 +186,18 @@ data class MessageEntity(
                 operatorPreview = operatorPreview,
                 operatorName = if (networkMessage.isReply) networkMessage.operatorName else "Вы",
                 height = mediaFileHeight,
-                width = mediaFileWidth
+                width = mediaFileWidth,
+                repliedMessageId = networkMessage.replyToMessage?.id,
+                repliedMessageText = repliedMessage,
+                repliedTextSpanStructureList = repliedList,
+                repliedMessageAttachmentUrl = networkMessage.replyToMessage?.attachmentUrl,
+                repliedMessageAttachmentType = networkMessage.replyToMessage?.attachmentTypeFile,
+                repliedMessageAttachmentName = networkMessage.replyToMessage?.attachmentName,
+                repliedMessageAttachmentSize = repliedMessageFileSize,
+                repliedMessageAttachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
+                repliedMessageAttachmentHeight = repliedMessageMediaFileHeight,
+                repliedMessageAttachmentWidth = repliedMessageMediaFileWidth,
+                dialogId = networkMessage.dialogId
             )
         }
 
@@ -184,7 +232,8 @@ data class MessageEntity(
                 operatorPreview = operatorPreview,
                 operatorName = networkMessage.operatorName,
                 height = mediaFileHeight,
-                width = mediaFileWidth
+                width = mediaFileWidth,
+                dialogId = networkMessage.dialogId
             )
         }
 
@@ -195,10 +244,15 @@ data class MessageEntity(
             operatorPreview: String?,
             fileSize: Long? = null,
             mediaFileHeight: Int? = null,
-            mediaFileWidth: Int? = null
+            mediaFileWidth: Int? = null,
+            repliedMessageFileSize: Long? = null,
+            repliedMessageMediaFileHeight: Int? = null,
+            repliedMessageMediaFileWidth: Int? = null,
         ): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = networkMessage.message?.convertTextToNormalString(list)
+            val repliedList = arrayListOf<Tag>()
+            val repliedMessage = networkMessage.replyToMessage?.message?.convertTextToNormalString(repliedList)
 
             return MessageEntity(
                 uuid = uuid,
@@ -209,7 +263,6 @@ data class MessageEntity(
                 timestamp = networkMessage.timestamp,
                 message = message,
                 spanStructureList = list,
-                actions = null,
                 attachmentUrl = networkMessage.attachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
                 attachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
@@ -219,7 +272,18 @@ data class MessageEntity(
                 operatorPreview = operatorPreview,
                 operatorName = "Вы",
                 height = mediaFileHeight,
-                width = mediaFileWidth
+                width = mediaFileWidth,
+                repliedMessageId = networkMessage.replyToMessage?.id,
+                repliedMessageText = repliedMessage,
+                repliedTextSpanStructureList = repliedList,
+                repliedMessageAttachmentUrl = networkMessage.replyToMessage?.attachmentUrl,
+                repliedMessageAttachmentType = networkMessage.replyToMessage?.attachmentTypeFile,
+                repliedMessageAttachmentName = networkMessage.replyToMessage?.attachmentName,
+                repliedMessageAttachmentSize = repliedMessageFileSize,
+                repliedMessageAttachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
+                repliedMessageAttachmentHeight = repliedMessageMediaFileHeight,
+                repliedMessageAttachmentWidth = repliedMessageMediaFileWidth,
+                dialogId = networkMessage.dialogId
             )
         }
 
@@ -235,19 +299,10 @@ data class MessageEntity(
                 isReply = true,
                 parentMsgId = networkMessage.parentMessageId,
                 timestamp = networkMessage.timestamp,
-                message = null,
-                spanStructureList = listOf(),
-                actions = null,
-                attachmentUrl = null,
-                attachmentType = null,
-                attachmentDownloadProgressType = null,
-                attachmentName = null,
-                attachmentSize = null,
                 operatorId = networkMessage.operatorId,
                 operatorPreview = operatorPreview,
                 operatorName = networkMessage.operatorName,
-                height = null,
-                width = null
+                dialogId = networkMessage.dialogId
             )
         }
 

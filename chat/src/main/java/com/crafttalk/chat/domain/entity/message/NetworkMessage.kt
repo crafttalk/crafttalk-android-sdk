@@ -1,5 +1,6 @@
 package com.crafttalk.chat.domain.entity.message
 
+import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.utils.ChatParams
 import com.google.gson.annotations.SerializedName
@@ -50,7 +51,10 @@ data class NetworkMessage (
     val operatorName: String? = null,
 
     @SerializedName (value = "reply_to_message")
-    val replyToMessage: NetworkMessage? = null
+    val replyToMessage: NetworkMessage? = null,
+
+    @SerializedName (value = "dialog_id")
+    val dialogId: String? = null
 
 ) : Serializable {
 
@@ -87,6 +91,27 @@ data class NetworkMessage (
         isImage -> TypeFile.IMAGE
         isGif -> TypeFile.GIF
         else -> null
+    }
+
+    companion object {
+
+        fun map(messageEntity: MessageEntity) = NetworkMessage(
+            id = messageEntity.id,
+            messageType = messageEntity.messageType,
+            isReply = messageEntity.isReply,
+            parentMessageId = messageEntity.parentMsgId,
+            timestamp = messageEntity.timestamp,
+            message = messageEntity.message,
+            actions = messageEntity.actions?.map { NetworkAction.map(it) },
+            attachmentUrl = messageEntity.attachmentUrl,
+            attachmentType = messageEntity.attachmentType?.value,
+            attachmentName = messageEntity.attachmentName,
+            operatorId = messageEntity.operatorId,
+            operatorName = messageEntity.operatorName,
+            replyToMessage = null,
+            dialogId = messageEntity.dialogId
+        )
+
     }
 
 }

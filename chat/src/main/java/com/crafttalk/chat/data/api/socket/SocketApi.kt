@@ -279,8 +279,22 @@ class SocketApi constructor(
         }
     }
 
-    fun sendMessage(message: String) {
-        socket?.emit("visitor-message", message, MessageType.VISITOR_MESSAGE.valueType, null, 0, null, null, null)
+    fun sendMessage(message: String, repliedMessage: NetworkMessage?) {
+        val repliedMessageJSONObject = repliedMessage?.let {
+            JSONObject(gson.toJson(it))
+        }
+
+        socket?.emit(
+            "visitor-message",
+            message,
+            MessageType.VISITOR_MESSAGE.valueType,
+            null,
+            0,
+            null,
+            null,
+            repliedMessageJSONObject,
+            null
+        )
     }
 
     fun selectAction(actionId: String) {
@@ -340,7 +354,6 @@ class SocketApi constructor(
                                 uuid = visitor.uuid,
                                 networkMessage = messageSocket,
                                 operatorPreview = operatorPreview,
-                                correctAttachmentUrl = url,
                                 mediaFileHeight = height,
                                 mediaFileWidth = width
                             ))
@@ -354,17 +367,40 @@ class SocketApi constructor(
                         uuid = visitor.uuid,
                         networkMessage = messageSocket,
                         operatorPreview = operatorPreview,
-                        correctAttachmentUrl = url,
-                        fileSize= getWeightFile(url)
+                        fileSize = getWeightFile(url)
                     ))
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isText -> {
-                insertMessage(MessageEntity.map(
-                    uuid = visitor.uuid,
-                    networkMessage = messageSocket,
-                    operatorPreview = operatorPreview
-                ))
+                val repliedMessageUrl = messageSocket.replyToMessage?.attachmentUrl
+                when {
+                    repliedMessageUrl != null && messageSocket.replyToMessage.isFile -> {
+                        insertMessage(MessageEntity.map(
+                            uuid = visitor.uuid,
+                            networkMessage = messageSocket,
+                            operatorPreview = operatorPreview,
+                            repliedMessageFileSize = repliedMessageUrl.run(::getWeightFile)
+                        ))
+                    }
+                    repliedMessageUrl != null && (messageSocket.replyToMessage.isImage || messageSocket.replyToMessage.isGif) -> {
+                        getSizeMediaFile(context, repliedMessageUrl) { height, width ->
+                            insertMessage(MessageEntity.map(
+                                uuid = visitor.uuid,
+                                networkMessage = messageSocket,
+                                operatorPreview = operatorPreview,
+                                repliedMessageMediaFileHeight = height,
+                                repliedMessageMediaFileWidth = width
+                            ))
+                        }
+                    }
+                    else -> {
+                        insertMessage(MessageEntity.map(
+                            uuid = visitor.uuid,
+                            networkMessage = messageSocket,
+                            operatorPreview = operatorPreview
+                        ))
+                    }
+                }
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
