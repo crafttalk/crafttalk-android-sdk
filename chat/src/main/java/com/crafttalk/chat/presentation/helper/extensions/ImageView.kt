@@ -105,22 +105,25 @@ fun ImageView.loadMediaFile(
 ) {
     warningContainer?.visibility = View.GONE
 
+    val mediaFileHeight = mediaFile.height ?: 0
+    val mediaFileWidth = mediaFile.width ?: 0
+
     when {
-        !mediaFile.failLoading && mediaFile.height > mediaFile.width && isUserMessage -> {
-            layoutParams.width = ChatAttr.getInstance().heightElongatedItemUserFilePreviewMessage * mediaFile.width / mediaFile.height
+        !mediaFile.failLoading && mediaFileHeight > mediaFileWidth && isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().heightElongatedItemUserFilePreviewMessage * mediaFileWidth / mediaFileHeight
             layoutParams.height = ChatAttr.getInstance().heightElongatedItemUserFilePreviewMessage
         }
-        !mediaFile.failLoading && mediaFile.height <= mediaFile.width && isUserMessage -> {
+        !mediaFile.failLoading && mediaFileHeight <= mediaFileWidth && isUserMessage -> {
             layoutParams.width = ChatAttr.getInstance().widthElongatedItemUserFilePreviewMessage
-            layoutParams.height = ChatAttr.getInstance().widthElongatedItemUserFilePreviewMessage * mediaFile.height / mediaFile.width
+            layoutParams.height = ChatAttr.getInstance().widthElongatedItemUserFilePreviewMessage * mediaFileHeight / mediaFileWidth
         }
-        !mediaFile.failLoading && mediaFile.height > mediaFile.width && !isUserMessage -> {
-            layoutParams.width = ChatAttr.getInstance().heightElongatedItemOperatorFilePreviewMessage * mediaFile.width / mediaFile.height
+        !mediaFile.failLoading && mediaFileHeight > mediaFileWidth && !isUserMessage -> {
+            layoutParams.width = ChatAttr.getInstance().heightElongatedItemOperatorFilePreviewMessage * mediaFileWidth / mediaFileHeight
             layoutParams.height = ChatAttr.getInstance().heightElongatedItemOperatorFilePreviewMessage
         }
-        !mediaFile.failLoading && mediaFile.height <= mediaFile.width && !isUserMessage -> {
+        !mediaFile.failLoading && mediaFileHeight <= mediaFileWidth && !isUserMessage -> {
             layoutParams.width = ChatAttr.getInstance().widthElongatedItemOperatorFilePreviewMessage
-            layoutParams.height = ChatAttr.getInstance().widthElongatedItemOperatorFilePreviewMessage * mediaFile.height / mediaFile.width
+            layoutParams.height = ChatAttr.getInstance().widthElongatedItemOperatorFilePreviewMessage * mediaFileHeight / mediaFileWidth
         }
         mediaFile.failLoading && isUserMessage -> {
             layoutParams.width = ChatAttr.getInstance().widthItemUserFilePreviewWarningMessage

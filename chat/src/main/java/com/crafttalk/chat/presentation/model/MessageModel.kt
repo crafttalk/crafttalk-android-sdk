@@ -2,7 +2,6 @@ package com.crafttalk.chat.presentation.model
 
 import android.text.SpannableString
 import com.crafttalk.chat.R
-import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.presentation.base.BaseItem
 import com.crafttalk.chat.presentation.model.Role.*
 import com.crafttalk.chat.domain.entity.message.MessageType as StateMessage
@@ -88,7 +87,6 @@ data class FileMessageItem(
     override val id: String,
     override val role: Role,
     val document: FileModel,
-    var typeDownloadProgress: TypeDownloadProgress,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
@@ -110,7 +108,6 @@ data class UnionMessageItem(
     val actions: List<ActionItem>?,
     val hasSelectedAction: Boolean,
     val file: FileModel,
-    var typeDownloadProgress: TypeDownloadProgress,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,

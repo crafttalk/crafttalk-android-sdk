@@ -55,8 +55,8 @@ class HolderOperatorFileMessage(
         time?.setTime(item)
         status?.setStatusMessage(item)
         // set width item and content
-        progressDownload?.setProgressDownloadFile(item.typeDownloadProgress)
-        fileIcon?.setFileIcon(item.typeDownloadProgress)
+        progressDownload?.setProgressDownloadFile(item.document.typeDownloadProgress)
+        fileIcon?.setFileIcon(item.document.typeDownloadProgress)
         fileName?.setFileName(item.document, false)
         fileSize?.setFileSize(item.document, false)
         // set bg

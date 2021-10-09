@@ -147,7 +147,7 @@ fun TextView.setFileName(file: FileModel, isUserMessage: Boolean) {
 }
 
 fun TextView.setFileSize(file: FileModel, isUserMessage: Boolean) {
-    if (file.size == 0L) return
+    if (file.size == null) return
     val df = DecimalFormat("#.##")
     val countByteInKByte = 1000L
     val countByteInMByte = 1000L * 1000L

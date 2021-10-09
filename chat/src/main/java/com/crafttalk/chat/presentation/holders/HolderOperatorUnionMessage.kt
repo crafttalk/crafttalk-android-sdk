@@ -148,8 +148,8 @@ class HolderOperatorUnionMessage(
                 media?.visibility = View.GONE
                 warningContainer?.visibility = View.GONE
                 fileInfo?.visibility = View.VISIBLE
-                progressDownload?.setProgressDownloadFile(item.typeDownloadProgress)
-                fileIcon?.setFileIcon(item.typeDownloadProgress)
+                progressDownload?.setProgressDownloadFile(item.file.typeDownloadProgress)
+                fileIcon?.setFileIcon(item.file.typeDownloadProgress)
                 fileName?.setFileName(item.file, false)
                 fileSize?.setFileSize(item.file, false)
             }

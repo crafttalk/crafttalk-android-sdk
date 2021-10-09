@@ -35,10 +35,10 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
-                name = localMessage.attachmentName!!,
-                size = localMessage.attachmentSize ?: 0,
-                height = localMessage.height ?: 0,
-                width = localMessage.width ?: 0,
+                name = localMessage.attachmentName ?: "",
+                size = localMessage.attachmentSize,
+                height = localMessage.height,
+                width = localMessage.width,
                 failLoading = localMessage.height == null || localMessage.width == null
             ),
             localMessage.timestamp,
@@ -51,10 +51,10 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
-                name = localMessage.attachmentName!!,
-                size = localMessage.attachmentSize ?: 0,
-                height = localMessage.height ?: 0,
-                width = localMessage.width ?: 0,
+                name = localMessage.attachmentName ?: "",
+                size = localMessage.attachmentSize,
+                height = localMessage.height,
+                width = localMessage.width,
                 failLoading = localMessage.height == null || localMessage.width == null
             ),
             localMessage.timestamp,
@@ -67,10 +67,10 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
-                name = localMessage.attachmentName!!,
-                size = localMessage.attachmentSize ?: 0
+                name = localMessage.attachmentName ?: "",
+                size = localMessage.attachmentSize,
+                typeDownloadProgress = localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED
             ),
-            localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED,
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
@@ -85,13 +85,13 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             FileModel(
                 url = localMessage.attachmentUrl,
                 name = localMessage.attachmentName,
-                height = localMessage.height ?: 0,
-                width = localMessage.width ?: 0,
-                size = localMessage.attachmentSize ?: 0,
+                height = localMessage.height,
+                width = localMessage.width,
+                size = localMessage.attachmentSize,
                 failLoading = (localMessage.attachmentType in listOf( TypeFile.IMAGE, TypeFile.GIF)) && (localMessage.height == null || localMessage.width == null),
-                type = localMessage.attachmentType
+                type = localMessage.attachmentType,
+                typeDownloadProgress = localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED
             ),
-            localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED,
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,
