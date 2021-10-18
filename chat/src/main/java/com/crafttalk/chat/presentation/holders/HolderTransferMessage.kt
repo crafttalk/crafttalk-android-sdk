@@ -2,11 +2,9 @@ package com.crafttalk.chat.presentation.holders
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.base.BaseViewHolder
@@ -34,24 +32,15 @@ class HolderTransferMessage(
         authorPreview?.setAuthorIcon(item.authorPreview)
         time?.setTime(item)
         status?.setStatusMessage(item)
-        message?.apply {
-            // set behavior
-            setTextIsSelectable(true)
-            // set width item
-            ChatAttr.getInstance().widthItemOperatorTextMessage?.let {
-                maxWidth = it
-            }
-            // set content
-            text = context.resources.getString(R.string.com_crafttalk_chat_message_join, item.authorName)
-            // set color
-            setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
-            // set dimension
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
-            // set font
-            ChatAttr.getInstance().resFontFamilyOperatorMessage?.let {
-                typeface = ResourcesCompat.getFont(context, it)
-            }
-        }
+        message?.setMessageText(
+            textMessageRes = R.string.com_crafttalk_chat_message_join,
+            textMessageResArgs = listOf(item.authorName),
+            maxWidthTextMessage = ChatAttr.getInstance().widthItemOperatorTextMessage,
+            colorTextMessage = ChatAttr.getInstance().colorTextOperatorMessage,
+            sizeTextMessage = ChatAttr.getInstance().sizeTextOperatorMessage,
+            resFontFamilyMessage = ChatAttr.getInstance().resFontFamilyOperatorMessage,
+            isSelectableText = true
+        )
         // set bg
         contentContainer?.apply {
             setBackgroundResource(ChatAttr.getInstance().bgOperatorMessageResId)

@@ -57,8 +57,16 @@ class HolderOperatorFileMessage(
         // set width item and content
         progressDownload?.setProgressDownloadFile(item.document.typeDownloadProgress)
         fileIcon?.setFileIcon(item.document.typeDownloadProgress)
-        fileName?.setFileName(item.document, false)
-        fileSize?.setFileSize(item.document, false)
+        fileName?.setFileName(
+            file = item.document,
+            colorTextFileName = ChatAttr.getInstance().colorOperatorFileName,
+            sizeTextFileName = ChatAttr.getInstance().sizeOperatorFileName
+        )
+        fileSize?.setFileSize(
+            file = item.document,
+            colorTextFileSize = ChatAttr.getInstance().colorOperatorFileSize,
+            sizeTextFileSize = ChatAttr.getInstance().sizeOperatorFileSize
+        )
         // set bg
         contentContainer?.apply {
             setBackgroundResource(ChatAttr.getInstance().bgOperatorMessageResId)

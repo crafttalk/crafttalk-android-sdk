@@ -1,14 +1,11 @@
 package com.crafttalk.chat.presentation.holders
 
 import android.content.res.ColorStateList
-import android.text.method.LinkMovementMethod
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
@@ -100,36 +97,28 @@ class HolderOperatorUnionMessage(
         authorPreview?.setAuthorIcon(item.authorPreview)
         time?.setTime(item)
         status?.setStatusMessage(item)
-        message?.apply {
-            // set behavior
-            setTextIsSelectable(true)
-            movementMethod = LinkMovementMethod.getInstance()
-            // set width item
-            ChatAttr.getInstance().widthItemOperatorTextMessage?.let {
-                maxWidth = it
-            }
-            // set content
-            text = item.message
-            listActions?.apply {
-                if (item.actions == null) {
-                    visibility = View.GONE
-                } else {
-                    adapter = AdapterAction(item.id, item.hasSelectedAction, selectAction).apply {
-                        this.data = item.actions
+        message?.setMessageText(
+            textMessage = item.message,
+            maxWidthTextMessage = ChatAttr.getInstance().widthItemOperatorTextMessage,
+            colorTextMessage = ChatAttr.getInstance().colorTextOperatorMessage,
+            colorTextLinkMessage = ChatAttr.getInstance().colorTextLinkOperatorMessage,
+            sizeTextMessage = ChatAttr.getInstance().sizeTextOperatorMessage,
+            resFontFamilyMessage = ChatAttr.getInstance().resFontFamilyOperatorMessage,
+            isClickableLink = true,
+            isSelectableText = true,
+            bindContinue = {
+                listActions?.apply {
+                    if (item.actions == null) {
+                        visibility = View.GONE
+                    } else {
+                        adapter = AdapterAction(item.id, item.hasSelectedAction, selectAction).apply {
+                            this.data = item.actions
+                        }
+                        visibility = View.VISIBLE
                     }
-                    visibility = View.VISIBLE
                 }
             }
-            // set color
-            setTextColor(ChatAttr.getInstance().colorTextOperatorMessage)
-            setLinkTextColor(ChatAttr.getInstance().colorTextLinkOperatorMessage)
-            // set dimension
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextOperatorMessage)
-            // set font
-            ChatAttr.getInstance().resFontFamilyOperatorMessage?.let {
-                typeface = ResourcesCompat.getFont(context, it)
-            }
-        }
+        )
         downloadMediaFile?.apply {
             if (fileType in listOf(TypeFile.IMAGE, TypeFile.GIF)) {
                 settingDownloadBtn(false, failLoading)
@@ -150,8 +139,16 @@ class HolderOperatorUnionMessage(
                 fileInfo?.visibility = View.VISIBLE
                 progressDownload?.setProgressDownloadFile(item.file.typeDownloadProgress)
                 fileIcon?.setFileIcon(item.file.typeDownloadProgress)
-                fileName?.setFileName(item.file, false)
-                fileSize?.setFileSize(item.file, false)
+                fileName?.setFileName(
+                    file = item.file,
+                    colorTextFileName = ChatAttr.getInstance().colorOperatorFileName,
+                    sizeTextFileName = ChatAttr.getInstance().sizeOperatorFileName
+                )
+                fileSize?.setFileSize(
+                    file = item.file,
+                    colorTextFileSize = ChatAttr.getInstance().colorOperatorFileSize,
+                    sizeTextFileSize = ChatAttr.getInstance().sizeOperatorFileSize
+                )
             }
             TypeFile.IMAGE -> {
                 fileInfo?.visibility = View.GONE

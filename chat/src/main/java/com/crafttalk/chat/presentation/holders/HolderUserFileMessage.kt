@@ -57,8 +57,16 @@ class HolderUserFileMessage(
         // set width item and content
         progressDownload?.setProgressDownloadFile(item.document.typeDownloadProgress)
         fileIcon?.setFileIcon(item.document.typeDownloadProgress)
-        fileName?.setFileName(item.document, true)
-        fileSize?.setFileSize(item.document, true)
+        fileName?.setFileName(
+            file = item.document,
+            colorTextFileName = ChatAttr.getInstance().colorUserFileName,
+            sizeTextFileName = ChatAttr.getInstance().sizeUserFileName
+        )
+        fileSize?.setFileSize(
+            file = item.document,
+            colorTextFileSize = ChatAttr.getInstance().colorUserFileSize,
+            sizeTextFileSize = ChatAttr.getInstance().sizeUserFileSize
+        )
         // set bg
         contentContainer?.apply {
             setBackgroundResource(ChatAttr.getInstance().bgUserMessageResId)

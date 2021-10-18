@@ -3,6 +3,8 @@ package com.crafttalk.chat.presentation.helper.extensions
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Build
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
@@ -100,10 +102,11 @@ fun TextView.setDate(message: MessageModel) {
 
 fun TextView.settingDownloadBtn(isUserMessage: Boolean, failLoading: Boolean) {
     // set visible
-    visibility = if (ChatAttr.getInstance().mediaFileDownloadMode in listOf(MediaFileDownloadMode.ONLY_IN_CHAT, MediaFileDownloadMode.All_PLACES) && !failLoading) {
-        View.VISIBLE
+    if (ChatAttr.getInstance().mediaFileDownloadMode in listOf(MediaFileDownloadMode.ONLY_IN_CHAT, MediaFileDownloadMode.All_PLACES) && !failLoading) {
+        visibility = View.VISIBLE
     } else {
-        View.GONE
+        visibility = View.GONE
+        return
     }
     // set color
     try {
@@ -130,23 +133,26 @@ fun TextView.settingDownloadBtn(isUserMessage: Boolean, failLoading: Boolean) {
     setBackgroundResource(if (isUserMessage) ChatAttr.getInstance().backgroundUserFileMessageDownload else ChatAttr.getInstance().backgroundOperatorFileMessageDownload)
 }
 
-fun TextView.setFileName(file: FileModel, isUserMessage: Boolean) {
+fun TextView.setFileName(
+    file: FileModel,
+    colorTextFileName: Int,
+    sizeTextFileName: Float
+) {
     text = file.name
     // set color and dimension
-    if (isUserMessage) {
-        setTextColor(ChatAttr.getInstance().colorUserFileName)
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeUserFileName)
-    } else {
-        setTextColor(ChatAttr.getInstance().colorOperatorFileName)
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeOperatorFileName)
-    }
+    setTextColor(colorTextFileName)
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, sizeTextFileName)
     // set font
     ChatAttr.getInstance().resFontFamilyFileInfo?.let {
         typeface = ResourcesCompat.getFont(context, it)
     }
 }
 
-fun TextView.setFileSize(file: FileModel, isUserMessage: Boolean) {
+fun TextView.setFileSize(
+    file: FileModel,
+    colorTextFileSize: Int,
+    sizeTextFileSize: Float
+) {
     if (file.size == null) return
     val df = DecimalFormat("#.##")
     val countByteInKByte = 1000L
@@ -169,15 +175,50 @@ fun TextView.setFileSize(file: FileModel, isUserMessage: Boolean) {
         else -> ""
     }
     // set color and dimension
-    if (isUserMessage) {
-        setTextColor(ChatAttr.getInstance().colorUserFileSize)
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeUserFileSize)
-    } else {
-        setTextColor(ChatAttr.getInstance().colorOperatorFileSize)
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeOperatorFileSize)
-    }
+    setTextColor(colorTextFileSize)
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, sizeTextFileSize)
     // set font
     ChatAttr.getInstance().resFontFamilyFileInfo?.let {
         typeface = ResourcesCompat.getFont(context, it)
     }
+}
+
+fun TextView.setMessageText(
+    textMessage: SpannableString? = null,
+    textMessageRes: Int? = null,
+    textMessageResArgs: List<Any> = listOf(),
+    maxWidthTextMessage: Int,
+    colorTextMessage: Int,
+    colorTextLinkMessage: Int? = null,
+    sizeTextMessage: Float,
+    resFontFamilyMessage: Int? = null,
+    isClickableLink: Boolean = false,
+    isSelectableText: Boolean = false,
+    bindContinue: () -> Unit = {}
+) {
+    if (textMessage == null && textMessageRes == null) {
+        visibility = View.GONE
+        return
+    } else {
+        visibility = View.VISIBLE
+    }
+    // set behavior
+    setTextIsSelectable(isSelectableText)
+    movementMethod = if (isClickableLink) LinkMovementMethod.getInstance() else null
+    // set width item
+    maxWidthTextMessage.let {
+        maxWidth = it
+    }
+    // set content
+    text = textMessage ?: textMessageRes?.let { context.resources.getString(it, textMessageResArgs) }
+    // set color
+    setTextColor(colorTextMessage)
+    if (isClickableLink && colorTextLinkMessage != null) colorTextLinkMessage.run(::setLinkTextColor) else setLinkTextColor(null)
+    // set dimension
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, sizeTextMessage)
+    // set font
+    resFontFamilyMessage?.let {
+        typeface = ResourcesCompat.getFont(context, it)
+    }
+    bindContinue()
 }

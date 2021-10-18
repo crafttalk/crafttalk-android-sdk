@@ -1,14 +1,11 @@
 package com.crafttalk.chat.presentation.holders
 
 import android.content.res.ColorStateList
-import android.text.method.LinkMovementMethod
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -96,26 +93,16 @@ class HolderUserUnionMessage(
         authorPreview?.setAuthorIcon(showAuthorIcon = false)
         time?.setTime(item)
         status?.setStatusMessage(item)
-        message?.apply {
-            // set behavior
-            setTextIsSelectable(true)
-            movementMethod = LinkMovementMethod.getInstance()
-            // set width item
-            ChatAttr.getInstance().widthItemUserTextMessage?.let {
-                maxWidth = it
-            }
-            // set content
-            text = item.message
-            // set color
-            setTextColor(ChatAttr.getInstance().colorTextUserMessage)
-            setLinkTextColor(ChatAttr.getInstance().colorTextLinkUserMessage)
-            // set dimension
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeTextUserMessage)
-            // set font
-            ChatAttr.getInstance().resFontFamilyUserMessage?.let {
-                typeface = ResourcesCompat.getFont(context, it)
-            }
-        }
+        message?.setMessageText(
+            textMessage = item.message,
+            maxWidthTextMessage = ChatAttr.getInstance().widthItemUserTextMessage,
+            colorTextMessage = ChatAttr.getInstance().colorTextUserMessage,
+            colorTextLinkMessage = ChatAttr.getInstance().colorTextLinkUserMessage,
+            sizeTextMessage = ChatAttr.getInstance().sizeTextUserMessage,
+            resFontFamilyMessage = ChatAttr.getInstance().resFontFamilyUserMessage,
+            isClickableLink = true,
+            isSelectableText = true
+        )
         downloadMediaFile?.apply {
             if (fileType in listOf(TypeFile.IMAGE, TypeFile.GIF)) {
                 settingDownloadBtn(true, failLoading)
@@ -136,8 +123,16 @@ class HolderUserUnionMessage(
                 fileInfo?.visibility = View.VISIBLE
                 progressDownload?.setProgressDownloadFile(item.file.typeDownloadProgress)
                 fileIcon?.setFileIcon(item.file.typeDownloadProgress)
-                fileName?.setFileName(item.file, true)
-                fileSize?.setFileSize(item.file, true)
+                fileName?.setFileName(
+                    file = item.file,
+                    colorTextFileName = ChatAttr.getInstance().colorUserFileName,
+                    sizeTextFileName = ChatAttr.getInstance().sizeUserFileName
+                )
+                fileSize?.setFileSize(
+                    file = item.file,
+                    colorTextFileSize = ChatAttr.getInstance().colorUserFileSize,
+                    sizeTextFileSize = ChatAttr.getInstance().sizeUserFileSize
+                )
             }
             TypeFile.IMAGE -> {
                 fileInfo?.visibility = View.GONE
