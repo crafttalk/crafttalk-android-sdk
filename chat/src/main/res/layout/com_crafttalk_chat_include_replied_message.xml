@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/com_crafttalk_chat_message_content_padding_start"
+    android:paddingTop="@dimen/com_crafttalk_chat_message_content_padding_top"
+    android:paddingEnd="@dimen/com_crafttalk_chat_message_content_padding_end">
+
+    <TextView
+        android:id="@+id/replied_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_light"
+        android:gravity="start"
+        android:textFontWeight="300"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/com_crafttalk_chat_message_replied_content_padding_top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:maxWidth="230dp"
+        tools:text="Пожалуйста, переформулируйте ваш вопрос 🙃"
+        tools:textColor="@color/com_crafttalk_chat_white"
+        tools:visibility="gone" />
+
+    <include
+        android:id="@+id/replied_file_info"
+        layout="@layout/com_crafttalk_chat_include_file_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/com_crafttalk_chat_message_replied_content_padding_top"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/replied_media_file"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/com_crafttalk_chat_message_replied_content_padding_top"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="150dp"
+        tools:layout_width="150dp"
+        tools:src="@tools:sample/avatars"
+        tools:visibility="gone" />
+
+    <TextView
+        android:id="@+id/replied_download_media_file"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/com_crafttalk_chat_download_btn_margin_top"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/com_crafttalk_chat_download"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/replied_media_file"
+        app:layout_constraintStart_toStartOf="@id/replied_media_file"
+        app:layout_constraintTop_toBottomOf="@id/replied_media_file"
+        tools:visibility="gone" />
+
+    <include
+        android:id="@+id/replied_media_file_warning"
+        layout="@layout/com_crafttalk_chat_include_media_warning"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/com_crafttalk_chat_message_replied_content_padding_top"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="150dp"
+        tools:layout_width="150dp"
+        tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_start"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="start"
+        app:barrierMargin="@dimen/com_crafttalk_chat_message_replied_content_barrier_indent_start"
+        app:constraint_referenced_ids="replied_message,replied_file_info,replied_media_file,replied_download_media_file,replied_media_file_warning" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_bottom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="bottom"
+        app:barrierMargin="@dimen/com_crafttalk_chat_message_replied_content_barrier_indent_bottom"
+        app:constraint_referenced_ids="replied_message,replied_file_info,replied_media_file,replied_download_media_file,replied_media_file_warning" />
+
+    <View
+        android:id="@+id/replied_barrier"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:background="@color/com_crafttalk_chat_white"
+        app:layout_constraintBottom_toBottomOf="@+id/barrier_content_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/barrier_content_start"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/com_crafttalk_chat_white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

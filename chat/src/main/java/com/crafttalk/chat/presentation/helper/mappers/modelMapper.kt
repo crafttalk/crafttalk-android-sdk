@@ -25,6 +25,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
             localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
             localMessage.hasSelectedAction(),
+            repliedMessage = RepliedMessageModel.map(localMessage, context),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             if (localMessage.isReply) localMessage.operatorPreview else null,

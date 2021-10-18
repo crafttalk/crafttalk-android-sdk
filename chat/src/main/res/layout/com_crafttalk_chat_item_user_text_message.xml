@@ -20,11 +20,21 @@
         android:id="@+id/content_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@id/user_message"
-        app:layout_constraintTop_toTopOf="@id/user_message"
+        app:layout_constraintStart_toStartOf="@id/barrier_content_start"
+        app:layout_constraintTop_toTopOf="@id/replied_message_container"
         app:layout_constraintEnd_toEndOf="@id/user_message"
         app:layout_constraintBottom_toBottomOf="@id/user_message"
         tools:background="@drawable/com_crafttalk_chat_background_item_simple_user_message" />
+
+    <include
+        android:id="@+id/replied_message_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        layout="@layout/com_crafttalk_chat_include_replied_message"
+        app:layout_constraintTop_toBottomOf="@id/include_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/user_message"
@@ -38,10 +48,17 @@
         android:paddingTop="@dimen/com_crafttalk_chat_message_content_padding_top"
         android:paddingEnd="@dimen/com_crafttalk_chat_message_content_padding_end"
         android:paddingBottom="@dimen/com_crafttalk_chat_message_content_padding_bottom"
-        app:layout_constraintTop_toBottomOf="@id/include_date"
+        app:layout_constraintTop_toBottomOf="@id/replied_message_container"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="Привет, мое имя Тест"
         tools:textColor="@color/com_crafttalk_chat_white" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_start"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="replied_message_container,user_message" />
 
     <include
         android:layout_width="0dp"

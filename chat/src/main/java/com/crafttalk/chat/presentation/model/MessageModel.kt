@@ -33,6 +33,7 @@ data class TextMessageItem(
     val message: SpannableString,
     val actions: List<ActionItem>?,
     val hasSelectedAction: Boolean,
+    val repliedMessage: RepliedMessageModel?,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
