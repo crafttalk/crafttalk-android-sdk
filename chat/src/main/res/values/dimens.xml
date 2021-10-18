@@ -6,6 +6,7 @@
 
     <dimen name="com_crafttalk_chat_default_size_title">20sp</dimen>
     <dimen name="com_crafttalk_chat_default_size_user_message">14sp</dimen>
+    <dimen name="com_crafttalk_chat_default_size_user_replied_message">14sp</dimen>
     <dimen name="com_crafttalk_chat_default_size_server_message">14sp</dimen>
     <dimen name="com_crafttalk_chat_default_size_server_action">14sp</dimen>
     <dimen name="com_crafttalk_chat_default_size_author">12sp</dimen>
@@ -32,6 +33,17 @@
     <dimen name="com_crafttalk_chat_message_content_padding_top">12dp</dimen>
     <dimen name="com_crafttalk_chat_message_content_padding_end">12dp</dimen>
     <dimen name="com_crafttalk_chat_message_content_padding_bottom">12dp</dimen>
+
+    <dimen name="com_crafttalk_chat_message_replied_content_padding_start">8dp</dimen>
+    <dimen name="com_crafttalk_chat_message_replied_content_padding_top">6dp</dimen>
+    <dimen name="com_crafttalk_chat_message_replied_content_padding_end">6dp</dimen>
+    <dimen name="com_crafttalk_chat_message_replied_content_padding_bottom">6dp</dimen>
+
+    <dimen name="com_crafttalk_chat_message_replied_content_barrier_indent_start">-8dp</dimen>
+    <dimen name="com_crafttalk_chat_message_replied_content_barrier_indent_top">-6dp</dimen>
+    <dimen name="com_crafttalk_chat_message_replied_content_barrier_indent_end">6dp</dimen>
+    <dimen name="com_crafttalk_chat_message_replied_content_barrier_indent_bottom">6dp</dimen>
+
     <dimen name="com_crafttalk_chat_download_btn_margin_top">16dp</dimen>
     <dimen name="com_crafttalk_chat_message_info_margin_top">10dp</dimen>
 
