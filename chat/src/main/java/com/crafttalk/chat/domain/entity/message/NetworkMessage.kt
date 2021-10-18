@@ -104,7 +104,7 @@ data class NetworkMessage (
             message = messageEntity.message,
             actions = messageEntity.actions?.map { NetworkAction.map(it) },
             attachmentUrl = messageEntity.attachmentUrl,
-            attachmentType = messageEntity.attachmentType?.value,
+            attachmentType = messageEntity.attachmentType?.name,
             attachmentName = messageEntity.attachmentName,
             operatorId = messageEntity.operatorId,
             operatorName = messageEntity.operatorName,

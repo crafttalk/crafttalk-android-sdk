@@ -384,13 +384,15 @@ class SocketApi constructor(
                     }
                     repliedMessageUrl != null && (messageSocket.replyToMessage.isImage || messageSocket.replyToMessage.isGif) -> {
                         getSizeMediaFile(context, repliedMessageUrl) { height, width ->
-                            insertMessage(MessageEntity.map(
-                                uuid = visitor.uuid,
-                                networkMessage = messageSocket,
-                                operatorPreview = operatorPreview,
-                                repliedMessageMediaFileHeight = height,
-                                repliedMessageMediaFileWidth = width
-                            ))
+                            viewModelScope.launch {
+                                insertMessage(MessageEntity.map(
+                                    uuid = visitor.uuid,
+                                    networkMessage = messageSocket,
+                                    operatorPreview = operatorPreview,
+                                    repliedMessageMediaFileHeight = height,
+                                    repliedMessageMediaFileWidth = width
+                                ))
+                            }
                         }
                     }
                     else -> {
