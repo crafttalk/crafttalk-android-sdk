@@ -102,14 +102,11 @@
         android:id="@+id/file_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintWidth_max="128dp"
         layout="@layout/com_crafttalk_chat_include_file_info"
         android:visibility="gone"
         android:layout_marginTop="16dp"
         android:layout_marginStart="@dimen/com_crafttalk_chat_message_content_padding_start"
-        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/server_message"
         tools:visibility="visible" />
 

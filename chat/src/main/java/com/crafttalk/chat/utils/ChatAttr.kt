@@ -95,8 +95,8 @@ private constructor(
     val sizeOperatorMessageTime = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_message_time, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_time)).toFloat()
     val sizeTextDateGrouping = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_text_date_grouping, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_info)).toFloat()
 
-    private val widthItemUserTextMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_width_item_user_text_message_in_percent)?.let { it * widthScreenInPx }
-    private val widthItemOperatorTextMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_width_item_operator_text_message_in_percent)?.let { it * widthScreenInPx }
+    private val widthItemUserTextMessageInPercent by lazy { attrArr.getFloat(R.styleable.ChatView_width_item_user_text_message_in_percent, 0.6f) * widthScreenInPx }
+    private val widthItemOperatorTextMessageInPercent by lazy { attrArr.getFloat(R.styleable.ChatView_width_item_operator_text_message_in_percent, 0.75f) * widthScreenInPx }
     private val widthItemUserFileIconMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_width_item_user_file_icon_message_in_percent)?.let { it * widthScreenInPx }
     private val widthItemOperatorFileIconMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_width_item_operator_file_icon_message_in_percent)?.let { it * widthScreenInPx }
     private val widthItemUserFilePreviewWarningMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_width_item_user_file_preview_warning_message_in_percent)?.let { it * widthScreenInPx } ?: (widthScreenInPx / 2)
@@ -105,8 +105,8 @@ private constructor(
     private val widthElongatedItemOperatorFilePreviewMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_width_elongated_item_operator_file_preview_message_in_percent)?.let { it * widthScreenInPx } ?: (0.7f * widthScreenInPx)
     private val heightElongatedItemUserFilePreviewMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_height_elongated_item_user_file_preview_message_in_percent)?.let { it * heightScreenInPx } ?: (0.4f * heightScreenInPx)
     private val heightElongatedItemOperatorFilePreviewMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_height_elongated_item_operator_file_preview_message_in_percent)?.let { it * heightScreenInPx } ?: (0.4f * heightScreenInPx)
-    val widthItemUserTextMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_text_message) ?: widthItemUserTextMessageInPercent)?.toInt()
-    val widthItemOperatorTextMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_text_message) ?: widthItemOperatorTextMessageInPercent)?.toInt()
+    val widthItemUserTextMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_text_message) ?: widthItemUserTextMessageInPercent).toInt()
+    val widthItemOperatorTextMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_text_message) ?: widthItemOperatorTextMessageInPercent).toInt()
     val widthItemUserFileIconMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_file_icon_message) ?: widthItemUserFileIconMessageInPercent)?.toInt()
     val widthItemOperatorFileIconMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_file_icon_message) ?: widthItemOperatorFileIconMessageInPercent)?.toInt()
     val widthItemUserFilePreviewWarningMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_file_preview_warning_message) ?: widthItemUserFilePreviewWarningMessageInPercent).toInt()
