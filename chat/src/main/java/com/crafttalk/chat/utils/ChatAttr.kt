@@ -79,6 +79,7 @@ private constructor(
     val drawableDocumentNotDownloadedIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_document_not_downloaded_icon)
     val drawableDocumentDownloadingIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_document_downloading_icon)
     val drawableDocumentDownloadedIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_document_downloaded_icon)
+    val drawableReplyMessageIcon = attrArr.getDrawable(R.styleable.ChatView_drawable_reply_message) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_reply_message)
 
     val sizeTextInternetConnectionWarning = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_warning, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_warning)).toFloat()
     val sizeTextInfoText = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_info, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_info)).toFloat()

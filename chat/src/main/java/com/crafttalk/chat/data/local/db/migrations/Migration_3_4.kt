@@ -10,7 +10,7 @@ object Migration_3_4: Migration(3, 4) {
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN dialog_id TEXT DEFAULT NULL")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_id TEXT DEFAULT NULL")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_text TEXT DEFAULT NULL")
-        database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_span_structure_list TEXT NOT NULL")
+        database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_span_structure_list TEXT NOT NULL DEFAULT '[]'")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_url TEXT DEFAULT NULL")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_type TEXT DEFAULT NULL")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_name TEXT DEFAULT NULL")

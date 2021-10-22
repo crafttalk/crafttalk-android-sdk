@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
@@ -316,6 +317,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             viewModel::updateData
         ).apply {
             list_with_message.adapter = this
+            ItemTouchHelper(MessageSwipeController {
+
+            }).attachToRecyclerView(list_with_message)
         }
     }
 

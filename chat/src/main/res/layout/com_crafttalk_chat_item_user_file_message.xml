@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="@id/border_content_start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/include_date"
-        app:layout_constraintBottom_toTopOf="@id/include_message_status"
+        app:layout_constraintBottom_toTopOf="@id/include_message_info"
         tools:background="@drawable/com_crafttalk_chat_background_item_simple_user_message" />
 
     <include
@@ -46,7 +46,7 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <include
-        android:id="@+id/include_message_status"
+        android:id="@+id/include_message_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         layout="@layout/com_crafttalk_chat_include_user_message_info"

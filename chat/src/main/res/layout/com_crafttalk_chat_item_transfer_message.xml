@@ -42,6 +42,7 @@
         tools:text="Оператор Тест подключился к диалогу" />
 
     <include
+        android:id="@+id/include_message_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         layout="@layout/com_crafttalk_chat_include_server_message_info"

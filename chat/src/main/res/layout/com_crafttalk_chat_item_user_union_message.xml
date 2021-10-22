@@ -150,6 +150,7 @@
         app:layout_constraintEnd_toStartOf="@id/barrier_content_start" />
 
     <include
+        android:id="@+id/include_message_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         layout="@layout/com_crafttalk_chat_include_user_message_info"

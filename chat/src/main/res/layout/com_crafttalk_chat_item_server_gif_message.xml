@@ -86,6 +86,7 @@
         app:constraint_referenced_ids="server_gif,server_gif_warning,download_file" />
 
     <include
+        android:id="@+id/include_message_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         layout="@layout/com_crafttalk_chat_include_server_message_info"
