@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/com_crafttalk_chat_white">
+
+    <View
+        android:id="@+id/top_limit"
+        android:layout_width="0dp"
+        android:layout_height="2px"
+        android:background="@color/com_crafttalk_chat_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/replied_message_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_include_replied_message"
+        android:layout_marginBottom="@dimen/com_crafttalk_chat_message_content_padding_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/reply_preview_close"
+        app:layout_constraintTop_toBottomOf="@+id/top_limit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/reply_preview_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/com_crafttalk_chat_ic_close"
+        android:tint="@color/com_crafttalk_chat_gray_8d8d8d"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_limit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="UseAppTint" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

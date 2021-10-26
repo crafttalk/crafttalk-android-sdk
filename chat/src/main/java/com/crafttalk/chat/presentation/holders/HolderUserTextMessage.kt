@@ -65,7 +65,6 @@ class HolderUserTextMessage(
                 repliedMessage?.visibility = View.VISIBLE
                 repliedFileInfo?.visibility = View.GONE
                 repliedMediaFile?.visibility = View.GONE
-                repliedDownloadMediaFile?.visibility = View.GONE
                 repliedMediaFileWarning?.visibility = View.GONE
                 repliedBarrier?.setBackgroundColor(ChatAttr.getInstance().colorBarrierRepliedMessage)
                 repliedMessage?.setMessageText(
@@ -82,7 +81,6 @@ class HolderUserTextMessage(
                         repliedMessageContainer?.visibility = View.VISIBLE
                         repliedMessage?.visibility = View.GONE
                         repliedMediaFile?.visibility = View.GONE
-                        repliedDownloadMediaFile?.visibility = View.GONE
                         repliedMediaFileWarning?.visibility = View.GONE
                         repliedFileInfo?.visibility = View.VISIBLE
                         repliedBarrier?.setBackgroundColor(ChatAttr.getInstance().colorBarrierRepliedMessage)
@@ -115,7 +113,6 @@ class HolderUserTextMessage(
                                 isUnionMessage = true,
                                 warningContainer = repliedMediaFileWarning
                             )
-                            repliedDownloadMediaFile?.settingDownloadBtn(true, item.repliedMessage.file.failLoading)
                         }
                     }
                     TypeFile.GIF -> {
@@ -135,7 +132,6 @@ class HolderUserTextMessage(
                                 warningContainer = repliedMediaFileWarning,
                                 isGif = true
                             )
-                            repliedDownloadMediaFile?.settingDownloadBtn(true, item.repliedMessage.file.failLoading)
                         }
                     }
                 }
@@ -148,4 +144,5 @@ class HolderUserTextMessage(
             ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(ChatAttr.getInstance().colorBackgroundUserMessage))
         }
     }
+
 }

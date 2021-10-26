@@ -32,7 +32,6 @@ class MessageSwipeController(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-//        return makeMovementFlags(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.LEFT)
         return makeFlag(ACTION_STATE_IDLE, ItemTouchHelper.LEFT) or makeFlag(ACTION_STATE_SWIPE, ItemTouchHelper.LEFT)
     }
 
@@ -44,9 +43,7 @@ class MessageSwipeController(
         return false
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//        Log.d("TEST_SWIPED", "onSwiped;")
-    }
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
 
     override fun onChildDraw(
         canvas: Canvas,
@@ -143,9 +140,9 @@ class MessageSwipeController(
         ChatAttr.getInstance().drawableReplyMessageIcon?.let { icon ->
             val halfHeightIcon = icon.intrinsicWidth.toFloat() / 2f
             icon.setBounds(
-                canvas.width - icon.intrinsicWidth - INDENT_TO_RIGHT_OF_QUOTE_ICON,
+                canvas.width - icon.intrinsicWidth - INDENT_TO_RIGHT_OF_REPLY_ICON,
                 (iconMiddle - halfHeightIcon).toInt(),
-                canvas.width - INDENT_TO_RIGHT_OF_QUOTE_ICON,
+                canvas.width - INDENT_TO_RIGHT_OF_REPLY_ICON,
                 (iconMiddle + halfHeightIcon).toInt()
             )
             icon.draw(canvas)
@@ -153,7 +150,7 @@ class MessageSwipeController(
     }
 
     companion object {
-        const val INDENT_TO_RIGHT_OF_QUOTE_ICON = 80
+        const val INDENT_TO_RIGHT_OF_REPLY_ICON = 80
         const val DEFAULT_HEIGHT_NPE_VIEW_GROUP = 0f
     }
 

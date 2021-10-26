@@ -15,6 +15,7 @@
     <color name="com_crafttalk_chat_default_color_text_server_message">#000</color>
     <color name="com_crafttalk_chat_default_color_text_user_message">#fff</color>
     <color name="com_crafttalk_chat_default_color_barrier_replied_message">#fff</color>
+    <color name="com_crafttalk_chat_default_color_barrier_replied_preview_message">#AEB0B0</color>
     <color name="com_crafttalk_chat_default_color_text_user_replied_message">#AEB0B0</color>
     <color name="com_crafttalk_chat_default_color_text_server_action">@color/com_crafttalk_chat_default_color_main</color>
     <color name="com_crafttalk_chat_default_color_text_warning">#2C2C2C</color>

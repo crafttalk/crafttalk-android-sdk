@@ -15,9 +15,8 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
+import android.view.ViewGroup
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -42,20 +41,23 @@ import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
+import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFileContract
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.TakePicture
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
-import com.crafttalk.chat.presentation.model.MessageModel
-import com.crafttalk.chat.presentation.model.TypeMultiple
+import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_replied_message.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_reply_preview.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_auth.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_user_feedback.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_warning.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.upper_limiter
 import javax.inject.Inject
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
@@ -272,6 +274,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         })
         close_feedback.setOnClickListener(this)
         upload_history_btn.setOnClickListener(this)
+        reply_preview_close.setOnClickListener(this)
         setFeedbackListeners()
     }
 
@@ -318,7 +321,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         ).apply {
             list_with_message.adapter = this
             ItemTouchHelper(MessageSwipeController {
-
+                viewModel.replyMessage.value = it
             }).attachToRecyclerView(list_with_message)
         }
     }
@@ -543,6 +546,79 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             })
         }
+        viewModel.replyMessage.observe(lifecycleOwner) {
+            if (it == null) {
+                reply_preview.visibility = View.GONE
+                return@observe
+            }
+            reply_preview.visibility = View.VISIBLE
+
+            val replyPreviewBarrier = reply_preview.findViewById<View>(R.id.replied_barrier)
+            val replyPreviewMessage = reply_preview.findViewById<TextView>(R.id.replied_message)
+            val replyPreviewFileInfo = reply_preview.findViewById<ViewGroup>(R.id.replied_file_info)
+            val replyPreviewFileIcon = reply_preview.findViewById<ImageView>(R.id.file_icon)
+            val replyPreviewProgressDownload = reply_preview.findViewById<ProgressBar>(R.id.progress_download)
+            val replyPreviewFileName = reply_preview.findViewById<TextView>(R.id.file_name)
+            val replyPreviewFileSize = reply_preview.findViewById<TextView>(R.id.file_size)
+            val replyPreviewMediaFile = reply_preview.findViewById<ImageView>(R.id.replied_media_file)
+            val replyPreviewMediaFileWarning = reply_preview.findViewById<ViewGroup>(R.id.replied_media_file_warning)
+
+            replyPreviewBarrier?.setBackgroundColor(ChatAttr.getInstance().colorMain)
+            when (it) {
+                is TextMessageItem, is UnionMessageItem -> {
+                    replyPreviewMessage.visibility = View.VISIBLE
+                    replyPreviewFileInfo.visibility = View.GONE
+                    replyPreviewMediaFile.visibility = View.GONE
+                    replyPreviewMediaFileWarning.visibility = View.GONE
+                    replyPreviewMessage.setMessageText(
+                        textMessage = (it as? TextMessageItem)?.message ?: (it as? UnionMessageItem)?.message,
+                        maxWidthTextMessage = (ChatAttr.getInstance().widthScreenInPx * 0.8f).toInt(),
+                        colorTextMessage = ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_707070),
+                        sizeTextMessage = ChatAttr.getInstance().sizeTextUserRepliedMessage,
+                        resFontFamilyMessage = ChatAttr.getInstance().resFontFamilyUserMessage
+                    )
+                }
+                is ImageMessageItem, is GifMessageItem -> {
+                    replyPreviewMessage.visibility = View.GONE
+                    replyPreviewFileInfo.visibility = View.GONE
+                    replyPreviewMediaFile.apply {
+                        visibility = View.VISIBLE
+                        settingMediaFile(true)
+                        loadMediaFile(
+                            id = it.id,
+                            mediaFile = (it as? ImageMessageItem)?.image ?: (it as? GifMessageItem)?.gif,
+                            updateData = viewModel::updateData,
+                            isUserMessage = true,
+                            isUnionMessage = true,
+                            warningContainer = replyPreviewMediaFileWarning,
+                            maxHeight = 200,
+                            maxWidth = 200
+                        )
+                    }
+                }
+                is FileMessageItem -> {
+                    replyPreviewMessage.visibility = View.GONE
+                    replyPreviewProgressDownload.visibility = View.INVISIBLE
+                    replyPreviewMediaFile.visibility = View.GONE
+                    replyPreviewMediaFileWarning.visibility = View.GONE
+                    replyPreviewFileInfo.visibility = View.VISIBLE
+                    replyPreviewFileIcon.setFileIcon(it.document.typeDownloadProgress)
+                    replyPreviewFileIcon.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_707070), PorterDuff.Mode.SRC_IN)
+                    replyPreviewFileName.setFileName(
+                        file = it.document,
+                        maxWidthTextFileName = (ChatAttr.getInstance().widthScreenInPx * 0.6f).toInt(),
+                        colorTextFileName = ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_707070),
+                        sizeTextFileName = ChatAttr.getInstance().sizeUserRepliedFileName
+                    )
+                    replyPreviewFileSize.setFileSize(
+                        file = it.document,
+                        maxWidthTextFileSize = (ChatAttr.getInstance().widthScreenInPx * 0.6f).toInt(),
+                        colorTextFileSize = ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_707070),
+                        sizeTextFileSize = ChatAttr.getInstance().sizeUserRepliedFileSize
+                    )
+                }
+            }
+        }
     }
 
     fun onResume(visitor: Visitor? = null) {
@@ -594,15 +670,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             }
             R.id.send_message -> {
-                val message = entry_field.text.toString().trim()
+                val message = entry_field.text.toString()
                 when {
-                    message.isNotEmpty() -> {
+                    message.trim().isNotEmpty() -> {
                         hideSoftKeyboard(this)
                         scroll(0)
-                        viewModel.sendMessage(message)
+                        viewModel.sendMessage(message, viewModel.replyMessage.value?.id)
+                        viewModel.replyMessage.value = null
                         entry_field.text.clear()
                     }
-                    entry_field.text.toString().isEmpty() -> {
+                    message.isEmpty() -> {
                         send_message.isClickable = false
                         BottomSheetFileViewer.Builder()
                             .add(R.menu.com_crafttalk_chat_options)
@@ -610,10 +687,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                             .show(parentFragment.parentFragmentManager)
                     }
                     else -> {
+                        viewModel.replyMessage.value = null
                         hideSoftKeyboard(this)
                         entry_field.text.clear()
                     }
                 }
+            }
+            R.id.reply_preview_close -> {
+                viewModel.replyMessage.value = null
             }
             R.id.warning_refresh -> {
                 startProgressBar(warning_loading)

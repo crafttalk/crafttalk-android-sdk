@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:paddingStart="@dimen/com_crafttalk_chat_message_content_padding_start"
     android:paddingTop="@dimen/com_crafttalk_chat_message_content_padding_top"
     android:paddingEnd="@dimen/com_crafttalk_chat_message_content_padding_end">
@@ -52,20 +53,6 @@
         tools:src="@tools:sample/avatars"
         tools:visibility="gone" />
 
-    <TextView
-        android:id="@+id/replied_download_media_file"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/com_crafttalk_chat_download_btn_margin_top"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/com_crafttalk_chat_download"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/replied_media_file"
-        app:layout_constraintStart_toStartOf="@id/replied_media_file"
-        app:layout_constraintTop_toBottomOf="@id/replied_media_file"
-        tools:visibility="gone" />
-
     <include
         android:id="@+id/replied_media_file_warning"
         layout="@layout/com_crafttalk_chat_include_media_warning"
@@ -85,7 +72,7 @@
         android:layout_height="0dp"
         app:barrierDirection="start"
         app:barrierMargin="@dimen/com_crafttalk_chat_message_replied_content_barrier_indent_start"
-        app:constraint_referenced_ids="replied_message,replied_file_info,replied_media_file,replied_download_media_file,replied_media_file_warning" />
+        app:constraint_referenced_ids="replied_message,replied_file_info,replied_media_file,replied_media_file_warning" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier_content_bottom"
@@ -93,7 +80,7 @@
         android:layout_height="0dp"
         app:barrierDirection="bottom"
         app:barrierMargin="@dimen/com_crafttalk_chat_message_replied_content_barrier_indent_bottom"
-        app:constraint_referenced_ids="replied_message,replied_file_info,replied_media_file,replied_download_media_file,replied_media_file_warning" />
+        app:constraint_referenced_ids="replied_message,replied_file_info,replied_media_file,replied_media_file_warning" />
 
     <View
         android:id="@+id/replied_barrier"

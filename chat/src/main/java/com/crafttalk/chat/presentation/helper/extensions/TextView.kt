@@ -135,10 +135,15 @@ fun TextView.settingDownloadBtn(isUserMessage: Boolean, failLoading: Boolean) {
 
 fun TextView.setFileName(
     file: FileModel,
+    maxWidthTextFileName: Int? = null,
     colorTextFileName: Int,
     sizeTextFileName: Float
 ) {
     text = file.name
+    // set width item
+    maxWidthTextFileName?.let {
+        maxWidth = it
+    }
     // set color and dimension
     setTextColor(colorTextFileName)
     setTextSize(TypedValue.COMPLEX_UNIT_PX, sizeTextFileName)
@@ -150,6 +155,7 @@ fun TextView.setFileName(
 
 fun TextView.setFileSize(
     file: FileModel,
+    maxWidthTextFileSize: Int? = null,
     colorTextFileSize: Int,
     sizeTextFileSize: Float
 ) {
@@ -173,6 +179,10 @@ fun TextView.setFileSize(
             "${(df.parse(df.format(value)).toDouble())} ${resources.getString(R.string.com_crafttalk_chat_file_size_Gb)}"
         }
         else -> ""
+    }
+    // set width item
+    maxWidthTextFileSize?.let {
+        maxWidth = it
     }
     // set color and dimension
     setTextColor(colorTextFileSize)

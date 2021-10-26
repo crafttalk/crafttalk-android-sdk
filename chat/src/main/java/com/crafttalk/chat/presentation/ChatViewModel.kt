@@ -45,6 +45,8 @@ class ChatViewModel
     val mergeHistoryProgressVisible = MutableLiveData(false)
 
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
+    val replyMessage: MutableLiveData<MessageModel?> = MutableLiveData(null)
+
     private fun uploadMessages() {
         val config = PagedList.Config.Builder()
             .setPageSize(ChatParams.pageSize)
@@ -265,11 +267,11 @@ class ChatViewModel
         }
     }
 
-    fun sendMessage(message: String) {
+    fun sendMessage(message: String, repliedMessageId: String?) {
         launchIO {
             messageInteractor.sendMessage(
                 message = message,
-                repliedMessageId = null
+                repliedMessageId = repliedMessageId
             )
         }
     }

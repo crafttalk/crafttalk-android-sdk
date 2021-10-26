@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        app:layout_constraintBottom_toTopOf="@id/reply_preview"
         tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
         tools:itemCount="1" />
 
@@ -60,7 +60,7 @@
         android:layout_marginBottom="52dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/list_with_message"
-        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        app:layout_constraintBottom_toBottomOf="@id/list_with_message"
         tools:visibility="visible" />
 
     <TextView
@@ -92,6 +92,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/lower_limit"
         tools:visibility="gone" />
+
+    <include
+        android:id="@+id/reply_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_include_reply_preview"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/company_name"

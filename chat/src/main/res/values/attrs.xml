@@ -71,6 +71,7 @@
         <attr name="drawable_document_not_downloaded_icon" format="reference"/>
         <attr name="drawable_document_downloading_icon" format="reference"/>
         <attr name="drawable_document_downloaded_icon" format="reference"/>
+        <attr name="drawable_reply_message" format="reference"/>
 
         <attr name="size_user_message" format="dimension"/>
         <attr name="size_user_replied_message" format="dimension"/>

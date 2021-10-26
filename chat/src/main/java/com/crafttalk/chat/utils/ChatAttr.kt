@@ -19,8 +19,8 @@ private constructor(
     context: Context
 ) {
 
-    private val widthScreenInPx = getSizeScreenInPx(context).first.toFloat()
-    private val heightScreenInPx = getSizeScreenInPx(context).second.toFloat()
+    val widthScreenInPx = getSizeScreenInPx(context).first.toFloat()
+    val heightScreenInPx = getSizeScreenInPx(context).second.toFloat()
 
     val timeDelayed = attrArr.getInt(R.styleable.ChatView_timeDelayed, 0).toLong()
     val delayDownloadDocument = attrArr.getInt(R.styleable.ChatView_delay_download_document, 1000).toLong()
