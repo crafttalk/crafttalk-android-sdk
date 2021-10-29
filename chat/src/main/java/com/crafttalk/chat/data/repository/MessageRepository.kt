@@ -30,6 +30,12 @@ class MessageRepository
     override fun getCountUnreadMessages(currentReadMessageTime: Long) = messagesDao
         .getCountUnreadMessages(currentReadMessageTime)
 
+    override fun getTimestampMessageById(messageId: String) = messagesDao
+        .getTimestampMessageById(messageId)
+
+    override fun getCountMessagesInclusiveTimestamp(timestampMessage: Long) = messagesDao
+        .getCountMessagesInclusiveTimestamp(timestampMessage)
+
     override fun getCountUnreadMessagesRange(
         currentReadMessageTime: Long,
         timestampLastMessage: Long

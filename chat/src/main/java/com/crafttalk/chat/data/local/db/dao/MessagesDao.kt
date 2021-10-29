@@ -18,6 +18,9 @@ interface MessagesDao {
     @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime")
     fun getCountUnreadMessages(currentReadMessageTime: Long): Int?
 
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp <= :timestampMessage")
+    fun getCountMessagesInclusiveTimestamp(timestampMessage: Long): Int?
+
     @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND timestamp <= :timestampLastMessage")
     fun getCountUnreadMessagesRange(currentReadMessageTime: Long, timestampLastMessage: Long): Int?
 
@@ -29,6 +32,9 @@ interface MessagesDao {
 
     @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id")
     fun getMessageById(id: String): MessageEntity?
+
+    @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE id = :id")
+    fun getTimestampMessageById(id: String): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessages(messages: List<MessageEntity>)

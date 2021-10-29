@@ -46,6 +46,7 @@ class ChatViewModel
 
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     val replyMessage: MutableLiveData<MessageModel?> = MutableLiveData(null)
+    val replyMessagePosition: MutableLiveData<Int?> = MutableLiveData(null)
 
     private fun uploadMessages() {
         val config = PagedList.Config.Builder()
@@ -252,6 +253,12 @@ class ChatViewModel
     fun selectAction(messageId: String, actionId: String) {
         launchIO {
             messageInteractor.selectActionInMessage(messageId, actionId)
+        }
+    }
+
+    fun selectReplyMessage(messageId: String) {
+        launchIO {
+            replyMessagePosition.postValue(messageInteractor.getCountMessagesInclusiveTimestampById(messageId))
         }
     }
 

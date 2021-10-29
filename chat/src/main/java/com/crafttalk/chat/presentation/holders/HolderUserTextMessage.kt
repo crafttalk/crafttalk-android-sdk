@@ -16,8 +16,9 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderUserTextMessage(
     view: View,
+    private val selectReplyMessage: (messageId: String) -> Unit,
     private val updateData: (id: String, height: Int, width: Int) -> Unit
-) : BaseViewHolder<TextMessageItem>(view) {
+) : BaseViewHolder<TextMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
 
     private val message: TextView? = view.findViewById(R.id.user_message)
@@ -30,7 +31,6 @@ class HolderUserTextMessage(
     private val repliedFileName: TextView? = view.findViewById(R.id.file_name)
     private val repliedFileSize: TextView? = view.findViewById(R.id.file_size)
     private val repliedMediaFile: ImageView? = view.findViewById(R.id.replied_media_file)
-    private val repliedDownloadMediaFile: TextView? = view.findViewById(R.id.replied_download_media_file)
     private val repliedMediaFileWarning: ViewGroup? = view.findViewById(R.id.replied_media_file_warning)
     private val authorName: TextView? = view.findViewById(R.id.author_name)
     private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
@@ -38,7 +38,21 @@ class HolderUserTextMessage(
     private val status: ImageView? = view.findViewById(R.id.status)
     private val date: TextView? = view.findViewById(R.id.date)
 
+    private var replyMessageId: String? = null
+
+    init {
+        repliedMessageContainer?.setOnClickListener(this)
+    }
+
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.replied_message_container -> replyMessageId?.run(selectReplyMessage)
+        }
+    }
+
     override fun bindTo(item: TextMessageItem) {
+        replyMessageId = item.repliedMessage?.id
+
         date?.setDate(item)
         // set content
         authorName?.setAuthor(item)

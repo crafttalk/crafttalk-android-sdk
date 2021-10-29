@@ -17,12 +17,13 @@ class AdapterListMessages(
     private val openGif: (activity: Activity, gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
     private val downloadFile: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val selectAction: (messageId: String, actionId: String) -> Unit,
+    private val selectReplyMessage: (messageId: String) -> Unit,
     private val updateData: (id: String, height: Int, width: Int) -> Unit
 ) : BaseAdapterWithPagination<MessageModel>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<out MessageModel> {
         return when (viewType) {
-            R.layout.com_crafttalk_chat_item_user_text_message -> HolderUserTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserTextMessage ?: viewType), updateData)
+            R.layout.com_crafttalk_chat_item_user_text_message -> HolderUserTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserTextMessage ?: viewType), selectReplyMessage, updateData)
             R.layout.com_crafttalk_chat_item_server_text_message -> HolderOperatorTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorTextMessage ?: viewType), selectAction)
             R.layout.com_crafttalk_chat_item_user_image_message -> HolderUserImageMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserImageMessage ?: viewType), downloadFile, updateData)
             { imageName, imageUrl -> openImage(parent.context as Activity, imageName, imageUrl, downloadFile) }

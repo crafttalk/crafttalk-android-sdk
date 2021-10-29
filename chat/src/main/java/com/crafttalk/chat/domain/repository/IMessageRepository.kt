@@ -13,6 +13,10 @@ interface IMessageRepository {
 
     fun getCountUnreadMessages(currentReadMessageTime: Long): Int?
 
+    fun getTimestampMessageById(messageId: String): Long?
+
+    fun getCountMessagesInclusiveTimestamp(timestampMessage: Long): Int?
+
     fun getCountUnreadMessagesRange(currentReadMessageTime: Long, timestampLastMessage: Long): Int?
 
     // получение времени первого сообщения

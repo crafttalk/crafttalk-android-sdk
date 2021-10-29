@@ -25,6 +25,10 @@ class MessageInteractor
         }
     }
 
+    fun getCountMessagesInclusiveTimestampById(messageId: String): Int? {
+        return messageRepository.getTimestampMessageById(messageId)?.run(messageRepository::getCountMessagesInclusiveTimestamp)
+    }
+
     suspend fun sendMessage(message: String, repliedMessageId: String?) {
         messageRepository.sendMessages(message, repliedMessageId)
     }

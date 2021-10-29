@@ -26,7 +26,9 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
@@ -57,7 +59,6 @@ import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_user_feedback.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_warning.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
-import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.upper_limiter
 import javax.inject.Inject
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
@@ -73,6 +74,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
          context.getSystemService(
              Context.LAYOUT_INFLATER_SERVICE
          ) as LayoutInflater
+    }
+    private val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
+        override fun getVerticalSnapPreference(): Int {
+            return SNAP_TO_START
+        }
     }
     private var permissionListener: ChatPermissionListener = object : ChatPermissionListener {
         override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
@@ -317,6 +323,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 )
             },
             viewModel::selectAction,
+            viewModel::selectReplyMessage,
             viewModel::updateData
         ).apply {
             list_with_message.adapter = this
@@ -618,6 +625,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     )
                 }
             }
+        }
+        viewModel.replyMessagePosition.observe(lifecycleOwner) {
+            it ?: return@observe
+            smoothScroller.targetPosition = adapterListMessages.itemCount - it
+            list_with_message.layoutManager?.startSmoothScroll(smoothScroller)
         }
     }
 
