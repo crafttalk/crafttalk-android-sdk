@@ -327,9 +327,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             viewModel::updateData
         ).apply {
             list_with_message.adapter = this
-            ItemTouchHelper(MessageSwipeController {
-                viewModel.replyMessage.value = it
-            }).attachToRecyclerView(list_with_message)
+            if (ChatAttr.getInstance().replyEnable) {
+                ItemTouchHelper(MessageSwipeController {
+                    viewModel.replyMessage.value = it
+                }).attachToRecyclerView(list_with_message)
+            }
         }
     }
 

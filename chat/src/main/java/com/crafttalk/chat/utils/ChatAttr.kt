@@ -24,6 +24,7 @@ private constructor(
 
     val timeDelayed = attrArr.getInt(R.styleable.ChatView_timeDelayed, 0).toLong()
     val delayDownloadDocument = attrArr.getInt(R.styleable.ChatView_delay_download_document, 1000).toLong()
+    val replyEnable = attrArr.getBoolean(R.styleable.ChatView_reply_enable, false)
 
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_main))
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_warning))

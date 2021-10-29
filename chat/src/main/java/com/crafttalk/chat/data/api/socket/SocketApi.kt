@@ -12,12 +12,9 @@ import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
-import com.crafttalk.chat.utils.AuthType
-import com.crafttalk.chat.utils.ChatParams
-import com.crafttalk.chat.utils.ChatStatus
+import com.crafttalk.chat.utils.*
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
-import com.crafttalk.chat.utils.InitialMessageMode
 import com.google.gson.Gson
 import io.socket.client.Manager
 import io.socket.client.Socket
@@ -280,21 +277,33 @@ class SocketApi constructor(
     }
 
     fun sendMessage(message: String, repliedMessage: NetworkMessage?) {
-        val repliedMessageJSONObject = repliedMessage?.let {
-            JSONObject(gson.toJson(it))
+        if (ChatAttr.getInstance().replyEnable) {
+            val repliedMessageJSONObject = repliedMessage?.let {
+                JSONObject(gson.toJson(it))
+            }
+            socket?.emit(
+                "visitor-message",
+                message,
+                MessageType.VISITOR_MESSAGE.valueType,
+                null,
+                0,
+                null,
+                null,
+                repliedMessageJSONObject,
+                null
+            )
+        } else {
+            socket?.emit(
+                "visitor-message",
+                message,
+                MessageType.VISITOR_MESSAGE.valueType,
+                null,
+                0,
+                null,
+                null,
+                null
+            )
         }
-
-        socket?.emit(
-            "visitor-message",
-            message,
-            MessageType.VISITOR_MESSAGE.valueType,
-            null,
-            0,
-            null,
-            null,
-            repliedMessageJSONObject,
-            null
-        )
     }
 
     fun selectAction(actionId: String) {

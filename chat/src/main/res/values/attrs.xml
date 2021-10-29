@@ -5,6 +5,7 @@
 
         <attr name="timeDelayed" format="integer"/>
         <attr name="delay_download_document" format="integer"/>
+        <attr name="reply_enable" format="boolean"/>
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
