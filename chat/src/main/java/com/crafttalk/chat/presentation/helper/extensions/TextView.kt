@@ -196,7 +196,7 @@ fun TextView.setFileSize(
 fun TextView.setMessageText(
     textMessage: SpannableString? = null,
     textMessageRes: Int? = null,
-    textMessageResArgs: List<Any> = listOf(),
+    textMessageResArgs: Array<Any> = arrayOf(),
     maxWidthTextMessage: Int,
     colorTextMessage: Int,
     colorTextLinkMessage: Int? = null,
@@ -220,7 +220,7 @@ fun TextView.setMessageText(
         maxWidth = it
     }
     // set content
-    text = textMessage ?: textMessageRes?.let { context.resources.getString(it, textMessageResArgs) }
+    text = textMessage ?: textMessageRes?.let { context.resources.getString(it, *textMessageResArgs) }
     // set color
     setTextColor(colorTextMessage)
     if (isClickableLink && colorTextLinkMessage != null) colorTextLinkMessage.run(::setLinkTextColor) else setLinkTextColor(null)

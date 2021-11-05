@@ -34,7 +34,7 @@ class HolderTransferMessage(
         status?.setStatusMessage(item)
         message?.setMessageText(
             textMessageRes = R.string.com_crafttalk_chat_message_join,
-            textMessageResArgs = listOf(item.authorName),
+            textMessageResArgs = arrayOf(item.authorName),
             maxWidthTextMessage = ChatAttr.getInstance().widthItemOperatorTextMessage,
             colorTextMessage = ChatAttr.getInstance().colorTextOperatorMessage,
             sizeTextMessage = ChatAttr.getInstance().sizeTextOperatorMessage,

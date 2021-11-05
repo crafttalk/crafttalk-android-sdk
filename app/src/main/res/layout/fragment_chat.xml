@@ -51,6 +51,7 @@
         app:show_internet_connection_state="false"
         app:show_chat_state="false"
         app:show_upper_limiter="false"
+        app:reply_enable="true"
         app:timeDelayed="1000" />
 
 </LinearLayout>
