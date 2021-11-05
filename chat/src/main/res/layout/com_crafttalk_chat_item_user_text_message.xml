@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:autoLink="email"
+        android:autoLink="email|web"
         android:fontFamily="@font/com_crafttalk_chat_ubuntu_light"
         android:textFontWeight="300"
         android:paddingStart="@dimen/com_crafttalk_chat_message_content_padding_start"
