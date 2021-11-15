@@ -52,6 +52,8 @@
         app:layout_constraintTop_toBottomOf="@id/content_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/com_crafttalk_chat_item_action"
+        tools:itemCount="3"
         tools:visibility="visible" />
 
     <include

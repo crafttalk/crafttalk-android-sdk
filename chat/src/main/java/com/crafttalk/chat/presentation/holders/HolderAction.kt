@@ -38,7 +38,7 @@ class HolderAction(
         actionId = item.id
         // set width item
         itemAction?.apply {
-            ChatAttr.getInstance().widthItemOperatorTextMessage?.let {
+            ChatAttr.getInstance().widthItemOperatorTextMessage.let {
                 layoutParams.width = it
             }
         }
