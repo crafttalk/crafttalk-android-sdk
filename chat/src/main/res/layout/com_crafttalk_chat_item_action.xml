@@ -14,6 +14,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:paddingVertical="12dp"
+        android:paddingHorizontal="8dp"
         android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
         android:textFontWeight="600"
         tools:text="Событие" />
