@@ -1,5 +1,6 @@
 package com.crafttalk.chat.presentation
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.*
@@ -47,6 +48,7 @@ import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFileContract
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.TakePicture
+import com.crafttalk.chat.presentation.helper.permission.requestPermissionWithAction
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
@@ -59,6 +61,7 @@ import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_user_feedback.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_warning.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
+import java.util.*
 import javax.inject.Inject
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
