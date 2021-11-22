@@ -370,6 +370,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        settingVoiceInput()
 
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
             uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
@@ -760,6 +761,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     fun onStop() {
         viewModel.onStop()
+    }
+
+    fun onDestroyView() {
+        speechRecognizer?.destroy()
     }
 
     private fun checkerObligatoryFields(fields: List<EditText>): Boolean {

@@ -60,6 +60,11 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         chat_view.onStop()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        chat_view.onDestroyView()
+    }
+
     private fun showWarning(warningText: String) {
         Snackbar.make(chat_view, warningText, Snackbar.LENGTH_LONG).show()
     }
