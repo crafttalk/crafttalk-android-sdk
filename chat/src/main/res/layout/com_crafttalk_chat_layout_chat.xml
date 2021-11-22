@@ -170,9 +170,11 @@
         android:id="@+id/voice_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:src="@drawable/com_crafttalk_chat_ic_voice_mic_off" />
+        tools:src="@drawable/com_crafttalk_chat_ic_voice_mic_off"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

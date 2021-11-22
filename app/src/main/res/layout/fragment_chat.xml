@@ -52,6 +52,7 @@
         app:show_chat_state="false"
         app:show_upper_limiter="false"
         app:reply_enable="true"
+        app:show_voice_input="true"
         app:timeDelayed="1000" />
 
 </LinearLayout>

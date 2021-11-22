@@ -232,6 +232,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
         infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
         upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
+        voice_input.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
         feedback_title.apply {
             setTextColor(ChatAttr.getInstance().colorFeedbackTitle)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeFeedbackTitle)
@@ -247,6 +248,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             warning_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
         }
         send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
+        voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
     }
 
     @SuppressLint("ClickableViewAccessibility")

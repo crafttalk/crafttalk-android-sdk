@@ -208,6 +208,13 @@ private constructor(
     val sizeFeedbackTitle = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_feedback_title, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_feedback_title)).toFloat()
     val colorFeedbackStar = attrArr.getColor(R.styleable.ChatView_color_feedback_star, colorMain)
 
+//    voice input
+    val showVoiceInput = attrArr.getBoolean(R.styleable.ChatView_show_voice_input, false)
+    val delayVoiceInputPostRecording = attrArr.getInt(R.styleable.ChatView_delay_voice_input_post_recording, 1000).toLong()
+    val delayVoiceInputBetweenRecurringWarnings = attrArr.getInt(R.styleable.ChatView_delay_voice_input_between_recurring_warnings, 2000).toLong()
+    val drawableVoiceInputMicOn = attrArr.getDrawable(R.styleable.ChatView_drawable_voice_input_mic_on) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_voice_mic_on)
+    val drawableVoiceInputMicOff = attrArr.getDrawable(R.styleable.ChatView_drawable_voice_input_mic_off) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_voice_mic_off)
+
     val drawableBackgroundSignInButton: Drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_background_sign_in_auth_form)!!).apply {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             DrawableCompat.setTint(this, colorMain)
