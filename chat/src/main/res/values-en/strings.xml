@@ -46,6 +46,14 @@
     <!--    FeedBack-->
     <string name="com_crafttalk_chat_feedback_title">The dialogue is over. Rate the quality of service.</string>
 
+    <!--    Voice input-->
+    <string name="com_crafttalk_chat_voice_input_entry_field_hint">Listening…</string>
+    <string name="com_crafttalk_chat_voice_input_failed_attempt_warning_title">Couldn\'t recognize your words, try to repeat</string>
+    <string name="com_crafttalk_chat_voice_input_network_warning_title">Check your internet connection and try again</string>
+    <string name="com_crafttalk_chat_voice_input_service_warning_title">Please try again later: voice input is temporarily unavailable</string>
+    <string name="com_crafttalk_chat_voice_input_instruction_warning_title">Press and hold the microphone icon and start speaking</string>
+    <string name="com_crafttalk_chat_voice_input_permission_warning_title">You don\'t have enough permission to use voice input</string>
+
     <!--    History-->
     <string name="com_crafttalk_chat_upload_history">Download history</string>
 

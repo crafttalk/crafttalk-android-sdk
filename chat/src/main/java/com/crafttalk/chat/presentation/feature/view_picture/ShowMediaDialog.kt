@@ -60,20 +60,16 @@ class ShowImageDialog(
             dialog?.let {
                 if (isSuccess) {
                     WarningSnackbar.make(
-                        it.image_show ?: it.gif_show,
-                        null,
-                        ChatAttr.getInstance().titleSuccessDownloadFileWarning,
-                        null,
+                        view = it.image_show ?: it.gif_show,
+                        title = ChatAttr.getInstance().titleSuccessDownloadFileWarning,
                         iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                         textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
                         backgroundColor = ChatAttr.getInstance().backgroundSuccessDownloadFileWarning
                     )?.show()
                 } else {
                     WarningSnackbar.make(
-                        it.image_show ?: it.gif_show,
-                        null,
-                        ChatAttr.getInstance().titleFailDownloadFileWarning,
-                        null
+                        view = it.image_show ?: it.gif_show,
+                        title = ChatAttr.getInstance().titleFailDownloadFileWarning,
                     )?.show()
                 }
             }

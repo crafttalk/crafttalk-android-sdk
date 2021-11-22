@@ -46,6 +46,14 @@
     <!--    FeedBack-->
     <string name="com_crafttalk_chat_feedback_title">Диалог завершен. Оцените качество обслуживания.</string>
 
+    <!--    Voice input-->
+    <string name="com_crafttalk_chat_voice_input_entry_field_hint">Записываю…</string>
+    <string name="com_crafttalk_chat_voice_input_failed_attempt_warning_title">Не удалось распознать ваши слова, попробуйте повторить</string>
+    <string name="com_crafttalk_chat_voice_input_network_warning_title">Проверьте подключение к Интернету и попробуйте еще раз</string>
+    <string name="com_crafttalk_chat_voice_input_service_warning_title">Пожалуйста, повторите действие позже: голосовой ввод временно недоступен</string>
+    <string name="com_crafttalk_chat_voice_input_instruction_warning_title">Нажав на иконку микрофона и удерживая её, начните говорить</string>
+    <string name="com_crafttalk_chat_voice_input_permission_warning_title">У вас недостаточно разрешений на использование голосового ввода</string>
+
     <!--    History-->
     <string name="com_crafttalk_chat_upload_history">Загрузить историю</string>
 

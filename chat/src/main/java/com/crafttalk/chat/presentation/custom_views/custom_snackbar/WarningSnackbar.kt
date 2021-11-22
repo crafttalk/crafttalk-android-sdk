@@ -25,6 +25,7 @@ class WarningSnackbar(
     companion object {
         fun make(
             view: View,
+            parentViewGroup: ViewGroup? = null,
             typeFailUpload: TypeFailUpload? = null,
             title: String? = null,
             description: String? = null,
@@ -32,7 +33,7 @@ class WarningSnackbar(
             @ColorRes textColor: Int = ChatAttr.getInstance().colorFailDownloadFileWarning,
             @ColorRes backgroundColor: Int = ChatAttr.getInstance().backgroundFailDownloadFileWarning
         ): WarningSnackbar? {
-            val parent = view.findSuitableParent() ?: return null
+            val parent = parentViewGroup ?: view.findSuitableParent() ?: return null
 
             val customView = LayoutInflater.from(view.context).inflate(
                 R.layout.com_crafttalk_chat_layout_warning_snackbar,
