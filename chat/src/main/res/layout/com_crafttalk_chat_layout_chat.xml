@@ -121,6 +121,15 @@
         app:layout_constraintBottom_toTopOf="@id/lower_limit"
         tools:visibility="gone" />
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/warning_input_container_cl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit" />
+
     <View
         android:id="@+id/lower_limit"
         android:layout_width="0dp"
@@ -153,8 +162,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/voice_input"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:src="@drawable/com_crafttalk_chat_ic_attach_file" />
+
+    <ImageView
+        android:id="@+id/voice_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/com_crafttalk_chat_ic_voice_mic_off" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

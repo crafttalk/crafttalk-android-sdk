@@ -8,15 +8,18 @@ import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Bundle
 import android.os.Handler
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.speech.SpeechRecognizer.*
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
@@ -78,6 +81,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
              Context.LAYOUT_INFLATER_SERVICE
          ) as LayoutInflater
     }
+    private var speechRecognizer: SpeechRecognizer? = null
+    private var speechRecognizerIntent: Intent? = null
     private val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
         override fun getVerticalSnapPreference(): Int {
             return SNAP_TO_START
@@ -244,6 +249,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setAllListeners() {
         phone_user.apply {
             val maskedListener = MaskedTextChangedListener(context.getString(R.string.com_crafttalk_chat_russian_phone_format), this)
@@ -253,6 +259,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         sign_in.setOnClickListener(this)
         user_feedback.setOnClickListener(this)
         send_message.setOnClickListener(this)
+        voice_input.setOnTouchListener { view, motionEvent ->
+            if (motionEvent.action == MotionEvent.ACTION_UP) {
+                delayOnLifecycle(ChatAttr.getInstance().delayVoiceInputPostRecording) {
+                    speechRecognizer?.stopListening()
+                }
+            }
+            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOn)
+                speechRecognizerIntent?.let { intent ->
+                    speechRecognizer?.startListening(intent)
+                }
+            }
+            true
+        }
         warning_refresh.setOnClickListener(this)
         scroll_to_down.setOnClickListener(this)
         entry_field.addTextChangedListener(object : TextWatcher {
@@ -636,6 +656,102 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             smoothScroller.targetPosition = adapterListMessages.itemCount - it
             list_with_message.layoutManager?.startSmoothScroll(smoothScroller)
         }
+    }
+
+    private fun settingVoiceInput() {
+        speechRecognizer = createSpeechRecognizer(context)
+
+        speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        }
+
+        speechRecognizer?.setRecognitionListener(object : RecognitionListener {
+            var idLastWarning: Int? = null
+            var timestampLastWarning: Long? = null
+
+            override fun onReadyForSpeech(bundle: Bundle) {
+                entry_field.text.clear()
+                entry_field.hint = resources.getString(R.string.com_crafttalk_chat_voice_input_entry_field_hint)
+                entry_field.performHapticFeedback(
+                    HapticFeedbackConstants.KEYBOARD_TAP,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                )
+            }
+
+            override fun onBeginningOfSpeech() {}
+            override fun onEndOfSpeech() {}
+
+            override fun onRmsChanged(v: Float) {}
+            override fun onBufferReceived(bytes: ByteArray) {}
+
+            override fun onError(i: Int) {
+                if (
+                    idLastWarning != null &&
+                    timestampLastWarning != null &&
+                    idLastWarning == i &&
+                    System.currentTimeMillis() - (timestampLastWarning ?: 0L) <= ChatAttr.getInstance().delayVoiceInputBetweenRecurringWarnings
+                ) {
+                    idLastWarning = i
+                    timestampLastWarning = System.currentTimeMillis()
+                } else {
+                    val warningTitle = when (i) {
+                        ERROR_AUDIO, ERROR_CLIENT, ERROR_NO_MATCH -> {
+                            if (idLastWarning in listOf(ERROR_AUDIO, ERROR_CLIENT, ERROR_NO_MATCH))
+                                resources.getString(R.string.com_crafttalk_chat_voice_input_instruction_warning_title)
+                            else
+                                resources.getString(R.string.com_crafttalk_chat_voice_input_failed_attempt_warning_title)
+                        }
+                        ERROR_NETWORK, ERROR_NETWORK_TIMEOUT -> resources.getString(R.string.com_crafttalk_chat_voice_input_network_warning_title)
+                        ERROR_RECOGNIZER_BUSY, ERROR_SERVER -> resources.getString(R.string.com_crafttalk_chat_voice_input_service_warning_title)
+                        ERROR_SPEECH_TIMEOUT -> resources.getString(R.string.com_crafttalk_chat_voice_input_instruction_warning_title)
+                        ERROR_INSUFFICIENT_PERMISSIONS -> {
+                            requestPermissionWithAction(
+                                context = context,
+                                permissions = arrayOf(Manifest.permission.RECORD_AUDIO),
+                                noPermission = { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
+                                    permissionListener.requestedPermissions(
+                                        permissions,
+                                        arrayOf(context.getString(R.string.com_crafttalk_chat_voice_input_permission_warning_title)),
+                                        actionsAfterObtainingPermission
+                                    )
+                                }
+                            )
+                            null
+                        }
+                        else -> resources.getString(R.string.com_crafttalk_chat_voice_input_failed_attempt_warning_title)
+                    }
+                    idLastWarning = i
+                    timestampLastWarning = System.currentTimeMillis()
+
+                    warningTitle?.let { title ->
+                        WarningSnackbar.make(
+                            view = entry_field,
+                            parentViewGroup = warning_input_container_cl,
+                            title = title
+                        )?.show()
+                    }
+                }
+
+                entry_field.text.clear()
+                entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint)
+                voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
+            }
+            override fun onResults(bundle: Bundle) {
+                idLastWarning = null
+
+                bundle.getStringArrayList(RESULTS_RECOGNITION)?.get(0)?.let { data ->
+                    entry_field.setText(data)
+                    entry_field.setSelection(data.length)
+                }
+                entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint)
+                voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
+            }
+
+            override fun onPartialResults(bundle: Bundle) {}
+            override fun onEvent(i: Int, bundle: Bundle) {}
+        })
+
     }
 
     fun onResume(visitor: Visitor? = null) {
