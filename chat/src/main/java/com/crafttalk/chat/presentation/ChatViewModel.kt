@@ -2,7 +2,6 @@ package com.crafttalk.chat.presentation
 
 import android.app.Activity
 import android.content.Context
-import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
@@ -152,7 +151,8 @@ class ChatViewModel
     }
 
     fun onStartChatView(visitor: Visitor?) {
-        Handler().postDelayed({
+        launchUI {
+            delay(ChatAttr.getInstance().timeDelayed)
             authChatInteractor.logIn(
                 visitor = visitor,
                 successAuthUi = ::deliverMessagesToUser,
@@ -162,7 +162,7 @@ class ChatViewModel
                 updateCurrentReadMessageTime = updateCurrentReadMessageTime,
                 chatEventListener = chatEventListener
             )
-        }, ChatAttr.getInstance().timeDelayed)
+        }
     }
 
     fun onStop() {
@@ -176,7 +176,8 @@ class ChatViewModel
     }
 
     fun registration(vararg args: String) {
-        Handler().postDelayed({
+        launchUI {
+            delay(ChatAttr.getInstance().timeDelayed)
             authChatInteractor.logIn(
                 visitor = Visitor.map(args),
                 successAuthUi = ::deliverMessagesToUser,
@@ -185,11 +186,12 @@ class ChatViewModel
                 updateCurrentReadMessageTime = updateCurrentReadMessageTime,
                 chatEventListener = chatEventListener
             )
-        }, ChatAttr.getInstance().timeDelayed)
+        }
     }
 
     fun reload() {
-        Handler().postDelayed({
+        launchUI {
+            delay(ChatAttr.getInstance().timeDelayed)
             authChatInteractor.logIn(
                 successAuthUi = ::deliverMessagesToUser,
                 sync = sync,
@@ -197,7 +199,7 @@ class ChatViewModel
                 updateCurrentReadMessageTime = updateCurrentReadMessageTime,
                 chatEventListener = chatEventListener
             )
-        }, ChatAttr.getInstance().timeDelayed)
+        }
     }
 
     fun uploadOldMessages(uploadHistoryComplete: () -> Unit = {}, executeAnyway: Boolean = false) {

@@ -9,7 +9,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -291,16 +290,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         list_with_message.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                list_with_message.postDelayed({
-                    val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return@postDelayed
+                list_with_message.delayOnLifecycle(DELAY_RENDERING_SCROLL_BTN) {
+                    val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return@delayOnLifecycle
 
                     if (indexLastVisible == -1) {
                         viewModel.scrollToDownVisible.value = false
-                        return@postDelayed
+                        return@delayOnLifecycle
                     }
                     viewModel.scrollToDownVisible.value = indexLastVisible >= MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL
                     viewModel.readMessage(adapterListMessages.getMessageTimestampByPosition(indexLastVisible))
-                }, DELAY_RENDERING_SCROLL_BTN)
+                }
             }
         })
         close_feedback.setOnClickListener(this)
@@ -913,7 +912,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         removeFeedbackListeners()
         viewModel.giveFeedbackOnOperator(countStars)
-        Handler().postDelayed({
+        rootView.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
             viewModel.feedbackContainerVisible.value = false
             feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
@@ -921,7 +920,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             setFeedbackListeners()
-        }, ChatAttr.getInstance().delayFeedbackScreenAppears)
+        }
     }
 
     override fun onModalOptionSelected(tag: String?, option: Option) {
