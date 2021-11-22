@@ -22,7 +22,11 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
             is StrongTag, is BTag -> result.setSpan(StyleSpan(Typeface.BOLD), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             is ItalicTag, is EmTag -> result.setSpan(StyleSpan(Typeface.ITALIC), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             is UrlTag -> {
-                result.setSpan(URLSpan(it.url), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                result.setSpan(object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.url)))
+                    }
+                }, it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 result.setSpan(
                     ForegroundColorSpan(
                         if (authorIsUser) ChatAttr.getInstance().colorTextLinkUserMessage
