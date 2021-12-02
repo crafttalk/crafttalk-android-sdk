@@ -112,12 +112,17 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
         if (endTagIndex <= startIndex || this.substring(startIndex, endTagIndex).trim().isEmpty()) return null
 
         val separatorIndex = this.indexOf("=", startIndex, true)
-        val startValueIndex = this.indexOf("\"", separatorIndex + 1, true)
-        val lastValueIndex = this.indexOf("\"", startValueIndex + 1, true)
+        val startSingleQuotesValueIndex = this.indexOf("\'", separatorIndex + 1, true)
+        val lastSingleQuotesValueIndex = this.indexOf("\'", startSingleQuotesValueIndex + 1, true)
+        val startDoubleQuotesValueIndex = this.indexOf("\"", separatorIndex + 1, true)
+        val lastDoubleQuotesValueIndex = this.indexOf("\"", startDoubleQuotesValueIndex + 1, true)
+
+        val startResultValueIndex = if (startSingleQuotesValueIndex == -1) startDoubleQuotesValueIndex else startSingleQuotesValueIndex
+        val lastResultValueIndex = if (lastSingleQuotesValueIndex == -1) lastDoubleQuotesValueIndex else lastSingleQuotesValueIndex
 
         return AttrTag(
             this.substring(startIndex, separatorIndex).trim(),
-            this.substring(startValueIndex + 1, lastValueIndex).trim()
+            this.substring(startResultValueIndex + 1, lastResultValueIndex).trim()
         )
     }
 
