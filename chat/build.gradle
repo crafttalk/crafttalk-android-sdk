@@ -56,7 +56,7 @@ ext {
     daggerVersion = '2.34'
     firebaseMessagingServiceVersion = '20.2.4'
     firebaseAnalyticsVersion = '17.5.0'
-    paginationVersion = '2.1.2'
+    paginationVersion = '3.1.0'
     photoViewVersion = '2.3.0'
     securityPreferencesVersion = '1.1.0-alpha03'
     constraintlayoutVersion = '1.1.3'

@@ -24,7 +24,9 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
             is UrlTag -> {
                 result.setSpan(object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.url)))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.url))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        context.startActivity(intent)
                     }
                 }, it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 result.setSpan(
@@ -60,7 +62,9 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
             is PhoneTag -> {
                 result.setSpan(object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${it.phone}")))
+                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${it.phone}"))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        context.startActivity(intent)
                     }
                 }, it.pointStart, it.pointEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 result.setSpan(
