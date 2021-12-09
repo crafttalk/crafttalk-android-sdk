@@ -24,4 +24,6 @@ object ChatParams {
     internal var fileWriteTimeout: Long? = null
     internal var fileCallTimeout: Long? = null
     internal var timeUnitTimeout: TimeUnit = TimeUnit.SECONDS
+
+    internal var glueMessage: String? = null
 }

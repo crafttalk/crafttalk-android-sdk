@@ -48,6 +48,7 @@ class AdapterListMessages(
                 { id, documentName, documentUrl -> downloadOrOpenDocument(id, documentName, documentUrl) }
             )
             R.layout.com_crafttalk_chat_item_transfer_message -> HolderTransferMessage(parent.inflate(ChatAttr.getInstance().layoutItemTransferMessage ?: viewType))
+            R.layout.com_crafttalk_chat_item_info_message -> HolderInfoMessage(parent.inflate(ChatAttr.getInstance().layoutItemInfoMessage ?: viewType))
             else -> HolderDefaultMessage(parent.inflate(R.layout.com_crafttalk_chat_item_default_message))
         }
     }

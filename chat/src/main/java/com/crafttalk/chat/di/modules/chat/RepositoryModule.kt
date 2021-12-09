@@ -21,4 +21,8 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindFeedbackRepository(feedbackRepository: FeedbackRepository): IFeedbackRepository
 
+    @ChatScope
+    @Binds
+    abstract fun bindConfigurationRepository(configurationRepository: ConfigurationRepository): IConfigurationRepository
+
 }

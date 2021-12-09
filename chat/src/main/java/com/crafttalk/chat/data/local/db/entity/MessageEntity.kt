@@ -7,9 +7,11 @@ import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.entity.MessageEntity.Companion.TABLE_NAME
 import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.file.TypeFile
+import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import java.util.*
 
 @Entity(tableName = TABLE_NAME)
 data class MessageEntity(
@@ -303,6 +305,25 @@ data class MessageEntity(
                 operatorPreview = operatorPreview,
                 operatorName = networkMessage.operatorName,
                 dialogId = networkMessage.dialogId
+            )
+        }
+
+        fun mapInfoMessage(
+            uuid: String,
+            infoMessage: String,
+            timestamp: Long
+        ): MessageEntity {
+            val list = arrayListOf<Tag>()
+            val message = infoMessage.convertTextToNormalString(list)
+
+            return MessageEntity(
+                uuid = uuid,
+                id = UUID.randomUUID().toString(),
+                messageType = MessageType.INFO_MESSAGE.valueType,
+                isReply = true,
+                timestamp = timestamp,
+                message = message,
+                spanStructureList = list
             )
         }
 

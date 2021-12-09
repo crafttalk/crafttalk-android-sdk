@@ -184,8 +184,9 @@ private constructor(
     val layoutItemOperatorFileMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_file_message)
     val layoutItemOperatorUnionMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_union_message)
     val layoutItemTransferMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_transfer_message)
+    val layoutItemInfoMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_info_message)
 
-//    download
+    //    download
     val mediaFileDownloadMode = attrArr.getInt(R.styleable.ChatView_media_file_download_mode, 0).let { MediaFileDownloadMode.values()[it] }
     val colorUserFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_color_user_file_message_download, R.color.com_crafttalk_chat_color_download_file)
     val colorOperatorFileMessageDownload = attrArr.getResourceId(R.styleable.ChatView_color_operator_file_message_download, R.color.com_crafttalk_chat_color_download_file)

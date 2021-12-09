@@ -12,6 +12,7 @@ class ChatViewModelFactory constructor(
     private val fileInteractor: FileInteractor,
     private val conditionInteractor: ConditionInteractor,
     private val feedbackInteractor: FeedbackInteractor,
+    private val configurationInteractor: ConfigurationInteractor,
     private val context: Context
 ): ViewModelProvider.Factory {
 
@@ -22,6 +23,7 @@ class ChatViewModelFactory constructor(
             fileInteractor,
             conditionInteractor,
             feedbackInteractor,
+            configurationInteractor,
             context
         ) as T
     }

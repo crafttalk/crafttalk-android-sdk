@@ -161,6 +161,15 @@ class MessageRepository
                 addAll(messagesAboutJoin)
             }
 
+            ChatParams.glueMessage?.let { msg ->
+                resultMessages.add(MessageEntity.mapInfoMessage(
+                    uuid = uuid,
+                    infoMessage = msg,
+                    timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime() ?: System.currentTimeMillis()) + 1
+                ))
+            }
+
+            removeAllInfoMessages()
             messagesDao.insertMessages(resultMessages)
 
             maxTimestampUserMessage?.let { timestampLastUserMessage ->
@@ -239,6 +248,10 @@ class MessageRepository
         typeDownloadProgress: TypeDownloadProgress
     ) {
         messagesDao.updateTypeDownloadProgress(id, typeDownloadProgress)
+    }
+
+    override fun removeAllInfoMessages() {
+        messagesDao.deleteAllMessageByType(MessageType.INFO_MESSAGE.valueType)
     }
 
 }

@@ -197,7 +197,7 @@ fun TextView.setMessageText(
     textMessage: SpannableString? = null,
     textMessageRes: Int? = null,
     textMessageResArgs: Array<Any> = arrayOf(),
-    maxWidthTextMessage: Int,
+    maxWidthTextMessage: Int? = null,
     colorTextMessage: Int,
     colorTextLinkMessage: Int? = null,
     sizeTextMessage: Float,
@@ -216,7 +216,7 @@ fun TextView.setMessageText(
     setTextIsSelectable(isSelectableText)
     movementMethod = if (isClickableLink) LinkMovementMethod.getInstance() else null
     // set width item
-    maxWidthTextMessage.let {
+    maxWidthTextMessage?.let {
         maxWidth = it
     }
     // set content

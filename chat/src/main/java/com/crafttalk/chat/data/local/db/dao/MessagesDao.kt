@@ -60,6 +60,9 @@ interface MessagesDao {
     @Query("DELETE FROM ${MessageEntity.TABLE_NAME}")
     fun deleteAllMessages()
 
+    @Query("DELETE FROM ${MessageEntity.TABLE_NAME} WHERE message_type = :messageType")
+    fun deleteAllMessageByType(messageType: Int)
+
     @Query("UPDATE ${MessageEntity.TABLE_NAME} SET actions = :actions WHERE id = :id")
     fun selectAction(id: String, actions: List<ActionEntity>?)
 

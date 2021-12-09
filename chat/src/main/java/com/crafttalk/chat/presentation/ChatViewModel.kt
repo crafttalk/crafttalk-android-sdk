@@ -29,6 +29,7 @@ class ChatViewModel
     private val fileInteractor: FileInteractor,
     private val conditionInteractor: ConditionInteractor,
     private val feedbackInteractor: FeedbackInteractor,
+    private val configurationInteractor: ConfigurationInteractor,
     private val context: Context
 ) : BaseViewModel() {
 
@@ -148,6 +149,9 @@ class ChatViewModel
     init {
         conditionInteractor.setInternetConnectionListener(internetConnectionListener)
         conditionInteractor.goToChatScreen()
+        launchIO {
+            configurationInteractor.getConfiguration()
+        }
     }
 
     fun onStartChatView(visitor: Visitor?) {
@@ -173,6 +177,7 @@ class ChatViewModel
     override fun onCleared() {
         super.onCleared()
         conditionInteractor.leaveChatScreen()
+        removeAllInfoMessages()
     }
 
     fun registration(vararg args: String) {
@@ -311,6 +316,12 @@ class ChatViewModel
             launchUI {
                 unreadMessagesCount?.run(actionUiAfter)
             }
+        }
+    }
+
+    private fun removeAllInfoMessages() {
+        launchIO {
+            messageInteractor.removeAllInfoMessages()
         }
     }
 

@@ -56,4 +56,6 @@ interface IMessageRepository {
 
     fun updateTypeDownloadProgressOfMessageWithAttachment(id: String, typeDownloadProgress: TypeDownloadProgress)
 
+    fun removeAllInfoMessages()
+
 }

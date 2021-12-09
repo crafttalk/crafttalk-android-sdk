@@ -19,6 +19,11 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             localMessage.operatorPreview
         )
+        localMessage.message != null && localMessage.messageType == MessageType.INFO_MESSAGE.valueType -> InfoMessageItem(
+            localMessage.id,
+            localMessage.message.convertToSpannableString(false, localMessage.spanStructureList, context),
+            localMessage.timestamp
+        )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,

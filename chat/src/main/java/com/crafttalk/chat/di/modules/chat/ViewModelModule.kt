@@ -21,6 +21,7 @@ class ViewModelModule {
         fileInteractor: FileInteractor,
         conditionInteractor: ConditionInteractor,
         feedbackInteractor: FeedbackInteractor,
+        configurationInteractor: ConfigurationInteractor,
         context: Context
     ): ChatViewModelFactory = ChatViewModelFactory(
         authChatInteractor,
@@ -28,6 +29,7 @@ class ViewModelModule {
         fileInteractor,
         conditionInteractor,
         feedbackInteractor,
+        configurationInteractor,
         context
     )
 

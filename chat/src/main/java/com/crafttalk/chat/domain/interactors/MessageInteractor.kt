@@ -145,4 +145,8 @@ class MessageInteractor
         messageRepository.updateSizeMessage(id, height, width)
     }
 
+    fun removeAllInfoMessages() {
+        messageRepository.removeAllInfoMessages()
+    }
+
 }
