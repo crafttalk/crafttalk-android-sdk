@@ -912,7 +912,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         removeFeedbackListeners()
         viewModel.giveFeedbackOnOperator(countStars)
-        rootView.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
+        user_feedback.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
             viewModel.feedbackContainerVisible.value = false
             feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
