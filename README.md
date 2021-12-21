@@ -190,6 +190,11 @@ override fun onStop() {
     super.onStop()
     chatView.onStop()
 }
+
+override fun onDestroyView() {
+    super.onDestroyView()
+    chatView.onDestroyView()
+}
 ```
 
 ## Кастомизация
@@ -350,6 +355,13 @@ Drawable:
 - size_user_replied_file_name - устанавливает размер текста имени файла процитированного сообщения
 - size_user_replied_file_size - устанавливает размер текста размера файла процитированного сообщения
 
+Голосовой ввод
+- show_voice_input - включает (true) или отключает (false) голосовой ввод 
+- delay_voice_input_post_recording - устанавливает задержку для дозаписи
+- delay_voice_input_between_recurring_warnings - устанавливает задержку между двумя предупреждениями при использовании голосового ввода
+- drawable_voice_input_mic_on - устанавливает иконку для включенного микрофона
+- drawable_voice_input_mic_off - устанавливает иконку для выключенного микрофона
+
 Оценка работы оператора:
 - delay_feedback_screen_appears - выставляет время в мс (при выставлении оценки), по истечении которого сворачивается плашка оценки работы оператора (по умолчанию 1000 мс)
 - color_feedback_title - устанавливает цвет заголовка на плашке оценки работы оператора
@@ -367,6 +379,8 @@ Drawable:
 - layout_item_operator_gif_message - задает layout для сообщения с гифкой от бота/оператора
 - layout_item_operator_file_message - задает layout для сообщения с файлом от бота/оператора
 - layout_item_operator_union_message - задает layout для смешанного(текст + фото/гифка/файл) сообщения от бота/оператора
+- layout_item_transfer_message - задает layout для сообщения от бота о переводе на оператора
+- layout_item_info_message - задает layout для сообщения склейки от бота
 
 ## Listeners
 
