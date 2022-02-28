@@ -65,6 +65,7 @@ import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_warning.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.ceil
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
@@ -258,7 +259,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             onFocusChangeListener = maskedListener
         }
         sign_in.setOnClickListener(this)
-        user_feedback.setOnClickListener(this)
         send_message.setOnClickListener(this)
         voice_input.setOnTouchListener { view, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_UP) {
@@ -305,23 +305,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         close_feedback.setOnClickListener(this)
         upload_history_btn.setOnClickListener(this)
         reply_preview_close.setOnClickListener(this)
-        setFeedbackListeners()
+        setFeedbackListener()
     }
 
-    private fun setFeedbackListeners() {
-        feedback_star_1.setOnClickListener(this)
-        feedback_star_2.setOnClickListener(this)
-        feedback_star_3.setOnClickListener(this)
-        feedback_star_4.setOnClickListener(this)
-        feedback_star_5.setOnClickListener(this)
-    }
-
-    private fun removeFeedbackListeners() {
-        feedback_star_1.setOnClickListener(null)
-        feedback_star_2.setOnClickListener(null)
-        feedback_star_3.setOnClickListener(null)
-        feedback_star_4.setOnClickListener(null)
-        feedback_star_5.setOnClickListener(null)
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setFeedbackListener() {
+        user_feedback.setOnTouchListener { view, motionEvent ->
+            var countStars = ceil((motionEvent.rawX - feedback_star_1.left) / (feedback_star_2.left - feedback_star_1.left).toDouble()).toInt()
+            if (countStars > 5) countStars = 5
+            when {
+                motionEvent.action == MotionEvent.ACTION_MOVE -> giveFeedback(countStars, false)
+                motionEvent.action == MotionEvent.ACTION_UP && countStars > 0 -> giveFeedback(countStars, true)
+            }
+            true
+        }
     }
 
     private fun setListMessages() {
@@ -852,11 +849,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
                 feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
-            R.id.feedback_star_1 -> giveFeedback(1)
-            R.id.feedback_star_2 -> giveFeedback(2)
-            R.id.feedback_star_3 -> giveFeedback(3)
-            R.id.feedback_star_4 -> giveFeedback(4)
-            R.id.feedback_star_5 -> giveFeedback(5)
         }
     }
 
@@ -882,25 +874,35 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
     }
 
-    private fun giveFeedback(countStars: Int) {
+    private fun giveFeedback(countStars: Int, isLastDecision: Boolean) {
         when (countStars) {
             1 -> {
                 feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
             2 -> {
                 feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
                 feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
             3 -> {
                 feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
                 feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
                 feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
             4 -> {
                 feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
                 feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
                 feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
                 feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
             5 -> {
                 feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
@@ -910,16 +912,18 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
             }
         }
-        removeFeedbackListeners()
-        viewModel.giveFeedbackOnOperator(countStars)
-        user_feedback.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
-            viewModel.feedbackContainerVisible.value = false
-            feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            setFeedbackListeners()
+        if (isLastDecision) {
+            user_feedback.setOnTouchListener(null)
+            viewModel.giveFeedbackOnOperator(countStars)
+            user_feedback.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
+                viewModel.feedbackContainerVisible.value = false
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                setFeedbackListener()
+            }
         }
     }
 
