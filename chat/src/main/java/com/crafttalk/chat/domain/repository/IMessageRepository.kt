@@ -50,7 +50,9 @@ interface IMessageRepository {
     ): TransferFileInfo?
 
     suspend fun sendMessages(message: String, repliedMessageId: String?)
+
     suspend fun selectAction(messageId: String, actionId: String)
+    suspend fun selectButton(messageId: String, actionId: String, buttonId: String)
 
     fun updateSizeMessage(id: String, height: Int, width: Int)
 

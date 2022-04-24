@@ -122,6 +122,26 @@ data class MessageEntity(
         }
     }
 
+    fun hasSelectedButton(): Boolean {
+        var hasActionBtn = false
+        var hasSelectedActionBtn = false
+        keyboard?.buttons?.forEach { horizontalList ->
+            horizontalList.forEach { button ->
+                if (button.typeOperation == NetworkButtonOperation.ACTION) {
+                    hasActionBtn = true
+                    if (button.selected) {
+                        hasSelectedActionBtn = true
+                    }
+                }
+            }
+        }
+        return if (keyboard?.buttons.isNullOrEmpty() || !hasActionBtn) {
+            false
+        } else {
+            hasSelectedActionBtn
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         return when (other) {
             is MessageEntity -> {

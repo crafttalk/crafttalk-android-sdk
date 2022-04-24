@@ -132,3 +132,57 @@ fun actionModelMapper(listActions: List<ActionEntity>): List<ActionItem>? {
         ActionItem(action.actionId, action.actionText, action.isSelected, backgroundRes)
     }
 }
+
+fun buttonModelMapper(listButtons: List<List<ButtonEntity>>): List<ButtonsListItem>? {
+    if (listButtons.isEmpty()) return null
+    return listButtons.mapIndexed { positionVerical, horizontalButtons ->
+        ButtonsListItem(
+            horizontalButtons.mapIndexed { positionHorizontal, button ->
+                val textColor = when {
+                    button.color == NetworkButtonColor.PRIMARY && button.selected -> ChatAttr.getInstance().colorPrimaryTextOperatorSelectedButton
+                    button.color == NetworkButtonColor.SECONDARY && button.selected -> ChatAttr.getInstance().colorSecondaryTextOperatorSelectedButton
+                    button.color == NetworkButtonColor.NEGATIVE && button.selected -> ChatAttr.getInstance().colorNegativeTextOperatorSelectedButton
+                    button.color == NetworkButtonColor.PRIMARY && !button.selected -> ChatAttr.getInstance().colorPrimaryTextOperatorButton
+                    button.color == NetworkButtonColor.SECONDARY && !button.selected -> ChatAttr.getInstance().colorSecondaryTextOperatorButton
+                    button.color == NetworkButtonColor.NEGATIVE && !button.selected -> ChatAttr.getInstance().colorNegativeTextOperatorButton
+                    button.selected -> ChatAttr.getInstance().colorTextOperatorSelectedButton
+                    !button.selected -> ChatAttr.getInstance().colorTextOperatorButton
+                    else -> ChatAttr.getInstance().colorTextOperatorButton
+                }
+                val backgroundRes = when {
+                    button.color == NetworkButtonColor.PRIMARY && button.selected -> ChatAttr.getInstance().backgroundPrimaryResOperatorSelectedButton
+                    button.color == NetworkButtonColor.SECONDARY && button.selected -> ChatAttr.getInstance().backgroundSecondaryResOperatorSelectedButton
+                    button.color == NetworkButtonColor.NEGATIVE && button.selected -> ChatAttr.getInstance().backgroundNegativeResOperatorSelectedButton
+                    button.color == NetworkButtonColor.PRIMARY && !button.selected -> ChatAttr.getInstance().backgroundPrimaryResOperatorButton
+                    button.color == NetworkButtonColor.SECONDARY && !button.selected -> ChatAttr.getInstance().backgroundSecondaryResOperatorButton
+                    button.color == NetworkButtonColor.NEGATIVE && !button.selected -> ChatAttr.getInstance().backgroundNegativeResOperatorButton
+                    button.selected -> ChatAttr.getInstance().backgroundResOperatorSelectedButton
+                    !button.selected -> ChatAttr.getInstance().backgroundResOperatorButton
+                    else -> ChatAttr.getInstance().backgroundResOperatorButton
+                }
+
+                val widthItem = (
+                        ChatAttr.getInstance().widthItemOperatorTextMessage -
+                                (horizontalButtons.size - 1) * ChatAttr.getInstance().horizontalSpacingOperatorButton
+                        ) / horizontalButtons.size
+
+                ButtonItem(
+                    id = button.buttonId,
+                    text = button.title,
+                    action = button.action,
+                    typeOperation = button.typeOperation,
+                    isSelected = button.selected,
+                    imageUrl = button.image?.url,
+                    imageEmoji = button.imageEmoji,
+                    textColor = textColor,
+                    backgroundRes = backgroundRes,
+                    width = widthItem.toInt(),
+                    marginTop = if (positionVerical == 0) 0 else (ChatAttr.getInstance().verticalSpacingOperatorButton / 2).toInt(),
+                    marginBottom = if (positionVerical == listButtons.size - 1) 0 else (ChatAttr.getInstance().verticalSpacingOperatorButton / 2).toInt(),
+                    marginStart = if (positionHorizontal == 0) 0 else (ChatAttr.getInstance().horizontalSpacingOperatorButton / 2).toInt(),
+                    marginEnd = if (positionHorizontal == horizontalButtons.size - 1) 0 else (ChatAttr.getInstance().horizontalSpacingOperatorButton / 2).toInt()
+                )
+            }
+        )
+    }
+}

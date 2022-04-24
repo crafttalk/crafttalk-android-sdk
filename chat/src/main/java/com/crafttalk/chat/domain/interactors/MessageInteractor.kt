@@ -37,6 +37,10 @@ class MessageInteractor
         messageRepository.selectAction(messageId, actionId)
     }
 
+    suspend fun selectButtonInMessage(messageId: String, actionId: String, buttonId: String) {
+        messageRepository.selectButton(messageId, actionId, buttonId)
+    }
+
     suspend fun uploadHistoryMessages(
         eventAllHistoryLoaded: () -> Unit,
         uploadHistoryComplete: () -> Unit,

@@ -4,6 +4,8 @@ import android.content.Context
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
+import com.crafttalk.chat.data.local.db.entity.ButtonEntity
+import com.crafttalk.chat.data.local.db.entity.KeyboardEntity
 import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
@@ -114,6 +116,7 @@ class MessageRepository
                     uuid = uuid,
                     networkMessage = networkMessage,
                     actionsSelected = actionSelectionMessages,
+                    buttonsSelected = listOf(),
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
                     fileSize = fileInfo?.size,
                     mediaFileHeight = fileInfo?.height,
@@ -236,6 +239,28 @@ class MessageRepository
                 )
             }
             messagesDao.selectAction(messageId, updatedActions)
+        }
+    }
+
+    override suspend fun selectButton(messageId: String, actionId: String, buttonId: String) {
+        socketApi.selectAction(actionId)
+        messagesDao.getMessageById(messageId)?.let {
+            val updatedButtons = it.keyboard?.buttons?.map { horizontalButtons ->
+                horizontalButtons.map { button: ButtonEntity ->
+                    ButtonEntity(
+                        buttonId = button.buttonId,
+                        title = button.title,
+                        action = button.action,
+                        typeOperation = button.typeOperation,
+                        color = button.color,
+                        image = button.image,
+                        imageEmoji = button.imageEmoji,
+                        hasFullSize = button.hasFullSize,
+                        selected = button.buttonId == buttonId
+                    )
+                }
+            }
+            messagesDao.selectButton(messageId, KeyboardEntity(updatedButtons ?: listOf()))
         }
     }
 
