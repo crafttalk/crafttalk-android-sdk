@@ -9,18 +9,16 @@ import com.crafttalk.chat.data.local.db.dao.PersonDao
 import com.crafttalk.chat.data.local.db.entity.FileEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.data.local.db.entity.PersonEntity
-import com.crafttalk.chat.data.local.db.entity.converters.ActionConverter
-import com.crafttalk.chat.data.local.db.entity.converters.SpanStructureListConverter
-import com.crafttalk.chat.data.local.db.entity.converters.TypeDownloadProgressConverter
-import com.crafttalk.chat.data.local.db.entity.converters.TypeFileConverter
+import com.crafttalk.chat.data.local.db.entity.converters.*
 
 @Database(
     entities = [MessageEntity::class, PersonEntity::class, FileEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(
     ActionConverter::class,
+    KeyboardConverter::class,
     TypeFileConverter::class,
     TypeDownloadProgressConverter::class,
     SpanStructureListConverter::class
