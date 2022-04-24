@@ -1,7 +1,10 @@
 package com.crafttalk.chat.utils
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
+import android.graphics.Color
+import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -35,6 +38,14 @@ private constructor(
     val colorTextOperatorMessage = attrArr.getColor(R.styleable.ChatView_color_text_operator_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_server_message))
     val colorTextOperatorAction = attrArr.getColor(R.styleable.ChatView_color_text_operator_action, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_server_action))
     val colorTextOperatorSelectedAction = attrArr.getColor(R.styleable.ChatView_color_text_operator_selected_action, ContextCompat.getColor(context, R.color.com_crafttalk_chat_white))
+    val colorTextOperatorButton = attrArr.getColor(R.styleable.ChatView_color_text_operator_button, colorMain)
+    val colorPrimaryTextOperatorButton = attrArr.getColor(R.styleable.ChatView_color_primary_text_operator_button, colorTextOperatorButton)
+    val colorSecondaryTextOperatorButton = attrArr.getColor(R.styleable.ChatView_color_secondary_text_operator_button, colorTextOperatorButton)
+    val colorNegativeTextOperatorButton = attrArr.getColor(R.styleable.ChatView_color_negative_text_operator_button, colorTextOperatorButton)
+    val colorTextOperatorSelectedButton = attrArr.getColor(R.styleable.ChatView_color_text_operator_selected_button, ContextCompat.getColor(context, R.color.com_crafttalk_chat_white))
+    val colorPrimaryTextOperatorSelectedButton = attrArr.getColor(R.styleable.ChatView_color_primary_text_operator_selected_button, colorTextOperatorSelectedButton)
+    val colorSecondaryTextOperatorSelectedButton = attrArr.getColor(R.styleable.ChatView_color_secondary_text_operator_selected_button, colorTextOperatorSelectedButton)
+    val colorNegativeTextOperatorSelectedButton = attrArr.getColor(R.styleable.ChatView_color_negative_text_operator_selected_button, colorTextOperatorSelectedButton)
     private val colorFileName = attrArr.getColor(R.styleable.ChatView_color_file_name, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_info))
     val colorUserFileName = attrArr.getColor(R.styleable.ChatView_color_user_file_name, colorFileName)
     val colorUserRepliedFileName = attrArr.getColor(R.styleable.ChatView_color_user_replied_file_name, colorFileName)
@@ -72,6 +83,14 @@ private constructor(
     val colorBackgroundOperatorMediaFileMessage = attrArr.getColor(R.styleable.ChatView_color_bg_operator_media_file_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_bg_server_message))
     val colorBackgroundOperatorAction = attrArr.getColor(R.styleable.ChatView_color_bg_operator_action, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_bg_server_action))
     val colorBackgroundOperatorSelectedAction = attrArr.getColor(R.styleable.ChatView_color_bg_operator_selected_action, colorMain)
+    val backgroundResOperatorButton = attrArr.getInt(R.styleable.ChatView_resource_bg_operator_button, R.drawable.com_crafttalk_chat_background_item_button)
+    val backgroundPrimaryResOperatorButton = attrArr.getInt(R.styleable.ChatView_resource_primary_bg_operator_button, backgroundResOperatorButton)
+    val backgroundSecondaryResOperatorButton = attrArr.getInt(R.styleable.ChatView_resource_secondary_bg_operator_button, backgroundResOperatorButton)
+    val backgroundNegativeResOperatorButton = attrArr.getInt(R.styleable.ChatView_resource_negative_bg_operator_button, backgroundResOperatorButton)
+    val backgroundResOperatorSelectedButton = attrArr.getInt(R.styleable.ChatView_resource_bg_operator_selected_button, R.drawable.com_crafttalk_chat_background_item_selected_button)
+    val backgroundPrimaryResOperatorSelectedButton = attrArr.getInt(R.styleable.ChatView_resource_primary_bg_operator_selected_button, backgroundResOperatorSelectedButton)
+    val backgroundSecondaryResOperatorSelectedButton = attrArr.getInt(R.styleable.ChatView_resource_secondary_bg_operator_selected_button, backgroundResOperatorSelectedButton)
+    val backgroundNegativeResOperatorSelectedButton = attrArr.getInt(R.styleable.ChatView_resource_negative_bg_operator_selected_button, backgroundResOperatorSelectedButton)
     val colorBordersOperatorAction = attrArr.getColor(R.styleable.ChatView_color_borders_operator_action, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_borders_server_action))
 
     val drawableProgressIndeterminate = attrArr.getDrawable(R.styleable.ChatView_drawable_progress_indeterminate)
@@ -88,6 +107,7 @@ private constructor(
     val sizeTextUserRepliedMessage = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_user_replied_message, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_user_replied_message)).toFloat()
     val sizeTextOperatorMessage = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_message, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_server_message)).toFloat()
     val sizeTextOperatorAction = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_action, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_server_action)).toFloat()
+    val sizeTextOperatorButton = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_operator_button, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_server_button)).toFloat()
     private val sizeFileName = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_file_name, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_info)).toFloat()
     val sizeUserFileName = attrArr.getDimension(R.styleable.ChatView_size_user_file_name, sizeFileName)
     val sizeUserRepliedFileName = attrArr.getDimension(R.styleable.ChatView_size_user_replied_file_name, sizeFileName)
@@ -116,6 +136,8 @@ private constructor(
     private val heightElongatedItemOperatorFilePreviewMessageInPercent = attrArr.getFloatOrNull(R.styleable.ChatView_height_elongated_item_operator_file_preview_message_in_percent)?.let { it * heightScreenInPx } ?: (0.4f * heightScreenInPx)
     val widthItemUserTextMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_text_message) ?: widthItemUserTextMessageInPercent).toInt()
     val widthItemOperatorTextMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_text_message) ?: widthItemOperatorTextMessageInPercent).toInt()
+    val horizontalSpacingOperatorButton = attrArr.getDimension(R.styleable.ChatView_horizontal_spacing_operator_button, context.resources.getDimension(R.dimen.com_crafttalk_chat_horizontal_spacing_operator_button))
+    val verticalSpacingOperatorButton = attrArr.getDimension(R.styleable.ChatView_vertical_spacing_operator_button, context.resources.getDimension(R.dimen.com_crafttalk_chat_vertical_spacing_operator_button))
     val widthItemUserFileIconMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_file_icon_message) ?: widthItemUserFileIconMessageInPercent)?.toInt()
     val widthItemOperatorFileIconMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_operator_file_icon_message) ?: widthItemOperatorFileIconMessageInPercent)?.toInt()
     val widthItemUserFilePreviewWarningMessage = (attrArr.getDimensionOrNull(R.styleable.ChatView_width_item_user_file_preview_warning_message) ?: widthItemUserFilePreviewWarningMessageInPercent).toInt()
@@ -150,6 +172,7 @@ private constructor(
     val resFontFamilyUserMessage = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_user_message)
     val resFontFamilyOperatorMessage = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_operator_message)
     val resFontFamilyOperatorAction = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_operator_action)
+    val resFontFamilyOperatorButton = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_operator_button)
     val resFontFamilyFileInfo = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_file_info)
     val resFontFamilyMessageAuthor = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_message_author)
     val resFontFamilyMessageTime = resFontFamilyAllText ?: attrArr.getResourceIdOrNull(R.styleable.ChatView_resource_font_family_message_time)

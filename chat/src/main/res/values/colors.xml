@@ -9,6 +9,7 @@
     <color name="com_crafttalk_chat_default_color_bg_server_message">#EBEBEB</color>
     <color name="com_crafttalk_chat_default_color_borders_server_action">#ddd</color>
     <color name="com_crafttalk_chat_default_color_bg_server_action">#fff</color>
+    <color name="com_crafttalk_chat_default_color_bg_server_button">#fff</color>
     <color name="com_crafttalk_chat_default_color_text_phone_server_message">@color/com_crafttalk_chat_default_color_main</color>
     <color name="com_crafttalk_chat_default_color_text_phone_user_message">@color/com_crafttalk_chat_white</color>
 

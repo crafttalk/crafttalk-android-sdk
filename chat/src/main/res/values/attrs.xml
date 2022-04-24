@@ -14,6 +14,14 @@
         <attr name="color_bg_operator_media_file_message" format="color"/>
         <attr name="color_bg_operator_action" format="color"/>
         <attr name="color_bg_operator_selected_action" format="color"/>
+        <attr name="resource_bg_operator_button" format="integer"/>
+        <attr name="resource_primary_bg_operator_button" format="integer"/>
+        <attr name="resource_secondary_bg_operator_button" format="integer"/>
+        <attr name="resource_negative_bg_operator_button" format="integer"/>
+        <attr name="resource_bg_operator_selected_button" format="integer"/>
+        <attr name="resource_primary_bg_operator_selected_button" format="integer"/>
+        <attr name="resource_secondary_bg_operator_selected_button" format="integer"/>
+        <attr name="resource_negative_bg_operator_selected_button" format="integer"/>
         <attr name="color_borders_operator_action" format="color"/>
         <attr name="color_text_user_message" format="color"/>
         <attr name="color_barrier_replied_message" format="color"/>
@@ -21,6 +29,14 @@
         <attr name="color_text_operator_message" format="color"/>
         <attr name="color_text_operator_action" format="color"/>
         <attr name="color_text_operator_selected_action" format="color"/>
+        <attr name="color_text_operator_button" format="color"/>
+        <attr name="color_primary_text_operator_button" format="color"/>
+        <attr name="color_secondary_text_operator_button" format="color"/>
+        <attr name="color_negative_text_operator_button" format="color"/>
+        <attr name="color_text_operator_selected_button" format="color"/>
+        <attr name="color_primary_text_operator_selected_button" format="color"/>
+        <attr name="color_secondary_text_operator_selected_button" format="color"/>
+        <attr name="color_negative_text_operator_selected_button" format="color"/>
         <attr name="color_file_name" format="color"/>
         <attr name="color_user_file_name" format="color"/>
         <attr name="color_user_replied_file_name" format="color"/>
@@ -78,6 +94,7 @@
         <attr name="size_user_replied_message" format="dimension"/>
         <attr name="size_operator_message" format="dimension"/>
         <attr name="size_operator_action" format="dimension"/>
+        <attr name="size_operator_button" format="dimension"/>
         <attr name="size_file_name" format="dimension"/>
         <attr name="size_user_file_name" format="dimension"/>
         <attr name="size_user_replied_file_name" format="dimension"/>
@@ -97,6 +114,8 @@
 
         <attr name="width_item_user_text_message" format="dimension"/>
         <attr name="width_item_operator_text_message" format="dimension"/>
+        <attr name="horizontal_spacing_operator_button" format="dimension"/>
+        <attr name="vertical_spacing_operator_button" format="dimension"/>
         <attr name="width_item_user_file_icon_message" format="dimension"/>
         <attr name="width_item_operator_file_icon_message" format="dimension"/>
         <attr name="width_item_user_file_preview_warning_message" format="dimension"/>
@@ -139,6 +158,7 @@
         <attr name="resource_font_family_user_message" format="integer"/>
         <attr name="resource_font_family_operator_message" format="integer"/>
         <attr name="resource_font_family_operator_action" format="integer"/>
+        <attr name="resource_font_family_operator_button" format="integer"/>
         <attr name="resource_font_family_file_info" format="integer"/>
         <attr name="resource_font_family_message_author" format="integer"/>
         <attr name="resource_font_family_message_time" format="integer"/>
