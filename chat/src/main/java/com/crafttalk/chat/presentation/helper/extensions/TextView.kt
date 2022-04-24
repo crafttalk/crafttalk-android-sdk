@@ -206,7 +206,7 @@ fun TextView.setMessageText(
     isSelectableText: Boolean = false,
     bindContinue: () -> Unit = {}
 ) {
-    if (textMessage == null && textMessageRes == null) {
+    if (textMessage.isNullOrBlank() && textMessageRes == null) {
         visibility = View.GONE
         return
     } else {
