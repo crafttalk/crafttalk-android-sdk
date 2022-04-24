@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.adapters.AdapterAction
+import com.crafttalk.chat.presentation.adapters.AdapterButton
 import com.crafttalk.chat.presentation.base.BaseViewHolder
 import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.model.TextMessageItem
@@ -22,6 +23,7 @@ class HolderOperatorTextMessage(
 
     private val message: TextView? = view.findViewById(R.id.server_message)
     private val listActions: RecyclerView? = view.findViewById(R.id.actions_list)
+    private val listButtons: RecyclerView? = view.findViewById(R.id.buttons_list)
     private val authorName: TextView? = view.findViewById(R.id.author_name)
     private val authorPreview: ImageView? = view.findViewById(R.id.author_preview)
     private val time: TextView? = view.findViewById(R.id.time)
@@ -51,6 +53,16 @@ class HolderOperatorTextMessage(
                     } else {
                         adapter = AdapterAction(item.id, item.hasSelectedAction, selectAction).apply {
                             this.data = item.actions
+                        }
+                        visibility = View.VISIBLE
+                    }
+                }
+                listButtons?.apply {
+                    if (item.buttons == null) {
+                        visibility = View.GONE
+                    } else {
+                        adapter = AdapterButton(item.id, item.hasSelectedButton, selectButton).apply {
+                            this.data = item.buttons
                         }
                         visibility = View.VISIBLE
                     }
