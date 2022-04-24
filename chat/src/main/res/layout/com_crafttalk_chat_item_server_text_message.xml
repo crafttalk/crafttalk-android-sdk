@@ -56,6 +56,20 @@
         tools:itemCount="3"
         tools:visibility="visible" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/buttons_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:nestedScrollingEnabled="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/actions_list"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/com_crafttalk_chat_item_action"
+        tools:itemCount="3"
+        tools:visibility="visible" />
+
     <include
         android:id="@+id/include_message_info"
         android:layout_width="0dp"
@@ -63,6 +77,6 @@
         layout="@layout/com_crafttalk_chat_include_server_message_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/actions_list" />
+        app:layout_constraintTop_toBottomOf="@id/buttons_list" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

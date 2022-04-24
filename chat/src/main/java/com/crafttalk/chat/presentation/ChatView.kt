@@ -344,6 +344,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 )
             },
             viewModel::selectAction,
+            viewModel::selectButton,
             viewModel::selectReplyMessage,
             viewModel::updateData
         ).apply {
