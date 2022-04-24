@@ -8,9 +8,11 @@ import com.crafttalk.chat.data.local.db.entity.MessageEntity.Companion.TABLE_NAM
 import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.message.MessageType
+import com.crafttalk.chat.domain.entity.message.NetworkButtonOperation
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 @Entity(tableName = TABLE_NAME)
@@ -43,6 +45,9 @@ data class MessageEntity(
 
     @ColumnInfo(name = "actions")
     val actions: List<ActionEntity>? = null,
+
+    @SerializedName(value = "keyboard")
+    val keyboard: KeyboardEntity? = null,
 
     @ColumnInfo(name = "attachment_url")
     val attachmentUrl: String? = null,
