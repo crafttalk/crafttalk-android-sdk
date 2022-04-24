@@ -15,7 +15,8 @@ import com.crafttalk.chat.utils.ChatAttr
 
 class HolderOperatorTextMessage(
     view: View,
-    private val selectAction: (messageId: String, actionId: String) -> Unit
+    private val selectAction: (messageId: String, actionId: String) -> Unit,
+    private val selectButton: (messageId: String, actionId: String, buttonId: String) -> Unit
 ) : BaseViewHolder<TextMessageItem>(view) {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
 

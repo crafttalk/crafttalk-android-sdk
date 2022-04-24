@@ -3,6 +3,7 @@ package com.crafttalk.chat.data.local.db.dao
 import androidx.paging.DataSource
 import androidx.room.*
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
+import com.crafttalk.chat.data.local.db.entity.KeyboardEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 
@@ -65,5 +66,8 @@ interface MessagesDao {
 
     @Query("UPDATE ${MessageEntity.TABLE_NAME} SET actions = :actions WHERE id = :id")
     fun selectAction(id: String, actions: List<ActionEntity>?)
+
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET keyboard = :keyboard WHERE id = :id")
+    fun selectButton(id: String, keyboard: KeyboardEntity?)
 
 }

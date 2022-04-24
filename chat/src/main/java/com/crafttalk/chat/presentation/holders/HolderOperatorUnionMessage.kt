@@ -19,6 +19,7 @@ import com.crafttalk.chat.utils.ChatAttr
 class HolderOperatorUnionMessage(
     view: View,
     private val selectAction: (messageId: String, actionId: String) -> Unit,
+    private val selectButton: (messageId: String, actionId: String, buttonId: String) -> Unit,
     private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val updateData: (id: String, height: Int, width: Int) -> Unit,
     private val clickGifHandler: (gifName: String, gifUrl: String) -> Unit,
