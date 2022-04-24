@@ -35,6 +35,9 @@ data class NetworkMessage (
     @SerializedName (value = "actions")
     val actions: List<NetworkAction>? = null,
 
+    @SerializedName (value = "keyboard")
+    val keyboard: NetworkKeyboard? = null,
+
     @SerializedName (value = "attachment_url")
     var attachmentUrl: String? = null,
 
@@ -103,6 +106,7 @@ data class NetworkMessage (
             timestamp = messageEntity.timestamp,
             message = messageEntity.message,
             actions = messageEntity.actions?.map { NetworkAction.map(it) },
+            keyboard = messageEntity.keyboard?.let { NetworkKeyboard.map(it) },
             attachmentUrl = messageEntity.attachmentUrl,
             attachmentType = messageEntity.attachmentType?.name,
             attachmentName = messageEntity.attachmentName,
