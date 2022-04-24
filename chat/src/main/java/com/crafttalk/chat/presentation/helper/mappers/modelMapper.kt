@@ -3,13 +3,16 @@ package com.crafttalk.chat.presentation.helper.mappers
 import android.content.Context
 import com.crafttalk.chat.R
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
+import com.crafttalk.chat.data.local.db.entity.ButtonEntity
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.MessageType.Companion.getMessageTypeByValueType
+import com.crafttalk.chat.domain.entity.message.NetworkButtonColor
 import com.crafttalk.chat.presentation.helper.converters.convertToSpannableString
 import com.crafttalk.chat.presentation.model.*
+import com.crafttalk.chat.utils.ChatAttr
 
 fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageModel {
     return when {
@@ -25,16 +28,18 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.timestamp
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
-            localMessage.id,
-            if (localMessage.isReply) Role.OPERATOR else Role.USER,
-            localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
-            localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
-            localMessage.hasSelectedAction(),
+            id = localMessage.id,
+            role = if (localMessage.isReply) Role.OPERATOR else Role.USER,
+            message = localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
+            actions = localMessage.actions?.let { listActions -> actionModelMapper(listActions) },
+            hasSelectedAction = localMessage.hasSelectedAction(),
+            buttons = localMessage.keyboard?.buttons?.let { listButtons -> buttonModelMapper(listButtons) },
+            hasSelectedButton = localMessage.hasSelectedButton(),
             repliedMessage = RepliedMessageModel.map(localMessage, context),
-            localMessage.timestamp,
-            if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            if (localMessage.isReply) localMessage.operatorPreview else null,
-            getMessageTypeByValueType(localMessage.messageType)
+            timestamp = localMessage.timestamp,
+            authorName = if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            authorPreview = if (localMessage.isReply) localMessage.operatorPreview else null,
+            stateCheck = getMessageTypeByValueType(localMessage.messageType)
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.GIF -> GifMessageItem(
             localMessage.id,
@@ -83,12 +88,14 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             getMessageTypeByValueType(localMessage.messageType)
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (!localMessage.attachmentUrl.isNullOrEmpty() && !localMessage.attachmentName.isNullOrEmpty() && localMessage.attachmentType != null) -> UnionMessageItem(
-            localMessage.id,
-            if (localMessage.isReply) Role.OPERATOR else Role.USER,
-            localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
-            localMessage.actions?.let { listAction -> actionModelMapper(listAction) },
-            localMessage.hasSelectedAction(),
-            FileModel(
+            id = localMessage.id,
+            role = if (localMessage.isReply) Role.OPERATOR else Role.USER,
+            message = localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
+            actions = localMessage.actions?.let { listActions -> actionModelMapper(listActions) },
+            hasSelectedAction = localMessage.hasSelectedAction(),
+            buttons = localMessage.keyboard?.buttons?.let { listButtons -> buttonModelMapper(listButtons) },
+            hasSelectedButton = localMessage.hasSelectedButton(),
+            file = FileModel(
                 url = localMessage.attachmentUrl,
                 name = localMessage.attachmentName,
                 height = localMessage.height,
@@ -98,10 +105,10 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 type = localMessage.attachmentType,
                 typeDownloadProgress = localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED
             ),
-            localMessage.timestamp,
-            if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
-            if (localMessage.isReply) localMessage.operatorPreview else null,
-            getMessageTypeByValueType(localMessage.messageType)
+            timestamp = localMessage.timestamp,
+            authorName = if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            authorPreview = if (localMessage.isReply) localMessage.operatorPreview else null,
+            stateCheck = getMessageTypeByValueType(localMessage.messageType)
         )
         else -> DefaultMessageItem(
             localMessage.id,
@@ -110,15 +117,15 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
     }
 }
 
-fun actionModelMapper(listAction: List<ActionEntity>): List<ActionItem>? {
-    if (listAction.isEmpty()) return null
-    return listAction.mapIndexed { position, action ->
-        val backgroundRes = if (listAction.size == 1) {
+fun actionModelMapper(listActions: List<ActionEntity>): List<ActionItem>? {
+    if (listActions.isEmpty()) return null
+    return listActions.mapIndexed { position, action ->
+        val backgroundRes = if (listActions.size == 1) {
             R.drawable.com_crafttalk_chat_background_single_item_action
         } else {
             when (position) {
                 0 -> R.drawable.com_crafttalk_chat_background_top_item_action
-                listAction.size - 1 -> R.drawable.com_crafttalk_chat_background_bottom_item_action
+                listActions.size - 1 -> R.drawable.com_crafttalk_chat_background_bottom_item_action
                 else -> R.drawable.com_crafttalk_chat_background_item_action
             }
         }
