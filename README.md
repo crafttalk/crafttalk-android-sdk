@@ -224,7 +224,15 @@ override fun onDestroyView() {
 - color_text_operator_message - устанавливает цвет текста сообщения бота/оператора
 - color_text_operator_action - устанавливает цвет текста подсказки бота
 - color_bg_operator_selected_action - устанавливает цвет фона выбранной подсказки бота
-- color_text_operator_selected_action- устанавливает цвет текста выбранной подсказки бота
+- color_text_operator_selected_action - устанавливает цвет текста выбранной подсказки бота
+- color_text_operator_button - устанавливает дефолтный цвет текста кнопки-подсказки бота
+- color_primary_text_operator_button - устанавливает цвет текста для кнопки-подсказки бота со стилем primary
+- color_secondary_text_operator_button - устанавливает цвет текста для кнопки-подсказки бота со стилем secondary
+- color_negative_text_operator_button - устанавливает цвет текста для кнопки-подсказки бота со стилем negative
+- color_text_operator_selected_button - устанавливает дефолтный цвет текста выбранной кнопки-подсказки бота
+- color_primary_text_operator_selected_button - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем primary
+- color_secondary_text_operator_selected_button - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем secondary
+- color_negative_text_operator_selected_button - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем negative
 - color_file_name - устанавливает цвет имени файла для всех сообщений
 - color_user_file_name - устанавливает цвет имени файла для пользовательского сообщения
 - color_operator_file_name - устанавливает цвет имени файла для сообщения бота/оператора
@@ -259,6 +267,14 @@ override fun onDestroyView() {
 Ссылки на ресурсы:
 - resource_bg_user_message - устанавливает background для сообщений пользователя
 - resource_bg_operator_message - устанавливает background для сообщений бота/оператора
+- resource_bg_operator_button - устанавливает дефолтный background для кнопки-подсказки бота
+- resource_primary_bg_operator_button - устанавливает background для кнопки-подсказки бота со стилем primary
+- resource_secondary_bg_operator_button - устанавливает background для кнопки-подсказки бота со стилем secondary
+- resource_negative_bg_operator_button - устанавливает background для кнопки-подсказки бота со стилем negative
+- resource_bg_operator_selected_button - устанавливает дефолтный background для выбранной кнопки-подсказки бота
+- resource_primary_bg_operator_selected_button - устанавливает background для выбранной кнопки-подсказки бота со стилем primary
+- resource_secondary_bg_operator_selected_button - устанавливает background для выбранной кнопки-подсказки бота со стилем secondary
+- resource_negative_bg_operator_selected_button - устанавливает background для выбранной кнопки-подсказки бота со стилем negative
 
 Drawable:
 - drawable_progress_indeterminate - устанавливает цвет всех тробберов в чате
@@ -272,6 +288,7 @@ Drawable:
 - size_user_message - устанавливает размер текста пользовательского сообщения
 - size_operator_message - устанавливает размер текста сообщения бота/оператора
 - size_operator_action - устанавливает размер текста подсказки бота
+- size_operator_button - устанавливает размер текста кнопки-подсказки бота
 - size_file_name - устанавливает размер текста имени файла для всех сообщений
 - size_user_file_name - устанавливает размер текста имени файла пользовательского сообщения
 - size_operator_file_name - устанавливает размер текста имени файла сообщения бота/оператора
@@ -308,12 +325,15 @@ Drawable:
 - width_elongated_item_operator_file_preview_message_in_percent - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от бота/оператора в процентном соотношении
 - height_elongated_item_user_file_preview_message_in_percent - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от пользователя в процентном соотношении
 - height_elongated_item_operator_file_preview_message_in_percent - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от бота/оператора в процентном соотношении
+- horizontal_spacing_operator_button - устанавливает горизонтальное расстояние между соседними кнопками-подсказками бота 
+- vertical_spacing_operator_button - устанавливает вертикальное расстояние между соседними кнопками-подсказками бота 
 
 Шрифты:
 - resource_font_family_all_text - шрифт для всех сообщений, если указан этот атрибут, то остальные игнорируются
 - resource_font_family_user_message
 - resource_font_family_operator_message
 - resource_font_family_operator_action
+- resource_font_family_operator_button
 - resource_font_family_file_info
 - resource_font_family_message_author
 - resource_font_family_message_time
