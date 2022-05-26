@@ -176,17 +176,17 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
         val closeTagIndex = this.indexOf(">", startIndex, true)
         return closeTagIndex > startIndex && closeTagIndex < this.length && this[closeTagIndex - 1] == '/'
     }
-    fun replyOrExecuteTag(tagName: String, resultString: StringBuilder, block: () -> Unit) {
-        when (tagName) {
-            "p" -> {
+    fun replyOrExecuteTag(tagName: String, isOpenTag: Boolean, resultString: StringBuilder, block: () -> Unit) {
+        when {
+            tagName == "p" -> {
                 resultString.append("\n\n")
             }
-            "br" -> {
+            tagName == "br" -> {
                 resultString.append("\n")
             }
-            "li" -> {
-                block()
+            tagName == "li" && isOpenTag -> {
                 resultString.append("\n")
+                block()
             }
             else -> block()
         }
@@ -268,16 +268,20 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
             '>' -> {
                 when (true) {
                     isSingleTag -> {
-                        replyOrExecuteTag(tagName.toString(), result) {
+                        replyOrExecuteTag(tagName.toString(), true, result) {
                             addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex, result.lastIndex)
                         }
                     }
                     !isSingleTag && isCloseTag -> {
-                        replyOrExecuteTag(tagName.toString().trim(), result) {
+                        replyOrExecuteTag(tagName.toString().trim(), false, result) {
                             updateStateTag(tagName.toString().trim(), result.lastIndex)
                         }
                     }
-                    !isSingleTag && !isCloseTag -> addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex)
+                    !isSingleTag && !isCloseTag -> {
+                        replyOrExecuteTag(tagName.toString().trim(), true, result) {
+                            addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex)
+                        }
+                    }
                 }
                 isSelectTag = false
                 isSingleTag = false
