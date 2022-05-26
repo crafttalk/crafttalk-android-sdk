@@ -29,8 +29,14 @@ class MessageRepository
     override fun getMessages() = messagesDao
         .getMessages()
 
-    override fun getCountUnreadMessages(currentReadMessageTime: Long) = messagesDao
-        .getCountUnreadMessages(currentReadMessageTime)
+    override fun getCountUnreadMessages(
+        currentReadMessageTime: Long,
+        ignoredMessageTypes: List<Int>
+    ) = messagesDao
+        .getCountUnreadMessages(
+            currentReadMessageTime= currentReadMessageTime,
+            ignoredMessageTypes = ignoredMessageTypes
+        )
 
     override fun getTimestampMessageById(messageId: String) = messagesDao
         .getTimestampMessageById(messageId)
@@ -40,9 +46,14 @@ class MessageRepository
 
     override fun getCountUnreadMessagesRange(
         currentReadMessageTime: Long,
-        timestampLastMessage: Long
+        timestampLastMessage: Long,
+        ignoredMessageTypes: List<Int>
     ) = messagesDao
-        .getCountUnreadMessagesRange(currentReadMessageTime, timestampLastMessage)
+        .getCountUnreadMessagesRange(
+            currentReadMessageTime = currentReadMessageTime,
+            timestampLastMessage = timestampLastMessage,
+            ignoredMessageTypes = ignoredMessageTypes
+        )
 
     override suspend fun getTimeFirstMessage() = messagesDao
         .getFirstTime()

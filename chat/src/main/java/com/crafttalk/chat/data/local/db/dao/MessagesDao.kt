@@ -16,14 +16,14 @@ interface MessagesDao {
     @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} LIMIT 1)")
     fun isNotEmpty(): Boolean
 
-    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime")
-    fun getCountUnreadMessages(currentReadMessageTime: Long): Int?
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND message_type NOT IN (:ignoredMessageTypes)")
+    fun getCountUnreadMessages(currentReadMessageTime: Long, ignoredMessageTypes: List<Int>): Int?
 
     @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp <= :timestampMessage")
     fun getCountMessagesInclusiveTimestamp(timestampMessage: Long): Int?
 
-    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND timestamp <= :timestampLastMessage")
-    fun getCountUnreadMessagesRange(currentReadMessageTime: Long, timestampLastMessage: Long): Int?
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND timestamp <= :timestampLastMessage AND message_type NOT IN (:ignoredMessageTypes)")
+    fun getCountUnreadMessagesRange(currentReadMessageTime: Long, timestampLastMessage: Long, ignoredMessageTypes: List<Int>): Int?
 
     @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} ORDER BY timestamp ASC LIMIT 1")
     fun getFirstTime(): Long?
