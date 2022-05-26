@@ -11,13 +11,20 @@ interface IMessageRepository {
 
     fun getMessages(): DataSource.Factory<Int, MessageEntity>
 
-    fun getCountUnreadMessages(currentReadMessageTime: Long): Int?
+    fun getCountUnreadMessages(
+        currentReadMessageTime: Long,
+        ignoredMessageTypes: List<Int>
+    ): Int?
 
     fun getTimestampMessageById(messageId: String): Long?
 
     fun getCountMessagesInclusiveTimestamp(timestampMessage: Long): Int?
 
-    fun getCountUnreadMessagesRange(currentReadMessageTime: Long, timestampLastMessage: Long): Int?
+    fun getCountUnreadMessagesRange(
+        currentReadMessageTime: Long,
+        timestampLastMessage: Long,
+        ignoredMessageTypes: List<Int>
+    ): Int?
 
     // получение времени первого сообщения
     suspend fun getTimeFirstMessage(): Long?

@@ -2,6 +2,7 @@ package com.crafttalk.chat.domain.interactors
 
 import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
@@ -19,9 +20,16 @@ class MessageInteractor
 
     fun getCountUnreadMessages(currentReadMessageTime: Long, timestampLastMessage: Long?): Int? {
         return if (timestampLastMessage == null) {
-            messageRepository.getCountUnreadMessages(currentReadMessageTime)
+            messageRepository.getCountUnreadMessages(
+                currentReadMessageTime = currentReadMessageTime,
+                ignoredMessageTypes = listOf(MessageType.INFO_MESSAGE.valueType)
+            )
         } else {
-            messageRepository.getCountUnreadMessagesRange(currentReadMessageTime, timestampLastMessage)
+            messageRepository.getCountUnreadMessagesRange(
+                currentReadMessageTime = currentReadMessageTime,
+                timestampLastMessage = timestampLastMessage,
+                ignoredMessageTypes = listOf(MessageType.INFO_MESSAGE.valueType)
+            )
         }
     }
 

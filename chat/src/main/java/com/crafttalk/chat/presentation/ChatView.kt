@@ -297,7 +297,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         viewModel.scrollToDownVisible.value = false
                         return@delayOnLifecycle
                     }
-                    viewModel.scrollToDownVisible.value = indexLastVisible >= MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL
+                    viewModel.scrollToDownVisible.value = (indexLastVisible > MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL) ||
+                            ((indexLastVisible == MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL) &&
+                            adapterListMessages.currentList?.get(0) !is InfoMessageItem)
                     viewModel.readMessage(adapterListMessages.getMessageTimestampByPosition(indexLastVisible))
                 }
             }
