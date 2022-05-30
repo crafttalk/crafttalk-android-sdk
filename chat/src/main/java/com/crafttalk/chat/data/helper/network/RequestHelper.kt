@@ -1,7 +1,7 @@
 package com.crafttalk.chat.data.helper.network
 
 import retrofit2.Call
-import java.net.UnknownHostException
+import java.io.IOException
 
 fun <T> Call<T>.toData(): T? {
     return try {
@@ -11,7 +11,7 @@ fun <T> Call<T>.toData(): T? {
         } else {
             null
         }
-    } catch (e: UnknownHostException) {
+    } catch (e: IOException) {
         null
     }
 }
