@@ -7,10 +7,7 @@ import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.dao.PersonDao
 import com.crafttalk.chat.data.local.db.database.ChatDatabase
-import com.crafttalk.chat.data.local.db.migrations.Migration_1_2
-import com.crafttalk.chat.data.local.db.migrations.Migration_2_3
-import com.crafttalk.chat.data.local.db.migrations.Migration_3_4
-import com.crafttalk.chat.data.local.db.migrations.Migration_4_5
+import com.crafttalk.chat.data.local.db.migrations.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -31,7 +28,8 @@ class DBModule {
             Migration_1_2,
             Migration_2_3,
             Migration_3_4,
-            Migration_4_5
+            Migration_4_5,
+            Migration_5_6
         )
         .build()
 
