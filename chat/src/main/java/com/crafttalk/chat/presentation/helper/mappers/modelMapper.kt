@@ -27,6 +27,16 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.message.convertToSpannableString(false, localMessage.spanStructureList, context),
             localMessage.timestamp
         )
+        localMessage.widget != null && localMessage.messageType == MessageType.VISITOR_MESSAGE.valueType -> WidgetMessageItem(
+            id = localMessage.id,
+            message = localMessage.message?.convertToSpannableString(false, localMessage.spanStructureList, context),
+            widgetId = localMessage.widget.widgetId,
+            payload = localMessage.widget.payload,
+            timestamp = localMessage.timestamp,
+            authorName = localMessage.operatorName ?: "Бот",
+            authorPreview = localMessage.operatorPreview,
+            stateCheck = getMessageTypeByValueType(localMessage.messageType)
+        )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             id = localMessage.id,
             role = if (localMessage.isReply) Role.OPERATOR else Role.USER,
