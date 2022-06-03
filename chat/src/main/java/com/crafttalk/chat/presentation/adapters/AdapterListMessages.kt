@@ -1,6 +1,8 @@
 package com.crafttalk.chat.presentation.adapters
 
 import android.app.Activity
+import android.text.SpannableString
+import android.view.View
 import android.view.ViewGroup
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -19,6 +21,9 @@ class AdapterListMessages(
     private val selectAction: (messageId: String, actionId: String) -> Unit,
     private val selectButton: (messageId: String, actionId: String, buttonId: String) -> Unit,
     private val selectReplyMessage: (messageId: String) -> Unit,
+    private val getWidgetView: (widgetId: String) -> View?,
+    private val findItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit,
+    private val bindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Map<String, Any>) -> Unit,
     private val updateData: (id: String, height: Int, width: Int) -> Unit
 ) : BaseAdapterWithPagination<MessageModel>() {
 
@@ -50,6 +55,7 @@ class AdapterListMessages(
             )
             R.layout.com_crafttalk_chat_item_transfer_message -> HolderTransferMessage(parent.inflate(ChatAttr.getInstance().layoutItemTransferMessage ?: viewType))
             R.layout.com_crafttalk_chat_item_info_message -> HolderInfoMessage(parent.inflate(ChatAttr.getInstance().layoutItemInfoMessage ?: viewType))
+            R.layout.com_crafttalk_chat_item_server_widget_message -> HolderOperatorWidgetMessage(parent.inflate(viewType), parent.inflate(R.layout.com_crafttalk_chat_item_default_widget), getWidgetView, findItemsViewOnWidget, bindWidget)
             else -> HolderDefaultMessage(parent.inflate(R.layout.com_crafttalk_chat_item_default_message))
         }
     }
@@ -57,5 +63,4 @@ class AdapterListMessages(
     fun getMessageTimestampByPosition(position: Int): Long? {
         return getItem(position)?.timestamp
     }
-
 }

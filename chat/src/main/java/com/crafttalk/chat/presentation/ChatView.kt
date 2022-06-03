@@ -14,6 +14,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.SpeechRecognizer.*
 import android.text.Editable
+import android.text.SpannableString
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
@@ -157,6 +158,22 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var takePicture: ActivityResultLauncher<Uri>? = null
     private var pickImage: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
     private var pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
+
+    private var methodGetWidgetView: (widgetId: String) -> View? = { null }
+    private var methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit = { _,_,_ -> }
+    private var methodBindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Map<String, Any>) -> Unit = { _, _, _, _ -> }
+
+    fun setMethodGetWidgetView(abcd: (widgetId: String) -> View?) {
+        this.methodGetWidgetView = abcd
+    }
+
+    fun setMethodFindItemsViewOnWidget(methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit) {
+        this.methodFindItemsViewOnWidget = methodFindItemsViewOnWidget
+    }
+
+    fun setMethodBindWidget(methodBindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Map<String, Any>) -> Unit) {
+        this.methodBindWidget = methodBindWidget
+    }
 
     fun setOnPermissionListener(listener: ChatPermissionListener) {
         this.permissionListener = listener
@@ -325,10 +342,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     private fun setListMessages() {
         adapterListMessages = AdapterListMessages(
-            viewModel::downloadOrOpenDocument,
-            viewModel::openImage,
-            viewModel::openGif,
-            { fileName, fileUrl, fileType ->
+            downloadOrOpenDocument = viewModel::downloadOrOpenDocument,
+            openImage = viewModel::openImage,
+            openGif = viewModel::openGif,
+            downloadFile = { fileName, fileUrl, fileType ->
                 downloadResource(
                     context,
                     fileName,
@@ -345,10 +362,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     { id -> downloadID = id }
                 )
             },
-            viewModel::selectAction,
-            viewModel::selectButton,
-            viewModel::selectReplyMessage,
-            viewModel::updateData
+            selectAction = viewModel::selectAction,
+            selectButton = viewModel::selectButton,
+            selectReplyMessage = viewModel::selectReplyMessage,
+            getWidgetView = methodGetWidgetView,
+            findItemsViewOnWidget = methodFindItemsViewOnWidget,
+            bindWidget = methodBindWidget,
+            updateData = viewModel::updateData
         ).apply {
             list_with_message.adapter = this
             if (ChatAttr.getInstance().replyEnable) {
