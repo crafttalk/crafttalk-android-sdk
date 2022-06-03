@@ -206,8 +206,9 @@ data class MessageEntity(
                 timestamp = networkMessage.timestamp,
                 message = message,
                 spanStructureList = list,
-                actions = networkMessage.actions?.let { ActionEntity.map(it) },
-                keyboard = networkMessage.keyboard?.let { KeyboardEntity.map(it, listOf()) },
+                widget = if (networkMessage.isReply) networkMessage.widget?.let { WidgetEntity.map(it) } else null,
+                actions = if (networkMessage.isReply) networkMessage.actions?.let { ActionEntity.map(it) } else null,
+                keyboard = if (networkMessage.isReply) networkMessage.keyboard?.let { KeyboardEntity.map(it, listOf()) } else null,
                 attachmentUrl = networkMessage.attachmentUrl,
                 attachmentType = networkMessage.attachmentTypeFile,
                 attachmentDownloadProgressType = TypeDownloadProgress.NOT_DOWNLOADED,
@@ -254,6 +255,7 @@ data class MessageEntity(
                 timestamp = networkMessage.timestamp,
                 message = message,
                 spanStructureList = list,
+                widget = networkMessage.widget?.let { WidgetEntity.map(it) },
                 actions = networkMessage.actions?.let { ActionEntity.map(it, actionsSelected) },
                 keyboard = networkMessage.keyboard?.let { KeyboardEntity.map(it, buttonsSelected) },
                 attachmentUrl = networkMessage.attachmentUrl,
@@ -359,5 +361,4 @@ data class MessageEntity(
         }
 
     }
-
 }

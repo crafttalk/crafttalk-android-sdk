@@ -108,6 +108,7 @@ data class NetworkMessage (
             parentMessageId = messageEntity.parentMsgId,
             timestamp = messageEntity.timestamp,
             message = messageEntity.message,
+            widget = messageEntity.widget?.let { NetworkWidget.map(it) },
             actions = messageEntity.actions?.map { NetworkAction.map(it) },
             keyboard = messageEntity.keyboard?.let { NetworkKeyboard.map(it) },
             attachmentUrl = messageEntity.attachmentUrl,
