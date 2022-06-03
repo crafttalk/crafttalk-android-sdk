@@ -43,6 +43,9 @@ data class MessageEntity(
     @ColumnInfo(name = "span_structure_list")
     val spanStructureList: List<Tag> = listOf(),
 
+    @ColumnInfo(name = "widget")
+    val widget: WidgetEntity? = null,
+
     @ColumnInfo(name = "actions")
     val actions: List<ActionEntity>? = null,
 

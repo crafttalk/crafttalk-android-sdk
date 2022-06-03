@@ -32,6 +32,5 @@ data class ActionEntity(
                 )
             }
         }
-
     }
 }

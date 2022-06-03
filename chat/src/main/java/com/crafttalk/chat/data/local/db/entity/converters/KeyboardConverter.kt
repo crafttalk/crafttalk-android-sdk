@@ -23,5 +23,4 @@ class KeyboardConverter {
         val gson = Gson()
         return gson.fromJson(keyboard, type)
     }
-
 }
