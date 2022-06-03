@@ -143,3 +143,16 @@ data class InfoMessageItem(
 ) : MessageModel(id, NEUTRAL, timestamp, "", null, StateMessage.INFO_MESSAGE) {
     override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_info_message
 }
+
+data class WidgetMessageItem(
+    override val id: String,
+    val message: SpannableString?,
+    val widgetId: String,
+    val payload: Map<String, Any>,
+    override val timestamp: Long,
+    override val authorName: String,
+    override val authorPreview: String?,
+    override val stateCheck: StateMessage
+) : MessageModel(id, OPERATOR, timestamp, authorName, authorPreview, stateCheck) {
+    override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_server_widget_message
+}

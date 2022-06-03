@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/com_crafttalk_chat_message_margin_start"
+    android:layout_marginTop="@dimen/com_crafttalk_chat_message_margin_top"
+    android:layout_marginEnd="@dimen/com_crafttalk_chat_message_margin_end"
+    android:layout_marginBottom="@dimen/com_crafttalk_chat_message_margin_bottom">
+
+    <include
+        android:id="@+id/include_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_include_date_message" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/widget_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/include_date" />
+
+    <include
+        android:id="@+id/include_message_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_include_server_message_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/widget_container" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
