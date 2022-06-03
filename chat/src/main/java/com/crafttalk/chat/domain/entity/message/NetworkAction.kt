@@ -16,7 +16,5 @@ data class NetworkAction (
             actionId = actionEntity.actionId,
             actionText = actionEntity.actionText
         )
-
     }
-
 }

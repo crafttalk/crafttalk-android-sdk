@@ -29,6 +29,9 @@ data class NetworkMessage (
     @SerializedName (value = "message")
     var message: String? = null,
 
+    @SerializedName (value = "widget")
+    val widget: NetworkWidget? = null,
+
     @SerializedName (value = "action")
     val selectedAction: String? = null,
 
@@ -115,7 +118,5 @@ data class NetworkMessage (
             replyToMessage = null,
             dialogId = messageEntity.dialogId
         )
-
     }
-
 }
