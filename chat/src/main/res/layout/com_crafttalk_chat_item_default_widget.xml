@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/content_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/server_message"
+        app:layout_constraintTop_toTopOf="@id/server_message"
+        app:layout_constraintEnd_toEndOf="@id/server_message"
+        app:layout_constraintBottom_toBottomOf="@id/server_message"
+        tools:background="@drawable/com_crafttalk_chat_background_item_simple_server_message" />
+
+    <TextView
+        android:id="@+id/server_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:autoLink="email|web"
+        android:paddingStart="@dimen/com_crafttalk_chat_message_content_padding_start"
+        android:paddingTop="@dimen/com_crafttalk_chat_message_content_padding_top"
+        android:paddingEnd="@dimen/com_crafttalk_chat_message_content_padding_end"
+        android:paddingBottom="@dimen/com_crafttalk_chat_message_content_padding_bottom"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_light"
+        android:textFontWeight="300"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Привет, мое имя Бот" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
