@@ -148,7 +148,7 @@ data class WidgetMessageItem(
     override val id: String,
     val message: SpannableString?,
     val widgetId: String,
-    val payload: Map<String, Any>,
+    val payload: Any,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,

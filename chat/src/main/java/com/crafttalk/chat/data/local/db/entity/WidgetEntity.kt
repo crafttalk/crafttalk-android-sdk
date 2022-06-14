@@ -7,7 +7,7 @@ data class WidgetEntity(
     @ColumnInfo(name = "id")
     val widgetId: String,
     @ColumnInfo(name = "payload")
-    val payload: Map<String, Any>
+    val payload: Any
 ) {
 
     companion object {

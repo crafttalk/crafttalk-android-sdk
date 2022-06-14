@@ -26,4 +26,5 @@ object ChatParams {
     internal var timeUnitTimeout: TimeUnit = TimeUnit.SECONDS
 
     internal var glueMessage: String? = null
+    internal var methodGetPayloadTypeWidget: (widgetId: String) -> Class<out Any>? = { null }
 }

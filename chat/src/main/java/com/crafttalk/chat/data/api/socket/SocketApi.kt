@@ -7,6 +7,8 @@ import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import com.crafttalk.chat.domain.entity.message.NetworkWidget
+import com.crafttalk.chat.domain.entity.message.NetworkWidgetDeserializer
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
@@ -16,6 +18,7 @@ import com.crafttalk.chat.utils.*
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import io.socket.client.Manager
 import io.socket.client.Socket
 import kotlinx.coroutines.*
@@ -175,6 +178,10 @@ class SocketApi constructor(
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
                 Log.d(TAG_SOCKET_EVENT, "json message___ methon message - $messageJson")
+
+                val gson = GsonBuilder()
+                    .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
+                    .create()
                 val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java)
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()

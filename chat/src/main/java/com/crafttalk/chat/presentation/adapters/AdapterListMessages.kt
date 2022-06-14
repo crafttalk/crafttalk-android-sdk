@@ -23,7 +23,7 @@ class AdapterListMessages(
     private val selectReplyMessage: (messageId: String) -> Unit,
     private val getWidgetView: (widgetId: String) -> View?,
     private val findItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit,
-    private val bindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Map<String, Any>) -> Unit,
+    private val bindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Any) -> Unit,
     private val updateData: (id: String, height: Int, width: Int) -> Unit
 ) : BaseAdapterWithPagination<MessageModel>() {
 

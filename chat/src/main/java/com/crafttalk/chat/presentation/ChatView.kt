@@ -55,6 +55,7 @@ import com.crafttalk.chat.presentation.helper.permission.requestPermissionWithAc
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
 import kotlinx.android.synthetic.main.com_crafttalk_chat_include_replied_message.view.*
@@ -161,17 +162,21 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     private var methodGetWidgetView: (widgetId: String) -> View? = { null }
     private var methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit = { _,_,_ -> }
-    private var methodBindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Map<String, Any>) -> Unit = { _, _, _, _ -> }
+    private var methodBindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Any) -> Unit = { _, _, _, _ -> }
 
-    fun setMethodGetWidgetView(abcd: (widgetId: String) -> View?) {
-        this.methodGetWidgetView = abcd
+    fun setMethodGetPayloadTypeWidget(methodGetPayloadTypeWidget: (widgetId: String) -> Class<out Any>?) {
+        ChatParams.methodGetPayloadTypeWidget = methodGetPayloadTypeWidget
+    }
+
+    fun setMethodGetWidgetView(methodGetWidgetView: (widgetId: String) -> View?) {
+        this.methodGetWidgetView = methodGetWidgetView
     }
 
     fun setMethodFindItemsViewOnWidget(methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit) {
         this.methodFindItemsViewOnWidget = methodFindItemsViewOnWidget
     }
 
-    fun setMethodBindWidget(methodBindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Map<String, Any>) -> Unit) {
+    fun setMethodBindWidget(methodBindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Any) -> Unit) {
         this.methodBindWidget = methodBindWidget
     }
 

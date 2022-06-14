@@ -18,7 +18,7 @@ class HolderOperatorWidgetMessage(
     private val defaultWidgetView: View,
     private val getWidgetView: (widgetId: String) -> View?,
     private val findItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit,
-    private val bindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Map<String, Any>) -> Unit
+    private val bindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Any) -> Unit
 ) : BaseViewHolder<WidgetMessageItem>(view) {
 
     private val container: ViewGroup? = view.findViewById(R.id.widget_container)
