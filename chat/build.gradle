@@ -112,7 +112,7 @@ dependencies {
     // EncryptedSharedPreferences
     implementation "androidx.security:security-crypto:$securityPreferencesVersion"
     // mask
-    implementation "com.redmadrobot:input-mask-android:$inputMaskVersion"
+    implementation "com.github.RedMadRobot:input-mask-android:$inputMaskVersion"
 
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:rules:1.3.0'
