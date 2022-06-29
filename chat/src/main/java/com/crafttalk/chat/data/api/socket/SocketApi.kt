@@ -221,25 +221,6 @@ class SocketApi constructor(
             isSynchronized = false
             chatInternetConnectionListener?.failConnect()
         }
-        socket.on(Socket.EVENT_RECONNECT_ERROR) {
-            Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECT_ERROR")
-            isAuthorized = false
-            isSynchronized = false
-        }
-        socket.on(Socket.EVENT_RECONNECT_FAILED) {
-            Log.d(TAG_SOCKET_EVENT, "EVENT_RECONNECT_FAILED")
-            isAuthorized = false
-            isSynchronized = false
-        }
-        socket.on(Socket.EVENT_CONNECT_TIMEOUT) {
-            Log.d(TAG_SOCKET_EVENT, "EVENT_CONNECT_TIMEOUT")
-            isAuthorized = false
-            isSynchronized = false
-            failAuthUiFun()
-            viewModelScope.launch {
-                failAuthUxFun()
-            }
-        }
     }
 
     private fun connectUser(socket: Socket) {
