@@ -19,6 +19,7 @@ class WidgetContainer {
         widget ?: return null
         val jsonObject = JSONObject(widget)
         val widgetId = jsonObject["widgetId"].toString()
+        val widgetDescription = jsonObject["description"].toString()
         return try {
             val payloadObj = Gson().fromJson(
                 jsonObject["payload"].toString(),
@@ -26,6 +27,7 @@ class WidgetContainer {
             )
             WidgetEntity(
                 widgetId = widgetId,
+                description = widgetDescription,
                 payload = payloadObj
             )
         } catch (ex: Exception) {

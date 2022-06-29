@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.RecyclerView
 import com.crafttalk.chat.R
 import com.crafttalk.chat.presentation.adapters.AdapterListMessages
+import com.crafttalk.chat.presentation.holders.HolderInfoMessage
+import com.crafttalk.chat.presentation.holders.HolderOperatorWidgetMessage
+import com.crafttalk.chat.presentation.holders.HolderTransferMessage
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
 import kotlin.math.abs
@@ -32,7 +35,14 @@ class MessageSwipeController(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return makeFlag(ACTION_STATE_IDLE, ItemTouchHelper.LEFT) or makeFlag(ACTION_STATE_SWIPE, ItemTouchHelper.LEFT)
+        return when (viewHolder) {
+            is HolderTransferMessage,
+            is HolderInfoMessage,
+            is HolderOperatorWidgetMessage -> {
+                0
+            }
+            else -> makeFlag(ACTION_STATE_IDLE, ItemTouchHelper.LEFT) or makeFlag(ACTION_STATE_SWIPE, ItemTouchHelper.LEFT)
+        }
     }
 
     override fun onMove(
@@ -101,7 +111,7 @@ class MessageSwipeController(
             isReturnBackToStartPosition = event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP
             if (isReturnBackToStartPosition && abs(viewHolder.itemView.translationX) >= widthItem * 0.1) {
                 val adapter = recyclerView.adapter as AdapterListMessages
-                adapter.currentList?.get(viewHolder.adapterPosition)?.let(swipeControllerAction)
+                adapter.currentList?.get(viewHolder.absoluteAdapterPosition)?.let(swipeControllerAction)
             }
             false
         }

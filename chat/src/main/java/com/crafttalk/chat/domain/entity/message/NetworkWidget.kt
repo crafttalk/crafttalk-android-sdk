@@ -9,6 +9,8 @@ import java.lang.reflect.Type
 data class NetworkWidget(
     @SerializedName(value = "id")
     val widgetId: String,
+    @SerializedName(value = "description")
+    val description: String,
     @SerializedName(value = "params")
     val params: Any
 ) {
@@ -17,6 +19,7 @@ data class NetworkWidget(
 
         fun map(widgetEntity: WidgetEntity) = NetworkWidget(
             widgetId = widgetEntity.widgetId,
+            description = widgetEntity.description,
             params = widgetEntity.payload
         )
     }
@@ -34,6 +37,11 @@ class NetworkWidgetDeserializer : JsonDeserializer<NetworkWidget?> {
         if (!jsonObject.has("params")) return null
 
         val widgetId = jsonObject["id"].asString
+        val widgetDescription = if (jsonObject.has("description")) {
+            jsonObject["description"].asString
+        } else {
+            ""
+        }
         return try {
             val paramObj = Gson().fromJson(
                 jsonObject["params"].toString(),
@@ -41,6 +49,7 @@ class NetworkWidgetDeserializer : JsonDeserializer<NetworkWidget?> {
             )
             NetworkWidget(
                 widgetId = widgetId,
+                description = widgetDescription,
                 params = paramObj
             )
         } catch (ex: Exception) {
