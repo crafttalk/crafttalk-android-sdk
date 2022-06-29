@@ -172,12 +172,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         this.methodGetWidgetView = methodGetWidgetView
     }
 
-    fun setMethodFindItemsViewOnWidget(methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit) {
+    fun setMethodFindItemsViewOnWidget(methodFindItemsViewOnWidget: (widgetId: String, widgetView: View, mapView: MutableMap<String, View>) -> Unit) {
         this.methodFindItemsViewOnWidget = methodFindItemsViewOnWidget
     }
 
     fun setMethodBindWidget(methodBindWidget: (widgetId: String, message: SpannableString?, mapView: MutableMap<String, View>, payload: Any) -> Unit) {
         this.methodBindWidget = methodBindWidget
+    }
+
+    fun clickButtonInWidget(actionId: String) {
+        viewModel.selectButtonInWidget(actionId)
     }
 
     fun setOnPermissionListener(listener: ChatPermissionListener) {

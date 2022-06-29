@@ -269,6 +269,12 @@ class ChatViewModel
         }
     }
 
+    fun selectButtonInWidget(actionId: String) {
+        launchIO {
+            messageInteractor.selectButtonInWidget(actionId)
+        }
+    }
+
     fun selectReplyMessage(messageId: String) {
         launchIO {
             replyMessagePosition.postValue(messageInteractor.getCountMessagesInclusiveTimestampById(messageId))

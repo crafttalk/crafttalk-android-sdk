@@ -60,6 +60,7 @@ interface IMessageRepository {
 
     suspend fun selectAction(messageId: String, actionId: String)
     suspend fun selectButton(messageId: String, actionId: String, buttonId: String)
+    fun selectButtonInWidget(actionId: String)
 
     fun updateSizeMessage(id: String, height: Int, width: Int)
 

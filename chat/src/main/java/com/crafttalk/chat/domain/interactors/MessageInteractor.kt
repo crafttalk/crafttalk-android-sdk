@@ -49,6 +49,10 @@ class MessageInteractor
         messageRepository.selectButton(messageId, actionId, buttonId)
     }
 
+    fun selectButtonInWidget(actionId: String) {
+        messageRepository.selectButtonInWidget(actionId)
+    }
+
     suspend fun uploadHistoryMessages(
         eventAllHistoryLoaded: () -> Unit,
         uploadHistoryComplete: () -> Unit,

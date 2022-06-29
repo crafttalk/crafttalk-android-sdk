@@ -275,6 +275,10 @@ class MessageRepository
         }
     }
 
+    override fun selectButtonInWidget(actionId: String) {
+        socketApi.selectAction(actionId)
+    }
+
     override fun updateSizeMessage(id: String, height: Int, width: Int) {
         messagesDao.updateSizeMessage(id, height, width)
     }

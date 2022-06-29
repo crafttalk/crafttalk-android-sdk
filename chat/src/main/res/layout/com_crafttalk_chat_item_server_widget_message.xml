@@ -5,13 +5,13 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/com_crafttalk_chat_message_margin_start"
     android:layout_marginTop="@dimen/com_crafttalk_chat_message_margin_top"
-    android:layout_marginEnd="@dimen/com_crafttalk_chat_message_margin_end"
     android:layout_marginBottom="@dimen/com_crafttalk_chat_message_margin_bottom">
 
     <include
         android:id="@+id/include_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/com_crafttalk_chat_message_margin_end"
         layout="@layout/com_crafttalk_chat_include_date_message" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
