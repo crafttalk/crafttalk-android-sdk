@@ -18,8 +18,14 @@ class WidgetContainer {
     fun toWidget(widget: String?): WidgetEntity? {
         widget ?: return null
         val jsonObject = JSONObject(widget)
+        if (!jsonObject.has("id")) return null
+        if (!jsonObject.has("payload")) return null
         val widgetId = jsonObject["widgetId"].toString()
-        val widgetDescription = jsonObject["description"].toString()
+        val widgetDescription = if (jsonObject.has("description")) {
+            jsonObject["description"].toString()
+        } else {
+            ""
+        }
         return try {
             val payloadObj = Gson().fromJson(
                 jsonObject["payload"].toString(),
