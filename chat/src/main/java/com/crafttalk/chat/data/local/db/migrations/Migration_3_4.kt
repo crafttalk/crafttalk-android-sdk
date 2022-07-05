@@ -16,7 +16,7 @@ object Migration_3_4: Migration(3, 4) {
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_name TEXT DEFAULT NULL")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_size INTEGER DEFAULT NULL")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_download_progress_type TEXT DEFAULT NULL")
-        database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN repliedMessageAttachmentHeight INTEGER DEFAULT NULL")
+        database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_height INTEGER DEFAULT NULL")
         database.execSQL("ALTER TABLE ${MessageEntity.TABLE_NAME} ADD COLUMN replied_message_attachment_width INTEGER DEFAULT NULL")
 
     }
