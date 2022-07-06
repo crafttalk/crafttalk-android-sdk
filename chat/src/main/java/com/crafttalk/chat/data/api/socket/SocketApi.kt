@@ -190,7 +190,10 @@ class SocketApi constructor(
                     MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
                     MessageType.MERGE_HISTORY.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
-                if (!messageJson.toString().contains(""""message":"\/start"""") && (messageSocket.id != null || !messageDao.isNotEmpty())) {
+                if (
+                    (!messageJson.toString().contains(""""message":"\/start"""") && !messageJson.toString().contains(""""message":"/start"""")) &&
+                    (messageSocket.id != null || !messageDao.isNotEmpty())
+                ) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
                             countNewMessages++
