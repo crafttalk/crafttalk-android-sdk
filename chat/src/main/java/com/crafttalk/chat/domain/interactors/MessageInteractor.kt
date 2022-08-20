@@ -56,6 +56,7 @@ class MessageInteractor
     suspend fun uploadHistoryMessages(
         eventAllHistoryLoaded: () -> Unit,
         uploadHistoryComplete: () -> Unit,
+        updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit,
         executeAnyway: Boolean
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
@@ -80,7 +81,8 @@ class MessageInteractor
                         getPersonPreview = { personId ->
                             personInteractor.getPersonPreview(personId, visitor.token)
                         },
-                        getFileInfo = messageRepository::getFileInfo
+                        getFileInfo = messageRepository::getFileInfo,
+                        updateSearchMessagePosition = updateSearchMessagePosition
                     )
                     uploadHistoryComplete()
                 }
@@ -91,7 +93,8 @@ class MessageInteractor
     suspend fun syncMessages(
         updateReadPoint: (newTimeMark: Long) -> Boolean,
         syncMessagesAcrossDevices: (indexFirstUnreadMessage: Int) -> Unit,
-        eventAllHistoryLoaded: () -> Unit
+        eventAllHistoryLoaded: () -> Unit,
+        updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
         val syncMessagesAcrossDevicesWrapper: (countUnreadMessages: Int) -> Unit = { countUnreadMessages ->
@@ -113,7 +116,8 @@ class MessageInteractor
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)
                     },
-                    getFileInfo = messageRepository::getFileInfo
+                    getFileInfo = messageRepository::getFileInfo,
+                    updateSearchMessagePosition = updateSearchMessagePosition
                 )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
                 messageRepository.mergeNewMessages()
@@ -133,7 +137,8 @@ class MessageInteractor
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)
                     },
-                    getFileInfo = messageRepository::getFileInfo
+                    getFileInfo = messageRepository::getFileInfo,
+                    updateSearchMessagePosition = updateSearchMessagePosition
                 )
                 messageRepository.updatePersonNames(messages, personInteractor::updatePersonName)
                 messageRepository.mergeNewMessages()
@@ -165,4 +170,7 @@ class MessageInteractor
         messageRepository.removeAllInfoMessages()
     }
 
+    fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {
+        messageRepository.setUpdateSearchMessagePosition(updateSearchMessagePosition)
+    }
 }

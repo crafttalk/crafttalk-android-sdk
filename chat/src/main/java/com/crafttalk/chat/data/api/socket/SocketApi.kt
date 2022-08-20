@@ -42,6 +42,7 @@ class SocketApi constructor(
     private var syncMessages: suspend () -> Unit = {}
     private var updateCurrentReadMessageTime: (newReadPoint: Long) -> Unit = {}
     private var updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit = { _,_ -> }
+    private var updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit = {}
     private var getPersonPreview: suspend (personId: String) -> String? = { null }
     private var updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
     private var isAuthorized: Boolean = false
@@ -94,6 +95,10 @@ class SocketApi constructor(
 
     fun setMessageListener(listener: ChatMessageListener) {
         this.chatMessageListener = listener
+    }
+
+    fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {
+        this.updateSearchMessagePosition = updateSearchMessagePosition
     }
 
     fun resetNewMessagesCounter() {
@@ -310,6 +315,9 @@ class SocketApi constructor(
         val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp
         maxUserTimestamp?.run(updateCurrentReadMessageTime)
         updateCountUnreadMessages(bufferNewMessages.filter { it.timestamp > (maxUserTimestamp ?: 0) }.size, maxUserTimestamp != null)
+        viewModelScope.launch {
+            updateSearchMessagePosition(bufferNewMessages)
+        }
         messageDao.insertMessages(bufferNewMessages)
         bufferNewMessages.clear()
         chatEventListener?.synchronized()
@@ -427,6 +435,9 @@ class SocketApi constructor(
                 updateCountUnreadMessages(0, true)
             } else {
                 updateCountUnreadMessages(1, false)
+            }
+            viewModelScope.launch {
+                updateSearchMessagePosition(listOf(message))
             }
             messageDao.insertMessage(message)
         } else {

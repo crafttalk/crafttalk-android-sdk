@@ -69,7 +69,8 @@ class MessageRepository
         syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         allMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
-        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?
+        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?,
+        updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
     ): List<MessageEntity> {
 
         try {
@@ -184,6 +185,7 @@ class MessageRepository
             }
 
             removeAllInfoMessages()
+            updateSearchMessagePosition(resultMessages)
             messagesDao.insertMessages(resultMessages)
 
             maxTimestampUserMessage?.let { timestampLastUserMessage ->
@@ -294,4 +296,7 @@ class MessageRepository
         messagesDao.deleteAllMessageByType(MessageType.INFO_MESSAGE.valueType)
     }
 
+    override fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {
+        socketApi.setUpdateSearchMessagePosition(updateSearchMessagePosition)
+    }
 }
