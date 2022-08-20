@@ -30,6 +30,7 @@ private constructor(
     val replyEnable = attrArr.getBoolean(R.styleable.ChatView_reply_enable, false)
 
     val colorMain = attrArr.getColor(R.styleable.ChatView_color_main, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_main))
+    val colorBlack = ContextCompat.getColor(context, R.color.com_crafttalk_chat_black)
     val colorTextInternetConnectionWarning = attrArr.getColor(R.styleable.ChatView_color_text_warning, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_warning))
     val colorTextInfo = attrArr.getColor(R.styleable.ChatView_color_company, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_info))
     val colorTextUserMessage = attrArr.getColor(R.styleable.ChatView_color_text_user_message, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_text_user_message))
@@ -238,6 +239,15 @@ private constructor(
     val delayVoiceInputBetweenRecurringWarnings = attrArr.getInt(R.styleable.ChatView_delay_voice_input_between_recurring_warnings, 2000).toLong()
     val drawableVoiceInputMicOn = attrArr.getDrawable(R.styleable.ChatView_drawable_voice_input_mic_on) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_voice_mic_on)
     val drawableVoiceInputMicOff = attrArr.getDrawable(R.styleable.ChatView_drawable_voice_input_mic_off) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_voice_mic_off)
+
+//    search
+    val colorSelectSearchText = attrArr.getColor(R.styleable.ChatView_color_select_search_text, ContextCompat.getColor(context, R.color.com_crafttalk_chat_yellow_ffeb3b))
+    val colorCurrentSelectSearchText = attrArr.getColor(R.styleable.ChatView_color_current_select_search_text, ContextCompat.getColor(context, R.color.com_crafttalk_chat_orange_ffb300))
+    val colorTextSearchCoincidence = attrArr.getColor(R.styleable.ChatView_color_search_coincidence_text, colorBlack)
+    val backgroundSearchSwitch = attrArr.getColor(R.styleable.ChatView_background_search_switch, ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray))
+    val colorSearchTop = attrArr.getColor(R.styleable.ChatView_color_search_top, colorBlack)
+    val colorSearchBottom = attrArr.getColor(R.styleable.ChatView_color_search_bottom, colorBlack)
+    val sizeTextSearchCoincidenceText = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_text_search_coincidence, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_search_coincidence)).toFloat()
 
     val drawableBackgroundSignInButton: Drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_background_sign_in_auth_form)!!).apply {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

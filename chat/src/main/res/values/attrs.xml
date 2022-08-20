@@ -208,6 +208,15 @@
         <attr name="drawable_voice_input_mic_on" format="reference"/>
         <attr name="drawable_voice_input_mic_off" format="reference"/>
 
+        <!--search-->
+        <attr name="color_select_search_text" format="color"/>
+        <attr name="color_current_select_search_text" format="color"/>
+        <attr name="color_search_coincidence_text" format="color"/>
+        <attr name="background_search_switch" format="color"/>
+        <attr name="color_search_top" format="color"/>
+        <attr name="color_search_bottom" format="color"/>
+        <attr name="size_text_search_coincidence" format="dimension"/>
+
         <!--warning-->
         <attr name="title_success_download_file_warning" format="string"/>
         <attr name="color_success_download_file_warning" format="color"/>
