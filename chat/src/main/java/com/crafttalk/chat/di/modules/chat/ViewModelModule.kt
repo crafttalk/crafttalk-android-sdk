@@ -18,6 +18,7 @@ class ViewModelModule {
     fun provideChatViewModelFactory(
         authChatInteractor: AuthInteractor,
         messageInteractor: MessageInteractor,
+        searchInteractor: SearchInteractor,
         fileInteractor: FileInteractor,
         conditionInteractor: ConditionInteractor,
         feedbackInteractor: FeedbackInteractor,
@@ -26,6 +27,7 @@ class ViewModelModule {
     ): ChatViewModelFactory = ChatViewModelFactory(
         authChatInteractor,
         messageInteractor,
+        searchInteractor,
         fileInteractor,
         conditionInteractor,
         feedbackInteractor,

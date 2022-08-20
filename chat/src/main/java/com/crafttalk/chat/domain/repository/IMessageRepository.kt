@@ -5,6 +5,7 @@ import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import com.crafttalk.chat.domain.entity.message.NetworkSearch
 import com.crafttalk.chat.domain.transfer.TransferFileInfo
 
 interface IMessageRepository {
@@ -15,6 +16,8 @@ interface IMessageRepository {
         currentReadMessageTime: Long,
         ignoredMessageTypes: List<Int>
     ): Int?
+
+    suspend fun getPositionByTimestamp(id: String, timestamp: Long): Int?
 
     fun getTimestampMessageById(messageId: String): Long?
 
@@ -33,6 +36,7 @@ interface IMessageRepository {
     suspend fun getTimeLastMessage(): Long?
 
     // загрузка определенного пула сообщений
+    // [startTime; endTime)
     suspend fun uploadMessages(
         uuid: String,
         startTime: Long?,
@@ -41,7 +45,8 @@ interface IMessageRepository {
         syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         returnedEmptyPool: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
-        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?
+        getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?,
+        updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
     ): List<MessageEntity>
 
     suspend fun mergeNewMessages()
@@ -58,6 +63,8 @@ interface IMessageRepository {
 
     suspend fun sendMessages(message: String, repliedMessageId: String?)
 
+    suspend fun searchTimestampsMessages(uuid: String, searchText: String): NetworkSearch?
+
     suspend fun selectAction(messageId: String, actionId: String)
     suspend fun selectButton(messageId: String, actionId: String, buttonId: String)
     fun selectButtonInWidget(actionId: String)
@@ -68,4 +75,5 @@ interface IMessageRepository {
 
     fun removeAllInfoMessages()
 
+    fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit)
 }

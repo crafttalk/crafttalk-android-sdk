@@ -9,6 +9,7 @@ import com.crafttalk.chat.domain.interactors.*
 class ChatViewModelFactory constructor(
     private val authChatInteractor: AuthInteractor,
     private val messageInteractor: MessageInteractor,
+    private val searchInteractor: SearchInteractor,
     private val fileInteractor: FileInteractor,
     private val conditionInteractor: ConditionInteractor,
     private val feedbackInteractor: FeedbackInteractor,
@@ -20,6 +21,7 @@ class ChatViewModelFactory constructor(
         return ChatViewModel(
             authChatInteractor,
             messageInteractor,
+            searchInteractor,
             fileInteractor,
             conditionInteractor,
             feedbackInteractor,
