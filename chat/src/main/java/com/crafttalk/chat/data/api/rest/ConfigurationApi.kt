@@ -11,5 +11,4 @@ interface ConfigurationApi {
     fun getConfiguration(
         @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!
     ): Call<NetworkResultConfiguration>
-
 }

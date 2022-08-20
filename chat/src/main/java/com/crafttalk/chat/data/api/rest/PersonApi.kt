@@ -15,5 +15,4 @@ interface PersonApi {
         @Path("personId") personId : String,
         @Query("auth_token") visitorToken: String
     ) : Call<NetworkResultPersonPreview>
-
 }

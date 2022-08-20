@@ -29,5 +29,4 @@ interface NotificationApi {
         @Body body: NetworkCheckSubscription,
         @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!
     ) : Call<NetworkResultCheckSubscription>
-
 }
