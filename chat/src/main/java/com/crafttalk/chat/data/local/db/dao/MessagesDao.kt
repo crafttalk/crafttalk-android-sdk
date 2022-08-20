@@ -16,6 +16,12 @@ interface MessagesDao {
     @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} LIMIT 1)")
     fun isNotEmpty(): Boolean
 
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :timestamp")
+    fun getPositionByTimestamp(timestamp: Long): Int?
+
+    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id)")
+    fun emptyAvailable(id: String): Boolean
+
     @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND message_type NOT IN (:ignoredMessageTypes)")
     fun getCountUnreadMessages(currentReadMessageTime: Long, ignoredMessageTypes: List<Int>): Int?
 
