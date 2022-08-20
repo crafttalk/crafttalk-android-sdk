@@ -6,6 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:id="@+id/search_switch_place"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_include_search_switch"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_with_message"
         android:layout_width="0dp"
@@ -18,7 +29,7 @@
         android:paddingBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_switch_place"
         app:layout_constraintBottom_toTopOf="@id/reply_preview"
         tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
         tools:itemCount="1" />

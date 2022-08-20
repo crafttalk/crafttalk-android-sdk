@@ -38,12 +38,33 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
+    <ImageView
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/com_crafttalk_chat_ic_search"
+        app:layout_constraintTop_toTopOf="@+id/infoChatState"
+        app:layout_constraintBottom_toBottomOf="@+id/infoChatState"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingEnd="16dp" />
+
+    <include
+        android:id="@+id/search_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        layout="@layout/com_crafttalk_chat_include_search"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/br_chat_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="warningConnection,infoChatState" />
+        app:constraint_referenced_ids="warningConnection,infoChatState,search_place" />
 
     <View
         android:id="@+id/upper_limiter"
