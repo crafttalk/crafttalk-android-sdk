@@ -1,7 +1,9 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
+import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
+import com.crafttalk.chat.data.helper.network.toData
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.data.local.db.entity.ButtonEntity
@@ -11,7 +13,9 @@ import javax.inject.Inject
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.message.MessageType
+import com.crafttalk.chat.domain.entity.message.NetworkBodySearch
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import com.crafttalk.chat.domain.entity.message.NetworkSearch
 import com.crafttalk.chat.domain.transfer.TransferFileInfo
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
@@ -23,7 +27,8 @@ class MessageRepository
 @Inject constructor(
     private val context: Context,
     private val messagesDao: MessagesDao,
-    private val socketApi: SocketApi
+    private val socketApi: SocketApi,
+    private val messageApi: MessageApi
 ) : IMessageRepository {
 
     override fun getMessages() = messagesDao
@@ -37,6 +42,14 @@ class MessageRepository
             currentReadMessageTime= currentReadMessageTime,
             ignoredMessageTypes = ignoredMessageTypes
         )
+
+    override suspend fun getPositionByTimestamp(id: String, timestamp: Long): Int? {
+        return if (messagesDao.emptyAvailable(id)) {
+            messagesDao.getPositionByTimestamp(timestamp)
+        } else {
+            null
+        }
+    }
 
     override fun getTimestampMessageById(messageId: String) = messagesDao
         .getTimestampMessageById(messageId)
@@ -239,6 +252,15 @@ class MessageRepository
     override suspend fun sendMessages(message: String, repliedMessageId: String?) {
         val repliedMessage = repliedMessageId?.let { messagesDao.getMessageById(it) }?.let { NetworkMessage.map(it) }
         socketApi.sendMessage(message, repliedMessage)
+    }
+
+    override suspend fun searchTimestampsMessages(uuid: String, searchText: String): NetworkSearch? {
+        return messageApi.searchMessages(
+            NetworkBodySearch(
+                visitorUuid = uuid,
+                searchText = searchText
+            )
+        ).toData()
     }
 
     override suspend fun selectAction(messageId: String, actionId: String) {
