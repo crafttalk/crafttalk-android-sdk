@@ -28,6 +28,7 @@
     <color name="com_crafttalk_chat_white">#fff</color>
     <color name="com_crafttalk_chat_white_transparent_75">#C0ffffff</color>
     <color name="com_crafttalk_chat_gray">#ddd</color>
+    <color name="com_crafttalk_chat_gray_bdbdbd">#bdbdbd</color>
     <color name="com_crafttalk_chat_gray_f5f5f5">#f5f5f5</color>
     <color name="com_crafttalk_chat_gray_8d8d8d">#8d8d8d</color>
     <color name="com_crafttalk_chat_gray_707070">#707070</color>
@@ -36,4 +37,7 @@
     <color name="com_crafttalk_chat_success">#2e7d32</color>
     <color name="com_crafttalk_chat_error">#ef5350</color>
 
+    <color name="com_crafttalk_chat_blue_005cb2">#005cb2</color>
+    <color name="com_crafttalk_chat_yellow_ffeb3b">#ffeb3b</color>
+    <color name="com_crafttalk_chat_orange_ffb300">#ffb300</color>
 </resources>

@@ -46,6 +46,12 @@
     <!--    FeedBack-->
     <string name="com_crafttalk_chat_feedback_title">The dialogue is over. Rate the quality of service.</string>
 
+    <!--    Search-->
+    <string name="com_crafttalk_chat_search_hint">Enter text…</string>
+    <string name="com_crafttalk_chat_search_cancel">Cancel</string>
+    <string name="com_crafttalk_chat_coincidence_not_found">No matches</string>
+    <string name="com_crafttalk_chat_coincidence">%d out of %d matches</string>
+
     <!--    Voice input-->
     <string name="com_crafttalk_chat_voice_input_entry_field_hint">Listening…</string>
     <string name="com_crafttalk_chat_voice_input_failed_attempt_warning_title">Couldn\'t recognize your words, try to repeat</string>

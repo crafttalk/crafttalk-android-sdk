@@ -46,6 +46,12 @@
     <!--    FeedBack-->
     <string name="com_crafttalk_chat_feedback_title">Диалог завершен. Оцените качество обслуживания.</string>
 
+    <!--    Search-->
+    <string name="com_crafttalk_chat_search_hint">Введите текст…</string>
+    <string name="com_crafttalk_chat_search_cancel">Отменить</string>
+    <string name="com_crafttalk_chat_coincidence_not_found">Нет совпадений</string>
+    <string name="com_crafttalk_chat_coincidence">%d из %d совпадений</string>
+
     <!--    Voice input-->
     <string name="com_crafttalk_chat_voice_input_entry_field_hint">Записываю…</string>
     <string name="com_crafttalk_chat_voice_input_failed_attempt_warning_title">Не удалось распознать ваши слова, попробуйте повторить</string>

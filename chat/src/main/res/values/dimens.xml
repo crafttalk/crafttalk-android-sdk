@@ -16,6 +16,7 @@
     <dimen name="com_crafttalk_chat_default_size_warning">18sp</dimen>
     <dimen name="com_crafttalk_chat_default_size_download">14sp</dimen>
     <dimen name="com_crafttalk_chat_default_size_info">12sp</dimen>
+    <dimen name="com_crafttalk_chat_default_size_search_coincidence">14sp</dimen>
     <dimen name="com_crafttalk_chat_default_size_feedback_title">16sp</dimen>
 
     <dimen name="com_crafttalk_chat_horizontal_spacing_operator_button">4dp</dimen>
