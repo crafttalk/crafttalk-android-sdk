@@ -2,6 +2,7 @@ package com.crafttalk.chat.di.modules.chat
 
 import com.crafttalk.chat.data.api.rest.ConfigurationApi
 import com.crafttalk.chat.data.api.rest.FileApi
+import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.di.Base
 import com.crafttalk.chat.di.ChatScope
 import com.crafttalk.chat.di.Upload
@@ -29,6 +30,10 @@ class NetworkModule {
                 .create()
         ))
         .build()
+
+    @ChatScope
+    @Provides
+    fun provideMessageApi(@Upload retrofit: Retrofit): MessageApi = retrofit.create(MessageApi::class.java)
 
     @ChatScope
     @Provides
