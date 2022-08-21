@@ -1,15 +1,21 @@
 package com.crafttalk.sampleChat
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.chat.presentation.ChatStateListener
+import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.createCarouselWidget
@@ -29,6 +35,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -64,12 +71,12 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         chat_view.onViewCreated(this, viewLifecycleOwner)
         chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
             override fun connect() { status_connection.visibility = View.GONE }
-            override fun failConnect() { status_connection.visibility = View.VISIBLE }
-            override fun lossConnection() { status_connection.visibility = View.VISIBLE }
+            override fun failConnect() { status_connection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
+            override fun lossConnection() { status_connection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
             override fun reconnect() { status_connection.visibility = View.GONE }
         })
         chat_view.setOnChatStateListener(object : ChatStateListener {
-            override fun startSynchronization() { chat_state.visibility = View.VISIBLE }
+            override fun startSynchronization() { chat_state.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
             override fun endSynchronization() { chat_state.visibility = View.GONE }
         })
         chat_view.setOnPermissionListener(object : ChatPermissionListener {
@@ -84,6 +91,38 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 requestPermission?.launch(permissions[0])
             }
         })
+        search.setOnClickListener {
+            search.visibility = View.GONE
+            icon.visibility = View.GONE
+            chat_state.visibility = View.GONE
+            status_connection.visibility = View.GONE
+            search_place.visibility = View.VISIBLE
+            hideSoftKeyboard(chat_view)
+        }
+        search_place.findViewById<TextView>(R.id.search_cancel).setOnClickListener {
+            search_place.visibility = View.GONE
+            chat_state.visibility = View.GONE
+            status_connection.visibility = View.GONE
+            search.visibility = View.VISIBLE
+            icon.visibility = View.VISIBLE
+            search_place.findViewById<EditText>(R.id.search_input).text.clear()
+            chat_view.onSearchCancelClick()
+        }
+        search_place.findViewById<EditText>(R.id.search_input).apply {
+            setOnTouchListener { view, motionEvent ->
+                val drawableLeft = 0
+                val drawableRight = 2
+
+                if(motionEvent.action == MotionEvent.ACTION_UP) {
+                    if(motionEvent.x + left >= (right - compoundDrawables[drawableRight].bounds.width() - compoundDrawablePadding)) {
+                        text.clear()
+                    } else if (motionEvent.x < (paddingLeft + compoundDrawables[drawableLeft].bounds.width())) {
+                        chat_view.searchText(text.toString())
+                    }
+                }
+                false
+            }
+        }
     }
 
     override fun onResume() {

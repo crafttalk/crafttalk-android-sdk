@@ -24,6 +24,7 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -60,8 +61,11 @@ import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
 import kotlinx.android.synthetic.main.com_crafttalk_chat_include_replied_message.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_include_reply_preview.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_search.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_search_switch.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_auth.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.upload_history_btn
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_user_feedback.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_warning.view.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
@@ -74,6 +78,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     @Inject
     lateinit var viewModel: ChatViewModel
     private var liveDataMessages: LiveData<PagedList<MessageModel>>? = null
+    private var searchLiveDataMessages: LiveData<PagedList<MessageModel>>? = null
+    private var searchLastScrolledPosition = -1
     private var isFirstUploadMessages = false
     private lateinit var adapterListMessages: AdapterListMessages
     private val fileViewerHelper = FileViewerHelper()
@@ -240,10 +246,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         warningConnection.setTextColor(chatAttr.colorTextInternetConnectionWarning)
         state_action_operator.setTextColor(chatAttr.colorTextInfo)
         company_name.setTextColor(chatAttr.colorTextInfo)
+        search_coincidence.setTextColor(chatAttr.colorTextSearchCoincidence)
         // set dimension
         warningConnection.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInternetConnectionWarning)
         state_action_operator.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
         company_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
+        search_coincidence.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextSearchCoincidenceText)
         // set bg
         upper_limiter.setBackgroundColor(chatAttr.colorMain)
         lower_limit.setBackgroundColor(chatAttr.colorMain)
@@ -252,12 +260,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             DrawableCompat.setTint(wrappedDrawable, chatAttr.colorMain)
             count_unread_message.background = wrappedDrawable
         }
+        search_switch_place.setBackgroundColor(chatAttr.backgroundSearchSwitch)
         // set company name
         company_name.text = chatAttr.companyName
         company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
         warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
         infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
         upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
+        search.visibility = if (chatAttr.showInternetConnectionState || chatAttr.showChatState) View.VISIBLE else View.GONE
         voice_input.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
         feedback_title.apply {
             setTextColor(ChatAttr.getInstance().colorFeedbackTitle)
@@ -268,6 +278,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         feedback_star_3.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
         feedback_star_4.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
         feedback_star_5.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        search_top.setColorFilter(ChatAttr.getInstance().colorSearchTop)
+        search_bottom.setColorFilter(ChatAttr.getInstance().colorSearchBottom)
 
         chatAttr.drawableProgressIndeterminate?.let {
             loading.indeterminateDrawable = it
@@ -331,6 +343,23 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         })
         close_feedback.setOnClickListener(this)
+        search.setOnClickListener(this)
+        search_cancel.setOnClickListener(this)
+        search_input.setOnTouchListener { view, motionEvent ->
+            val drawableLeft = 0
+            val drawableRight = 2
+
+            if(motionEvent.action == MotionEvent.ACTION_UP) {
+                if(motionEvent.x + left >= (search_input.right - search_input.compoundDrawables[drawableRight].bounds.width() - search_input.compoundDrawablePadding)) {
+                    search_input.text.clear()
+                } else if (motionEvent.x < (search_input.paddingLeft + search_input.compoundDrawables[drawableLeft].bounds.width())) {
+                    searchText(search_input.text.toString())
+                }
+            }
+            false
+        }
+        search_top.setOnClickListener(this)
+        search_bottom.setOnClickListener(this)
         upload_history_btn.setOnClickListener(this)
         reply_preview_close.setOnClickListener(this)
         setFeedbackListener()
@@ -428,7 +457,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         infoChatState.visibility = View.INVISIBLE
                     }
                     if (ChatAttr.getInstance().showInternetConnectionState) {
-                        warningConnection.visibility = View.VISIBLE
+                        warningConnection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE
                     }
                     sign_in.isClickable = true
                 }
@@ -460,7 +489,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     }
                     stateStartingProgressListener?.stop()
                     if (ChatAttr.getInstance().showChatState) {
-                        infoChatState.visibility = View.VISIBLE
+                        infoChatState.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE
                     }
                 }
                 DisplayableUIObject.CHAT -> {
@@ -528,6 +557,45 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 scroll_to_down.visibility = View.GONE
             }
         }
+        viewModel.showSearchNavigate.observe(lifecycleOwner) {
+            search_top.visibility = if (it) View.VISIBLE else View.GONE
+            search_bottom.visibility = if (it) View.VISIBLE else View.GONE
+        }
+        viewModel.enabledSearchTop.observe(lifecycleOwner) {
+            search_top.isEnabled = it
+            if (it) {
+                search_top.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
+            } else {
+                search_top.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
+            }
+        }
+        viewModel.enabledSearchBottom.observe(lifecycleOwner) {
+            search_bottom.isEnabled = it
+            if (it) {
+                search_bottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
+            } else {
+                search_bottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
+            }
+        }
+        viewModel.searchCoincidenceText.observe(lifecycleOwner) {
+            search_switch_place.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+            search_coincidence.text = it
+        }
+        viewModel.searchScrollToPosition.observe(lifecycleOwner) { searchItem ->
+            searchLiveDataMessages?.removeObservers(lifecycleOwner)
+            searchItem ?: return@observe
+            val searchText = viewModel.searchText ?: return@observe
+            searchLiveDataMessages = viewModel.uploadSearchMessages(searchText, searchItem)
+            searchLiveDataMessages?.observe(lifecycleOwner, { pagedList ->
+                adapterListMessages.submitList(pagedList!!) {
+                    val position = searchItem.scrollPosition ?: return@submitList
+                    if (position != searchLastScrolledPosition) {
+                        scroll(position + 1, true)
+                    }
+                    searchLastScrolledPosition = position
+                }
+            })
+        }
         viewModel.feedbackContainerVisible.observe(lifecycleOwner) {
             user_feedback.visibility = if (it) {
                 View.VISIBLE
@@ -584,6 +652,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             isFirstUploadMessages = true
             liveDataMessages?.observe(lifecycleOwner, { pagedList ->
                 pagedList ?: return@observe
+                if (viewModel.searchText != null && viewModel.searchScrollToPosition.value != null) return@observe
 
                 val countItemsLastVersion = adapterListMessages.itemCount
                 adapterListMessages.submitList(pagedList) {
@@ -842,7 +911,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 when {
                     message.trim().isNotEmpty() -> {
                         hideSoftKeyboard(this)
-                        scroll(0)
+                        if (viewModel.searchText == null) scroll(0)
                         viewModel.sendMessage(message, viewModel.replyMessage.value?.id)
                         viewModel.replyMessage.value = null
                         entry_field.text.clear()
@@ -881,10 +950,26 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
                 feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
+            R.id.search -> {
+                warningConnection.visibility = View.GONE
+                infoChatState.visibility = View.GONE
+                search.visibility = View.GONE
+                search_place.visibility = View.VISIBLE
+                hideSoftKeyboard(this)
+            }
+            R.id.search_cancel -> {
+                search_place.visibility = View.GONE
+                warningConnection.visibility = View.GONE
+                infoChatState.visibility = View.INVISIBLE
+                search.visibility = View.VISIBLE
+                onSearchCancelClick()
+            }
+            R.id.search_top -> viewModel.onSearchTopClick()
+            R.id.search_bottom -> viewModel.onSearchBottomClick()
         }
     }
 
-    private fun scroll(countUnreadMessages: Int) {
+    private fun scroll(countUnreadMessages: Int, isSearchScroll: Boolean = false) {
         fun scrollToDesiredPosition(position: Int, actionScroll: (position: Int) -> Unit) {
             if (adapterListMessages.currentList?.getOrNull(position) == null) {
                 list_with_message.smoothScrollToPosition(position)
@@ -900,6 +985,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
 
         when {
+            isSearchScroll -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
             isExist && indexLastVisible >= 20 -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
             isExist && indexLastVisible < 20 -> scrollToDesiredPosition(position, list_with_message::smoothScrollToPosition)
             !isExist -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
@@ -959,6 +1045,18 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
     }
 
+    fun searchText(searchText: String) {
+        viewModel.onSearchClick(searchText)
+    }
+
+    fun onSearchCancelClick() {
+        search_switch_place.visibility = View.GONE
+        search_input.text.clear()
+        scroll(0)
+        hideSoftKeyboard(this)
+        viewModel.onSearchCancel()
+    }
+
     override fun onModalOptionSelected(tag: String?, option: Option) {
         when (option.id) {
             R.id.document -> {
@@ -1008,5 +1106,4 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     override fun onCloseBottomSheet() {
         send_message.isClickable = true
     }
-
 }

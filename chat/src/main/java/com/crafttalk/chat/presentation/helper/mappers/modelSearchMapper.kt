@@ -6,16 +6,19 @@ import android.text.style.BackgroundColorSpan
 import com.crafttalk.chat.domain.interactors.SearchItem
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
-import kotlin.math.abs
 
-fun messageSearchMapper(messageModel: MessageModel, searchText: String?, currentSearchItem: SearchItem?): MessageModel {
-    currentSearchItem ?: return messageModel
-    searchText ?: return messageModel
+fun messageSearchMapper(
+    messageModel: MessageModel,
+    searchText: String,
+    currentSearchItem: SearchItem,
+    allSearchedItems: List<SearchItem>
+): MessageModel {
+    if (allSearchedItems.find { it.id == messageModel.id } == null) return messageModel
     when (messageModel) {
-        is TextMessageItem -> selectText(messageModel.id, messageModel.timestamp, messageModel.message, searchText, currentSearchItem)
-        is InfoMessageItem -> selectText(messageModel.id, messageModel.timestamp, messageModel.message, searchText, currentSearchItem)
-        is WidgetMessageItem -> messageModel.message?.let { selectText(messageModel.id, messageModel.timestamp, it, searchText, currentSearchItem) }
-        is UnionMessageItem -> selectText(messageModel.id, messageModel.timestamp, messageModel.message, searchText, currentSearchItem)
+        is TextMessageItem -> selectText(messageModel.id, messageModel.message, searchText, currentSearchItem)
+        is InfoMessageItem -> selectText(messageModel.id, messageModel.message, searchText, currentSearchItem)
+        is WidgetMessageItem -> messageModel.message?.let { selectText(messageModel.id, it, searchText, currentSearchItem) }
+        is UnionMessageItem -> selectText(messageModel.id, messageModel.message, searchText, currentSearchItem)
         else -> {}
     }
     return messageModel
@@ -23,7 +26,6 @@ fun messageSearchMapper(messageModel: MessageModel, searchText: String?, current
 
 private fun selectText(
     messageId: String,
-    messageTimestamp: Long,
     spannableString: SpannableString,
     searchText: String,
     currentSearchItem: SearchItem
@@ -35,8 +37,7 @@ private fun selectText(
             BackgroundColorSpan(
                 if (
                     numberCoincidences == currentSearchItem.positionMatchInMsg &&
-                    ((currentSearchItem.id != null && messageId == currentSearchItem.id) ||
-                            (abs(messageTimestamp - currentSearchItem.timestamp) <= 50))
+                    (currentSearchItem.id != null && messageId == currentSearchItem.id)
                 ) ChatAttr.getInstance().colorCurrentSelectSearchText
                 else ChatAttr.getInstance().colorSelectSearchText
             ),
@@ -55,8 +56,7 @@ private fun selectText(
                 BackgroundColorSpan(
                     if (
                         numberCoincidences == currentSearchItem.positionMatchInMsg &&
-                        ((currentSearchItem.id != null && messageId == currentSearchItem.id) ||
-                                (abs(messageTimestamp - currentSearchItem.timestamp) <= 50))
+                        (currentSearchItem.id != null && messageId == currentSearchItem.id)
                     ) ChatAttr.getInstance().colorCurrentSelectSearchText
                     else ChatAttr.getInstance().colorSelectSearchText
                 ),

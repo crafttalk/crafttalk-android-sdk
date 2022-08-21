@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File as DomainFile
 import java.io.File as IOFile
@@ -16,6 +17,7 @@ import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
 import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
+import com.crafttalk.chat.presentation.helper.mappers.messageSearchMapper
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ChatParams
@@ -26,6 +28,7 @@ class ChatViewModel
 @Inject constructor(
     private val authChatInteractor: AuthInteractor,
     private val messageInteractor: MessageInteractor,
+    private val searchInteractor: SearchInteractor,
     private val fileInteractor: FileInteractor,
     private val conditionInteractor: ConditionInteractor,
     private val feedbackInteractor: FeedbackInteractor,
@@ -36,6 +39,7 @@ class ChatViewModel
     var currentReadMessageTime = conditionInteractor.getCurrentReadMessageTime()
     var isAllHistoryLoaded = conditionInteractor.checkFlagAllHistoryLoaded()
     var initialLoadKey = conditionInteractor.getInitialLoadKey()
+    private var initSearchInitialLoadKey = initialLoadKey
 
     var countUnreadMessages = MutableLiveData<Int>()
     val scrollToDownVisible = MutableLiveData(false)
@@ -43,6 +47,13 @@ class ChatViewModel
     val openDocument = MutableLiveData<Pair<IOFile?, Boolean>?>()
     val mergeHistoryBtnVisible = MutableLiveData(false)
     val mergeHistoryProgressVisible = MutableLiveData(false)
+
+    var searchText: String? = null
+    val showSearchNavigate: MutableLiveData<Boolean> = MutableLiveData(false)
+    val enabledSearchTop: MutableLiveData<Boolean> = MutableLiveData(false)
+    val enabledSearchBottom: MutableLiveData<Boolean> = MutableLiveData(false)
+    val searchCoincidenceText: MutableLiveData<String> = MutableLiveData()
+    val searchScrollToPosition: MutableLiveData<SearchItem?> = MutableLiveData(null)
 
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     val replyMessage: MutableLiveData<MessageModel?> = MutableLiveData(null)
@@ -86,7 +97,8 @@ class ChatViewModel
         messageInteractor.syncMessages(
             updateReadPoint = updateCurrentReadMessageTime,
             syncMessagesAcrossDevices = ::syncMessagesAcrossDevices,
-            eventAllHistoryLoaded = eventAllHistoryLoaded
+            eventAllHistoryLoaded = eventAllHistoryLoaded,
+            updateSearchMessagePosition = searchInteractor::updateMessagePosition
         )
     }
     private val updateCurrentReadMessageTime: (Long) -> Boolean = { newTimeMark ->
@@ -152,6 +164,7 @@ class ChatViewModel
         launchIO {
             configurationInteractor.getConfiguration()
         }
+        messageInteractor.setUpdateSearchMessagePosition(searchInteractor::updateMessagePosition)
     }
 
     fun onStartChatView(visitor: Visitor?) {
@@ -212,6 +225,7 @@ class ChatViewModel
             messageInteractor.uploadHistoryMessages(
                 eventAllHistoryLoaded = eventAllHistoryLoaded,
                 uploadHistoryComplete = uploadHistoryComplete,
+                updateSearchMessagePosition = searchInteractor::updateMessagePosition,
                 executeAnyway = executeAnyway
             )
         }
@@ -312,6 +326,116 @@ class ChatViewModel
         launchIO { fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
             uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
         }}
+    }
+
+    fun uploadSearchMessages(searchText: String, currentSearchItem: SearchItem): LiveData<PagedList<MessageModel>> {
+        val config = PagedList.Config.Builder()
+            .setPageSize(ChatParams.pageSize)
+            .build()
+        val dataSource = messageInteractor.getAllMessages()
+            .map { (messageModelMapper(it, context)) }
+            .map { messageSearchMapper(it, searchText, currentSearchItem, searchInteractor.getAllSearchedItems()) }
+            .mapByPage { groupPageByDate(it) }
+        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder(
+            dataSource,
+            config
+        ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
+            override fun onItemAtEndLoaded(itemAtEnd: MessageModel) {
+                super.onItemAtEndLoaded(itemAtEnd)
+                if (!isAllHistoryLoaded) {
+                    uploadOldMessages()
+                }
+            }
+        }).setInitialLoadKey(initSearchInitialLoadKey)
+        return pagedListBuilder.build()
+    }
+
+    fun onSearchClick(searchText: String) {
+        launchIO {
+            this.searchText = searchText
+            val searchItem = searchInteractor.preloadMessages(searchText)
+            if (searchItem == null) {
+                searchCoincidenceText.postValue(
+                    context.resources.getString(
+                        R.string.com_crafttalk_chat_coincidence_not_found
+                    )
+                )
+                showSearchNavigate.postValue(false)
+                enabledSearchTop.postValue(false)
+                enabledSearchBottom.postValue(false)
+                searchScrollToPosition.postValue(searchScrollToPosition.value)
+            } else {
+                searchCoincidenceText.postValue(
+                    context.resources.getString(
+                        R.string.com_crafttalk_chat_coincidence,
+                        searchItem.searchPosition,
+                        searchItem.allCount
+                    )
+                )
+                enabledSearchTop.postValue(searchItem.allCount != 1)
+                enabledSearchBottom.postValue(searchItem.searchPosition != 1)
+                showSearchNavigate.postValue(searchItem.allCount != 1)
+                searchScrollToPosition.postValue(searchItem)
+            }
+        }
+    }
+
+    fun onSearchTopClick() {
+        launchIO {
+            val searchItem = searchInteractor.onSearchTopClick()
+            if (searchItem == null) {
+                showSearchNavigate.postValue(true)
+                enabledSearchTop.postValue(false)
+                enabledSearchBottom.postValue(true)
+            } else {
+                initSearchInitialLoadKey = searchItem.scrollPosition ?: initialLoadKey
+                searchCoincidenceText.postValue(
+                    context.resources.getString(
+                        R.string.com_crafttalk_chat_coincidence,
+                        searchItem.searchPosition,
+                        searchItem.allCount
+                    )
+                )
+                enabledSearchTop.postValue(!searchItem.isLast)
+                enabledSearchBottom.postValue(true)
+                showSearchNavigate.postValue(true)
+                searchScrollToPosition.postValue(searchItem)
+            }
+        }
+    }
+
+    fun onSearchBottomClick() {
+        val searchItem = searchInteractor.onSearchBottomClick()
+        if (searchItem == null) {
+            showSearchNavigate.postValue(true)
+            enabledSearchTop.postValue(true)
+            enabledSearchBottom.postValue(false)
+        } else {
+            initSearchInitialLoadKey = searchItem.scrollPosition ?: initialLoadKey
+            searchCoincidenceText.postValue(
+                context.resources.getString(
+                    R.string.com_crafttalk_chat_coincidence,
+                    searchItem.searchPosition,
+                    searchItem.allCount
+                )
+            )
+            enabledSearchTop.postValue(true)
+            enabledSearchBottom.postValue(!searchItem.isLast)
+            showSearchNavigate.postValue(true)
+            searchScrollToPosition.postValue(searchItem)
+        }
+    }
+
+    fun onSearchCancel() {
+        initSearchInitialLoadKey = initialLoadKey
+        searchText = null
+        showSearchNavigate.postValue(false)
+        enabledSearchTop.postValue(false)
+        enabledSearchBottom.postValue(false)
+        searchCoincidenceText.postValue("")
+        searchScrollToPosition.postValue(null)
+        uploadMessages()
+        searchInteractor.cancelSearch()
     }
 
     fun readMessage(lastTimestamp: Long?) {
