@@ -365,6 +365,7 @@ class ChatViewModel
                 enabledSearchBottom.postValue(false)
                 searchScrollToPosition.postValue(searchScrollToPosition.value)
             } else {
+                initSearchInitialLoadKey = searchItem.scrollPosition ?: initialLoadKey
                 searchCoincidenceText.postValue(
                     context.resources.getString(
                         R.string.com_crafttalk_chat_coincidence,

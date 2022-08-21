@@ -358,6 +358,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             false
         }
+        if (ChatAttr.getInstance().enableAutoSearch) {
+            search_input.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    if (search_input.text.isNotEmpty()) searchText(search_input.text.toString())
+                    else onSearchCancelClick()
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+        }
         search_top.setOnClickListener(this)
         search_bottom.setOnClickListener(this)
         upload_history_btn.setOnClickListener(this)
@@ -1054,6 +1064,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         search_input.text.clear()
         scroll(0)
         hideSoftKeyboard(this)
+        searchLastScrolledPosition = -1
         viewModel.onSearchCancel()
     }
 

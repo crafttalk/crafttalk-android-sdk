@@ -241,6 +241,7 @@ private constructor(
     val drawableVoiceInputMicOff = attrArr.getDrawable(R.styleable.ChatView_drawable_voice_input_mic_off) ?: ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_voice_mic_off)
 
 //    search
+    val enableAutoSearch = attrArr.getBoolean(R.styleable.ChatView_enable_auto_search, false)
     val colorSelectSearchText = attrArr.getColor(R.styleable.ChatView_color_select_search_text, ContextCompat.getColor(context, R.color.com_crafttalk_chat_yellow_ffeb3b))
     val colorCurrentSelectSearchText = attrArr.getColor(R.styleable.ChatView_color_current_select_search_text, ContextCompat.getColor(context, R.color.com_crafttalk_chat_orange_ffb300))
     val colorTextSearchCoincidence = attrArr.getColor(R.styleable.ChatView_color_search_coincidence_text, colorBlack)
