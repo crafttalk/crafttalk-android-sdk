@@ -46,7 +46,7 @@ ext {
     androidXRecyclerViewVersion = '1.1.0'
     materialVersion = '1.4.0'
     fragmentKtxVersion = '1.3.4'
-    socketVersion = '1.0.2'
+    socketVersion = '2.1.0'
     retrofitVersion = '2.8.1'
     coroutinesVersion = '1.3.0'
     glideVersion = '4.11.0'
