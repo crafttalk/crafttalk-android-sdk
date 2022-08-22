@@ -2,6 +2,8 @@ package com.crafttalk.sampleChat
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -122,6 +124,15 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 }
                 false
             }
+//            auto search
+//            addTextChangedListener(object : TextWatcher {
+//                override fun afterTextChanged(s: Editable?) {
+//                    if (text.isNotEmpty()) chat_view.searchText(text.toString())
+//                    else chat_view.onSearchCancelClick()
+//                }
+//                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//            })
         }
     }
 
