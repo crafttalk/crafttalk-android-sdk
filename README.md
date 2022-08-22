@@ -388,6 +388,16 @@ Drawable:
 - size_feedback_title - устанавливает размер заголовка на плашке оценки работы оператора
 - color_feedback_star - устанавливает цвет звезд
 
+Поиск по чату:
+- enable_auto_search - включает автопоиск (дефолтное значение - false)
+- color_select_search_text - устанавливает цвет выделения текста, подходящего под шаблон 
+- color_current_select_search_text - устанавливает цвет выделения текущего текста
+- color_search_coincidence_text - устанавливает цвет текста сообщения о совпадениях
+- background_search_switch - устанавливает цвет фона блока навигации по совпадениям поиска
+- color_search_top - устанавливает цвет иконки навигации по поиску вверх
+- color_search_bottom - устанавливает цвет иконки навигации по поиску вниз
+- size_text_search_coincidence - устанавливает размер текста сообщения о совпадениях
+
 Собственные layouts:
 - layout_item_user_text_message - задает layout для текстового сообщения пользователя
 - layout_item_user_image_message - задает layout для сообщения с фото от пользователя
