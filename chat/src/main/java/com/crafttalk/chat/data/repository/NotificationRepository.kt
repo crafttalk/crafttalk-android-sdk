@@ -7,7 +7,7 @@ import com.crafttalk.chat.domain.entity.notification.NetworkSubscription
 import com.crafttalk.chat.domain.entity.notification.NetworkUnsubscription
 import com.crafttalk.chat.domain.repository.INotificationRepository
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,14 +50,13 @@ class NotificationRepository
     }
 
     override fun getToken(success: (token: String) -> Unit) {
-        FirebaseInstanceId.getInstance().instanceId
+        FirebaseMessaging.getInstance().token
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     return@OnCompleteListener
                 }
-                val token = task.result?.token
+                val token = task.result
                 token?.let(success)
             })
     }
-
 }
