@@ -209,6 +209,7 @@
         <attr name="drawable_voice_input_mic_off" format="reference"/>
 
         <!--search-->
+        <attr name="enable_search" format="boolean"/>
         <attr name="enable_auto_search" format="boolean"/>
         <attr name="color_select_search_text" format="color"/>
         <attr name="color_current_select_search_text" format="color"/>
