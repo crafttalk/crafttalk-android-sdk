@@ -13,7 +13,7 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.NetworkBodyStructureUploadFile
 import com.crafttalk.chat.domain.entity.file.TypeUpload
 import com.crafttalk.chat.domain.repository.IFileRepository
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -47,7 +47,7 @@ class FileRepository
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 handleUploadFile(response.code(), response.message())
-                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
+                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 when (t.message) {
@@ -61,11 +61,11 @@ class FileRepository
     private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: RequestBody, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val body: MultipartBody.Part = MultipartBody.Part.createFormData(ApiParams.FILE_FIELD_NAME, fileName, fileRequestBody)
         val fileNameRequestBody = RequestBody.create(
-            MediaType.get(ContentTypeValue.TEXT_PLAIN.value),
+            ContentTypeValue.TEXT_PLAIN.value.toMediaTypeOrNull(),
             fileName
         )
         val uuidRequestBody = RequestBody.create(
-            MediaType.get(ContentTypeValue.TEXT_PLAIN.value),
+            ContentTypeValue.TEXT_PLAIN.value.toMediaTypeOrNull(),
             uuid
         )
 
@@ -79,7 +79,7 @@ class FileRepository
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 handleUploadFile(response.code(), response.message())
-                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url()}")
+                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 when (t.message) {
@@ -107,13 +107,16 @@ class FileRepository
 
     override fun uploadMediaFile(visitor: Visitor, bitmap: Bitmap, type: TypeUpload, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val fileName = "createPhoto${System.currentTimeMillis()}.jpg"
+        Log.d("TEST_DAYA_M", "uploadMediaFile t - ${type}; ")
         when (type) {
             TypeUpload.JSON -> {
                 val fileRequestBody = fileRequestHelper.generateJsonRequestBody(bitmap)
+                Log.d("TEST_DAYA_M", "uploadMediaFile fileRequestBody1 - ${fileRequestBody}; ")
                 uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {
-                val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(bitmap, fileName) ?: return
+                val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(bitmap, fileName)
+                Log.d("TEST_DAYA_M", "uploadMediaFile fileRequestBody2 - ${fileRequestBody}; ")
                 uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
             }
         }

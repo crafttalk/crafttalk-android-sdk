@@ -389,6 +389,7 @@ Drawable:
 - color_feedback_star - устанавливает цвет звезд
 
 Поиск по чату:
+- enable_search - включает поиск (дефолтное значение - false)
 - enable_auto_search - включает автопоиск (дефолтное значение - false)
 - color_select_search_text - устанавливает цвет выделения текста, подходящего под шаблон 
 - color_current_select_search_text - устанавливает цвет выделения текущего текста
