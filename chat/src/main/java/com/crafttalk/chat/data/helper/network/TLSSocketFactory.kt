@@ -26,7 +26,7 @@ class TLSSocketFactory(
         fun OkHttpClient.Builder.enableTls() = apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
                 try {
-                    val sslContext = SSLContext.getInstance(TlsVersion.TLS_1_2.javaName())
+                    val sslContext = SSLContext.getInstance(TlsVersion.TLS_1_2.javaName)
                     sslContext.init(null, arrayOf(trustManager), null)
                     sslSocketFactory(TLSSocketFactory(sslContext.socketFactory), trustManager)
                 } catch (e: Exception) {
@@ -36,9 +36,9 @@ class TLSSocketFactory(
         }
     }
 
-    private fun Socket.enableTLSOnSocket(): Socket? {
+    private fun Socket.enableTLSOnSocket(): Socket {
         return (this as? SSLSocket)?.apply {
-            enabledProtocols += TlsVersion.TLS_1_2.javaName()
+            enabledProtocols += TlsVersion.TLS_1_2.javaName
         } ?: this
     }
 
@@ -51,32 +51,32 @@ class TLSSocketFactory(
     }
 
     @Throws(IOException::class)
-    override fun createSocket(): Socket? {
+    override fun createSocket(): Socket {
         return sslSocketFactory.createSocket().enableTLSOnSocket()
     }
 
     @Throws(IOException::class)
-    override fun createSocket(s: Socket, host: String, port: Int, autoClose: Boolean): Socket? {
+    override fun createSocket(s: Socket, host: String, port: Int, autoClose: Boolean): Socket {
         return sslSocketFactory.createSocket(s, host, port, autoClose).enableTLSOnSocket()
     }
 
     @Throws(IOException::class, UnknownHostException::class)
-    override fun createSocket(host: String, port: Int): Socket? {
+    override fun createSocket(host: String, port: Int): Socket {
         return sslSocketFactory.createSocket(host, port).enableTLSOnSocket()
     }
 
     @Throws(IOException::class, UnknownHostException::class)
-    override fun createSocket(host: String, port: Int, localHost: InetAddress, localPort: Int): Socket? {
+    override fun createSocket(host: String, port: Int, localHost: InetAddress, localPort: Int): Socket {
         return sslSocketFactory.createSocket(host, port, localHost, localPort).enableTLSOnSocket()
     }
 
     @Throws(IOException::class)
-    override fun createSocket(host: InetAddress, port: Int): Socket? {
+    override fun createSocket(host: InetAddress, port: Int): Socket {
         return sslSocketFactory.createSocket(host, port).enableTLSOnSocket()
     }
 
     @Throws(IOException::class)
-    override fun createSocket(address: InetAddress, port: Int, localAddress: InetAddress, localPort: Int): Socket? {
+    override fun createSocket(address: InetAddress, port: Int, localAddress: InetAddress, localPort: Int): Socket {
         return sslSocketFactory.createSocket(address, port, localAddress, localPort).enableTLSOnSocket()
     }
 
