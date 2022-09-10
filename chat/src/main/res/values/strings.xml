@@ -64,7 +64,7 @@
     <string name="com_crafttalk_chat_upload_history">Загрузить историю</string>
 
     <!--    Download file-->
-    <string name="com_crafttalk_chat_download_file_success">Файл успешно скачен</string>
+    <string name="com_crafttalk_chat_download_file_success">Файл успешно скачан</string>
     <string name="com_crafttalk_chat_download_file_fail">Файл не удалось скачать</string>
     <string name="com_crafttalk_chat_open_file_fail">Файл не удалось открыть</string>
     <string name="com_crafttalk_chat_download">Загрузить</string>
