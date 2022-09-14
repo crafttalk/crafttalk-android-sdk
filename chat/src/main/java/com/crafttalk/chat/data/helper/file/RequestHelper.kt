@@ -8,7 +8,7 @@ import com.crafttalk.chat.data.ContentTypeValue
 import com.crafttalk.chat.data.helper.converters.file.convertToBase64
 import com.crafttalk.chat.data.helper.converters.file.convertToFile
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
@@ -40,7 +40,7 @@ class RequestHelper
     fun generateMultipartRequestBody(bitmap: Bitmap, mediaName: String): RequestBody {
         return convertToFile(bitmap, context, mediaName).readBytes().let { bytes ->
             RequestBody.create(
-                MediaType.get(ContentTypeValue.MEDIA.value),
+                ContentTypeValue.MEDIA.value.toMediaTypeOrNull(),
                 bytes
             )
         }
