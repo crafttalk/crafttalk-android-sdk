@@ -210,10 +210,6 @@ override fun onDestroyView() {
 
 Атрибуты, настраивающие внешний вид:
 
-Локаль (нужно для корректного отображения даты, по которой группируются сообщения):
-- locale_language - устанавливает язык локали
-- locale_country - устанавливает страну локали
-
 Цвета:
 - color_main - устанавливает главный цвет чата
 - color_bg_user_message - устанавливает цвет фона пользовательского сообщения
@@ -328,6 +324,26 @@ Drawable:
 - horizontal_spacing_operator_button - устанавливает горизонтальное расстояние между соседними кнопками-подсказками бота 
 - vertical_spacing_operator_button - устанавливает вертикальное расстояние между соседними кнопками-подсказками бота 
 
+Скругления:
+- rounded_media_file_preview_message - устанавливает значения скругления углов для медиафайла
+- rounded_gif_file_preview_message - устанавливает значения скругления углов для gif'ок
+- rounded_top_left_user_media_file_preview_message - устанавливает значение скругления верхнего левого угла для медиафайла от пользователя
+- rounded_top_right_user_media_file_preview_message - устанавливает значение скругления верхнего правого угла для медиафайла от пользователя
+- rounded_bottom_left_user_media_file_preview_message - устанавливает значение скругления нижнего левого угла для медиафайла от пользователя
+- rounded_bottom_right_user_media_file_preview_message - устанавливает значение скругления нижнего правого угла для медиафайла от пользователя
+- rounded_top_left_user_gif_file_preview_message - устанавливает значение скругления верхнего левого угла для gif'ок пользователя
+- rounded_top_right_user_gif_file_preview_message - устанавливает значение скругления верхнего правого угла для gif'ок пользователя
+- rounded_bottom_left_user_gif_file_preview_message - устанавливает значение скругления нижнего левого угла для gif'ок пользователя
+- rounded_bottom_right_user_gif_file_preview_message - устанавливает значение скругления нижнего правого угла для gif'ок пользователя
+- rounded_top_left_operator_media_file_preview_message - устанавливает значение скругления верхнего левого угла для медиафайла от бота/оператора
+- rounded_top_right_operator_media_file_preview_message - устанавливает значение скругления верхнего правого угла для медиафайла от бота/оператора
+- rounded_bottom_left_operator_media_file_preview_message - устанавливает значение скругления нижнего левого угла для медиафайла от бота/оператора
+- rounded_bottom_right_operator_media_file_preview_message - устанавливает значение скругления нижнего правого угла для медиафайла от бота/оператора
+- rounded_top_left_operator_gif_file_preview_message - устанавливает значение скругления верхнего левого угла для gif'ок бота/оператора
+- rounded_top_right_operator_gif_file_preview_message - устанавливает значение скругления верхнего правого угла для gif'ок бота/оператора
+- rounded_bottom_left_operator_gif_file_preview_message - устанавливает значение скругления нижнего левого угла для gif'ок бота/оператора
+- rounded_bottom_right_operator_gif_file_preview_message - устанавливает значение скругления нижнего правого угла для gif'ок бота/оператора
+
 Шрифты:
 - resource_font_family_all_text - шрифт для всех сообщений, если указан этот атрибут, то остальные игнорируются
 - resource_font_family_user_message
@@ -356,7 +372,7 @@ Drawable:
 - show_chat_state - указывает о необходимости отобразить дефолтную панель с состоянием синхронизации
 
 Кнопка для скачивания файлов:
-- show_file_message_download - указывает о необходимости отобразить кнопку для скачивания файлов
+- media_file_download_mode - указывает о необходимости отобразить кнопку для скачивания файлов (дефолтное значение ONLY_IN_VIEWER). ONLY_IN_VIEWER - предоставляет возможность скачать фото только при просмотре этого фото, ONLY_IN_CHAT - предоставляет возможность скачать фото из чата, All_PLACES -  предоставляет возможность скачать фото из любого места.
 - color_user_file_message_download - устанавливает цвет текста кнопки для пользовательского сообщения
 - color_operator_file_message_download - устанавливает цвет текста кнопки для сообщения от бота/оператора
 - size_user_file_message_download - устанавливает размер текста кнопки для пользовательского сообщения
@@ -398,6 +414,14 @@ Drawable:
 - color_search_top - устанавливает цвет иконки навигации по поиску вверх
 - color_search_bottom - устанавливает цвет иконки навигации по поиску вниз
 - size_text_search_coincidence - устанавливает размер текста сообщения о совпадениях
+
+Предупреждение:
+- title_success_download_file_warning - устанавливает сообщение которое отображается при успешном скачивании файла (дефолтное значение - "Файл успешно скачан")
+- color_success_download_file_warning - устанавливает цвет текста информационного сообщения при успешном скачивании файла
+- background_success_download_file_warning -  устанавливает цвет фона информационного сообщения при успешном скачивании файла
+- title_fail_download_file_warning - устанавливает сообщение которое отображается при неудачном скачивании файла (дефолтное значение - "Файл не удалось скачать")
+- color_fail_download_file_warning - устанавливает цвет текста информационного сообщения при неудачном скачивании файла
+- background_fail_download_file_warning - устанавливает цвет фона информационного сообщения при неудачном скачивании файла
 
 Собственные layouts:
 - layout_item_user_text_message - задает layout для текстового сообщения пользователя

@@ -5,29 +5,18 @@
 
         <attr name="timeDelayed" format="integer"/>
         <attr name="delay_download_document" format="integer"/>
-        <attr name="reply_enable" format="boolean"/>
 
         <attr name="color_main" format="color"/>
         <attr name="color_bg_user_message" format="color"/>
         <attr name="color_bg_user_media_file_message" format="color"/>
         <attr name="color_bg_operator_message" format="color"/>
         <attr name="color_bg_operator_media_file_message" format="color"/>
-        <attr name="color_bg_operator_action" format="color"/>
-        <attr name="color_bg_operator_selected_action" format="color"/>
-        <attr name="resource_bg_operator_button" format="integer"/>
-        <attr name="resource_primary_bg_operator_button" format="integer"/>
-        <attr name="resource_secondary_bg_operator_button" format="integer"/>
-        <attr name="resource_negative_bg_operator_button" format="integer"/>
-        <attr name="resource_bg_operator_selected_button" format="integer"/>
-        <attr name="resource_primary_bg_operator_selected_button" format="integer"/>
-        <attr name="resource_secondary_bg_operator_selected_button" format="integer"/>
-        <attr name="resource_negative_bg_operator_selected_button" format="integer"/>
-        <attr name="color_borders_operator_action" format="color"/>
         <attr name="color_text_user_message" format="color"/>
-        <attr name="color_barrier_replied_message" format="color"/>
-        <attr name="color_text_user_replied_message" format="color"/>
         <attr name="color_text_operator_message" format="color"/>
         <attr name="color_text_operator_action" format="color"/>
+        <attr name="color_borders_operator_action" format="color"/>
+        <attr name="color_bg_operator_action" format="color"/>
+        <attr name="color_bg_operator_selected_action" format="color"/>
         <attr name="color_text_operator_selected_action" format="color"/>
         <attr name="color_text_operator_button" format="color"/>
         <attr name="color_primary_text_operator_button" format="color"/>
@@ -39,11 +28,9 @@
         <attr name="color_negative_text_operator_selected_button" format="color"/>
         <attr name="color_file_name" format="color"/>
         <attr name="color_user_file_name" format="color"/>
-        <attr name="color_user_replied_file_name" format="color"/>
         <attr name="color_operator_file_name" format="color"/>
         <attr name="color_file_size" format="color"/>
         <attr name="color_user_file_size" format="color"/>
-        <attr name="color_user_replied_file_size" format="color"/>
         <attr name="color_operator_file_size" format="color"/>
         <attr name="color_text_user_message_author" format="color"/>
         <attr name="color_text_operator_message_author" format="color"/>
@@ -62,25 +49,24 @@
         <attr name="color_user_gif_message_status" format="color"/>
         <attr name="color_user_image_message_status" format="color"/>
         <attr name="color_user_text_message_status" format="color"/>
+        <attr name="color_text_link_operator_message" format="color"/>
+        <attr name="color_text_link_user_message" format="color"/>
         <attr name="color_text_warning" format="color"/>
         <attr name="color_company" format="color"/>
         <attr name="color_text_date_grouping" format="color"/>
-        <attr name="color_text_link_operator_message" format="color"/>
-        <attr name="color_text_link_user_message" format="color"/>
         <attr name="color_text_phone_operator_message" format="color"/>
         <attr name="color_text_phone_user_message" format="color"/>
 
-        <attr name="media_file_download_mode" format="enum">
-            <enum name="ONLY_IN_VIEWER" value="0"/>
-            <enum name="ONLY_IN_CHAT" value="1"/>
-            <enum name="All_PLACES" value="2"/>
-        </attr>
-        <attr name="color_user_file_message_download" format="reference"/>
-        <attr name="color_operator_file_message_download" format="reference"/>
-        <attr name="size_user_file_message_download" format="dimension"/>
-        <attr name="size_operator_file_message_download" format="dimension"/>
-        <attr name="background_user_file_message_download" format="reference"/>
-        <attr name="background_operator_file_message_download" format="reference"/>
+        <attr name="resource_bg_user_message" format="reference"/>
+        <attr name="resource_bg_operator_message" format="reference"/>
+        <attr name="resource_bg_operator_button" format="integer"/>
+        <attr name="resource_primary_bg_operator_button" format="integer"/>
+        <attr name="resource_secondary_bg_operator_button" format="integer"/>
+        <attr name="resource_negative_bg_operator_button" format="integer"/>
+        <attr name="resource_bg_operator_selected_button" format="integer"/>
+        <attr name="resource_primary_bg_operator_selected_button" format="integer"/>
+        <attr name="resource_secondary_bg_operator_selected_button" format="integer"/>
+        <attr name="resource_negative_bg_operator_selected_button" format="integer"/>
 
         <attr name="drawable_progress_indeterminate" format="reference"/>
         <attr name="drawable_attach_file" format="reference"/>
@@ -88,34 +74,28 @@
         <attr name="drawable_document_not_downloaded_icon" format="reference"/>
         <attr name="drawable_document_downloading_icon" format="reference"/>
         <attr name="drawable_document_downloaded_icon" format="reference"/>
-        <attr name="drawable_reply_message" format="reference"/>
 
         <attr name="size_user_message" format="dimension"/>
-        <attr name="size_user_replied_message" format="dimension"/>
         <attr name="size_operator_message" format="dimension"/>
         <attr name="size_operator_action" format="dimension"/>
         <attr name="size_operator_button" format="dimension"/>
         <attr name="size_file_name" format="dimension"/>
         <attr name="size_user_file_name" format="dimension"/>
-        <attr name="size_user_replied_file_name" format="dimension"/>
         <attr name="size_operator_file_name" format="dimension"/>
         <attr name="size_file_size" format="dimension"/>
         <attr name="size_user_file_size" format="dimension"/>
-        <attr name="size_user_replied_file_size" format="dimension"/>
         <attr name="size_operator_file_size" format="dimension"/>
         <attr name="size_user_message_author" format="dimension"/>
         <attr name="size_operator_message_author" format="dimension"/>
-        <attr name="size_operator_message_author_preview" format="dimension"/>
         <attr name="size_user_message_time" format="dimension"/>
         <attr name="size_operator_message_time" format="dimension"/>
         <attr name="size_warning" format="dimension"/>
         <attr name="size_info" format="dimension"/>
         <attr name="size_text_date_grouping" format="dimension"/>
 
+        <attr name="size_operator_message_author_preview" format="dimension"/>
         <attr name="width_item_user_text_message" format="dimension"/>
         <attr name="width_item_operator_text_message" format="dimension"/>
-        <attr name="horizontal_spacing_operator_button" format="dimension"/>
-        <attr name="vertical_spacing_operator_button" format="dimension"/>
         <attr name="width_item_user_file_icon_message" format="dimension"/>
         <attr name="width_item_operator_file_icon_message" format="dimension"/>
         <attr name="width_item_user_file_preview_warning_message" format="dimension"/>
@@ -134,6 +114,8 @@
         <attr name="width_elongated_item_operator_file_preview_message_in_percent" format="float"/>
         <attr name="height_elongated_item_user_file_preview_message_in_percent" format="float"/>
         <attr name="height_elongated_item_operator_file_preview_message_in_percent" format="float"/>
+        <attr name="horizontal_spacing_operator_button" format="dimension"/>
+        <attr name="vertical_spacing_operator_button" format="dimension"/>
 
         <attr name="rounded_media_file_preview_message" format="dimension"/>
         <attr name="rounded_gif_file_preview_message" format="dimension"/>
@@ -164,23 +146,45 @@
         <attr name="resource_font_family_message_time" format="integer"/>
         <attr name="resource_font_family_message_date" format="integer"/>
 
+        <!--indentation-->
         <attr name="margin_start_media_file" format="dimension"/>
         <attr name="margin_end_media_file" format="dimension"/>
         <attr name="margin_top_media_file" format="dimension"/>
         <attr name="margin_bottom_media_file" format="dimension"/>
 
+        <!--elements UI-->
         <attr name="company_name" format="string"/>
         <attr name="show_company_name" format="boolean"/>
         <attr name="show_internet_connection_state" format="boolean"/>
-        <attr name="show_chat_state" format="boolean"/>
         <attr name="show_upper_limiter" format="boolean"/>
         <attr name="show_starting_progress" format="boolean"/>
-
         <attr name="show_user_message_author" format="boolean"/>
         <attr name="show_user_message_status" format="boolean"/>
+        <attr name="show_chat_state" format="boolean"/>
 
-        <attr name="resource_bg_user_message" format="reference"/>
-        <attr name="resource_bg_operator_message" format="reference"/>
+        <!--file download button-->
+        <attr name="media_file_download_mode" format="enum">
+            <enum name="ONLY_IN_VIEWER" value="0"/>
+            <enum name="ONLY_IN_CHAT" value="1"/>
+            <enum name="All_PLACES" value="2"/>
+        </attr>
+        <attr name="color_user_file_message_download" format="reference"/>
+        <attr name="color_operator_file_message_download" format="reference"/>
+        <attr name="size_user_file_message_download" format="dimension"/>
+        <attr name="size_operator_file_message_download" format="dimension"/>
+        <attr name="background_user_file_message_download" format="reference"/>
+        <attr name="background_operator_file_message_download" format="reference"/>
+
+        <!--replied-->
+        <attr name="reply_enable" format="boolean"/>
+        <attr name="drawable_reply_message" format="reference"/>
+        <attr name="color_barrier_replied_message" format="color"/>
+        <attr name="color_text_user_replied_message" format="color"/>
+        <attr name="color_user_replied_file_name" format="color"/>
+        <attr name="color_user_replied_file_size" format="color"/>
+        <attr name="size_user_replied_message" format="dimension"/>
+        <attr name="size_user_replied_file_name" format="dimension"/>
+        <attr name="size_user_replied_file_size" format="dimension"/>
 
         <attr name="layout_item_user_text_message" format="reference"/>
         <attr name="layout_item_user_image_message" format="reference"/>
