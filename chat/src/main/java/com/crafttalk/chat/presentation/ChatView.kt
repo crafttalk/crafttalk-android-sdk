@@ -464,7 +464,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         setAllListeners()
         setListMessages()
 
-        viewModel.internetConnectionState.observe(lifecycleOwner) { state ->
+        viewModel.internetConnectionState.observe(lifecycleOwner, androidx.lifecycle.Observer { state ->
             when (state) {
                 InternetConnectionState.NO_INTERNET -> {
                     if (ChatAttr.getInstance().showChatState) {
@@ -481,8 +481,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     }
                 }
             }
-        }
-        viewModel.displayableUIObject.observe(lifecycleOwner) {
+        })
+        viewModel.displayableUIObject.observe(lifecycleOwner, androidx.lifecycle.Observer {
             Log.d("CHAT_VIEW", "displayableUIObject - ${it};")
             when (it) {
                 DisplayableUIObject.NOTHING -> {
@@ -548,17 +548,17 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     state_action_operator.visibility = View.GONE
                 }
             }
-        }
+        })
 
-        viewModel.countUnreadMessages.observe(lifecycleOwner) {
+        viewModel.countUnreadMessages.observe(lifecycleOwner, androidx.lifecycle.Observer {
             if (it <= 0) {
                 count_unread_message.visibility = View.GONE
             } else {
                 count_unread_message.text = if (it < 10) it.toString() else "9+"
                 count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
             }
-        }
-        viewModel.scrollToDownVisible.observe(lifecycleOwner) {
+        })
+        viewModel.scrollToDownVisible.observe(lifecycleOwner, androidx.lifecycle.Observer {
             if (it) {
                 scroll_to_down.visibility = View.VISIBLE
                 if (viewModel.countUnreadMessages.value != null && viewModel.countUnreadMessages.value != 0) {
@@ -570,37 +570,37 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 count_unread_message.visibility = View.GONE
                 scroll_to_down.visibility = View.GONE
             }
-        }
-        viewModel.showSearchNavigate.observe(lifecycleOwner) {
+        })
+        viewModel.showSearchNavigate.observe(lifecycleOwner, androidx.lifecycle.Observer {
             search_top.visibility = if (it) View.VISIBLE else View.GONE
             search_bottom.visibility = if (it) View.VISIBLE else View.GONE
-        }
-        viewModel.enabledSearchTop.observe(lifecycleOwner) {
+        })
+        viewModel.enabledSearchTop.observe(lifecycleOwner, androidx.lifecycle.Observer {
             search_top.isEnabled = it
             if (it) {
                 search_top.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
             } else {
                 search_top.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
             }
-        }
-        viewModel.enabledSearchBottom.observe(lifecycleOwner) {
+        })
+        viewModel.enabledSearchBottom.observe(lifecycleOwner, androidx.lifecycle.Observer {
             search_bottom.isEnabled = it
             if (it) {
                 search_bottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
             } else {
                 search_bottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
             }
-        }
-        viewModel.searchCoincidenceText.observe(lifecycleOwner) {
+        })
+        viewModel.searchCoincidenceText.observe(lifecycleOwner, androidx.lifecycle.Observer {
             search_switch_place.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
             search_coincidence.text = it
-        }
-        viewModel.searchScrollToPosition.observe(lifecycleOwner) { searchItem ->
+        })
+        viewModel.searchScrollToPosition.observe(lifecycleOwner, androidx.lifecycle.Observer { searchItem ->
             searchLiveDataMessages?.removeObservers(lifecycleOwner)
-            searchItem ?: return@observe
-            val searchText = viewModel.searchText ?: return@observe
+            searchItem ?: return@Observer
+            val searchText = viewModel.searchText ?: return@Observer
             searchLiveDataMessages = viewModel.uploadSearchMessages(searchText, searchItem)
-            searchLiveDataMessages?.observe(lifecycleOwner, { pagedList ->
+            searchLiveDataMessages?.observe(lifecycleOwner, androidx.lifecycle.Observer { pagedList ->
                 adapterListMessages.submitList(pagedList!!) {
                     val position = searchItem.scrollPosition ?: return@submitList
                     if (position != searchLastScrolledPosition) {
@@ -609,22 +609,22 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     searchLastScrolledPosition = position
                 }
             })
-        }
-        viewModel.feedbackContainerVisible.observe(lifecycleOwner) {
+        })
+        viewModel.feedbackContainerVisible.observe(lifecycleOwner, androidx.lifecycle.Observer {
             user_feedback.visibility = if (it) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
-        }
-        viewModel.openDocument.observe(lifecycleOwner) {
-            it ?: return@observe
+        })
+        viewModel.openDocument.observe(lifecycleOwner, androidx.lifecycle.Observer {
+            it ?: return@Observer
             val (file, isSuccess) = it
             if (!isSuccess) {
                 downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_download_file_fail))
-                return@observe
+                return@Observer
             }
-            file ?: return@observe
+            file ?: return@Observer
             viewModel.openDocument.value = null
 
             val uri: Uri = fileViewerHelper.getUriForFile(context, file)
@@ -643,30 +643,30 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             } catch (ex: ActivityNotFoundException) {
                 downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_open_file_fail))
             }
-        }
-        viewModel.mergeHistoryBtnVisible.observe(lifecycleOwner) {
+        })
+        viewModel.mergeHistoryBtnVisible.observe(lifecycleOwner, androidx.lifecycle.Observer {
             if (it) {
                 upload_history_btn.visibility = View.VISIBLE
             } else {
                 upload_history_btn.visibility = View.GONE
             }
-        }
-        viewModel.mergeHistoryProgressVisible.observe(lifecycleOwner) {
+        })
+        viewModel.mergeHistoryProgressVisible.observe(lifecycleOwner, androidx.lifecycle.Observer {
             if (it) {
                 startProgressBar(upload_history_loading)
             } else {
                 stopProgressBar(upload_history_loading)
             }
-        }
+        })
 
-        viewModel.uploadMessagesForUser.observe(lifecycleOwner) { liveDataPagedList ->
-            liveDataPagedList ?: return@observe
+        viewModel.uploadMessagesForUser.observe(lifecycleOwner, androidx.lifecycle.Observer { liveDataPagedList ->
+            liveDataPagedList ?: return@Observer
             liveDataMessages?.removeObservers(lifecycleOwner)
             liveDataMessages = liveDataPagedList
             isFirstUploadMessages = true
-            liveDataMessages?.observe(lifecycleOwner, { pagedList ->
-                pagedList ?: return@observe
-                if (viewModel.searchText != null && viewModel.searchScrollToPosition.value != null) return@observe
+            liveDataMessages?.observe(lifecycleOwner, androidx.lifecycle.Observer { pagedList ->
+                pagedList ?: return@Observer
+                if (viewModel.searchText != null && viewModel.searchScrollToPosition.value != null) return@Observer
 
                 val countItemsLastVersion = adapterListMessages.itemCount
                 adapterListMessages.submitList(pagedList) {
@@ -691,11 +691,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     isFirstUploadMessages = false
                 }
             })
-        }
-        viewModel.replyMessage.observe(lifecycleOwner) {
+        })
+        viewModel.replyMessage.observe(lifecycleOwner, androidx.lifecycle.Observer {
             if (it == null) {
                 reply_preview.visibility = View.GONE
-                return@observe
+                return@Observer
             }
             reply_preview.visibility = View.VISIBLE
 
@@ -764,12 +764,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     )
                 }
             }
-        }
-        viewModel.replyMessagePosition.observe(lifecycleOwner) {
-            it ?: return@observe
+        })
+        viewModel.replyMessagePosition.observe(lifecycleOwner, androidx.lifecycle.Observer {
+            it ?: return@Observer
             smoothScroller.targetPosition = adapterListMessages.itemCount - it
             list_with_message.layoutManager?.startSmoothScroll(smoothScroller)
-        }
+        })
     }
 
     private fun settingVoiceInput() {

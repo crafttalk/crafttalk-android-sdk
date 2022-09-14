@@ -312,7 +312,7 @@ class SocketApi constructor(
 
     fun mergeNewMessages() {
         isSynchronized = true
-        val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp
+        val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxBy { it.timestamp }?.timestamp
         maxUserTimestamp?.run(updateCurrentReadMessageTime)
         updateCountUnreadMessages(bufferNewMessages.filter { it.timestamp > (maxUserTimestamp ?: 0) }.size, maxUserTimestamp != null)
         viewModelScope.launch {

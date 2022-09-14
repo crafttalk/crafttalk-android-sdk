@@ -26,7 +26,7 @@ class TLSSocketFactory(
         fun OkHttpClient.Builder.enableTls() = apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
                 try {
-                    val sslContext = SSLContext.getInstance(TlsVersion.TLS_1_2.javaName)
+                    val sslContext = SSLContext.getInstance(TlsVersion.TLS_1_2.javaName())
                     sslContext.init(null, arrayOf(trustManager), null)
                     sslSocketFactory(TLSSocketFactory(sslContext.socketFactory), trustManager)
                 } catch (e: Exception) {
@@ -38,7 +38,7 @@ class TLSSocketFactory(
 
     private fun Socket.enableTLSOnSocket(): Socket {
         return (this as? SSLSocket)?.apply {
-            enabledProtocols += TlsVersion.TLS_1_2.javaName
+            enabledProtocols += TlsVersion.TLS_1_2.javaName()
         } ?: this
     }
 

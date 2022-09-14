@@ -168,7 +168,7 @@ class MessageRepository
                     mediaFileWidth = fileInfo?.width,
                     repliedMessageFileSize = repliedFileInfo?.size,
                     repliedMessageMediaFileHeight = repliedFileInfo?.height,
-                    repliedMessageMediaFileWidth = repliedFileInfo?.width,
+                    repliedMessageMediaFileWidth = repliedFileInfo?.width
                 )
             }
 
@@ -180,7 +180,7 @@ class MessageRepository
                 )
             }
 
-            val maxTimestampUserMessage = userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp
+            val maxTimestampUserMessage = userMessagesWithContent.maxBy { it.timestamp }?.timestamp
             maxTimestampUserMessage?.run(updateReadPoint)
 
             val resultMessages = mutableListOf<MessageEntity>().apply {
@@ -193,7 +193,7 @@ class MessageRepository
                 resultMessages.add(MessageEntity.mapInfoMessage(
                     uuid = uuid,
                     infoMessage = msg,
-                    timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime() ?: System.currentTimeMillis()) + 1
+                    timestamp = ((resultMessages.maxBy { it.timestamp })?.timestamp ?: messagesDao.getLastTime() ?: System.currentTimeMillis()) + 1
                 ))
             }
 

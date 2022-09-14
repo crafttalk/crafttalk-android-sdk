@@ -113,7 +113,7 @@ data class MessageEntity(
     val repliedMessageAttachmentWidth: Int? = null,
 
     @ColumnInfo(name = "dialog_id")
-    val dialogId: String? = null,
+    val dialogId: String? = null
 
 ) {
 
@@ -190,7 +190,7 @@ data class MessageEntity(
             mediaFileWidth: Int? = null,
             repliedMessageFileSize: Long? = null,
             repliedMessageMediaFileHeight: Int? = null,
-            repliedMessageMediaFileWidth: Int? = null,
+            repliedMessageMediaFileWidth: Int? = null
         ): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = networkMessage.message?.convertTextToNormalString(list)
@@ -282,7 +282,7 @@ data class MessageEntity(
             mediaFileWidth: Int? = null,
             repliedMessageFileSize: Long? = null,
             repliedMessageMediaFileHeight: Int? = null,
-            repliedMessageMediaFileWidth: Int? = null,
+            repliedMessageMediaFileWidth: Int? = null
         ): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = networkMessage.message?.convertTextToNormalString(list)

@@ -73,12 +73,12 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         chat_view.onViewCreated(this, viewLifecycleOwner)
         chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
             override fun connect() { status_connection.visibility = View.GONE }
-            override fun failConnect() { status_connection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
-            override fun lossConnection() { status_connection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
+            override fun failConnect() { status_connection.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
+            override fun lossConnection() { status_connection.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
             override fun reconnect() { status_connection.visibility = View.GONE }
         })
         chat_view.setOnChatStateListener(object : ChatStateListener {
-            override fun startSynchronization() { chat_state.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
+            override fun startSynchronization() { chat_state.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
             override fun endSynchronization() { chat_state.visibility = View.GONE }
         })
         chat_view.setOnPermissionListener(object : ChatPermissionListener {

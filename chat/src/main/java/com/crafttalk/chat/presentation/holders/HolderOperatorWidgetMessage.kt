@@ -28,8 +28,8 @@ class HolderOperatorWidgetMessage(
     private val status: ImageView? = view.findViewById(R.id.status)
     private val date: TextView? = view.findViewById(R.id.date)
 
-    private val messageFromDefaultWidget: TextView? by lazy { defaultWidgetView.findViewById(R.id.server_message) }
-    private val contentContainerFromDefaultWidget: View? by lazy { defaultWidgetView.findViewById(R.id.content_container) }
+    private val messageFromDefaultWidget: TextView? by lazy { defaultWidgetView.findViewById<TextView>(R.id.server_message) }
+    private val contentContainerFromDefaultWidget: View? by lazy { defaultWidgetView.findViewById<View>(R.id.content_container) }
 
     private val mapView: MutableMap<String, View> = mutableMapOf()
     private var widgetId: String? = null

@@ -69,7 +69,7 @@ class ShowImageDialog(
                 } else {
                     WarningSnackbar.make(
                         view = it.image_show ?: it.gif_show,
-                        title = ChatAttr.getInstance().titleFailDownloadFileWarning,
+                        title = ChatAttr.getInstance().titleFailDownloadFileWarning
                     )?.show()
                 }
             }

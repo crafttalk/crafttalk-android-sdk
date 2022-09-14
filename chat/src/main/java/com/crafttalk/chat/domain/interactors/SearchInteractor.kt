@@ -93,7 +93,7 @@ class SearchInteractor
                             positionMatchInMsg = i,
                             allCount = searchAllCount,
                             scrollPosition = messagePosition,
-                            isLast = (currentSearchPosition == 1) || (currentSearchPosition == searchAllCount),
+                            isLast = (currentSearchPosition == 1) || (currentSearchPosition == searchAllCount)
                         )
                     )
                 }
