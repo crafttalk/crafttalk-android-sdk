@@ -39,6 +39,7 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
+import com.crafttalk.chat.domain.interactors.SearchItem
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.ChatViewModel.Companion.DELAY_RENDERING_SCROLL_BTN
 import com.crafttalk.chat.presentation.ChatViewModel.Companion.MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL
@@ -79,7 +80,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     lateinit var viewModel: ChatViewModel
     private var liveDataMessages: LiveData<PagedList<MessageModel>>? = null
     private var searchLiveDataMessages: LiveData<PagedList<MessageModel>>? = null
-    private var searchLastScrolledPosition = -1
+    private var searchItemLast: SearchItem? = null
     private var isFirstUploadMessages = false
     private lateinit var adapterListMessages: AdapterListMessages
     private val fileViewerHelper = FileViewerHelper()
@@ -603,10 +604,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             searchLiveDataMessages?.observe(lifecycleOwner, androidx.lifecycle.Observer { pagedList ->
                 adapterListMessages.submitList(pagedList!!) {
                     val position = searchItem.scrollPosition ?: return@submitList
-                    if (position != searchLastScrolledPosition) {
+                    if (searchItem.id != searchItemLast?.id) {
                         scroll(position + 1, true)
                     }
-                    searchLastScrolledPosition = position
+                    searchItemLast = searchItem
+                    viewModel.updateCountUnreadMessages()
                 }
             })
         })
@@ -1068,7 +1070,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         search_input.text.clear()
         scroll(0)
         hideSoftKeyboard(this)
-        searchLastScrolledPosition = -1
+        searchItemLast = null
         viewModel.onSearchCancel()
     }
 
