@@ -49,7 +49,7 @@ ext {
     coroutinesVersion = '1.6.4'
     glideVersion = '4.13.2'
     roomVersion = '2.2.4'
-    okHttpVersion = '4.10.0'
+    okHttpVersion = '4.9.3'
     kotlin_version = '1.5.30'
     daggerVersion = '2.43.2'
     firebaseMessagingServiceVersion = '23.0.8'
