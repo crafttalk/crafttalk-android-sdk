@@ -59,3 +59,8 @@ class AttrTag(
     val attrName: String,
     val value: String
 )
+
+class AttrTagInfo(
+    val endIndex: Int,
+    val attrTag: AttrTag
+)
