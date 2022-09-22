@@ -105,7 +105,7 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
 
 fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
     // атрибуты должны удовлетворять формату: <attrName>="<value>"
-    fun String.getAttrTag(startIndex: Int, isSingleTag: Boolean): AttrTag? {
+    fun String.getAttrTag(startIndex: Int, isSingleTag: Boolean): AttrTagInfo? {
         val endTagIndex =
             if (isSingleTag) this.indexOf("/>", startIndex, true)
             else this.indexOf(">", startIndex, true)
@@ -120,9 +120,12 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
         val startResultValueIndex = if (startSingleQuotesValueIndex == -1) startDoubleQuotesValueIndex else startSingleQuotesValueIndex
         val lastResultValueIndex = if (lastSingleQuotesValueIndex == -1) lastDoubleQuotesValueIndex else lastSingleQuotesValueIndex
 
-        return AttrTag(
-            this.substring(startIndex, separatorIndex).trim(),
-            this.substring(startResultValueIndex + 1, lastResultValueIndex).trim()
+        return AttrTagInfo(
+            endIndex = lastResultValueIndex,
+            attrTag = AttrTag(
+                this.substring(startIndex, separatorIndex).trim(),
+                this.substring(startResultValueIndex + 1, lastResultValueIndex).trim()
+            )
         )
     }
 
@@ -202,8 +205,15 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
     var isCloseTag = false
     var isReplaceTag = false
     var isFillAttrTag = false
+    var jumpIndex = -1
 
     this.forEachIndexed { index, char ->
+        if (jumpIndex != -1 && index <= jumpIndex) {
+            if (index == jumpIndex) {
+                jumpIndex = -1
+            }
+            return@forEachIndexed
+        }
         when (char) {
             ' ' -> {
                 if (isSelectTag) {
@@ -211,7 +221,8 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                         try {
                             getAttrTag(index, isSingleTag)?.let {
                                 isFillAttrTag = true
-                                listAttrsTag.add(it)
+                                listAttrsTag.add(it.attrTag)
+                                jumpIndex = it.endIndex
                             }
                         } catch (ex: StringIndexOutOfBoundsException) {
                             Log.e("FAIL_PARSE", "getAttrTag fail - ${ex.message}")
