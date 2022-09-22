@@ -140,6 +140,7 @@ class MessageRepository
                 MessageEntity.mapOperatorMessage(
                     uuid = uuid,
                     networkMessage = networkMessage,
+                    arrivalTime = System.currentTimeMillis(),
                     actionsSelected = actionSelectionMessages,
                     buttonsSelected = listOf(),
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
@@ -161,6 +162,7 @@ class MessageRepository
                 MessageEntity.mapUserMessage(
                     uuid = uuid,
                     networkMessage = networkMessage,
+                    arrivalTime = System.currentTimeMillis(),
                     status = newStatus,
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) },
                     fileSize = fileInfo?.size,
@@ -176,6 +178,7 @@ class MessageRepository
                 MessageEntity.mapOperatorJoinMessage(
                     uuid = uuid,
                     networkMessage = networkMessage,
+                    arrivalTime = System.currentTimeMillis(),
                     operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) }
                 )
             }
@@ -193,7 +196,8 @@ class MessageRepository
                 resultMessages.add(MessageEntity.mapInfoMessage(
                     uuid = uuid,
                     infoMessage = msg,
-                    timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime() ?: System.currentTimeMillis()) + 1
+                    timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime() ?: System.currentTimeMillis()) + 1,
+                    arrivalTime = System.currentTimeMillis()
                 ))
             }
 

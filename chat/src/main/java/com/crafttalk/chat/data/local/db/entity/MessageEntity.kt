@@ -37,6 +37,9 @@ data class MessageEntity(
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,
 
+    @ColumnInfo(name = "arrival_time")
+    val arrivalTime: Long? = null,
+
     @ColumnInfo(name = "message")
     val message: String? = null,
 
@@ -184,6 +187,7 @@ data class MessageEntity(
         fun map(
             uuid: String,
             networkMessage: NetworkMessage,
+            arrivalTime: Long,
             operatorPreview: String?,
             fileSize: Long? = null,
             mediaFileHeight: Int? = null,
@@ -204,6 +208,7 @@ data class MessageEntity(
                 isReply = networkMessage.isReply,
                 parentMsgId = networkMessage.parentMessageId,
                 timestamp = networkMessage.timestamp,
+                arrivalTime = arrivalTime,
                 message = message,
                 spanStructureList = list,
                 widget = if (networkMessage.isReply) networkMessage.widget?.let { WidgetEntity.map(it) } else null,
@@ -236,6 +241,7 @@ data class MessageEntity(
         fun mapOperatorMessage(
             uuid: String,
             networkMessage: NetworkMessage,
+            arrivalTime: Long,
             actionsSelected: List<String>,
             buttonsSelected: List<String>,
             operatorPreview: String?,
@@ -253,6 +259,7 @@ data class MessageEntity(
                 isReply = true,
                 parentMsgId = networkMessage.parentMessageId,
                 timestamp = networkMessage.timestamp,
+                arrivalTime = arrivalTime,
                 message = message,
                 spanStructureList = list,
                 widget = networkMessage.widget?.let { WidgetEntity.map(it) },
@@ -275,6 +282,7 @@ data class MessageEntity(
         fun mapUserMessage(
             uuid: String,
             networkMessage: NetworkMessage,
+            arrivalTime: Long,
             status: Int,
             operatorPreview: String?,
             fileSize: Long? = null,
@@ -296,6 +304,7 @@ data class MessageEntity(
                 isReply = false,
                 parentMsgId = networkMessage.parentMessageId,
                 timestamp = networkMessage.timestamp,
+                arrivalTime = arrivalTime,
                 message = message,
                 spanStructureList = list,
                 attachmentUrl = networkMessage.attachmentUrl,
@@ -325,6 +334,7 @@ data class MessageEntity(
         fun mapOperatorJoinMessage(
             uuid: String,
             networkMessage: NetworkMessage,
+            arrivalTime: Long,
             operatorPreview: String?
         ): MessageEntity {
             return MessageEntity(
@@ -334,6 +344,7 @@ data class MessageEntity(
                 isReply = true,
                 parentMsgId = networkMessage.parentMessageId,
                 timestamp = networkMessage.timestamp,
+                arrivalTime = arrivalTime,
                 operatorId = networkMessage.operatorId,
                 operatorPreview = operatorPreview,
                 operatorName = networkMessage.operatorName,
@@ -344,7 +355,8 @@ data class MessageEntity(
         fun mapInfoMessage(
             uuid: String,
             infoMessage: String,
-            timestamp: Long
+            timestamp: Long,
+            arrivalTime: Long
         ): MessageEntity {
             val list = arrayListOf<Tag>()
             val message = infoMessage.convertTextToNormalString(list)
@@ -355,10 +367,10 @@ data class MessageEntity(
                 messageType = MessageType.INFO_MESSAGE.valueType,
                 isReply = true,
                 timestamp = timestamp,
+                arrivalTime = arrivalTime,
                 message = message,
                 spanStructureList = list
             )
         }
-
     }
 }
