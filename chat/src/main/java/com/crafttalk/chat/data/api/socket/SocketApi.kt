@@ -182,6 +182,7 @@ class SocketApi constructor(
             viewModelScope.launch {
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
+                val currentTimestamp = System.currentTimeMillis()
                 Log.d(TAG_SOCKET_EVENT, "json message___ methon message - $messageJson")
 
                 val gson = GsonBuilder()
@@ -208,7 +209,7 @@ class SocketApi constructor(
                     if (messageSocket.id == null) {
                         messageSocket.id = System.currentTimeMillis().toString()
                     }
-                    updateDataInDatabase(messageSocket)
+                    updateDataInDatabase(messageSocket, currentTimestamp)
                 }
             }
         }
@@ -351,7 +352,7 @@ class SocketApi constructor(
         }
     }
 
-    private suspend fun updateDataInDatabase(messageSocket: NetworkMessage) {
+    private suspend fun updateDataInDatabase(messageSocket: NetworkMessage, currentTimestamp: Long) {
         val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
@@ -361,6 +362,7 @@ class SocketApi constructor(
                             insertMessage(MessageEntity.map(
                                 uuid = visitor.uuid,
                                 networkMessage = messageSocket,
+                                arrivalTime = currentTimestamp,
                                 operatorPreview = operatorPreview,
                                 mediaFileHeight = height,
                                 mediaFileWidth = width
@@ -374,6 +376,7 @@ class SocketApi constructor(
                     insertMessage(MessageEntity.map(
                         uuid = visitor.uuid,
                         networkMessage = messageSocket,
+                        arrivalTime = currentTimestamp,
                         operatorPreview = operatorPreview,
                         fileSize = getWeightFile(url)
                     ))
@@ -386,6 +389,7 @@ class SocketApi constructor(
                         insertMessage(MessageEntity.map(
                             uuid = visitor.uuid,
                             networkMessage = messageSocket,
+                            arrivalTime = currentTimestamp,
                             operatorPreview = operatorPreview,
                             repliedMessageFileSize = repliedMessageUrl.run(::getWeightFile)
                         ))
@@ -396,6 +400,7 @@ class SocketApi constructor(
                                 insertMessage(MessageEntity.map(
                                     uuid = visitor.uuid,
                                     networkMessage = messageSocket,
+                                    arrivalTime = currentTimestamp,
                                     operatorPreview = operatorPreview,
                                     repliedMessageMediaFileHeight = height,
                                     repliedMessageMediaFileWidth = width
@@ -407,6 +412,7 @@ class SocketApi constructor(
                         insertMessage(MessageEntity.map(
                             uuid = visitor.uuid,
                             networkMessage = messageSocket,
+                            arrivalTime = currentTimestamp,
                             operatorPreview = operatorPreview
                         ))
                     }
@@ -421,6 +427,7 @@ class SocketApi constructor(
                 insertMessage(MessageEntity.mapOperatorJoinMessage(
                     uuid = visitor.uuid,
                     networkMessage = messageSocket,
+                    arrivalTime = currentTimestamp,
                     operatorPreview = operatorPreview
                 ))
             }
