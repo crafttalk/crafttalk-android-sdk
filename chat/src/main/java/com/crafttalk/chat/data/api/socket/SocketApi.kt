@@ -134,6 +134,13 @@ class SocketApi constructor(
 
     private fun setAllListeners(socket: Socket) {
 
+        socket.on(Socket.EVENT_ERROR) {
+            Log.d(TAG_SOCKET_EVENT, "EVENT_ERROR res: ${it};")
+            it.forEach {
+                Log.d(TAG_SOCKET_EVENT, "EVENT_ERROR ${it};")
+            }
+        }
+
         socket.on("connect") {
             Log.d(TAG_SOCKET_EVENT, "connect connecting - ${socket.connected()}")
             authenticationUser(socket)
