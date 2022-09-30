@@ -86,9 +86,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private val fileViewerHelper = FileViewerHelper()
     private lateinit var parentFragment: Fragment
     private val inflater: LayoutInflater by lazy {
-         context.getSystemService(
-             Context.LAYOUT_INFLATER_SERVICE
-         ) as LayoutInflater
+        context.getSystemService(
+            Context.LAYOUT_INFLATER_SERVICE
+        ) as LayoutInflater
     }
     private var speechRecognizer: SpeechRecognizer? = null
     private var speechRecognizerIntent: Intent? = null
@@ -684,7 +684,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                             countItemsLastVersion != pagedList.size
                         ) {
                             viewModel.updateCountUnreadMessages(pagedList.getOrNull(0)?.timestamp) { countUnreadMessages ->
-                                scroll(countUnreadMessages)
+                                delayOnLifecycle(300) {
+                                    scroll(countUnreadMessages)
+                                }
                             }
                         } else {
                             viewModel.updateCountUnreadMessages()
