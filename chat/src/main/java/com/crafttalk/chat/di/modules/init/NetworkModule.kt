@@ -4,6 +4,7 @@ import android.content.Context
 import com.crafttalk.chat.data.api.rest.NotificationApi
 import com.crafttalk.chat.data.api.rest.PersonApi
 import com.crafttalk.chat.data.api.socket.SocketApi
+import com.crafttalk.chat.data.helper.network.CustomCookieJar
 import com.crafttalk.chat.data.helper.network.TLSSocketFactory.Companion.enableTls
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.di.Base
@@ -42,6 +43,7 @@ class NetworkModule {
             ChatParams.fileWriteTimeout?.let { writeTimeout(it, ChatParams.timeUnitTimeout) }
             ChatParams.fileCallTimeout?.let { callTimeout(it, ChatParams.timeUnitTimeout) }
         }
+        .cookieJar(CustomCookieJar())
         .build()
 
     @Base
@@ -63,7 +65,8 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSocketApi(messagesDao: MessagesDao, gson: Gson, context: Context) = SocketApi(
+    fun provideSocketApi(okHttpClient: OkHttpClient, messagesDao: MessagesDao, gson: Gson, context: Context) = SocketApi(
+        okHttpClient,
         messagesDao,
         gson,
         context

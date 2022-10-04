@@ -19,6 +19,7 @@ import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
 import kotlinx.coroutines.*
@@ -26,8 +27,10 @@ import kotlinx.coroutines.channels.Channel
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
+import okhttp3.OkHttpClient
 
 class SocketApi constructor(
+    private val okHttpClient: OkHttpClient,
     private val messageDao: MessagesDao,
     private val gson: Gson,
     private val context: Context
@@ -63,8 +66,15 @@ class SocketApi constructor(
     fun initSocket() {
         if (socket == null) {
             socket = try {
-                val manager = Manager(URI("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}"))
-                manager.socket("/${ChatParams.urlChatNameSpace}").apply {
+                val opt: IO.Options = IO.Options().apply {
+                    callFactory = okHttpClient
+                    webSocketFactory = okHttpClient
+                }
+                val manager = Manager(
+                    URI("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}"),
+                    opt
+                )
+                manager.socket("/${ChatParams.urlChatNameSpace}", opt).apply {
                     setAllListeners(this)
                 }
             } catch (e: URISyntaxException) {
