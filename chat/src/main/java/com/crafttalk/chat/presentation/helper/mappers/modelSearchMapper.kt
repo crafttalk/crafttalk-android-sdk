@@ -30,7 +30,7 @@ private fun selectText(
     searchText: String,
     currentSearchItem: SearchItem
 ): SpannableString {
-    var indexStart = spannableString.toString().indexOf(searchText)
+    var indexStart = spannableString.toString().indexOf(searchText, ignoreCase = true)
     var numberCoincidences = 1
     if (indexStart != -1) {
         spannableString.setSpan(
@@ -48,7 +48,7 @@ private fun selectText(
     }
 
     while (indexStart != -1) {
-        indexStart = spannableString.toString().indexOf(searchText, indexStart + 1)
+        indexStart = spannableString.toString().indexOf(searchText, indexStart + 1, ignoreCase = true)
         numberCoincidences++
 
         if (indexStart != -1) {
