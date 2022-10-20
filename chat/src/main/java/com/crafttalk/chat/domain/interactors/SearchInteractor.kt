@@ -6,15 +6,15 @@ import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
 
 fun String.countContains(pattern: String): Int {
-    if (!contains(pattern)) return 0
+    if (!contains(pattern, ignoreCase = true)) return 0
     var count = 0
     var indexStart: Int
-    indexStart = this.indexOf(pattern)
+    indexStart = this.indexOf(pattern, ignoreCase = true)
     if (indexStart != -1) {
         count += 1
     }
     while (indexStart != -1) {
-        indexStart = this.indexOf(pattern, indexStart + 1)
+        indexStart = this.indexOf(pattern, indexStart + 1, ignoreCase = true)
         if (indexStart != -1) {
             count += 1
         }
