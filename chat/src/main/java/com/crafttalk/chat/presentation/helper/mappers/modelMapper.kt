@@ -1,6 +1,7 @@
 package com.crafttalk.chat.presentation.helper.mappers
 
 import android.content.Context
+import android.text.SpannableString
 import com.crafttalk.chat.R
 import com.crafttalk.chat.data.local.db.entity.ActionEntity
 import com.crafttalk.chat.data.local.db.entity.ButtonEntity
@@ -56,7 +57,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
-                name = localMessage.attachmentName ?: "",
+                name = SpannableString(localMessage.attachmentName ?: ""),
                 size = localMessage.attachmentSize,
                 height = localMessage.height,
                 width = localMessage.width,
@@ -72,7 +73,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
-                name = localMessage.attachmentName ?: "",
+                name = SpannableString(localMessage.attachmentName ?: ""),
                 size = localMessage.attachmentSize,
                 height = localMessage.height,
                 width = localMessage.width,
@@ -88,7 +89,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
-                name = localMessage.attachmentName ?: "",
+                name = SpannableString(localMessage.attachmentName ?: ""),
                 size = localMessage.attachmentSize,
                 typeDownloadProgress = localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED
             ),
@@ -107,7 +108,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             hasSelectedButton = localMessage.hasSelectedButton(),
             file = FileModel(
                 url = localMessage.attachmentUrl,
-                name = localMessage.attachmentName,
+                name = SpannableString(localMessage.attachmentName),
                 height = localMessage.height,
                 width = localMessage.width,
                 size = localMessage.attachmentSize,

@@ -45,7 +45,7 @@ class HolderOperatorFileMessage(
 
     override fun bindTo(item: FileMessageItem) {
         id = item.id
-        documentName = item.document.name
+        documentName = item.document.name.toString()
         documentUrl = item.document.url
 
         date?.setDate(item)

@@ -89,9 +89,9 @@ class HolderOperatorUnionMessage(
 
     override fun bindTo(item: UnionMessageItem) {
         id = item.id
-        attachmentFileName = item.file.name
+        attachmentFileName = item.file.name.toString()
         attachmentFileUrl = item.file.url
-        mediaFileName = item.file.name
+        mediaFileName = item.file.name.toString()
         fileType = item.file.type
         failLoading = item.file.failLoading
 
