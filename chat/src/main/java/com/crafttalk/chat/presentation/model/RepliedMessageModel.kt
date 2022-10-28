@@ -31,7 +31,7 @@ data class RepliedMessageModel(
                 } else {
                     FileModel(
                         url = localMessage.repliedMessageAttachmentUrl!!,
-                        name = localMessage.repliedMessageAttachmentName!!,
+                        name = SpannableString(localMessage.repliedMessageAttachmentName ?: ""),
                         size = localMessage.repliedMessageAttachmentSize,
                         height = localMessage.repliedMessageAttachmentHeight,
                         width = localMessage.repliedMessageAttachmentWidth,

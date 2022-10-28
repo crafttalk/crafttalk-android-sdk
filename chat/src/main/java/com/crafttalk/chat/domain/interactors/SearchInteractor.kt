@@ -58,10 +58,14 @@ class SearchInteractor
 
         var searchAllCount = 0
         searchResult?.forEach {
-            searchAllCount += it.message?.countContains(searchText) ?: 0
+            searchAllCount += when {
+                it.isFile -> it.attachmentName?.countContains(searchText) ?: 0
+                it.isText -> it.message?.countContains(searchText) ?: 0
+                else -> 0
+            }
         }
 
-        if (searchResult.isNullOrEmpty()) {
+        if (searchResult.isNullOrEmpty() || searchAllCount == 0) {
             return null
         } else {
             var messagePosition: Int? = 0
@@ -82,7 +86,11 @@ class SearchInteractor
                 } else {
                     null
                 }
-                val countMatchInMsg = networkMessage.message?.countContains(searchText) ?: 1
+                val countMatchInMsg = when {
+                    networkMessage.isFile -> networkMessage.attachmentName?.countContains(searchText) ?: 0
+                    networkMessage.isText -> networkMessage.message?.countContains(searchText) ?: 0
+                    else -> 0
+                }
                 for(i in 1..countMatchInMsg) {
                     currentSearchPosition++
                     searchItems.add(
