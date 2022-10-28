@@ -45,8 +45,10 @@ class Visitor (
         visitorJson.put("contract", contract)
         visitorJson.put("birthday", birthday)
         visitorJson.put("hash", hash)
-        for ((key, value) in addedFields) {
-            visitorJson.put(key, value)
+        if (addedFields != null) {
+            for ((key, value) in addedFields) {
+                visitorJson.put(key, value)
+            }
         }
         return visitorJson
     }
