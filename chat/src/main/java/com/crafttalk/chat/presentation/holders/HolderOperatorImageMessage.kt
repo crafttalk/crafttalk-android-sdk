@@ -58,7 +58,7 @@ class HolderOperatorImageMessage(
 
     override fun bindTo(item: ImageMessageItem) {
         imageUrl = item.image.url
-        imageName = item.image.name
+        imageName = item.image.name.toString()
         failLoading = item.image.failLoading
 
         date?.setDate(item)
