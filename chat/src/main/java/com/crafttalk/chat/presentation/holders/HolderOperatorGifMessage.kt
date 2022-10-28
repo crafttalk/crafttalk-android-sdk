@@ -58,7 +58,7 @@ class HolderOperatorGifMessage(
 
     override fun bindTo(item: GifMessageItem) {
         gifUrl = item.gif.url
-        gifName = item.gif.name
+        gifName = item.gif.name.toString()
         failLoading = item.gif.failLoading
 
         date?.setDate(item)

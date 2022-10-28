@@ -19,6 +19,7 @@ fun messageSearchMapper(
         is InfoMessageItem -> selectText(messageModel.id, messageModel.message, searchText, currentSearchItem)
         is WidgetMessageItem -> messageModel.message?.let { selectText(messageModel.id, it, searchText, currentSearchItem) }
         is UnionMessageItem -> selectText(messageModel.id, messageModel.message, searchText, currentSearchItem)
+        is FileMessageItem -> selectText(messageModel.id, messageModel.document.name, searchText, currentSearchItem)
         else -> {}
     }
     return messageModel
