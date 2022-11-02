@@ -187,9 +187,9 @@ class MessageRepository
             maxTimestampUserMessage?.run(updateReadPoint)
 
             val resultMessages = mutableListOf<MessageEntity>().apply {
-                addAll(operatorMessagesWithContent)
-                addAll(userMessagesWithContent)
-                addAll(messagesAboutJoin)
+                addAll(operatorMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
+                addAll(userMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
+                addAll(messagesAboutJoin.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
             }
 
             ChatParams.glueMessage?.let { msg ->
