@@ -329,7 +329,7 @@ class SocketApi constructor(
         viewModelScope.launch {
             updateSearchMessagePosition(bufferNewMessages)
         }
-        messageDao.insertMessages(bufferNewMessages)
+        messageDao.insertMessages(bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(it.id) })
         bufferNewMessages.clear()
         chatEventListener?.synchronized()
     }
@@ -456,7 +456,9 @@ class SocketApi constructor(
             viewModelScope.launch {
                 updateSearchMessagePosition(listOf(message))
             }
-            messageDao.insertMessage(message)
+            if (!messageDao.hasThisMessage(message.id)) {
+                messageDao.insertMessage(message)
+            }
         } else {
             bufferNewMessages.add(message)
         }

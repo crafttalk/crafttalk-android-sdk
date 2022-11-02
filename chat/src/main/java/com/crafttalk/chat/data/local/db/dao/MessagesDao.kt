@@ -43,6 +43,9 @@ interface MessagesDao {
     @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE id = :id")
     fun getTimestampMessageById(id: String): Long?
 
+    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id LIMIT 1)")
+    fun hasThisMessage(id: String): Boolean
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessages(messages: List<MessageEntity>)
 
