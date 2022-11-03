@@ -334,7 +334,7 @@ class ChatViewModel
             .build()
         val dataSource = messageInteractor.getAllMessages()
             .map { (messageModelMapper(it, context)) }
-            .map { messageSearchMapper(it, searchText, currentSearchItem, searchInteractor.getAllSearchedItems()) }
+            .map { messageSearchMapper(it, searchText.trim(), currentSearchItem, searchInteractor.getAllSearchedItems()) }
             .mapByPage { groupPageByDate(it) }
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder(
             dataSource,
@@ -350,10 +350,12 @@ class ChatViewModel
         return pagedListBuilder.build()
     }
 
-    fun onSearchClick(searchText: String) {
+    fun onSearchClick(searchText: String, searchStart: () -> Unit) {
         launchIO {
             this.searchText = searchText
-            val searchItem = searchInteractor.preloadMessages(searchText)
+            val searchItem = searchInteractor.preloadMessages(searchText.trim()) {
+                launchUI { searchStart() }
+            }
             if (searchItem == null) {
                 searchCoincidenceText.postValue(
                     context.resources.getString(
