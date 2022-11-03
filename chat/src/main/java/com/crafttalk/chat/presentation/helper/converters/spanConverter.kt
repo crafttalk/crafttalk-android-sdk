@@ -8,9 +8,11 @@ import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.*
+import android.util.Log
 import android.view.View
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatAttr
+import java.lang.Exception
 
 fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: List<Tag>, context: Context): SpannableString {
     val result = SpannableString(this)
@@ -22,9 +24,13 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
             is UrlTag -> {
                 result.setSpan(object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.url))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.url.replaceFirstChar { it.lowercase() }))
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        context.startActivity(intent)
+                        try {
+                            context.startActivity(intent)
+                        } catch (ex: Exception) {
+                            Log.d("LOG_CONVERTER", "Fail onClick ${it.url};")
+                        }
                     }
                 }, it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 result.setSpan(

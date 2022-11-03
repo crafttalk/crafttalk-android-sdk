@@ -143,6 +143,25 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
     }
     private var stateStartingProgressListener: StateStartingProgressListener? = null
+    private var searchListener: SearchListener = object : SearchListener {
+        override fun start() {
+            search_input.setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_hourglass),
+                search_input.compoundDrawables[1],
+                search_input.compoundDrawables[2],
+                search_input.compoundDrawables[3]
+            )
+        }
+        override fun stop() {
+            search_input.compoundDrawables
+            search_input.setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_search),
+                search_input.compoundDrawables[1],
+                search_input.compoundDrawables[2],
+                search_input.compoundDrawables[3]
+            )
+        }
+    }
     private var downloadID: Long? = null
     private val defaultUploadFileListener: UploadFileListener by lazy {
         object : UploadFileListener {
@@ -209,6 +228,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     fun setMergeHistoryListener(listener: MergeHistoryListener) {
         viewModel.mergeHistoryListener = listener
+    }
+
+    fun setSearchListener(listener: SearchListener) {
+        searchListener = listener
     }
 
     fun mergeHistory() {
@@ -595,6 +618,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.searchCoincidenceText.observe(lifecycleOwner, androidx.lifecycle.Observer {
             search_switch_place.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
             search_coincidence.text = it
+            searchListener.stop()
         })
         viewModel.searchScrollToPosition.observe(lifecycleOwner, androidx.lifecycle.Observer { searchItem ->
             searchLiveDataMessages?.removeObservers(lifecycleOwner)
@@ -1064,7 +1088,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun searchText(searchText: String) {
-        viewModel.onSearchClick(searchText)
+        viewModel.onSearchClick(searchText, searchListener::start)
     }
 
     fun onSearchCancelClick() {
