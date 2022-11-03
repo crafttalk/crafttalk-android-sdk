@@ -51,3 +51,8 @@ interface ChatEventListener {
     fun showUploadHistoryBtn()
     fun synchronized()
 }
+
+interface SearchListener {
+    fun start()
+    fun stop()
+}
