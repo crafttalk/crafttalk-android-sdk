@@ -350,10 +350,12 @@ class ChatViewModel
         return pagedListBuilder.build()
     }
 
-    fun onSearchClick(searchText: String) {
+    fun onSearchClick(searchText: String, searchStart: () -> Unit) {
         launchIO {
             this.searchText = searchText
-            val searchItem = searchInteractor.preloadMessages(searchText)
+            val searchItem = searchInteractor.preloadMessages(searchText.trim()) {
+                launchUI { searchStart() }
+            }
             if (searchItem == null) {
                 searchCoincidenceText.postValue(
                     context.resources.getString(

@@ -47,9 +47,10 @@ class SearchInteractor
         return searchItems
     }
 
-    suspend fun preloadMessages(searchText: String): SearchItem? {
+    suspend fun preloadMessages(searchText: String, searchStart: () -> Unit): SearchItem? {
         val uuid = visitorInteractor.getVisitor()?.uuid ?: return null
         if (this.searchText == searchText) return searchItems.getOrNull(indexCurrentSearchItem)
+        searchStart()
         this.searchText = searchText
         indexCurrentSearchItem = 0
         indexLastLoadSearchItem = -1
