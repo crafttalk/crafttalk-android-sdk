@@ -24,7 +24,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
             is UrlTag -> {
                 result.setSpan(object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.url.replaceFirstChar { it.lowercase() }))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("${it.url.substring(0, 1).toLowerCase()}${it.url.substring(1)}"))
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         try {
                             context.startActivity(intent)
