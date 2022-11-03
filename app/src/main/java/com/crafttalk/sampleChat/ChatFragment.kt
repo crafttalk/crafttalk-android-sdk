@@ -12,11 +12,13 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.chat.presentation.ChatStateListener
+import com.crafttalk.chat.presentation.SearchListener
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
 import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
@@ -80,6 +82,28 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         chat_view.setOnChatStateListener(object : ChatStateListener {
             override fun startSynchronization() { chat_state.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
             override fun endSynchronization() { chat_state.visibility = View.GONE }
+        })
+        chat_view.setSearchListener(object : SearchListener {
+            override fun start() {
+                search_place.findViewById<EditText>(R.id.search_input).apply {
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_hourglass),
+                        compoundDrawables[1],
+                        compoundDrawables[2],
+                        compoundDrawables[3]
+                    )
+                }
+            }
+            override fun stop() {
+                search_place.findViewById<EditText>(R.id.search_input).apply {
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_search),
+                        compoundDrawables[1],
+                        compoundDrawables[2],
+                        compoundDrawables[3]
+                    )
+                }
+            }
         })
         chat_view.setOnPermissionListener(object : ChatPermissionListener {
             override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
