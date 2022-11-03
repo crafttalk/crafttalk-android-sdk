@@ -334,7 +334,7 @@ class ChatViewModel
             .build()
         val dataSource = messageInteractor.getAllMessages()
             .map { (messageModelMapper(it, context)) }
-            .map { messageSearchMapper(it, searchText, currentSearchItem, searchInteractor.getAllSearchedItems()) }
+            .map { messageSearchMapper(it, searchText.trim(), currentSearchItem, searchInteractor.getAllSearchedItems()) }
             .mapByPage { groupPageByDate(it) }
         val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder(
             dataSource,

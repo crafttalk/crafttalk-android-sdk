@@ -74,7 +74,6 @@ class SearchInteractor
             searchItems = mutableListOf()
             searchResult.forEach { networkMessage ->
                 messagePosition = if (messagePosition != null) {
-                    indexLastLoadSearchItem++
                     val messageId = if (networkMessage.isReply) networkMessage.id else networkMessage.idFromChannel
                     if (messageId == null) {
                         null
@@ -82,7 +81,11 @@ class SearchInteractor
                         messageRepository.getPositionByTimestamp(
                             id = messageId,
                             timestamp = networkMessage.timestamp
-                        )
+                        ).apply {
+                            if (this != null) {
+                                indexLastLoadSearchItem++
+                            }
+                        }
                     }
                 } else {
                     null
@@ -110,7 +113,9 @@ class SearchInteractor
         }
 
         val firstItem = searchItems.firstOrNull()
-        if (firstItem != null && firstItem.scrollPosition == null) {
+        val secondItem = searchItems.getOrNull(1)
+        if ((firstItem != null && firstItem.scrollPosition == null) ||
+            (secondItem != null && secondItem.scrollPosition == null)) {
             additionalLoadingMessages()
         }
         return firstItem
