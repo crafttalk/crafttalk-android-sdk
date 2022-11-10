@@ -32,20 +32,25 @@ class MessageRepository
 ) : IMessageRepository {
 
     override fun getMessages() = messagesDao
-        .getMessages()
+        .getMessages(ChatParams.urlChatNameSpace.orEmpty())
 
     override fun getCountUnreadMessages(
         currentReadMessageTime: Long,
         ignoredMessageTypes: List<Int>
-    ) = messagesDao
-        .getCountUnreadMessages(
-            currentReadMessageTime= currentReadMessageTime,
-            ignoredMessageTypes = ignoredMessageTypes
-        )
+    ): Int? {
+        val namespace = ChatParams.urlChatNameSpace ?: return null
+        return messagesDao
+            .getCountUnreadMessages(
+                namespace = namespace,
+                currentReadMessageTime= currentReadMessageTime,
+                ignoredMessageTypes = ignoredMessageTypes
+            )
+    }
 
     override suspend fun getPositionByTimestamp(id: String, timestamp: Long): Int? {
         return if (messagesDao.emptyAvailable(id)) {
-            messagesDao.getPositionByTimestamp(timestamp)
+            val namespace = ChatParams.urlChatNameSpace ?: return null
+            messagesDao.getPositionByTimestamp(namespace, timestamp)
         } else {
             null
         }
@@ -54,25 +59,36 @@ class MessageRepository
     override fun getTimestampMessageById(messageId: String) = messagesDao
         .getTimestampMessageById(messageId)
 
-    override fun getCountMessagesInclusiveTimestamp(timestampMessage: Long) = messagesDao
-        .getCountMessagesInclusiveTimestamp(timestampMessage)
+    override fun getCountMessagesInclusiveTimestamp(timestampMessage: Long): Int? {
+        val namespace = ChatParams.urlChatNameSpace ?: return null
+        return messagesDao
+            .getCountMessagesInclusiveTimestamp(namespace, timestampMessage)
+    }
 
     override fun getCountUnreadMessagesRange(
         currentReadMessageTime: Long,
         timestampLastMessage: Long,
         ignoredMessageTypes: List<Int>
-    ) = messagesDao
-        .getCountUnreadMessagesRange(
-            currentReadMessageTime = currentReadMessageTime,
-            timestampLastMessage = timestampLastMessage,
-            ignoredMessageTypes = ignoredMessageTypes
-        )
+    ): Int? {
+        val namespace = ChatParams.urlChatNameSpace ?: return null
+        return messagesDao
+            .getCountUnreadMessagesRange(
+                namespace = namespace,
+                currentReadMessageTime = currentReadMessageTime,
+                timestampLastMessage = timestampLastMessage,
+                ignoredMessageTypes = ignoredMessageTypes
+            )
+    }
 
-    override suspend fun getTimeFirstMessage() = messagesDao
-        .getFirstTime()
+    override suspend fun getTimeFirstMessage(): Long? {
+        val namespace = ChatParams.urlChatNameSpace ?: return null
+        return messagesDao.getFirstTime(namespace)
+    }
 
-    override suspend fun getTimeLastMessage() = messagesDao
-        .getLastTime()
+    override suspend fun getTimeLastMessage(): Long? {
+        val namespace = ChatParams.urlChatNameSpace ?: return null
+        return messagesDao.getLastTime(namespace)
+    }
 
     override suspend fun uploadMessages(
         uuid: String,
@@ -193,12 +209,14 @@ class MessageRepository
             }
 
             ChatParams.glueMessage?.let { msg ->
-                resultMessages.add(MessageEntity.mapInfoMessage(
-                    uuid = uuid,
-                    infoMessage = msg,
-                    timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime() ?: System.currentTimeMillis()) + 1,
-                    arrivalTime = System.currentTimeMillis()
-                ))
+                ChatParams.urlChatNameSpace?.let { namespace ->
+                    resultMessages.add(MessageEntity.mapInfoMessage(
+                        uuid = uuid,
+                        infoMessage = msg,
+                        timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime(namespace) ?: System.currentTimeMillis()) + 1,
+                        arrivalTime = System.currentTimeMillis()
+                    ))
+                }
             }
 
             removeAllInfoMessages()

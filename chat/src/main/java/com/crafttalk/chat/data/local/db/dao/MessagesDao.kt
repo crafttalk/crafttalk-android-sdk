@@ -10,32 +10,32 @@ import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 @Dao
 interface MessagesDao {
 
-    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} ORDER BY timestamp DESC, arrival_time DESC")
-    fun getMessages(): DataSource.Factory<Int, MessageEntity>
+    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace ORDER BY timestamp DESC, arrival_time DESC")
+    fun getMessages(namespace: String): DataSource.Factory<Int, MessageEntity>
 
-    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} LIMIT 1)")
-    fun isNotEmpty(): Boolean
+    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace LIMIT 1)")
+    fun isNotEmpty(namespace: String): Boolean
 
-    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :timestamp")
-    fun getPositionByTimestamp(timestamp: Long): Int?
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND timestamp > :timestamp")
+    fun getPositionByTimestamp(namespace: String, timestamp: Long): Int?
 
     @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id)")
     fun emptyAvailable(id: String): Boolean
 
-    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND message_type NOT IN (:ignoredMessageTypes)")
-    fun getCountUnreadMessages(currentReadMessageTime: Long, ignoredMessageTypes: List<Int>): Int?
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND timestamp > :currentReadMessageTime AND message_type NOT IN (:ignoredMessageTypes)")
+    fun getCountUnreadMessages(namespace: String, currentReadMessageTime: Long, ignoredMessageTypes: List<Int>): Int?
 
-    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp <= :timestampMessage")
-    fun getCountMessagesInclusiveTimestamp(timestampMessage: Long): Int?
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND timestamp <= :timestampMessage")
+    fun getCountMessagesInclusiveTimestamp(namespace: String, timestampMessage: Long): Int?
 
-    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE timestamp > :currentReadMessageTime AND timestamp <= :timestampLastMessage AND message_type NOT IN (:ignoredMessageTypes)")
-    fun getCountUnreadMessagesRange(currentReadMessageTime: Long, timestampLastMessage: Long, ignoredMessageTypes: List<Int>): Int?
+    @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND timestamp > :currentReadMessageTime AND timestamp <= :timestampLastMessage AND message_type NOT IN (:ignoredMessageTypes)")
+    fun getCountUnreadMessagesRange(namespace: String, currentReadMessageTime: Long, timestampLastMessage: Long, ignoredMessageTypes: List<Int>): Int?
 
-    @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} ORDER BY timestamp ASC LIMIT 1")
-    fun getFirstTime(): Long?
+    @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace ORDER BY timestamp ASC LIMIT 1")
+    fun getFirstTime(namespace: String): Long?
 
-    @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} ORDER BY timestamp DESC LIMIT 1")
-    fun getLastTime(): Long?
+    @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace ORDER BY timestamp DESC LIMIT 1")
+    fun getLastTime(namespace: String): Long?
 
     @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id")
     fun getMessageById(id: String): MessageEntity?

@@ -208,7 +208,7 @@ class SocketApi constructor(
                 }
                 if (
                     (!messageJson.toString().contains(""""message":"\/start"""") && !messageJson.toString().contains(""""message":"/start"""")) &&
-                    (messageSocket.id != null || !messageDao.isNotEmpty())
+                    (messageSocket.id != null || !messageDao.isNotEmpty(ChatParams.urlChatNameSpace.orEmpty()))
                 ) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
