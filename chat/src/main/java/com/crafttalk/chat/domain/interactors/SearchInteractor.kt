@@ -44,7 +44,7 @@ class SearchInteractor
     }
 
     fun getAllSearchedItems(): List<SearchItem> {
-        return searchItems
+        return searchItems.toList()
     }
 
     suspend fun preloadMessages(searchText: String, searchStart: () -> Unit): SearchItem? {
@@ -158,27 +158,31 @@ class SearchInteractor
     }
 
     private suspend fun additionalLoadingMessages() {
-        val visitor = visitorInteractor.getVisitor() ?: return
+        try {
+            val visitor = visitorInteractor.getVisitor() ?: return
 
-        if (indexLastLoadSearchItem == searchItems.size - 1) return
-        if (indexCurrentSearchItem != indexLastLoadSearchItem) return
-        if (allMessageLoaded) return
+            if (indexLastLoadSearchItem == searchItems.size - 1) return
+            if (indexCurrentSearchItem != indexLastLoadSearchItem) return
+            if (allMessageLoaded) return
 
-        if (indexCurrentSearchItem == 0) {
-            val startTime = searchItems.getOrNull(1)?.timestamp ?: searchItems.firstOrNull()?.timestamp
-            startTime?.let { time ->
+            if (indexCurrentSearchItem == 0) {
+                val startTime = searchItems.getOrNull(1)?.timestamp ?: searchItems.firstOrNull()?.timestamp
+                startTime?.let { time ->
+                    uploadMessages(
+                        visitor,
+                        time
+                    )
+                }
+            } else {
                 uploadMessages(
                     visitor,
-                    time
+                    searchItems[indexLastLoadSearchItem + 1].timestamp
                 )
             }
-        } else {
-            uploadMessages(
-                visitor,
-                searchItems[indexLastLoadSearchItem + 1].timestamp
-            )
+            fillMessagePosition()
+        } catch (ex: ConcurrentModificationException) {
+            Log.d("LOG_SEARCH_EX", "additionalLoadingMessages ex: ${ex.message}")
         }
-        fillMessagePosition()
     }
 
     suspend fun onSearchTopClick(): SearchItem? {
@@ -200,44 +204,52 @@ class SearchInteractor
     }
 
     private suspend fun fillMessagePosition() {
-        run loop@{
-            searchItems.forEachIndexed { index, item ->
-                if (item.scrollPosition != null) return@forEachIndexed
+        try {
+            run loop@{
+                searchItems.forEachIndexed { index, item ->
+                    if (item.scrollPosition != null) return@forEachIndexed
 
-                val messagePosition = if (item.id == null) {
-                    return@loop
-                } else {
-                    messageRepository.getPositionByTimestamp(
-                        id = item.id,
-                        timestamp = item.timestamp
-                    ) ?: return@loop
-                }
-                searchItems[index] = item.copy(scrollPosition = messagePosition)
-                if (index > indexLastLoadSearchItem) {
-                    indexLastLoadSearchItem = index
+                    val messagePosition = if (item.id == null) {
+                        return@loop
+                    } else {
+                        messageRepository.getPositionByTimestamp(
+                            id = item.id,
+                            timestamp = item.timestamp
+                        ) ?: return@loop
+                    }
+                    searchItems[index] = item.copy(scrollPosition = messagePosition)
+                    if (index > indexLastLoadSearchItem) {
+                        indexLastLoadSearchItem = index
+                    }
                 }
             }
+        } catch (ex: ConcurrentModificationException) {
+            Log.d("LOG_SEARCH_EX", "fillMessagePosition ex: ${ex.message}")
         }
     }
 
     suspend fun updateMessagePosition(insertedMessages: List<MessageEntity>) {
-        run loop@{
-            searchItems.forEachIndexed { index, item ->
-                val messagePosition = if (item.id == null) {
-                    return@loop
-                } else {
-                    messageRepository.getPositionByTimestamp(
-                        id = item.id,
-                        timestamp = item.timestamp
-                    ) ?: return@loop
-                }
+        try {
+            run loop@{
+                searchItems.forEachIndexed { index, item ->
+                    val messagePosition = if (item.id == null) {
+                        return@loop
+                    } else {
+                        messageRepository.getPositionByTimestamp(
+                            id = item.id,
+                            timestamp = item.timestamp
+                        ) ?: return@loop
+                    }
 
-                val offset = insertedMessages.count { it.timestamp > item.timestamp }
+                    val offset = insertedMessages.count { it.timestamp > item.timestamp }
 
-                searchItems[index] = item.apply {
-                    scrollPosition = messagePosition + offset
+                    searchItems[index] = item.apply {
+                        scrollPosition = messagePosition + offset
+                    }
                 }
             }
+        } catch (ex: ConcurrentModificationException) {
+            Log.d("LOG_SEARCH_EX", "updateMessagePosition ex: ${ex.message}")
         }
     }
 }
