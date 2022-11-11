@@ -1,5 +1,6 @@
 package com.crafttalk.chat.domain.interactors
 
+import android.util.Log
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IMessageRepository
