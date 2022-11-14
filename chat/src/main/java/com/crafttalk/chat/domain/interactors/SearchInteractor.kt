@@ -7,6 +7,7 @@ import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
 
 fun String.countContains(pattern: String): Int {
+    Log.d("SEARCH_LOG", "countContains str: $this, pattern: $pattern;")
     if (!contains(pattern, ignoreCase = true)) return 0
     var count = 0
     var indexStart: Int
@@ -58,14 +59,22 @@ class SearchInteractor
         searchItems = mutableListOf()
         val searchResult = messageRepository.searchTimestampsMessages(uuid, searchText)?.messages
 
+        Log.d("SEARCH_LOG", "search count: ${searchResult?.size};")
+
+        searchResult?.forEach {
+            Log.d("SEARCH_LOG", "search item: ${it};")
+        }
+
         var searchAllCount = 0
         searchResult?.forEach {
             searchAllCount += when {
-                it.isFile -> it.attachmentName?.countContains(searchText) ?: 0
-                it.isText -> it.message?.countContains(searchText) ?: 0
+                it.isFile -> it.attachmentName?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 1 res: $this") } ?: 0
+                it.isText -> it.message?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 2 res: $this") } ?: 0
                 else -> 0
             }
         }
+
+        Log.d("SEARCH_LOG", "searchAllCount: ${searchAllCount};")
 
         if (searchResult.isNullOrEmpty() || searchAllCount == 0) {
             return null
@@ -92,10 +101,11 @@ class SearchInteractor
                     null
                 }
                 val countMatchInMsg = when {
-                    networkMessage.isFile -> networkMessage.attachmentName?.countContains(searchText) ?: 0
-                    networkMessage.isText -> networkMessage.message?.countContains(searchText) ?: 0
+                    networkMessage.isFile -> networkMessage.attachmentName?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 3 res: $this") } ?: 0
+                    networkMessage.isText -> networkMessage.message?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 4 res: $this") } ?: 0
                     else -> 0
                 }
+                Log.d("SEARCH_LOG", "countMatchInMsg: $countMatchInMsg; messagePosition: $messagePosition; networkMessage: $networkMessage;")
                 for(i in 1..countMatchInMsg) {
                     currentSearchPosition++
                     searchItems.add(
@@ -113,13 +123,19 @@ class SearchInteractor
             }
         }
 
+        searchItems.forEach {
+            Log.d("SEARCH_LOG", "searchItems item: ${it};")
+        }
+
         val firstItem = searchItems.firstOrNull()
         val secondItem = searchItems.getOrNull(1)
         if ((firstItem != null && firstItem.scrollPosition == null) ||
             (secondItem != null && secondItem.scrollPosition == null)) {
             additionalLoadingMessages()
         }
-        return firstItem
+        return firstItem.apply {
+            Log.d("SEARCH_LOG", "searchItems first: ${this};")
+        }
     }
 
     private suspend fun uploadMessages(visitor: Visitor, startTime: Long) {
