@@ -6,6 +6,7 @@ import com.crafttalk.chat.presentation.UploadFileListener
 import com.crafttalk.chat.utils.TypeFailUpload
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel: ViewModel() {
@@ -20,8 +21,8 @@ abstract class BaseViewModel: ViewModel() {
         }
     }
 
-    private fun launch(dispatcher: CoroutineDispatcher, action: suspend () -> Unit) {
-        viewModelScope.launch(dispatcher) {
+    private fun launch(dispatcher: CoroutineDispatcher, action: suspend () -> Unit): Job {
+        return viewModelScope.launch(dispatcher) {
             action()
         }
     }
@@ -32,8 +33,8 @@ abstract class BaseViewModel: ViewModel() {
         }
     }
 
-    fun launchIO(action: suspend () -> Unit) {
-        launch(Dispatchers.IO) {
+    fun launchIO(action: suspend () -> Unit): Job {
+        return launch(Dispatchers.IO) {
             action()
         }
     }
