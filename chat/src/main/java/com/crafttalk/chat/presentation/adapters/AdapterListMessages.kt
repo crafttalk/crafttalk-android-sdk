@@ -12,6 +12,7 @@ import com.crafttalk.chat.presentation.helper.extensions.inflate
 import com.crafttalk.chat.presentation.holders.*
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
+import java.lang.IndexOutOfBoundsException
 
 class AdapterListMessages(
     private val downloadOrOpenDocument: (id: String, documentName: String, documentUrl: String) -> Unit,
@@ -61,6 +62,14 @@ class AdapterListMessages(
     }
 
     fun getMessageTimestampByPosition(position: Int): Long? {
-        return getItem(position)?.timestamp
+        return getItemOrNull(position)?.timestamp ?: getItemOrNull(position - 1)?.timestamp
+    }
+
+    private fun getItemOrNull(position: Int): MessageModel? {
+        return try {
+            getItem(position)
+        } catch (ex: IndexOutOfBoundsException) {
+            null
+        }
     }
 }
