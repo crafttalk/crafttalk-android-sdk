@@ -21,6 +21,7 @@ import com.crafttalk.chat.presentation.helper.mappers.messageSearchMapper
 import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ChatParams
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -350,8 +351,13 @@ class ChatViewModel
         return pagedListBuilder.build()
     }
 
+    private var lastSearchJob: Job? = null
+
     fun onSearchClick(searchText: String, searchStart: () -> Unit) {
-        launchIO {
+        if (lastSearchJob?.isActive == true) {
+            lastSearchJob?.cancel()
+        }
+        lastSearchJob = launchIO {
             this.searchText = searchText
             val searchItem = searchInteractor.preloadMessages(searchText.trim()) {
                 launchUI { searchStart() }
@@ -383,8 +389,11 @@ class ChatViewModel
         }
     }
 
+    private var lastSearchTopJob: Job? = null
+
     fun onSearchTopClick() {
-        launchIO {
+        if (lastSearchTopJob?.isActive == true) return
+        lastSearchTopJob = launchIO {
             val searchItem = searchInteractor.onSearchTopClick()
             if (searchItem == null) {
                 showSearchNavigate.postValue(true)

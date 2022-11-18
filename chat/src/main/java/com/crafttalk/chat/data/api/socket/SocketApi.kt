@@ -326,10 +326,12 @@ class SocketApi constructor(
         val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxBy { it.timestamp }?.timestamp
         maxUserTimestamp?.run(updateCurrentReadMessageTime)
         updateCountUnreadMessages(bufferNewMessages.filter { it.timestamp > (maxUserTimestamp ?: 0) }.size, maxUserTimestamp != null)
-        viewModelScope.launch {
-            updateSearchMessagePosition(bufferNewMessages)
+        bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(it.id) }.let { messages ->
+            viewModelScope.launch {
+                updateSearchMessagePosition(messages)
+            }
+            messageDao.insertMessages(messages)
         }
-        messageDao.insertMessages(bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(it.id) })
         bufferNewMessages.clear()
         chatEventListener?.synchronized()
     }
@@ -453,10 +455,10 @@ class SocketApi constructor(
             } else {
                 updateCountUnreadMessages(1, false)
             }
-            viewModelScope.launch {
-                updateSearchMessagePosition(listOf(message))
-            }
             if (!messageDao.hasThisMessage(message.id)) {
+                viewModelScope.launch {
+                    updateSearchMessagePosition(listOf(message))
+                }
                 messageDao.insertMessage(message)
             }
         } else {

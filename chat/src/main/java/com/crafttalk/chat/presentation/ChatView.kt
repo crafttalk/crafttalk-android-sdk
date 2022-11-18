@@ -1012,6 +1012,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     private fun scroll(countUnreadMessages: Int, isSearchScroll: Boolean = false) {
+        Log.d("SEARCH_LOG", "scroll countUnreadMessages: ${countUnreadMessages}; isSearchScroll: $isSearchScroll;")
         fun scrollToDesiredPosition(position: Int, actionScroll: (position: Int) -> Unit) {
             if (adapterListMessages.currentList?.getOrNull(position) == null) {
                 list_with_message.smoothScrollToPosition(position)
