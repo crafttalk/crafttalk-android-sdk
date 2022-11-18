@@ -36,6 +36,8 @@ class SearchInteractor
     private var indexLastLoadSearchItem: Int = -1
     private var searchItems: MutableList<SearchItem> = mutableListOf()
     private var allMessageLoaded = false
+    private var canUpdatePositions = true
+    private var wantUpdatePositions = false
 
     fun cancelSearch() {
         searchText = ""
@@ -56,7 +58,8 @@ class SearchInteractor
         this.searchText = searchText
         indexCurrentSearchItem = 0
         indexLastLoadSearchItem = -1
-        searchItems = mutableListOf()
+        canUpdatePositions = false
+        searchItems.clear()
         val searchResult = messageRepository.searchTimestampsMessages(uuid, searchText)?.messages
 
         Log.d("SEARCH_LOG", "search count: ${searchResult?.size};")
@@ -81,7 +84,6 @@ class SearchInteractor
         } else {
             var messagePosition: Int? = 0
             var currentSearchPosition = 0
-            searchItems = mutableListOf()
             searchResult.forEach { networkMessage ->
                 messagePosition = if (messagePosition != null) {
                     val messageId = if (networkMessage.isReply) networkMessage.id else networkMessage.idFromChannel
@@ -119,6 +121,10 @@ class SearchInteractor
                             isLast = (currentSearchPosition == 1) || (currentSearchPosition == searchAllCount)
                         )
                     )
+                }
+                canUpdatePositions = true
+                if (wantUpdatePositions) {
+                    updateMessagePosition(null)
                 }
             }
         }
@@ -245,7 +251,11 @@ class SearchInteractor
         }
     }
 
-    suspend fun updateMessagePosition(insertedMessages: List<MessageEntity>) {
+    suspend fun updateMessagePosition(insertedMessages: List<MessageEntity>?) {
+        if (!canUpdatePositions) {
+            wantUpdatePositions = true
+            return
+        }
         try {
             run loop@{
                 searchItems.forEachIndexed { index, item ->
@@ -258,14 +268,16 @@ class SearchInteractor
                         ) ?: return@loop
                     }
 
-                    val offset = insertedMessages.count { it.timestamp > item.timestamp }
+                    val offset = insertedMessages?.count { it.timestamp > item.timestamp } ?: 0
 
                     searchItems[index] = item.apply {
                         scrollPosition = messagePosition + offset
                     }
                 }
+                wantUpdatePositions = false
             }
         } catch (ex: ConcurrentModificationException) {
+            wantUpdatePositions = false
             Log.d("LOG_SEARCH_EX", "updateMessagePosition ex: ${ex.message}")
         }
     }
