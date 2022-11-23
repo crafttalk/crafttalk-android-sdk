@@ -31,14 +31,16 @@ class MessageRepository
     private val messageApi: MessageApi
 ) : IMessageRepository {
 
+    private val namespace: String
+    get() = ChatParams.urlChatNameSpace.orEmpty()
+
     override fun getMessages() = messagesDao
-        .getMessages(ChatParams.urlChatNameSpace.orEmpty())
+        .getMessages(namespace)
 
     override fun getCountUnreadMessages(
         currentReadMessageTime: Long,
         ignoredMessageTypes: List<Int>
     ): Int? {
-        val namespace = ChatParams.urlChatNameSpace ?: return null
         return messagesDao
             .getCountUnreadMessages(
                 namespace = namespace,
@@ -48,21 +50,19 @@ class MessageRepository
     }
 
     override suspend fun getPositionByTimestamp(id: String, timestamp: Long): Int? {
-        return if (messagesDao.emptyAvailable(id)) {
-            val namespace = ChatParams.urlChatNameSpace ?: return null
+        return if (messagesDao.emptyAvailable(namespace, id)) {
             messagesDao.getPositionByTimestamp(namespace, timestamp)
         } else {
             null
         }
     }
 
-    override fun getTimestampMessageById(messageId: String) = messagesDao
-        .getTimestampMessageById(messageId)
+    override fun getTimestampMessageById(messageId: String): Long? {
+        return messagesDao.getTimestampMessageById(namespace, messageId)
+    }
 
     override fun getCountMessagesInclusiveTimestamp(timestampMessage: Long): Int? {
-        val namespace = ChatParams.urlChatNameSpace ?: return null
-        return messagesDao
-            .getCountMessagesInclusiveTimestamp(namespace, timestampMessage)
+        return messagesDao.getCountMessagesInclusiveTimestamp(namespace, timestampMessage)
     }
 
     override fun getCountUnreadMessagesRange(
@@ -70,7 +70,6 @@ class MessageRepository
         timestampLastMessage: Long,
         ignoredMessageTypes: List<Int>
     ): Int? {
-        val namespace = ChatParams.urlChatNameSpace ?: return null
         return messagesDao
             .getCountUnreadMessagesRange(
                 namespace = namespace,
@@ -81,12 +80,10 @@ class MessageRepository
     }
 
     override suspend fun getTimeFirstMessage(): Long? {
-        val namespace = ChatParams.urlChatNameSpace ?: return null
         return messagesDao.getFirstTime(namespace)
     }
 
     override suspend fun getTimeLastMessage(): Long? {
-        val namespace = ChatParams.urlChatNameSpace ?: return null
         return messagesDao.getLastTime(namespace)
     }
 
@@ -203,20 +200,18 @@ class MessageRepository
             maxTimestampUserMessage?.run(updateReadPoint)
 
             val resultMessages = mutableListOf<MessageEntity>().apply {
-                addAll(operatorMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
-                addAll(userMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
-                addAll(messagesAboutJoin.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
+                addAll(operatorMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(namespace, it.id) })
+                addAll(userMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(namespace, it.id) })
+                addAll(messagesAboutJoin.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(namespace, it.id) })
             }
 
             ChatParams.glueMessage?.let { msg ->
-                ChatParams.urlChatNameSpace?.let { namespace ->
-                    resultMessages.add(MessageEntity.mapInfoMessage(
-                        uuid = uuid,
-                        infoMessage = msg,
-                        timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime(namespace) ?: System.currentTimeMillis()) + 1,
-                        arrivalTime = System.currentTimeMillis()
-                    ))
-                }
+                resultMessages.add(MessageEntity.mapInfoMessage(
+                    uuid = uuid,
+                    infoMessage = msg,
+                    timestamp = (resultMessages.maxOfOrNull { it.timestamp } ?: messagesDao.getLastTime(namespace) ?: System.currentTimeMillis()) + 1,
+                    arrivalTime = System.currentTimeMillis()
+                ))
             }
 
             removeAllInfoMessages()
@@ -272,7 +267,7 @@ class MessageRepository
     }
 
     override suspend fun sendMessages(message: String, repliedMessageId: String?) {
-        val repliedMessage = repliedMessageId?.let { messagesDao.getMessageById(it) }?.let { NetworkMessage.map(it) }
+        val repliedMessage = repliedMessageId?.let { messagesDao.getMessageById(namespace, it) }?.let { NetworkMessage.map(it) }
         socketApi.sendMessage(message, repliedMessage)
     }
 
@@ -287,7 +282,7 @@ class MessageRepository
 
     override suspend fun selectAction(messageId: String, actionId: String) {
         socketApi.selectAction(actionId)
-        messagesDao.getMessageById(messageId)?.let {
+        messagesDao.getMessageById(namespace, messageId)?.let {
             val updatedActions = it.actions?.map { action ->
                 ActionEntity(
                     action.actionId,
@@ -295,13 +290,13 @@ class MessageRepository
                     action.actionId == actionId
                 )
             }
-            messagesDao.selectAction(messageId, updatedActions)
+            messagesDao.selectAction(namespace, messageId, updatedActions)
         }
     }
 
     override suspend fun selectButton(messageId: String, actionId: String, buttonId: String) {
         socketApi.selectAction(actionId)
-        messagesDao.getMessageById(messageId)?.let {
+        messagesDao.getMessageById(namespace, messageId)?.let {
             val updatedButtons = it.keyboard?.buttons?.map { horizontalButtons ->
                 horizontalButtons.map { button: ButtonEntity ->
                     ButtonEntity(
@@ -317,7 +312,7 @@ class MessageRepository
                     )
                 }
             }
-            messagesDao.selectButton(messageId, KeyboardEntity(updatedButtons ?: listOf()))
+            messagesDao.selectButton(namespace, messageId, KeyboardEntity(updatedButtons ?: listOf()))
         }
     }
 
@@ -326,18 +321,18 @@ class MessageRepository
     }
 
     override fun updateSizeMessage(id: String, height: Int, width: Int) {
-        messagesDao.updateSizeMessage(id, height, width)
+        messagesDao.updateSizeMessage(namespace, id, height, width)
     }
 
     override fun updateTypeDownloadProgressOfMessageWithAttachment(
         id: String,
         typeDownloadProgress: TypeDownloadProgress
     ) {
-        messagesDao.updateTypeDownloadProgress(id, typeDownloadProgress)
+        messagesDao.updateTypeDownloadProgress(namespace, id, typeDownloadProgress)
     }
 
     override fun removeAllInfoMessages() {
-        messagesDao.deleteAllMessageByType(MessageType.INFO_MESSAGE.valueType)
+        messagesDao.deleteAllMessageByType(namespace, MessageType.INFO_MESSAGE.valueType)
     }
 
     override fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {

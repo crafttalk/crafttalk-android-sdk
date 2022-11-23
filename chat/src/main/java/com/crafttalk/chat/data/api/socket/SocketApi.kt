@@ -63,6 +63,9 @@ class SocketApi constructor(
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
     private var isSendGreet = false
 
+    private val namespace: String
+        get() = ChatParams.urlChatNameSpace.orEmpty()
+
     fun initSocket() {
         if (socket == null) {
             socket = try {
@@ -74,7 +77,7 @@ class SocketApi constructor(
                     URI("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}"),
                     opt
                 )
-                manager.socket("/${ChatParams.urlChatNameSpace}", opt).apply {
+                manager.socket("/${namespace}", opt).apply {
                     setAllListeners(this)
                 }
             } catch (e: URISyntaxException) {
@@ -208,7 +211,7 @@ class SocketApi constructor(
                 }
                 if (
                     (!messageJson.toString().contains(""""message":"\/start"""") && !messageJson.toString().contains(""""message":"/start"""")) &&
-                    (messageSocket.id != null || !messageDao.isNotEmpty(ChatParams.urlChatNameSpace.orEmpty()))
+                    (messageSocket.id != null || !messageDao.isNotEmpty(namespace))
                 ) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
@@ -326,7 +329,7 @@ class SocketApi constructor(
         val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp
         maxUserTimestamp?.run(updateCurrentReadMessageTime)
         updateCountUnreadMessages(bufferNewMessages.filter { it.timestamp > (maxUserTimestamp ?: 0) }.size, maxUserTimestamp != null)
-        bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(it.id) }.let { messages ->
+        bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(namespace, it.id) }.let { messages ->
             viewModelScope.launch {
                 updateSearchMessagePosition(messages)
             }
@@ -432,7 +435,7 @@ class SocketApi constructor(
             }
             (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
-                    messageDao.updateMessage(parentId, messageSocket.messageType)
+                    messageDao.updateMessage(namespace, parentId, messageSocket.messageType)
                 }
             }
             (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
@@ -455,7 +458,7 @@ class SocketApi constructor(
             } else {
                 updateCountUnreadMessages(1, false)
             }
-            if (!messageDao.hasThisMessage(message.id)) {
+            if (!messageDao.hasThisMessage(namespace, message.id)) {
                 viewModelScope.launch {
                     updateSearchMessagePosition(listOf(message))
                 }

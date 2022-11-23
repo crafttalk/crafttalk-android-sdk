@@ -21,13 +21,16 @@ class PersonRepository
     private val personApi: PersonApi
 ) : IPersonRepository {
 
+    private val namespace: String
+        get() = ChatParams.urlChatNameSpace.orEmpty()
+
     override suspend fun updatePersonName(personId: String?, currentPersonName: String?) {
         personId ?: return
         currentPersonName ?: return
         if (personId.isEmpty()) return
         when (ChatParams.operatorNameMode) {
             OperatorNameMode.ACTUAL -> {
-                messagesDao.updatePersonName(personId, currentPersonName)
+                messagesDao.updatePersonName(namespace, personId, currentPersonName)
             }
         }
     }
@@ -44,7 +47,7 @@ class PersonRepository
                         ).toData()?.picture?.apply {
                             try {
                                 personDao.addPersonPreview(PersonEntity(personId, this))
-                                messagesDao.updatePersonPreview(personId, this)
+                                messagesDao.updatePersonPreview(namespace, personId, this)
                             } catch (ex: SQLiteConstraintException) {}
                         }
                 }
@@ -53,7 +56,7 @@ class PersonRepository
                         personId = personId,
                         visitorToken = visitorToken
                     ).toData()?.picture.apply {
-                        messagesDao.updatePersonPreview(personId, this)
+                        messagesDao.updatePersonPreview(namespace, personId, this)
                     }
                 }
                 else -> null

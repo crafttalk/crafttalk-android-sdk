@@ -19,8 +19,8 @@ interface MessagesDao {
     @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND timestamp > :timestamp")
     fun getPositionByTimestamp(namespace: String, timestamp: Long): Int?
 
-    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id)")
-    fun emptyAvailable(id: String): Boolean
+    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND id = :id)")
+    fun emptyAvailable(namespace: String, id: String): Boolean
 
     @Query("SELECT COUNT(*) FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND timestamp > :currentReadMessageTime AND message_type NOT IN (:ignoredMessageTypes)")
     fun getCountUnreadMessages(namespace: String, currentReadMessageTime: Long, ignoredMessageTypes: List<Int>): Int?
@@ -37,14 +37,14 @@ interface MessagesDao {
     @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace ORDER BY timestamp DESC LIMIT 1")
     fun getLastTime(namespace: String): Long?
 
-    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id")
-    fun getMessageById(id: String): MessageEntity?
+    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND id = :id")
+    fun getMessageById(namespace: String, id: String): MessageEntity?
 
-    @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE id = :id")
-    fun getTimestampMessageById(id: String): Long?
+    @Query("SELECT timestamp FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND id = :id")
+    fun getTimestampMessageById(namespace: String, id: String): Long?
 
-    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id LIMIT 1)")
-    fun hasThisMessage(id: String): Boolean
+    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND id = :id LIMIT 1)")
+    fun hasThisMessage(namespace: String, id: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessages(messages: List<MessageEntity>)
@@ -52,31 +52,31 @@ interface MessagesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertMessage(message: MessageEntity)
 
-    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET message_type = :type WHERE id = :id")
-    fun updateMessage(id: String, type: Int)
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET message_type = :type WHERE namespace = :namespace AND id = :id")
+    fun updateMessage(namespace: String, id: String, type: Int)
 
-    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET height = :height, width = :width WHERE id = :id")
-    fun updateSizeMessage(id: String, height: Int, width: Int)
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET height = :height, width = :width WHERE namespace = :namespace AND id = :id")
+    fun updateSizeMessage(namespace: String, id: String, height: Int, width: Int)
 
-    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET attachment_download_progress_type = :typeDownloadProgress WHERE id = :id")
-    fun updateTypeDownloadProgress(id: String, typeDownloadProgress: TypeDownloadProgress)
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET attachment_download_progress_type = :typeDownloadProgress WHERE namespace = :namespace AND id = :id")
+    fun updateTypeDownloadProgress(namespace: String, id: String, typeDownloadProgress: TypeDownloadProgress)
 
-    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET operator_name = :currentPersonName WHERE operator_id = :personId")
-    fun updatePersonName(personId: String, currentPersonName: String)
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET operator_name = :currentPersonName WHERE namespace = :namespace AND operator_id = :personId")
+    fun updatePersonName(namespace: String, personId: String, currentPersonName: String)
 
-    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET operator_preview = :newPersonPicture WHERE (operator_id = :personId) AND ((operator_preview != :newPersonPicture) OR (operator_preview is null AND :newPersonPicture is not null) OR (operator_preview is not null AND :newPersonPicture is null))")
-    fun updatePersonPreview(personId: String, newPersonPicture: String?)
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET operator_preview = :newPersonPicture WHERE (namespace = :namespace) AND (operator_id = :personId) AND ((operator_preview != :newPersonPicture) OR (operator_preview is null AND :newPersonPicture is not null) OR (operator_preview is not null AND :newPersonPicture is null))")
+    fun updatePersonPreview(namespace: String, personId: String, newPersonPicture: String?)
 
     @Query("DELETE FROM ${MessageEntity.TABLE_NAME}")
     fun deleteAllMessages()
 
-    @Query("DELETE FROM ${MessageEntity.TABLE_NAME} WHERE message_type = :messageType")
-    fun deleteAllMessageByType(messageType: Int)
+    @Query("DELETE FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace AND message_type = :messageType")
+    fun deleteAllMessageByType(namespace: String, messageType: Int)
 
-    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET actions = :actions WHERE id = :id")
-    fun selectAction(id: String, actions: List<ActionEntity>?)
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET actions = :actions WHERE namespace = :namespace AND id = :id")
+    fun selectAction(namespace: String, id: String, actions: List<ActionEntity>?)
 
-    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET keyboard = :keyboard WHERE id = :id")
-    fun selectButton(id: String, keyboard: KeyboardEntity?)
+    @Query("UPDATE ${MessageEntity.TABLE_NAME} SET keyboard = :keyboard WHERE namespace = :namespace AND id = :id")
+    fun selectButton(namespace: String, id: String, keyboard: KeyboardEntity?)
 
 }

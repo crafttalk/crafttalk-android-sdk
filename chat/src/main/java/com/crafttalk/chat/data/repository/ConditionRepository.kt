@@ -17,6 +17,9 @@ class ConditionRepository
     private val socketApi: SocketApi
 ) : IConditionRepository {
 
+    private val namespace: String
+        get() = ChatParams.urlChatNameSpace.orEmpty()
+
     override fun setInternetConnectionListener(listener: ChatInternetConnectionListener) {
         socketApi.setInternetConnectionListener(listener)
     }
@@ -89,7 +92,6 @@ class ConditionRepository
     }
 
     override suspend fun getStatusExistenceMessages(): Boolean {
-        val namespace = ChatParams.urlChatNameSpace ?: return false
         return messagesDao.isNotEmpty(namespace)
     }
 
