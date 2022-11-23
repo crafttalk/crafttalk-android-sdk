@@ -54,7 +54,7 @@ class ChatViewModel
     val enabledSearchTop: MutableLiveData<Boolean> = MutableLiveData(false)
     val enabledSearchBottom: MutableLiveData<Boolean> = MutableLiveData(false)
     val searchCoincidenceText: MutableLiveData<String> = MutableLiveData()
-    val searchScrollToPosition: MutableLiveData<SearchItem?> = MutableLiveData(null)
+    val searchScrollToPosition: MutableLiveData<SearchItem?> = MutableLiveData()
 
     val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
     val replyMessage: MutableLiveData<MessageModel?> = MutableLiveData(null)
@@ -329,7 +329,7 @@ class ChatViewModel
         }}
     }
 
-    fun uploadSearchMessages(searchText: String, currentSearchItem: SearchItem): LiveData<PagedList<MessageModel>> {
+    fun uploadSearchMessages(searchText: String, currentSearchItem: SearchItem?): LiveData<PagedList<MessageModel>> {
         val config = PagedList.Config.Builder()
             .setPageSize(ChatParams.pageSize)
             .build()
@@ -357,6 +357,15 @@ class ChatViewModel
         if (lastSearchJob?.isActive == true) {
             lastSearchJob?.cancel()
         }
+        if (searchText.isEmpty()) {
+            showSearchNavigate.postValue(false)
+            enabledSearchTop.postValue(false)
+            enabledSearchBottom.postValue(false)
+            searchCoincidenceText.postValue("")
+            searchScrollToPosition.postValue(null)
+            searchInteractor.cancelSearch()
+            return
+        }
         lastSearchJob = launchIO {
             this.searchText = searchText
             val searchItem = searchInteractor.preloadMessages(searchText.trim()) {
@@ -371,7 +380,7 @@ class ChatViewModel
                 showSearchNavigate.postValue(false)
                 enabledSearchTop.postValue(false)
                 enabledSearchBottom.postValue(false)
-                searchScrollToPosition.postValue(searchScrollToPosition.value)
+                searchScrollToPosition.postValue(null)
             } else {
                 initSearchInitialLoadKey = searchItem.scrollPosition ?: initialLoadKey
                 searchCoincidenceText.postValue(
