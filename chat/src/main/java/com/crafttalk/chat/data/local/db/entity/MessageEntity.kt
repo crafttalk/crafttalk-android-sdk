@@ -12,6 +12,7 @@ import com.crafttalk.chat.domain.entity.message.NetworkButtonOperation
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import com.crafttalk.chat.utils.ChatParams
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
@@ -20,6 +21,9 @@ data class MessageEntity(
 
     @ColumnInfo(name = "uuid")
     val uuid: String,
+
+    @ColumnInfo(name = "namespace")
+    val namespace: String,
 
     @PrimaryKey
     @ColumnInfo(name = "id")
@@ -152,6 +156,7 @@ data class MessageEntity(
         return when (other) {
             is MessageEntity -> {
                         this.uuid == other.uuid &&
+                        this.namespace == other.namespace &&
                         this.isReply == other.isReply &&
                         this.parentMsgId == other.parentMsgId &&
                         this.message == other.message &&
@@ -168,6 +173,7 @@ data class MessageEntity(
 
     override fun hashCode(): Int {
         var result = uuid.hashCode()
+        result = 31 * result + namespace.hashCode()
         result = 31 * result + isReply.hashCode()
         result = 31 * result + (parentMsgId?.hashCode() ?: 0)
         result = 31 * result + (message?.hashCode() ?: 0)
@@ -203,6 +209,7 @@ data class MessageEntity(
 
             return MessageEntity(
                 uuid = uuid,
+                namespace = ChatParams.urlChatNameSpace.orEmpty(),
                 id = networkMessage.id!!,
                 messageType = networkMessage.messageType,
                 isReply = networkMessage.isReply,
@@ -254,6 +261,7 @@ data class MessageEntity(
 
             return MessageEntity(
                 uuid = uuid,
+                namespace = ChatParams.urlChatNameSpace.orEmpty(),
                 id = networkMessage.id!!,
                 messageType = networkMessage.messageType,
                 isReply = true,
@@ -299,6 +307,7 @@ data class MessageEntity(
 
             return MessageEntity(
                 uuid = uuid,
+                namespace = ChatParams.urlChatNameSpace.orEmpty(),
                 id = networkMessage.idFromChannel!!,
                 messageType = status,
                 isReply = false,
@@ -339,6 +348,7 @@ data class MessageEntity(
         ): MessageEntity {
             return MessageEntity(
                 uuid = uuid,
+                namespace = ChatParams.urlChatNameSpace.orEmpty(),
                 id = networkMessage.id!!,
                 messageType = networkMessage.messageType,
                 isReply = true,
@@ -363,6 +373,7 @@ data class MessageEntity(
 
             return MessageEntity(
                 uuid = uuid,
+                namespace = ChatParams.urlChatNameSpace.orEmpty(),
                 id = UUID.randomUUID().toString(),
                 messageType = MessageType.INFO_MESSAGE.valueType,
                 isReply = true,

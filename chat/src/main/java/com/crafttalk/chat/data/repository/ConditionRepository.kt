@@ -6,6 +6,7 @@ import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
+import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ChatStatus
 import javax.inject.Inject
 
@@ -88,7 +89,8 @@ class ConditionRepository
     }
 
     override suspend fun getStatusExistenceMessages(): Boolean {
-        return messagesDao.isNotEmpty()
+        val namespace = ChatParams.urlChatNameSpace ?: return false
+        return messagesDao.isNotEmpty(namespace)
     }
 
     companion object {
