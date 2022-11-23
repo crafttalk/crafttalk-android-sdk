@@ -389,8 +389,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         if (ChatAttr.getInstance().enableAutoSearch) {
             search_input.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    if (search_input.text.isNotEmpty()) searchText(search_input.text.toString())
-                    else onSearchCancelClick()
+                    searchText(search_input.text.toString())
                 }
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -622,13 +621,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         })
         viewModel.searchScrollToPosition.observe(lifecycleOwner, androidx.lifecycle.Observer { searchItem ->
             searchLiveDataMessages?.removeObservers(lifecycleOwner)
-            searchItem ?: return@Observer
             val searchText = viewModel.searchText ?: return@Observer
             searchLiveDataMessages = viewModel.uploadSearchMessages(searchText, searchItem)
             searchLiveDataMessages?.observe(lifecycleOwner, androidx.lifecycle.Observer { pagedList ->
                 adapterListMessages.submitList(pagedList!!) {
-                    val position = searchItem.scrollPosition ?: return@submitList
-                    if (searchItem.id != searchItemLast?.id) {
+                    if (searchItem != null && searchItem != searchItemLast) {
+                        val position = searchItem.scrollPosition ?: return@submitList
                         scroll(position + 1, true)
                     }
                     searchItemLast = searchItem

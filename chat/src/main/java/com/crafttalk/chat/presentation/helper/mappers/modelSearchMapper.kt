@@ -10,7 +10,7 @@ import com.crafttalk.chat.utils.ChatAttr
 fun messageSearchMapper(
     messageModel: MessageModel,
     searchText: String,
-    currentSearchItem: SearchItem,
+    currentSearchItem: SearchItem?,
     allSearchedItems: List<SearchItem>
 ): MessageModel {
     if (allSearchedItems.find { it.id == messageModel.id } == null) return messageModel
@@ -29,7 +29,7 @@ private fun selectText(
     messageId: String,
     spannableString: SpannableString,
     searchText: String,
-    currentSearchItem: SearchItem
+    currentSearchItem: SearchItem?
 ): SpannableString {
     var indexStart = spannableString.toString().indexOf(searchText, ignoreCase = true)
     var numberCoincidences = 1
@@ -37,7 +37,7 @@ private fun selectText(
         spannableString.setSpan(
             BackgroundColorSpan(
                 if (
-                    numberCoincidences == currentSearchItem.positionMatchInMsg &&
+                    numberCoincidences == currentSearchItem?.positionMatchInMsg &&
                     (currentSearchItem.id != null && messageId == currentSearchItem.id)
                 ) ChatAttr.getInstance().colorCurrentSelectSearchText
                 else ChatAttr.getInstance().colorSelectSearchText
@@ -56,7 +56,7 @@ private fun selectText(
             spannableString.setSpan(
                 BackgroundColorSpan(
                     if (
-                        numberCoincidences == currentSearchItem.positionMatchInMsg &&
+                        numberCoincidences == currentSearchItem?.positionMatchInMsg &&
                         (currentSearchItem.id != null && messageId == currentSearchItem.id)
                     ) ChatAttr.getInstance().colorCurrentSelectSearchText
                     else ChatAttr.getInstance().colorSelectSearchText

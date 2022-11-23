@@ -1,13 +1,16 @@
 package com.crafttalk.chat.domain.interactors
 
 import android.util.Log
+import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IMessageRepository
+import kotlinx.coroutines.*
+import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
 
 fun String.countContains(pattern: String): Int {
-    Log.d("SEARCH_LOG", "countContains str: $this, pattern: $pattern;")
+//    Log.d("SEARCH_LOG", "countContains str: $this, pattern: $pattern;")
     if (!contains(pattern, ignoreCase = true)) return 0
     var count = 0
     var indexStart: Int
@@ -34,7 +37,7 @@ class SearchInteractor
     private var searchText: String = ""
     private var indexCurrentSearchItem: Int = 0
     private var indexLastLoadSearchItem: Int = -1
-    private var searchItems: MutableList<SearchItem> = mutableListOf()
+    private var searchItems: CopyOnWriteArrayList<SearchItem> = CopyOnWriteArrayList()
     private var allMessageLoaded = false
     private var canUpdatePositions = true
     private var wantUpdatePositions = false
@@ -53,8 +56,8 @@ class SearchInteractor
 
     suspend fun preloadMessages(searchText: String, searchStart: () -> Unit): SearchItem? {
         val uuid = visitorInteractor.getVisitor()?.uuid ?: return null
-        if (this.searchText == searchText) return searchItems.getOrNull(indexCurrentSearchItem)
         searchStart()
+        if (this.searchText == searchText) return searchItems.getOrNull(indexCurrentSearchItem)
         this.searchText = searchText
         indexCurrentSearchItem = 0
         indexLastLoadSearchItem = -1
@@ -63,16 +66,14 @@ class SearchInteractor
         val searchResult = messageRepository.searchTimestampsMessages(uuid, searchText)?.messages
 
         Log.d("SEARCH_LOG", "search count: ${searchResult?.size};")
-
-        searchResult?.forEach {
-            Log.d("SEARCH_LOG", "search item: ${it};")
-        }
+        yield()
 
         var searchAllCount = 0
         searchResult?.forEach {
+            yield()
             searchAllCount += when {
-                it.isFile -> it.attachmentName?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 1 res: $this") } ?: 0
-                it.isText -> it.message?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 2 res: $this") } ?: 0
+                it.isFile -> it.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 1 res: $this") } ?: 0
+                it.isText -> it.message?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 2 res: $this") } ?: 0
                 else -> 0
             }
         }
@@ -85,6 +86,7 @@ class SearchInteractor
             var messagePosition: Int? = 0
             var currentSearchPosition = 0
             searchResult.forEach { networkMessage ->
+                yield()
                 messagePosition = if (messagePosition != null) {
                     val messageId = if (networkMessage.isReply) networkMessage.id else networkMessage.idFromChannel
                     if (messageId == null) {
@@ -103,12 +105,13 @@ class SearchInteractor
                     null
                 }
                 val countMatchInMsg = when {
-                    networkMessage.isFile -> networkMessage.attachmentName?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 3 res: $this") } ?: 0
-                    networkMessage.isText -> networkMessage.message?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 4 res: $this") } ?: 0
+                    networkMessage.isFile -> networkMessage.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 3 res: $this") } ?: 0
+                    networkMessage.isText -> networkMessage.message?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 4 res: $this") } ?: 0
                     else -> 0
                 }
                 Log.d("SEARCH_LOG", "countMatchInMsg: $countMatchInMsg; messagePosition: $messagePosition; networkMessage: $networkMessage;")
                 for(i in 1..countMatchInMsg) {
+                    yield()
                     currentSearchPosition++
                     searchItems.add(
                         SearchItem(
@@ -181,31 +184,27 @@ class SearchInteractor
     }
 
     private suspend fun additionalLoadingMessages() {
-        try {
-            val visitor = visitorInteractor.getVisitor() ?: return
+        val visitor = visitorInteractor.getVisitor() ?: return
 
-            if (indexLastLoadSearchItem == searchItems.size - 1) return
-            if (indexCurrentSearchItem != indexLastLoadSearchItem) return
-            if (allMessageLoaded) return
+        if (indexLastLoadSearchItem == searchItems.size - 1) return
+        if (indexCurrentSearchItem != indexLastLoadSearchItem) return
+        if (allMessageLoaded) return
 
-            if (indexCurrentSearchItem == 0) {
-                val startTime = searchItems.getOrNull(1)?.timestamp ?: searchItems.firstOrNull()?.timestamp
-                startTime?.let { time ->
-                    uploadMessages(
-                        visitor,
-                        time
-                    )
-                }
-            } else {
+        if (indexCurrentSearchItem == 0) {
+            val startTime = searchItems.getOrNull(1)?.timestamp ?: searchItems.firstOrNull()?.timestamp
+            startTime?.let { time ->
                 uploadMessages(
                     visitor,
-                    searchItems[indexLastLoadSearchItem + 1].timestamp
+                    time
                 )
             }
-            fillMessagePosition()
-        } catch (ex: ConcurrentModificationException) {
-            Log.d("LOG_SEARCH_EX", "additionalLoadingMessages ex: ${ex.message}")
+        } else {
+            uploadMessages(
+                visitor,
+                searchItems[indexLastLoadSearchItem + 1].timestamp
+            )
         }
+        fillMessagePosition()
     }
 
     suspend fun onSearchTopClick(): SearchItem? {
@@ -227,27 +226,22 @@ class SearchInteractor
     }
 
     private suspend fun fillMessagePosition() {
-        try {
-            run loop@{
-                searchItems.forEachIndexed { index, item ->
-                    if (item.scrollPosition != null) return@forEachIndexed
-
-                    val messagePosition = if (item.id == null) {
-                        return@loop
-                    } else {
-                        messageRepository.getPositionByTimestamp(
-                            id = item.id,
-                            timestamp = item.timestamp
-                        ) ?: return@loop
-                    }
-                    searchItems[index] = item.copy(scrollPosition = messagePosition)
-                    if (index > indexLastLoadSearchItem) {
-                        indexLastLoadSearchItem = index
-                    }
+        run loop@{
+            searchItems.forEachIndexed { index, item ->
+                if (item.scrollPosition != null) return@forEachIndexed
+                val messagePosition = if (item.id == null) {
+                    return@loop
+                } else {
+                    messageRepository.getPositionByTimestamp(
+                        id = item.id,
+                        timestamp = item.timestamp
+                    ) ?: return@loop
+                }
+                searchItems[index] = item.copy(scrollPosition = messagePosition)
+                if (index > indexLastLoadSearchItem) {
+                    indexLastLoadSearchItem = index
                 }
             }
-        } catch (ex: ConcurrentModificationException) {
-            Log.d("LOG_SEARCH_EX", "fillMessagePosition ex: ${ex.message}")
         }
     }
 
@@ -256,29 +250,22 @@ class SearchInteractor
             wantUpdatePositions = true
             return
         }
-        try {
-            run loop@{
-                searchItems.forEachIndexed { index, item ->
-                    val messagePosition = if (item.id == null) {
-                        return@loop
-                    } else {
-                        messageRepository.getPositionByTimestamp(
-                            id = item.id,
-                            timestamp = item.timestamp
-                        ) ?: return@loop
-                    }
-
-                    val offset = insertedMessages?.count { it.timestamp > item.timestamp } ?: 0
-
-                    searchItems[index] = item.apply {
-                        scrollPosition = messagePosition + offset
-                    }
+        run loop@{
+            searchItems.forEachIndexed { index, item ->
+                val messagePosition = if (item.id == null) {
+                    return@loop
+                } else {
+                    messageRepository.getPositionByTimestamp(
+                        id = item.id,
+                        timestamp = item.timestamp
+                    ) ?: return@loop
                 }
-                wantUpdatePositions = false
+                val offset = insertedMessages?.count { it.timestamp > item.timestamp } ?: 0
+                searchItems[index] = item.apply {
+                    scrollPosition = messagePosition + offset
+                }
             }
-        } catch (ex: ConcurrentModificationException) {
             wantUpdatePositions = false
-            Log.d("LOG_SEARCH_EX", "updateMessagePosition ex: ${ex.message}")
         }
     }
 }
