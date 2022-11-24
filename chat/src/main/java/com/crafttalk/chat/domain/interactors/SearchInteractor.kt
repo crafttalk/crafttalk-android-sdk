@@ -187,9 +187,10 @@ class SearchInteractor
         val visitor = visitorInteractor.getVisitor() ?: return
 
         if (indexLastLoadSearchItem == searchItems.size - 1) return
-        if (indexCurrentSearchItem != indexLastLoadSearchItem) return
+        if (indexCurrentSearchItem < indexLastLoadSearchItem) return
         if (allMessageLoaded) return
 
+        yield()
         if (indexCurrentSearchItem == 0) {
             val startTime = searchItems.getOrNull(1)?.timestamp ?: searchItems.firstOrNull()?.timestamp
             startTime?.let { time ->
@@ -228,7 +229,13 @@ class SearchInteractor
     private suspend fun fillMessagePosition() {
         run loop@{
             searchItems.forEachIndexed { index, item ->
-                if (item.scrollPosition != null) return@forEachIndexed
+                yield()
+                if (item.scrollPosition != null) {
+                    if (index > indexLastLoadSearchItem) {
+                        indexLastLoadSearchItem = index
+                    }
+                    return@forEachIndexed
+                }
                 val messagePosition = if (item.id == null) {
                     return@loop
                 } else {

@@ -357,6 +357,7 @@ class ChatViewModel
         if (lastSearchJob?.isActive == true) {
             lastSearchJob?.cancel()
         }
+        lastSearchTopJob?.cancel()
         if (searchText.isEmpty()) {
             showSearchNavigate.postValue(false)
             enabledSearchTop.postValue(false)
@@ -448,6 +449,8 @@ class ChatViewModel
     }
 
     fun onSearchCancel() {
+        lastSearchJob?.cancel()
+        lastSearchTopJob?.cancel()
         initSearchInitialLoadKey = initialLoadKey
         searchText = null
         showSearchNavigate.postValue(false)
