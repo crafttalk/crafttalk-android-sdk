@@ -72,7 +72,7 @@ class SearchInteractor
         searchResult?.forEach {
             yield()
             searchAllCount += when {
-                it.isFile -> it.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 1 res: $this") } ?: 0
+//                it.isFile -> it.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 1 res: $this") } ?: 0
                 it.isText -> it.message?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 2 res: $this") } ?: 0
                 else -> 0
             }
@@ -105,7 +105,7 @@ class SearchInteractor
                     null
                 }
                 val countMatchInMsg = when {
-                    networkMessage.isFile -> networkMessage.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 3 res: $this") } ?: 0
+//                    networkMessage.isFile -> networkMessage.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 3 res: $this") } ?: 0
                     networkMessage.isText -> networkMessage.message?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 4 res: $this") } ?: 0
                     else -> 0
                 }
@@ -215,7 +215,7 @@ class SearchInteractor
         indexCurrentSearchItem++
         fillMessagePosition()
         additionalLoadingMessages()
-        return searchItems[indexCurrentSearchItem]
+        return searchItems.getOrNull(indexCurrentSearchItem)
     }
 
     fun onSearchBottomClick(): SearchItem? {
@@ -223,7 +223,7 @@ class SearchInteractor
             return null
         }
         indexCurrentSearchItem--
-        return searchItems[indexCurrentSearchItem]
+        return searchItems.getOrNull(indexCurrentSearchItem)
     }
 
     private suspend fun fillMessagePosition() {
