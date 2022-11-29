@@ -357,6 +357,7 @@ class ChatViewModel
         if (lastSearchJob?.isActive == true) {
             lastSearchJob?.cancel()
         }
+        lastSearchTopJob?.cancel()
         if (searchText.isEmpty()) {
             showSearchNavigate.postValue(false)
             enabledSearchTop.postValue(false)
@@ -368,6 +369,7 @@ class ChatViewModel
         }
         lastSearchJob = launchIO {
             this.searchText = searchText
+            delay(1000)
             val searchItem = searchInteractor.preloadMessages(searchText.trim()) {
                 launchUI { searchStart() }
             }
@@ -448,6 +450,8 @@ class ChatViewModel
     }
 
     fun onSearchCancel() {
+        lastSearchJob?.cancel()
+        lastSearchTopJob?.cancel()
         initSearchInitialLoadKey = initialLoadKey
         searchText = null
         showSearchNavigate.postValue(false)
