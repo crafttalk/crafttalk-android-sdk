@@ -72,7 +72,7 @@ class SearchInteractor
         searchResult?.forEach {
             yield()
             searchAllCount += when {
-                it.isFile -> it.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 1 res: $this") } ?: 0
+//                it.isFile -> it.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 1 res: $this") } ?: 0
                 it.isText -> it.message?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 2 res: $this") } ?: 0
                 else -> 0
             }
@@ -105,7 +105,7 @@ class SearchInteractor
                     null
                 }
                 val countMatchInMsg = when {
-                    networkMessage.isFile -> networkMessage.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 3 res: $this") } ?: 0
+//                    networkMessage.isFile -> networkMessage.attachmentName?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 3 res: $this") } ?: 0
                     networkMessage.isText -> networkMessage.message?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 4 res: $this") } ?: 0
                     else -> 0
                 }
@@ -187,9 +187,10 @@ class SearchInteractor
         val visitor = visitorInteractor.getVisitor() ?: return
 
         if (indexLastLoadSearchItem == searchItems.size - 1) return
-        if (indexCurrentSearchItem != indexLastLoadSearchItem) return
+        if (indexCurrentSearchItem < indexLastLoadSearchItem) return
         if (allMessageLoaded) return
 
+        yield()
         if (indexCurrentSearchItem == 0) {
             val startTime = searchItems.getOrNull(1)?.timestamp ?: searchItems.firstOrNull()?.timestamp
             startTime?.let { time ->
@@ -214,7 +215,7 @@ class SearchInteractor
         indexCurrentSearchItem++
         fillMessagePosition()
         additionalLoadingMessages()
-        return searchItems[indexCurrentSearchItem]
+        return searchItems.getOrNull(indexCurrentSearchItem)
     }
 
     fun onSearchBottomClick(): SearchItem? {
@@ -222,13 +223,19 @@ class SearchInteractor
             return null
         }
         indexCurrentSearchItem--
-        return searchItems[indexCurrentSearchItem]
+        return searchItems.getOrNull(indexCurrentSearchItem)
     }
 
     private suspend fun fillMessagePosition() {
         run loop@{
             searchItems.forEachIndexed { index, item ->
-                if (item.scrollPosition != null) return@forEachIndexed
+                yield()
+                if (item.scrollPosition != null) {
+                    if (index > indexLastLoadSearchItem) {
+                        indexLastLoadSearchItem = index
+                    }
+                    return@forEachIndexed
+                }
                 val messagePosition = if (item.id == null) {
                     return@loop
                 } else {
