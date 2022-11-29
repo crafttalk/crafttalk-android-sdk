@@ -627,7 +627,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 adapterListMessages.submitList(pagedList!!) {
                     if (searchItem != null && searchItem != searchItemLast) {
                         val position = searchItem.scrollPosition ?: return@submitList
-                        scroll(position + 1, true)
+                        delayOnLifecycle(300) {
+                            scroll(position + 1, true)
+                        }
                     }
                     searchItemLast = searchItem
                     viewModel.updateCountUnreadMessages()
@@ -707,7 +709,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         ) {
                             viewModel.updateCountUnreadMessages(pagedList.getOrNull(0)?.timestamp) { countUnreadMessages ->
                                 delayOnLifecycle(300) {
-                                    scroll(countUnreadMessages)
+                                    if (viewModel.searchText == null) {
+                                        scroll(countUnreadMessages)
+                                    }
                                 }
                             }
                         } else {
