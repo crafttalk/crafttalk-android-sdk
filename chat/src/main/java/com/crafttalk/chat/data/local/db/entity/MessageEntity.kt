@@ -308,7 +308,7 @@ data class MessageEntity(
             return MessageEntity(
                 uuid = uuid,
                 namespace = ChatParams.urlChatNameSpace.orEmpty(),
-                id = networkMessage.idFromChannel!!,
+                id = networkMessage.idFromChannel ?: networkMessage.id!!,
                 messageType = status,
                 isReply = false,
                 parentMsgId = networkMessage.parentMessageId,
