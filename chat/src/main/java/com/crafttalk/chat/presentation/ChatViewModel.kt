@@ -369,6 +369,7 @@ class ChatViewModel
         }
         lastSearchJob = launchIO {
             this.searchText = searchText
+            delay(1000)
             val searchItem = searchInteractor.preloadMessages(searchText.trim()) {
                 launchUI { searchStart() }
             }
