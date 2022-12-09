@@ -55,6 +55,7 @@ object Chat {
         operatorPreviewMode: OperatorPreviewMode = OperatorPreviewMode.CACHE,
         operatorNameMode: OperatorNameMode = OperatorNameMode.IMMUTABLE,
         clickableLinkMode: ClickableLinkMode = ClickableLinkMode.ALL,
+        firebasePushToken: String? = null,
         localeLanguage: String = context.getString(R.string.com_crafttalk_chat_default_language),
         localeCountry: String = context.getString(R.string.com_crafttalk_chat_default_country),
         phonePatterns: Array<CharSequence> = context.resources.getTextArray(R.array.com_crafttalk_chat_phone_patterns),
@@ -74,6 +75,7 @@ object Chat {
         ChatParams.operatorPreviewMode = operatorPreviewMode
         ChatParams.operatorNameMode = operatorNameMode
         ChatParams.clickableLinkMode = clickableLinkMode
+        ChatParams.firebasePushToken = firebasePushToken
         ChatParams.locale = Locale(localeLanguage, localeCountry)
         ChatParams.phonePatterns = phonePatterns
         uploadPoolMessagesTimeout?.let { ChatParams.uploadPoolMessagesTimeout = it }
@@ -84,6 +86,10 @@ object Chat {
         ChatParams.fileWriteTimeout = fileWriteTimeout
         ChatParams.fileCallTimeout = fileCallTimeout
         initDI(context)
+    }
+
+    fun setFirebasePushToken(firebasePushToken: String) {
+        ChatParams.firebasePushToken = firebasePushToken
     }
 
     fun createSession() {
