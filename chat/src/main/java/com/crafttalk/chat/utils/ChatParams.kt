@@ -14,6 +14,7 @@ object ChatParams {
     internal var operatorPreviewMode: OperatorPreviewMode? = null
     internal var operatorNameMode: OperatorNameMode? = null
     internal var clickableLinkMode: ClickableLinkMode? = null
+    internal var firebasePushToken: String? = null
     internal var locale: Locale? = null
     internal var phonePatterns: Array<CharSequence>? = null
     internal var uploadPoolMessagesTimeout: Long = 5000
