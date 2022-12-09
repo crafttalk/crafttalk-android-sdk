@@ -6,6 +6,7 @@ import com.crafttalk.chat.domain.entity.notification.NetworkResultCheckSubscript
 import com.crafttalk.chat.domain.entity.notification.NetworkSubscription
 import com.crafttalk.chat.domain.entity.notification.NetworkUnsubscription
 import com.crafttalk.chat.domain.repository.INotificationRepository
+import com.crafttalk.chat.utils.ChatParams
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
@@ -30,12 +31,24 @@ class NotificationRepository
     }
 
     override fun subscribe(uuid: String) {
-        getToken { token ->
+        val pushToken = ChatParams.firebasePushToken
+        if (pushToken != null) {
             checkSubscription(uuid, false) {
-                notificationApi.subscribe(NetworkSubscription(token, uuid)).enqueue(object : Callback<Unit> {
-                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
-                    override fun onFailure(call: Call<Unit>, t: Throwable) {}
-                })
+                notificationApi.subscribe(NetworkSubscription(pushToken, uuid))
+                    .enqueue(object : Callback<Unit> {
+                        override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
+                        override fun onFailure(call: Call<Unit>, t: Throwable) {}
+                    })
+            }
+        } else {
+            getToken { token ->
+                checkSubscription(uuid, false) {
+                    notificationApi.subscribe(NetworkSubscription(token, uuid))
+                        .enqueue(object : Callback<Unit> {
+                            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
+                            override fun onFailure(call: Call<Unit>, t: Throwable) {}
+                        })
+                }
             }
         }
     }
