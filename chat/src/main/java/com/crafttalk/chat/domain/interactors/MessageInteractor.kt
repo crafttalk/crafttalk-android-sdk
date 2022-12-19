@@ -18,6 +18,13 @@ class MessageInteractor
     fun getAllMessages(): DataSource.Factory<Int, MessageEntity> =
         messageRepository.getMessages()
 
+    fun clearDbIfMessagesDuplicated() {
+        val messages = messageRepository.getAllMessages()
+        if (messages.size != messages.distinctBy { it.id }.size) {
+            messageRepository.removeAllMessages()
+        }
+    }
+
     fun getCountUnreadMessages(currentReadMessageTime: Long, timestampLastMessage: Long?): Int? {
         return if (timestampLastMessage == null) {
             messageRepository.getCountUnreadMessages(
