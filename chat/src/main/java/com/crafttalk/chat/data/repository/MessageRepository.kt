@@ -34,6 +34,9 @@ class MessageRepository
     override fun getMessages() = messagesDao
         .getMessages()
 
+    override fun getAllMessages() = messagesDao
+        .getAllMessages()
+
     override fun getCountUnreadMessages(
         currentReadMessageTime: Long,
         ignoredMessageTypes: List<Int>
@@ -320,6 +323,10 @@ class MessageRepository
 
     override fun removeAllInfoMessages() {
         messagesDao.deleteAllMessageByType(MessageType.INFO_MESSAGE.valueType)
+    }
+
+    override fun removeAllMessages() {
+        messagesDao.deleteAllMessages()
     }
 
     override fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {

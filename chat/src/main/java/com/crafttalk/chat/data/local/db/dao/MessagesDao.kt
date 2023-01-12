@@ -13,6 +13,9 @@ interface MessagesDao {
     @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} ORDER BY timestamp DESC, arrival_time DESC")
     fun getMessages(): DataSource.Factory<Int, MessageEntity>
 
+    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} ORDER BY timestamp DESC, arrival_time DESC")
+    fun getAllMessages(): List<MessageEntity>
+
     @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} LIMIT 1)")
     fun isNotEmpty(): Boolean
 
