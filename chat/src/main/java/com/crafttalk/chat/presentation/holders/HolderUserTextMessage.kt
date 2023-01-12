@@ -8,9 +8,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import com.crafttalk.chat.R
-import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.base.BaseViewHolder
 import com.crafttalk.chat.presentation.helper.extensions.*
+import com.crafttalk.chat.presentation.helper.ui.bindRepliedMessage
 import com.crafttalk.chat.presentation.model.TextMessageItem
 import com.crafttalk.chat.utils.ChatAttr
 
@@ -69,89 +69,22 @@ class HolderUserTextMessage(
             isClickableLink = true,
             isSelectableText = true
         )
-
-        when {
-            item.repliedMessage == null -> {
-                repliedMessageContainer?.visibility = View.GONE
-            }
-            !item.repliedMessage.textMessage.isNullOrBlank() -> {
-                repliedMessageContainer?.visibility = View.VISIBLE
-                repliedMessage?.visibility = View.VISIBLE
-                repliedFileInfo?.visibility = View.GONE
-                repliedMediaFile?.visibility = View.GONE
-                repliedMediaFileWarning?.visibility = View.GONE
-                repliedBarrier?.setBackgroundColor(ChatAttr.getInstance().colorBarrierRepliedMessage)
-                repliedMessage?.setMessageText(
-                    textMessage = item.repliedMessage.textMessage,
-                    maxWidthTextMessage = ChatAttr.getInstance().widthItemUserTextMessage,
-                    colorTextMessage = ChatAttr.getInstance().colorTextUserRepliedMessage,
-                    sizeTextMessage = ChatAttr.getInstance().sizeTextUserRepliedMessage,
-                    resFontFamilyMessage = ChatAttr.getInstance().resFontFamilyUserMessage
-                )
-            }
-            item.repliedMessage.file != null -> {
-                when (item.repliedMessage.file.type) {
-                    TypeFile.FILE -> {
-                        repliedMessageContainer?.visibility = View.VISIBLE
-                        repliedMessage?.visibility = View.GONE
-                        repliedMediaFile?.visibility = View.GONE
-                        repliedMediaFileWarning?.visibility = View.GONE
-                        repliedFileInfo?.visibility = View.VISIBLE
-                        repliedBarrier?.setBackgroundColor(ChatAttr.getInstance().colorBarrierRepliedMessage)
-                        repliedProgressDownload?.setProgressDownloadFile(item.repliedMessage.file.typeDownloadProgress)
-                        repliedFileIcon?.setFileIcon(item.repliedMessage.file.typeDownloadProgress)
-                        repliedFileName?.setFileName(
-                            file = item.repliedMessage.file,
-                            colorTextFileName = ChatAttr.getInstance().colorUserRepliedFileName,
-                            sizeTextFileName = ChatAttr.getInstance().sizeUserRepliedFileName
-                        )
-                        repliedFileSize?.setFileSize(
-                            file = item.repliedMessage.file,
-                            colorTextFileSize = ChatAttr.getInstance().colorUserRepliedFileSize,
-                            sizeTextFileSize = ChatAttr.getInstance().sizeUserRepliedFileSize
-                        )
-                    }
-                    TypeFile.IMAGE -> {
-                        repliedMessageContainer?.visibility = View.VISIBLE
-                        repliedMessage?.visibility = View.GONE
-                        repliedFileInfo?.visibility = View.GONE
-                        repliedMediaFile?.apply {
-                            visibility = View.VISIBLE
-                            repliedBarrier?.setBackgroundColor(ChatAttr.getInstance().colorBarrierRepliedMessage)
-                            settingMediaFile(true)
-                            loadMediaFile(
-                                id = item.id,
-                                mediaFile = item.repliedMessage.file,
-                                updateData = updateData,
-                                isUserMessage = true,
-                                isUnionMessage = true,
-                                warningContainer = repliedMediaFileWarning
-                            )
-                        }
-                    }
-                    TypeFile.GIF -> {
-                        repliedMessageContainer?.visibility = View.VISIBLE
-                        repliedMessage?.visibility = View.GONE
-                        repliedFileInfo?.visibility = View.GONE
-                        repliedMediaFile?.apply {
-                            visibility = View.VISIBLE
-                            repliedBarrier?.setBackgroundColor(ChatAttr.getInstance().colorBarrierRepliedMessage)
-                            settingMediaFile(true)
-                            loadMediaFile(
-                                id = item.id,
-                                mediaFile = item.repliedMessage.file,
-                                updateData = updateData,
-                                isUserMessage = true,
-                                isUnionMessage = true,
-                                warningContainer = repliedMediaFileWarning,
-                                isGif = true
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
+        bindRepliedMessage(
+            itemId = item.id,
+            itemRepliedMessage = item.repliedMessage,
+            isUserMessage = true,
+            repliedMessageContainer = repliedMessageContainer,
+            repliedBarrier = repliedBarrier,
+            repliedMessage = repliedMessage,
+            repliedFileInfo = repliedFileInfo,
+            repliedFileIcon = repliedFileIcon,
+            repliedProgressDownload = repliedProgressDownload,
+            repliedFileName = repliedFileName,
+            repliedFileSize = repliedFileSize,
+            repliedMediaFile = repliedMediaFile,
+            repliedMediaFileWarning = repliedMediaFileWarning,
+            updateData = updateData
+        )
         // set bg
         contentContainer?.apply {
             setBackgroundResource(ChatAttr.getInstance().bgUserMessageResId)

@@ -19,6 +19,7 @@ import com.crafttalk.chat.domain.entity.message.NetworkSearch
 import com.crafttalk.chat.domain.transfer.TransferFileInfo
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
+import com.crafttalk.chat.presentation.helper.ui.getWeightMediaFile
 import com.crafttalk.chat.utils.ChatParams
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeoutOrNull
@@ -248,7 +249,7 @@ class MessageRepository
             (networkMessage.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType))  && networkMessage.isFile -> {
                 networkMessage.attachmentUrl?.let { url ->
                     TransferFileInfo(
-                        size = getWeightFile(url)
+                        size = getWeightFile(url) ?: getWeightMediaFile(context, url)
                     )
                 }
             }
