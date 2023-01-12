@@ -14,6 +14,7 @@ import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
+import com.crafttalk.chat.presentation.helper.ui.getWeightMediaFile
 import com.crafttalk.chat.utils.*
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
@@ -397,7 +398,7 @@ class SocketApi constructor(
                         networkMessage = messageSocket,
                         arrivalTime = currentTimestamp,
                         operatorPreview = operatorPreview,
-                        fileSize = getWeightFile(url)
+                        fileSize = getWeightFile(url) ?: getWeightMediaFile(context, url)
                     ))
                 }
             }
@@ -410,7 +411,7 @@ class SocketApi constructor(
                             networkMessage = messageSocket,
                             arrivalTime = currentTimestamp,
                             operatorPreview = operatorPreview,
-                            repliedMessageFileSize = repliedMessageUrl.run(::getWeightFile)
+                            repliedMessageFileSize = getWeightFile(repliedMessageUrl) ?: getWeightMediaFile(context, repliedMessageUrl)
                         ))
                     }
                     repliedMessageUrl != null && (messageSocket.replyToMessage.isImage || messageSocket.replyToMessage.isGif) -> {
