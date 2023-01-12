@@ -38,6 +38,19 @@ fun getSizeMediaFile(context: Context, url: String): Pair<Int, Int>? {
     }
 }
 
+fun getWeightMediaFile(context: Context, url: String): Long? {
+    return try {
+        val weight = Glide.with(context)
+            .asFile()
+            .load(url)
+            .submit()
+            .get()
+        weight.length()
+    } catch (ex: Exception) {
+        null
+    }
+}
+
 fun getWeightFile(urlPath: String): Long? {
     val CONTENT_DISPOSITION = "content-disposition"
     val template = "size="
@@ -63,10 +76,18 @@ fun getWeightFile(urlPath: String): Long? {
                     startIndex != -1 && indexEndComma == -1 && indexEndBracket == -1 -> contentDisposition.substring(startIndex)
                     else -> null
                 })?.toLong()
-                alternativeSize
+                if (alternativeSize == 0L) {
+                    null
+                } else {
+                    alternativeSize
+                }
             }
         } else {
-            size.toLong()
+            if (size == 0) {
+                null
+            } else {
+                size.toLong()
+            }
         }
     } catch (ex: Exception) {
         null
