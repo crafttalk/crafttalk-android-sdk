@@ -384,7 +384,7 @@ class SocketApi constructor(
                     }
                 }
             }
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isFile -> {
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isFile || messageSocket.isUnknownType) -> {
                 messageSocket.attachmentUrl?.let { url ->
                     insertMessage(MessageEntity.map(
                         uuid = visitor.uuid,
