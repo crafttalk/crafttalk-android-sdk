@@ -172,10 +172,11 @@ class SocketApi constructor(
             viewModelScope.launch {
                 successAuthUxFun()
             }
-            if ((ChatParams.initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
-                greet()
+            syncChat {
+                if ((ChatParams.initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
+                    greet()
+                }
             }
-            syncChat()
         }
 
         socket.on("authorization-required") {
@@ -257,10 +258,11 @@ class SocketApi constructor(
             viewModelScope.launch {
                 successAuthUxFun()
             }
-            if (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                greet()
+            syncChat {
+                if (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                    greet()
+                }
             }
-            syncChat()
         } else {
             try {
                 socket.emit(
@@ -359,9 +361,10 @@ class SocketApi constructor(
         socket?.off("history-messages-loaded")
     }
 
-    private fun syncChat() {
+    private fun syncChat(actionAfter: () -> Unit) {
         viewModelScope.launch {
             syncMessages()
+            actionAfter()
         }
     }
 
