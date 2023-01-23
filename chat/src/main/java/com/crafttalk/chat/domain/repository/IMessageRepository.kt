@@ -12,6 +12,8 @@ interface IMessageRepository {
 
     fun getMessages(): DataSource.Factory<Int, MessageEntity>
 
+    fun getAllMessages(): List<MessageEntity>
+
     fun getCountUnreadMessages(
         currentReadMessageTime: Long,
         ignoredMessageTypes: List<Int>
@@ -74,6 +76,8 @@ interface IMessageRepository {
     fun updateTypeDownloadProgressOfMessageWithAttachment(id: String, typeDownloadProgress: TypeDownloadProgress)
 
     fun removeAllInfoMessages()
+
+    fun removeAllMessages()
 
     fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit)
 }

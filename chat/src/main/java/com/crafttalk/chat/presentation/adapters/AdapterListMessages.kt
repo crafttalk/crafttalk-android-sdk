@@ -31,7 +31,7 @@ class AdapterListMessages(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<out MessageModel> {
         return when (viewType) {
             R.layout.com_crafttalk_chat_item_user_text_message -> HolderUserTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserTextMessage ?: viewType), selectReplyMessage, updateData)
-            R.layout.com_crafttalk_chat_item_server_text_message -> HolderOperatorTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorTextMessage ?: viewType), selectAction, selectButton)
+            R.layout.com_crafttalk_chat_item_server_text_message -> HolderOperatorTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorTextMessage ?: viewType), selectReplyMessage, updateData, selectAction, selectButton)
             R.layout.com_crafttalk_chat_item_user_image_message -> HolderUserImageMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserImageMessage ?: viewType), downloadFile, updateData)
             { imageName, imageUrl -> openImage(parent.context as Activity, imageName, imageUrl, downloadFile) }
             R.layout.com_crafttalk_chat_item_server_image_message -> HolderOperatorImageMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorImageMessage ?: viewType), downloadFile, updateData)
