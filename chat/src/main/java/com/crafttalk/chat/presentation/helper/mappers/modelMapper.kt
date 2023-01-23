@@ -61,7 +61,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 size = localMessage.attachmentSize,
                 height = localMessage.height,
                 width = localMessage.width,
-                failLoading = localMessage.height == null || localMessage.width == null
+                failLoading = localMessage.height == null || localMessage.height == 0 || localMessage.width == null || localMessage.width == 0
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -77,7 +77,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 size = localMessage.attachmentSize,
                 height = localMessage.height,
                 width = localMessage.width,
-                failLoading = localMessage.height == null || localMessage.width == null
+                failLoading = localMessage.height == null || localMessage.height == 0 || localMessage.width == null || localMessage.width == 0
             ),
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -112,7 +112,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
                 height = localMessage.height,
                 width = localMessage.width,
                 size = localMessage.attachmentSize,
-                failLoading = (localMessage.attachmentType in listOf( TypeFile.IMAGE, TypeFile.GIF)) && (localMessage.height == null || localMessage.width == null),
+                failLoading = (localMessage.attachmentType in listOf( TypeFile.IMAGE, TypeFile.GIF)) && (localMessage.height == null || localMessage.height == 0 || localMessage.width == null || localMessage.width == 0),
                 type = localMessage.attachmentType,
                 typeDownloadProgress = localMessage.attachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED
             ),
