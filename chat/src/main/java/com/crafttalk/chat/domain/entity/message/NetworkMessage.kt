@@ -88,6 +88,11 @@ data class NetworkMessage (
             !attachmentType.isNullOrEmpty() &&
             attachmentType == "FILE"
 
+    val isUnknownType: Boolean
+        get() = !attachmentUrl.isNullOrEmpty() &&
+                !attachmentName.isNullOrEmpty() &&
+                !attachmentType.isNullOrEmpty()
+
     val isContainsContent: Boolean
     get() = isText || isImage || isGif || isFile
 
@@ -96,6 +101,7 @@ data class NetworkMessage (
         isFile -> TypeFile.FILE
         isImage -> TypeFile.IMAGE
         isGif -> TypeFile.GIF
+        isUnknownType -> TypeFile.FILE
         else -> null
     }
 

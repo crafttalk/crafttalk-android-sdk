@@ -178,13 +178,20 @@
         <!--replied-->
         <attr name="reply_enable" format="boolean"/>
         <attr name="drawable_reply_message" format="reference"/>
-        <attr name="color_barrier_replied_message" format="color"/>
+        <attr name="color_barrier_user_replied_message" format="color"/>
+        <attr name="color_barrier_operator_replied_message" format="color"/>
         <attr name="color_text_user_replied_message" format="color"/>
+        <attr name="color_text_operator_replied_message" format="color"/>
         <attr name="color_user_replied_file_name" format="color"/>
+        <attr name="color_operator_replied_file_name" format="color"/>
         <attr name="color_user_replied_file_size" format="color"/>
+        <attr name="color_operator_replied_file_size" format="color"/>
         <attr name="size_user_replied_message" format="dimension"/>
+        <attr name="size_operator_replied_message" format="dimension"/>
         <attr name="size_user_replied_file_name" format="dimension"/>
+        <attr name="size_operator_replied_file_name" format="dimension"/>
         <attr name="size_user_replied_file_size" format="dimension"/>
+        <attr name="size_operator_replied_file_size" format="dimension"/>
 
         <attr name="layout_item_user_text_message" format="reference"/>
         <attr name="layout_item_user_image_message" format="reference"/>

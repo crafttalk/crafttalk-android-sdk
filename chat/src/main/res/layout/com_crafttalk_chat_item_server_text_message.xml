@@ -21,10 +21,20 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="@id/server_message"
-        app:layout_constraintTop_toTopOf="@id/server_message"
-        app:layout_constraintEnd_toEndOf="@id/server_message"
+        app:layout_constraintTop_toTopOf="@id/replied_message_container"
+        app:layout_constraintEnd_toEndOf="@id/barrier_content_end"
         app:layout_constraintBottom_toBottomOf="@id/server_message"
         tools:background="@drawable/com_crafttalk_chat_background_item_simple_server_message" />
+
+    <include
+        android:id="@+id/replied_message_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        layout="@layout/com_crafttalk_chat_include_replied_message"
+        app:layout_constraintTop_toBottomOf="@id/include_date"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/server_message"
@@ -39,8 +49,15 @@
         android:fontFamily="@font/com_crafttalk_chat_ubuntu_light"
         android:textFontWeight="300"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/include_date"
+        app:layout_constraintTop_toBottomOf="@id/replied_message_container"
         tools:text="Привет, мое имя Бот" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="replied_message_container,server_message" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/actions_list"
