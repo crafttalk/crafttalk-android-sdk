@@ -264,7 +264,7 @@ class MessageRepository
 
     override suspend fun searchTimestampsMessages(uuid: String, searchText: String): NetworkSearch? {
         return messageApi.searchMessages(
-            NetworkBodySearch(
+            body = NetworkBodySearch(
                 visitorUuid = uuid,
                 searchText = searchText
             )
