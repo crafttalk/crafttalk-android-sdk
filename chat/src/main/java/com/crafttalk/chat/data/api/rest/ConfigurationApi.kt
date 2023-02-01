@@ -9,6 +9,7 @@ interface ConfigurationApi {
 
     @GET("configuration/{clientId}")
     fun getConfiguration(
+        @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
         @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!
     ): Call<NetworkResultConfiguration>
 }
