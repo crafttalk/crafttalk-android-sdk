@@ -73,38 +73,38 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         }
 
         chat_view.onViewCreated(this, viewLifecycleOwner)
-        chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
-            override fun connect() { status_connection.visibility = View.GONE }
-            override fun failConnect() { status_connection.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
-            override fun lossConnection() { status_connection.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
-            override fun reconnect() { status_connection.visibility = View.GONE }
-        })
-        chat_view.setOnChatStateListener(object : ChatStateListener {
-            override fun startSynchronization() { chat_state.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
-            override fun endSynchronization() { chat_state.visibility = View.GONE }
-        })
-        chat_view.setSearchListener(object : SearchListener {
-            override fun start() {
-                search_place.findViewById<EditText>(R.id.search_input).apply {
-                    setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_hourglass),
-                        compoundDrawables[1],
-                        compoundDrawables[2],
-                        compoundDrawables[3]
-                    )
-                }
-            }
-            override fun stop() {
-                search_place.findViewById<EditText>(R.id.search_input).apply {
-                    setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_search),
-                        compoundDrawables[1],
-                        compoundDrawables[2],
-                        compoundDrawables[3]
-                    )
-                }
-            }
-        })
+//        chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
+//            override fun connect() { status_connection.visibility = View.GONE }
+//            override fun failConnect() { status_connection.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
+//            override fun lossConnection() { status_connection.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
+//            override fun reconnect() { status_connection.visibility = View.GONE }
+//        })
+//        chat_view.setOnChatStateListener(object : ChatStateListener {
+//            override fun startSynchronization() { chat_state.visibility = if (search_place.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
+//            override fun endSynchronization() { chat_state.visibility = View.GONE }
+//        })
+//        chat_view.setSearchListener(object : SearchListener {
+//            override fun start() {
+//                search_place.findViewById<EditText>(R.id.search_input).apply {
+//                    setCompoundDrawablesWithIntrinsicBounds(
+//                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_hourglass),
+//                        compoundDrawables[1],
+//                        compoundDrawables[2],
+//                        compoundDrawables[3]
+//                    )
+//                }
+//            }
+//            override fun stop() {
+//                search_place.findViewById<EditText>(R.id.search_input).apply {
+//                    setCompoundDrawablesWithIntrinsicBounds(
+//                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_search),
+//                        compoundDrawables[1],
+//                        compoundDrawables[2],
+//                        compoundDrawables[3]
+//                    )
+//                }
+//            }
+//        })
         chat_view.setOnPermissionListener(object : ChatPermissionListener {
             override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
                 callbackResult = { isGranted ->
@@ -117,37 +117,37 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 requestPermission?.launch(permissions[0])
             }
         })
-        search.setOnClickListener {
-            search.visibility = View.GONE
-            icon.visibility = View.GONE
-            chat_state.visibility = View.GONE
-            status_connection.visibility = View.GONE
-            search_place.visibility = View.VISIBLE
-            hideSoftKeyboard(chat_view)
-        }
-        search_place.findViewById<TextView>(R.id.search_cancel).setOnClickListener {
-            search_place.visibility = View.GONE
-            chat_state.visibility = View.GONE
-            status_connection.visibility = View.GONE
-            search.visibility = View.VISIBLE
-            icon.visibility = View.VISIBLE
-            search_place.findViewById<EditText>(R.id.search_input).text.clear()
-            chat_view.onSearchCancelClick()
-        }
-        search_place.findViewById<EditText>(R.id.search_input).apply {
-            setOnTouchListener { view, motionEvent ->
-                val drawableLeft = 0
-                val drawableRight = 2
-
-                if(motionEvent.action == MotionEvent.ACTION_UP) {
-                    if(motionEvent.x + left >= (right - compoundDrawables[drawableRight].bounds.width() - compoundDrawablePadding)) {
-                        text.clear()
-                    } else if (motionEvent.x < (paddingLeft + compoundDrawables[drawableLeft].bounds.width())) {
-                        chat_view.searchText(text.toString())
-                    }
-                }
-                false
-            }
+//        search.setOnClickListener {
+//            search.visibility = View.GONE
+//            icon.visibility = View.GONE
+//            chat_state.visibility = View.GONE
+//            status_connection.visibility = View.GONE
+//            search_place.visibility = View.VISIBLE
+//            hideSoftKeyboard(chat_view)
+//        }
+//        search_place.findViewById<TextView>(R.id.search_cancel).setOnClickListener {
+//            search_place.visibility = View.GONE
+//            chat_state.visibility = View.GONE
+//            status_connection.visibility = View.GONE
+//            search.visibility = View.VISIBLE
+//            icon.visibility = View.VISIBLE
+//            search_place.findViewById<EditText>(R.id.search_input).text.clear()
+//            chat_view.onSearchCancelClick()
+//        }
+//        search_place.findViewById<EditText>(R.id.search_input).apply {
+//            setOnTouchListener { view, motionEvent ->
+//                val drawableLeft = 0
+//                val drawableRight = 2
+//
+//                if(motionEvent.action == MotionEvent.ACTION_UP) {
+//                    if(motionEvent.x + left >= (right - compoundDrawables[drawableRight].bounds.width() - compoundDrawablePadding)) {
+//                        text.clear()
+//                    } else if (motionEvent.x < (paddingLeft + compoundDrawables[drawableLeft].bounds.width())) {
+//                        chat_view.searchText(text.toString())
+//                    }
+//                }
+//                false
+//            }
 //            auto search
 //            addTextChangedListener(object : TextWatcher {
 //                override fun afterTextChanged(s: Editable?) {
@@ -156,7 +156,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 //                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 //                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 //            })
-        }
+//        }
     }
 
     override fun onResume() {

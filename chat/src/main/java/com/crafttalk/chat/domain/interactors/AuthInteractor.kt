@@ -39,6 +39,9 @@ class AuthInteractor
         chatEventListener: ChatEventListener? = null
     ) {
         val currentVisitor = dataPreparation(visitor)
+        if (!currentVisitor?.uuid.isNullOrBlank()) {
+            ChatParams.visitorUuid = currentVisitor?.uuid.orEmpty()
+        }
 
         val successAuthUiWrapper = {
             if (conditionInteractor.getStatusChat() == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {

@@ -6,13 +6,15 @@ import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
+import com.crafttalk.chat.utils.ChatParams
 import java.net.URL
 import kotlin.math.min
 
 fun getSizeMediaFile(context: Context, url: String, resultSize: (height: Int?, width: Int?) -> Unit) {
     Glide.with(context)
         .asBitmap()
-        .load(url)
+        .load(createCorrectGlideUrl(url))
         .into(object : CustomTarget<Bitmap>() {
             override fun onLoadFailed(errorDrawable: Drawable?) {
                 super.onLoadFailed(errorDrawable)
@@ -29,7 +31,7 @@ fun getSizeMediaFile(context: Context, url: String): Pair<Int, Int>? {
     return try {
         val resource = Glide.with(context)
             .asBitmap()
-            .load(url)
+            .load(createCorrectGlideUrl(url))
             .submit()
             .get()
         Pair(resource.height, resource.width)
@@ -42,7 +44,7 @@ fun getWeightMediaFile(context: Context, url: String): Long? {
     return try {
         val weight = Glide.with(context)
             .asFile()
-            .load(url)
+            .load(createCorrectGlideUrl(url))
             .submit()
             .get()
         weight.length()
@@ -52,17 +54,18 @@ fun getWeightMediaFile(context: Context, url: String): Long? {
 }
 
 fun getWeightFile(urlPath: String): Long? {
-    val CONTENT_DISPOSITION = "content-disposition"
+    val contentDispositionKey = "content-disposition"
     val template = "size="
 
     return try {
         val url = URL(urlPath)
         val urlConnection = url.openConnection()
+        urlConnection.setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
         urlConnection.connect()
         val size = urlConnection.contentLength
 
         if (size == -1) {
-            val contentDisposition = urlConnection.getHeaderField(CONTENT_DISPOSITION)
+            val contentDisposition = urlConnection.getHeaderField(contentDispositionKey)
             if (contentDisposition == null) {
                 null
             } else {

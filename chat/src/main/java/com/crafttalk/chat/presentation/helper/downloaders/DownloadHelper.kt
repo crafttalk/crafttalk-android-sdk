@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.DownloadFileListener
 import com.crafttalk.chat.presentation.helper.permission.checkPermission
+import com.crafttalk.chat.utils.ChatParams
 import java.io.File
 
 fun downloadResource(
@@ -32,7 +33,9 @@ fun downloadResource(
             val dm = ContextCompat.getSystemService(context, DownloadManager::class.java)
             val downloadUri: Uri = Uri.parse(fileUrl)
             val request = DownloadManager.Request(downloadUri)
-            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            request
+                .addRequestHeader("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
+                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
                 .setAllowedOverRoaming(false)
                 .setTitle(fileName)
                 .setMimeType(fileType.value)

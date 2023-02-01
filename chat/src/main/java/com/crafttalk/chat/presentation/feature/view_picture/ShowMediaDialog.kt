@@ -12,6 +12,7 @@ import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.file.TypeFile.GIF
 import com.crafttalk.chat.domain.entity.file.TypeFile.IMAGE
 import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnackbar
+import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.MediaFileDownloadMode
 import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_gif.*
@@ -131,7 +132,7 @@ class ShowImageDialog(
                 image_navigate_back.setOnClickListener(this)
                 settingFileDownload(image_download)
                 Glide.with(context)
-                    .load(url)
+                    .load(createCorrectGlideUrl(url))
                     .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
                     .into(image_show)
             }
@@ -141,7 +142,7 @@ class ShowImageDialog(
                 settingFileDownload(gif_download)
                 Glide.with(context)
                     .asGif()
-                    .load(url)
+                    .load(createCorrectGlideUrl(url))
                     .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
                     .into(gif_show)
             }
