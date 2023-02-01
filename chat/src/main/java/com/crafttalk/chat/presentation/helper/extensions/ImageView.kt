@@ -17,6 +17,9 @@ import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
+import com.bumptech.glide.load.model.LazyHeaders
+import com.bumptech.glide.load.model.GlideUrl
+import com.crafttalk.chat.utils.ChatParams
 
 fun ImageView.setStatusMessage(message: MessageModel) {
     if (message.role == Role.USER && ChatAttr.getInstance().showUserMessageStatus) {
@@ -50,7 +53,7 @@ fun ImageView.setStatusMessage(message: MessageModel) {
 fun ImageView.setAuthorIcon(authorPreview: String? = null, showAuthorIcon: Boolean = true) {
     if (showAuthorIcon) {
         Glide.with(context)
-            .load(authorPreview ?: R.drawable.com_crafttalk_chat_ic_operator)
+            .load(createCorrectGlideUrl(authorPreview) ?: R.drawable.com_crafttalk_chat_ic_operator)
             .circleCrop()
             .apply(
                 RequestOptions().override(
@@ -184,7 +187,7 @@ fun ImageView.loadMediaFile(
 
     Glide.with(context)
         .apply { if (isGif) asGif() }
-        .load(mediaFile.url)
+        .load(createCorrectGlideUrl(mediaFile.url))
         .apply(RequestOptions().override(layoutParams.width, layoutParams.height))
         .apply(RequestOptions.bitmapTransform(GranularRoundedCorners(
             roundedTopLeft,
@@ -238,4 +241,19 @@ fun ImageView.setFileIcon(typeDownloadProgress: TypeDownloadProgress) {
             }
         )
         .into(this)
+}
+
+fun createCorrectGlideUrl(url: String?): GlideUrl? {
+    if (url == null) return null
+    val headers = if (ChatParams.visitorUuid.isEmpty()) {
+        LazyHeaders.Builder().build()
+    } else {
+        LazyHeaders.Builder()
+            .addHeader(
+                "Cookie",
+                "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}"
+            )
+            .build()
+    }
+    return GlideUrl(url, headers)
 }
