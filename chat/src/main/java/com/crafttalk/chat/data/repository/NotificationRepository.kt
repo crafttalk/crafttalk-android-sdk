@@ -20,7 +20,9 @@ class NotificationRepository
 ) : INotificationRepository {
 
     private fun checkSubscription(uuid: String, hasSubscription: Boolean, success: () -> Unit) {
-        notificationApi.checkSubscription(NetworkCheckSubscription(uuid)).enqueue(object : Callback<NetworkResultCheckSubscription> {
+        notificationApi.checkSubscription(
+            body = NetworkCheckSubscription(uuid)
+        ).enqueue(object : Callback<NetworkResultCheckSubscription> {
             override fun onResponse(call: Call<NetworkResultCheckSubscription>, response: Response<NetworkResultCheckSubscription>) {
                 if (response.isSuccessful && response.body()?.result == hasSubscription) {
                     success()
@@ -34,7 +36,9 @@ class NotificationRepository
         val pushToken = ChatParams.firebasePushToken
         if (pushToken != null) {
             checkSubscription(uuid, false) {
-                notificationApi.subscribe(NetworkSubscription(pushToken, uuid))
+                notificationApi.subscribe(
+                    body = NetworkSubscription(pushToken, uuid)
+                )
                     .enqueue(object : Callback<Unit> {
                         override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
                         override fun onFailure(call: Call<Unit>, t: Throwable) {}
@@ -43,7 +47,9 @@ class NotificationRepository
         } else {
             getToken { token ->
                 checkSubscription(uuid, false) {
-                    notificationApi.subscribe(NetworkSubscription(token, uuid))
+                    notificationApi.subscribe(
+                        body = NetworkSubscription(token, uuid)
+                    )
                         .enqueue(object : Callback<Unit> {
                             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
                             override fun onFailure(call: Call<Unit>, t: Throwable) {}
@@ -55,7 +61,9 @@ class NotificationRepository
 
     override fun unSubscribe(uuid: String) {
         checkSubscription(uuid, true) {
-            notificationApi.unsubscribe(NetworkUnsubscription(uuid)).enqueue(object : Callback<Unit> {
+            notificationApi.unsubscribe(
+                body = NetworkUnsubscription(uuid)
+            ).enqueue(object : Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
                 override fun onFailure(call: Call<Unit>, t: Throwable) {}
             })

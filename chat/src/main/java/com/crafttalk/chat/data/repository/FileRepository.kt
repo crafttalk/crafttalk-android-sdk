@@ -13,6 +13,7 @@ import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.NetworkBodyStructureUploadFile
 import com.crafttalk.chat.domain.entity.file.TypeUpload
 import com.crafttalk.chat.domain.repository.IFileRepository
+import com.crafttalk.chat.utils.ChatParams
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,9 +35,8 @@ class FileRepository
     private val fileRequestHelper: RequestHelper
 ) : IFileRepository {
 
-    private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: String, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
+    private fun uploadFile(uuid: String, fileName: String, fileRequestBody: String, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val request = fileApi.uploadFile(
-            visitorToken = token,
             networkBody = NetworkBodyStructureUploadFile(
                 fileName = fileName,
                 uuid = uuid,
@@ -58,7 +58,7 @@ class FileRepository
         })
     }
 
-    private fun uploadFile(uuid: String, token: String, fileName: String, fileRequestBody: RequestBody, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
+    private fun uploadFile(uuid: String, fileName: String, fileRequestBody: RequestBody, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val body: MultipartBody.Part = MultipartBody.Part.createFormData(ApiParams.FILE_FIELD_NAME, fileName, fileRequestBody)
         val fileNameRequestBody = RequestBody.create(
             ContentTypeValue.TEXT_PLAIN.value.toMediaTypeOrNull(),
@@ -70,7 +70,6 @@ class FileRepository
         )
 
         val request = fileApi.uploadFile(
-            visitorToken = token,
             fileName = fileNameRequestBody,
             uuid = uuidRequestBody,
             fileB64 = body
@@ -96,11 +95,11 @@ class FileRepository
         when (type) {
             TypeUpload.JSON -> {
                 val fileRequestBody = fileRequestHelper.generateJsonRequestBody(file.uri, file.type) ?: return
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
+                uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {
                 val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(file.uri) ?: return
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
+                uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
         }
     }
@@ -112,12 +111,12 @@ class FileRepository
             TypeUpload.JSON -> {
                 val fileRequestBody = fileRequestHelper.generateJsonRequestBody(bitmap)
                 Log.d("TEST_DAYA_M", "uploadMediaFile fileRequestBody1 - ${fileRequestBody}; ")
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
+                uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {
                 val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(bitmap, fileName)
                 Log.d("TEST_DAYA_M", "uploadMediaFile fileRequestBody2 - ${fileRequestBody}; ")
-                uploadFile(visitor.uuid, visitor.token, fileName, fileRequestBody, handleUploadFile)
+                uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
         }
     }
@@ -138,6 +137,7 @@ class FileRepository
         try {
             val url = URL(documentUrl)
             val urlConnection = url.openConnection() as HttpURLConnection
+            urlConnection.setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
             urlConnection.connect()
             val inputStream = urlConnection.inputStream
             val fileOutputStream = FileOutputStream(correctFile)
@@ -151,10 +151,13 @@ class FileRepository
 
             downloadedSuccess()
         } catch (ex: FileNotFoundException) {
+            correctFile.delete()
             downloadedFail()
         } catch (ex: MalformedURLException) {
+            correctFile.delete()
             downloadedFail()
         } catch (ex: IOException) {
+            correctFile.delete()
             downloadedFail()
         }
     }

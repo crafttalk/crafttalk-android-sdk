@@ -220,7 +220,7 @@ class SocketApi constructor(
                     (messageSocket.id != null || !messageDao.isNotEmpty())
                 ) {
                     when {
-                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
+                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.TRANSFER_TO_OPERATOR.valueType)) -> {
                             countNewMessages++
                             chatMessageListener?.getNewMessages(countNewMessages)
                         }

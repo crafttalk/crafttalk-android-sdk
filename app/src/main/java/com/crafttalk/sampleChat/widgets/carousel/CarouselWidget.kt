@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
 import com.crafttalk.sampleChat.R
 
 data class CarouselWidget(
@@ -44,7 +45,7 @@ fun bindCarouselWidget(
         val itemView = inflater.inflate(R.layout.item_widget_carousel, listView, false)
         itemView.findViewById<ImageView>(R.id.item_carousel_img).apply {
             Glide.with(context)
-                .load(itemCarouselWidget.image_url)
+                .load(createCorrectGlideUrl(itemCarouselWidget.image_url))
                 .into(this)
         }
         itemView.findViewById<TextView>(R.id.item_carousel_title).apply {
