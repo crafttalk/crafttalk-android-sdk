@@ -39,7 +39,7 @@ class MessageRepository
         .getMessages(namespace)
 
     override fun getAllMessages() = messagesDao
-        .getAllMessages()
+        .getAllMessages(namespace)
 
     override fun getCountUnreadMessages(
         currentReadMessageTime: Long,
