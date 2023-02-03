@@ -13,6 +13,9 @@ interface MessagesDao {
     @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace ORDER BY timestamp DESC, arrival_time DESC")
     fun getMessages(namespace: String): DataSource.Factory<Int, MessageEntity>
 
+    @Query("SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace ORDER BY timestamp DESC, arrival_time DESC")
+    fun getAllMessages(namespace: String): List<MessageEntity>
+
     @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE namespace = :namespace LIMIT 1)")
     fun isNotEmpty(namespace: String): Boolean
 

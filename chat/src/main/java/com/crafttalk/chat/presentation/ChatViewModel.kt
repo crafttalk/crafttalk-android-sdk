@@ -169,17 +169,20 @@ class ChatViewModel
     }
 
     fun onStartChatView(visitor: Visitor?) {
-        launchUI {
-            delay(ChatAttr.getInstance().timeDelayed)
-            authChatInteractor.logIn(
-                visitor = visitor,
-                successAuthUi = ::deliverMessagesToUser,
-                sync = sync,
-                failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
-                firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
-                updateCurrentReadMessageTime = updateCurrentReadMessageTime,
-                chatEventListener = chatEventListener
-            )
+        launchIO {
+            messageInteractor.clearDbIfMessagesDuplicated()
+            launchUI {
+                delay(ChatAttr.getInstance().timeDelayed)
+                authChatInteractor.logIn(
+                    visitor = visitor,
+                    successAuthUi = ::deliverMessagesToUser,
+                    sync = sync,
+                    failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
+                    firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
+                    updateCurrentReadMessageTime = updateCurrentReadMessageTime,
+                    chatEventListener = chatEventListener
+                )
+            }
         }
     }
 
@@ -195,29 +198,35 @@ class ChatViewModel
     }
 
     fun registration(vararg args: String) {
-        launchUI {
-            delay(ChatAttr.getInstance().timeDelayed)
-            authChatInteractor.logIn(
-                visitor = Visitor.map(args),
-                successAuthUi = ::deliverMessagesToUser,
-                sync = sync,
-                failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
-                updateCurrentReadMessageTime = updateCurrentReadMessageTime,
-                chatEventListener = chatEventListener
-            )
+        launchIO {
+            messageInteractor.clearDbIfMessagesDuplicated()
+            launchUI {
+                delay(ChatAttr.getInstance().timeDelayed)
+                authChatInteractor.logIn(
+                    visitor = Visitor.map(args),
+                    successAuthUi = ::deliverMessagesToUser,
+                    sync = sync,
+                    failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
+                    updateCurrentReadMessageTime = updateCurrentReadMessageTime,
+                    chatEventListener = chatEventListener
+                )
+            }
         }
     }
 
     fun reload() {
-        launchUI {
-            delay(ChatAttr.getInstance().timeDelayed)
-            authChatInteractor.logIn(
-                successAuthUi = ::deliverMessagesToUser,
-                sync = sync,
-                failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
-                updateCurrentReadMessageTime = updateCurrentReadMessageTime,
-                chatEventListener = chatEventListener
-            )
+        launchIO {
+            messageInteractor.clearDbIfMessagesDuplicated()
+            launchUI {
+                delay(ChatAttr.getInstance().timeDelayed)
+                authChatInteractor.logIn(
+                    successAuthUi = ::deliverMessagesToUser,
+                    sync = sync,
+                    failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
+                    updateCurrentReadMessageTime = updateCurrentReadMessageTime,
+                    chatEventListener = chatEventListener
+                )
+            }
         }
     }
 

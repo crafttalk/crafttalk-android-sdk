@@ -6,6 +6,7 @@ import com.crafttalk.chat.domain.entity.notification.NetworkResultCheckSubscript
 import com.crafttalk.chat.domain.entity.notification.NetworkSubscription
 import com.crafttalk.chat.domain.entity.notification.NetworkUnsubscription
 import com.crafttalk.chat.domain.repository.INotificationRepository
+import com.crafttalk.chat.utils.ChatParams
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
@@ -19,7 +20,9 @@ class NotificationRepository
 ) : INotificationRepository {
 
     private fun checkSubscription(uuid: String, hasSubscription: Boolean, success: () -> Unit) {
-        notificationApi.checkSubscription(NetworkCheckSubscription(uuid)).enqueue(object : Callback<NetworkResultCheckSubscription> {
+        notificationApi.checkSubscription(
+            body = NetworkCheckSubscription(uuid)
+        ).enqueue(object : Callback<NetworkResultCheckSubscription> {
             override fun onResponse(call: Call<NetworkResultCheckSubscription>, response: Response<NetworkResultCheckSubscription>) {
                 if (response.isSuccessful && response.body()?.result == hasSubscription) {
                     success()
@@ -30,19 +33,37 @@ class NotificationRepository
     }
 
     override fun subscribe(uuid: String) {
-        getToken { token ->
+        val pushToken = ChatParams.firebasePushToken
+        if (pushToken != null) {
             checkSubscription(uuid, false) {
-                notificationApi.subscribe(NetworkSubscription(token, uuid)).enqueue(object : Callback<Unit> {
-                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
-                    override fun onFailure(call: Call<Unit>, t: Throwable) {}
-                })
+                notificationApi.subscribe(
+                    body = NetworkSubscription(pushToken, uuid)
+                )
+                    .enqueue(object : Callback<Unit> {
+                        override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
+                        override fun onFailure(call: Call<Unit>, t: Throwable) {}
+                    })
+            }
+        } else {
+            getToken { token ->
+                checkSubscription(uuid, false) {
+                    notificationApi.subscribe(
+                        body = NetworkSubscription(token, uuid)
+                    )
+                        .enqueue(object : Callback<Unit> {
+                            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
+                            override fun onFailure(call: Call<Unit>, t: Throwable) {}
+                        })
+                }
             }
         }
     }
 
     override fun unSubscribe(uuid: String) {
         checkSubscription(uuid, true) {
-            notificationApi.unsubscribe(NetworkUnsubscription(uuid)).enqueue(object : Callback<Unit> {
+            notificationApi.unsubscribe(
+                body = NetworkUnsubscription(uuid)
+            ).enqueue(object : Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {}
                 override fun onFailure(call: Call<Unit>, t: Throwable) {}
             })

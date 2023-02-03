@@ -14,6 +14,7 @@ import com.crafttalk.chat.presentation.ChatEventListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
+import com.crafttalk.chat.presentation.helper.ui.getWeightMediaFile
 import com.crafttalk.chat.utils.*
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
@@ -174,10 +175,11 @@ class SocketApi constructor(
             viewModelScope.launch {
                 successAuthUxFun()
             }
-            if ((ChatParams.initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
-                greet()
+            syncChat {
+                if ((ChatParams.initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
+                    greet()
+                }
             }
-            syncChat()
         }
 
         socket.on("authorization-required") {
@@ -214,7 +216,7 @@ class SocketApi constructor(
                     (messageSocket.id != null || !messageDao.isNotEmpty(namespace))
                 ) {
                     when {
-                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType == MessageType.VISITOR_MESSAGE.valueType) -> {
+                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.TRANSFER_TO_OPERATOR.valueType)) -> {
                             countNewMessages++
                             chatMessageListener?.getNewMessages(countNewMessages)
                         }
@@ -259,10 +261,11 @@ class SocketApi constructor(
             viewModelScope.launch {
                 successAuthUxFun()
             }
-            if (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                greet()
+            syncChat {
+                if (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                    greet()
+                }
             }
-            syncChat()
         } else {
             try {
                 socket.emit(
@@ -361,9 +364,10 @@ class SocketApi constructor(
         socket?.off("history-messages-loaded")
     }
 
-    private fun syncChat() {
+    private fun syncChat(actionAfter: () -> Unit) {
         viewModelScope.launch {
             syncMessages()
+            actionAfter()
         }
     }
 
@@ -386,14 +390,14 @@ class SocketApi constructor(
                     }
                 }
             }
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isFile -> {
+            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isFile || messageSocket.isUnknownType) -> {
                 messageSocket.attachmentUrl?.let { url ->
                     insertMessage(MessageEntity.map(
                         uuid = visitor.uuid,
                         networkMessage = messageSocket,
                         arrivalTime = currentTimestamp,
                         operatorPreview = operatorPreview,
-                        fileSize = getWeightFile(url)
+                        fileSize = getWeightFile(url) ?: getWeightMediaFile(context, url)
                     ))
                 }
             }
@@ -406,7 +410,7 @@ class SocketApi constructor(
                             networkMessage = messageSocket,
                             arrivalTime = currentTimestamp,
                             operatorPreview = operatorPreview,
-                            repliedMessageFileSize = repliedMessageUrl.run(::getWeightFile)
+                            repliedMessageFileSize = getWeightFile(repliedMessageUrl) ?: getWeightMediaFile(context, repliedMessageUrl)
                         ))
                     }
                     repliedMessageUrl != null && (messageSocket.replyToMessage.isImage || messageSocket.replyToMessage.isGif) -> {

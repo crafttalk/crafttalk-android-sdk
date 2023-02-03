@@ -13,16 +13,16 @@ interface FileApi {
     @Headers("Content-Type: application/json")
     @POST("webchat/{clientId}/upload-file")
     fun uploadFile(
+        @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
         @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
-        @Query("auth_token") visitorToken: String,
         @Body networkBody: NetworkBodyStructureUploadFile
     ): Call<String>
 
     @Multipart
     @POST("webchat/{clientId}/upload-file")
     fun uploadFile(
+        @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
         @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
-        @Query("auth_token") visitorToken: String,
         @Part(ApiParams.FILE_NAME) fileName: RequestBody,
         @Part(ApiParams.UUID) uuid: RequestBody,
         @Part fileB64: MultipartBody.Part
