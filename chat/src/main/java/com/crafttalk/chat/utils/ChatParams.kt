@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit
 object ChatParams {
     internal var visitorUuid: String = ""
     internal var authMode: AuthType? = null
+    internal var enableSearch: Boolean? = null
     internal var pageSize = 20
     internal var countDownloadedMessages = 20
     internal var initialMessageMode: InitialMessageMode? = null

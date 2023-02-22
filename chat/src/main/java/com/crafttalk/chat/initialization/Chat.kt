@@ -141,5 +141,4 @@ object Chat {
             actionIOAfterLogOut()
         }
     }
-
 }
