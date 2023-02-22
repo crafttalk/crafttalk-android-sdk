@@ -92,6 +92,10 @@ object Chat {
         ChatParams.firebasePushToken = firebasePushToken
     }
 
+    fun setNewFieldsForRegistrationVisitor(fields: HashMap<String, Any>) {
+        ChatParams.addedFieldsForRegistrationVisitor = fields
+    }
+
     fun createSession() {
         conditionInteractor?.createSessionChat()
     }

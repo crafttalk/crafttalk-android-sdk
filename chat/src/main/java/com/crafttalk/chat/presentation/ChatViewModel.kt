@@ -203,7 +203,7 @@ class ChatViewModel
             launchUI {
                 delay(ChatAttr.getInstance().timeDelayed)
                 authChatInteractor.logIn(
-                    visitor = Visitor.map(args),
+                    visitor = Visitor.map(args, ChatParams.addedFieldsForRegistrationVisitor),
                     successAuthUi = ::deliverMessagesToUser,
                     sync = sync,
                     failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },

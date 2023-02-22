@@ -27,6 +27,8 @@ object ChatParams {
     internal var fileCallTimeout: Long? = null
     internal var timeUnitTimeout: TimeUnit = TimeUnit.SECONDS
 
+    internal var addedFieldsForRegistrationVisitor: HashMap<String, Any>? = null
+
     internal var glueMessage: String? = null
     internal var methodGetPayloadTypeWidget: (widgetId: String) -> Class<out Any>? = { null }
 }
