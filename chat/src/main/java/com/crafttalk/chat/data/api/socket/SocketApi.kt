@@ -173,7 +173,13 @@ class SocketApi constructor(
                 successAuthUxFun()
             }
             syncChat {
-                if ((ChatParams.initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
+                if (
+                    (ChatParams.showInitialMessage == false) &&
+                    (
+                            (ChatParams.sendInitialMessageOnStartDialog == true) ||
+                            (ChatParams.sendInitialMessageOnOpen == true && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
+                    )
+                ) {
                     greet()
                 }
             }
@@ -259,7 +265,10 @@ class SocketApi constructor(
                 successAuthUxFun()
             }
             syncChat {
-                if (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
+                if (
+                    (ChatParams.showInitialMessage == false) &&
+                    (ChatParams.sendInitialMessageOnOpen == true && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
+                ) {
                     greet()
                 }
             }
