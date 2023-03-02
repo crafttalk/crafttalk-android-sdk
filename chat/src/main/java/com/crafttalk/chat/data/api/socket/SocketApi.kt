@@ -344,7 +344,11 @@ class SocketApi constructor(
 
         socket?.on("history-messages-loaded") {
             viewModelScope.launch {
+                Log.d("TEST_LOG_HISTORY", "all: ${it};")
                 val listMessages = gson.fromJson(it[0].toString().replace("&amp;", "&"), Array<NetworkMessage>::class.java)
+                listMessages.forEach {
+                    Log.d("TEST_LOG_HISTORY", "history item: ${it};")
+                }
                 channel.send(listMessages.toList())
             }
         }

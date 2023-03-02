@@ -1,6 +1,7 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.repository.IConditionRepository
@@ -46,10 +47,13 @@ class ConditionRepository
     }
 
     override fun getFlagAllHistoryLoaded(): Boolean {
-        return pref.getBoolean(FIELD_IS_ALL_HISTORY_LOADED, false)
+        return pref.getBoolean(FIELD_IS_ALL_HISTORY_LOADED, false).apply {
+            Log.d("TEST_LOG_HISTORY", "getFlagAllHistoryLoaded isAllHistoryLoaded: ${this};")
+        }
     }
 
     override fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean) {
+        Log.d("TEST_LOG_HISTORY", "saveFlagAllHistoryLoaded isAllHistoryLoaded: ${isAllHistoryLoaded};")
         val prefEditor = pref.edit()
         prefEditor.putBoolean(FIELD_IS_ALL_HISTORY_LOADED, isAllHistoryLoaded)
         prefEditor.apply()

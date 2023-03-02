@@ -1,6 +1,7 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.toData
@@ -102,6 +103,7 @@ class MessageRepository
                         )
                     }.await()
                 }
+                Log.d("TEST_LOG_HISTORY", "uploadMessages size: ${listMessages?.size} list: ${listMessages};")
                 socketApi.closeHistoryListener()
                 listMessages ?: break
 
@@ -114,6 +116,7 @@ class MessageRepository
 //                        it.selectedAction.isNullOrBlank()
 //                    }.size
                     if (listMessages.isEmpty() /*|| countRealMessages < ChatParams.countDownloadedMessages*/) {
+                        Log.d("TEST_LOG_HISTORY", "uploadMessages allMessageLoaded 1;")
                         allMessageLoaded()
                     }
                     break
@@ -126,12 +129,18 @@ class MessageRepository
                 fullPullMessages.addAll(listMessages.filter { it.timestamp >= startTime })
 
                 if (firstTimeMessage == null) {
+                    Log.d("TEST_LOG_HISTORY", "uploadMessages allMessageLoaded 2;")
                     allMessageLoaded()
                     break
                 }
                 if (firstTimeMessage <= startTime) break
 
                 lastTimestamp = firstTimeMessage
+            }
+
+            Log.d("TEST_LOG_HISTORY", "uploadMessages fullPullMessages size ${fullPullMessages.size};")
+            fullPullMessages.forEach {
+                Log.d("TEST_LOG_HISTORY", "uploadMessages fullPullMessages item ${it};")
             }
 
             if (fullPullMessages.isEmpty()) return listOf()
