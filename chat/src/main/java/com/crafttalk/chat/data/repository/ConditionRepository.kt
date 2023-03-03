@@ -8,6 +8,7 @@ import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.ChatStatus
 import javax.inject.Inject
+import android.util.Log
 
 class ConditionRepository
 @Inject constructor(
@@ -46,10 +47,13 @@ class ConditionRepository
     }
 
     override fun getFlagAllHistoryLoaded(): Boolean {
-        return pref.getBoolean(FIELD_IS_ALL_HISTORY_LOADED, false)
+        return pref.getBoolean(FIELD_IS_ALL_HISTORY_LOADED, false).apply {
+            Log.d("TEST_LOG_HISTORY", "getFlagAllHistoryLoaded isAllHistoryLoaded: ${this};")
+        }
     }
 
     override fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean) {
+        Log.d("TEST_LOG_HISTORY", "saveFlagAllHistoryLoaded isAllHistoryLoaded: ${isAllHistoryLoaded};")
         val prefEditor = pref.edit()
         prefEditor.putBoolean(FIELD_IS_ALL_HISTORY_LOADED, isAllHistoryLoaded)
         prefEditor.apply()
