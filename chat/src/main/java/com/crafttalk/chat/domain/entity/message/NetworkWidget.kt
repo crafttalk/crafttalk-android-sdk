@@ -7,11 +7,11 @@ import com.google.gson.annotations.SerializedName
 import java.lang.reflect.Type
 
 data class NetworkWidget(
-    @SerializedName(value = "id")
+    @SerializedName(value = "id", alternate = ["widgetId"])
     val widgetId: String,
     @SerializedName(value = "description")
     val description: String,
-    @SerializedName(value = "params")
+    @SerializedName(value = "params", alternate = ["payload"])
     val params: Any
 ) {
 
