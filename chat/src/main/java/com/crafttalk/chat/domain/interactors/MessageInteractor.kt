@@ -1,5 +1,6 @@
 package com.crafttalk.chat.domain.interactors
 
+import android.util.Log
 import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.message.MessageType
@@ -61,7 +62,7 @@ class MessageInteractor
     }
 
     suspend fun uploadHistoryMessages(
-        eventAllHistoryLoaded: () -> Unit,
+        eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit,
         uploadHistoryComplete: () -> Unit,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit,
         executeAnyway: Boolean
@@ -70,29 +71,41 @@ class MessageInteractor
         val statusExistenceMessages = conditionRepository.getStatusExistenceMessages()
         val flagAllHistoryLoaded = conditionRepository.getFlagAllHistoryLoaded()
 
+        Log.d("TEST_LOG_HISTORY", "uploadHistoryMessages interactor statusExistenceMessages: ${statusExistenceMessages}; flagAllHistoryLoaded: ${flagAllHistoryLoaded};")
         when {
-            !statusExistenceMessages && executeAnyway -> uploadHistoryComplete()
-            statusExistenceMessages && (!flagAllHistoryLoaded || executeAnyway) -> messageRepository
-                .getTimeFirstMessage()
-                ?.let { firstMessageTime ->
-                    messageRepository.uploadMessages(
-                        uuid = visitor.uuid,
-                        startTime = null,
-                        endTime = firstMessageTime,
-                        updateReadPoint = { false },
-                        syncMessagesAcrossDevices = {},
-                        returnedEmptyPool = {
-                            eventAllHistoryLoaded()
-                            conditionRepository.saveFlagAllHistoryLoaded(true)
-                        },
-                        getPersonPreview = { personId ->
-                            personInteractor.getPersonPreview(personId, visitor.token)
-                        },
-                        getFileInfo = messageRepository::getFileInfo,
-                        updateSearchMessagePosition = updateSearchMessagePosition
-                    )
-                    uploadHistoryComplete()
-                }
+            !statusExistenceMessages && executeAnyway -> {
+                Log.d("TEST_LOG_HISTORY", "uploadHistoryMessages interactor 1;")
+                uploadHistoryComplete()
+            }
+            statusExistenceMessages && (!flagAllHistoryLoaded || executeAnyway) -> {
+                Log.d("TEST_LOG_HISTORY", "uploadHistoryMessages interactor 2;")
+                messageRepository
+                    .getTimeFirstMessage()
+                    ?.let { firstMessageTime ->
+                        messageRepository.uploadMessages(
+                            uuid = visitor.uuid,
+                            startTime = null,
+                            endTime = firstMessageTime,
+                            updateReadPoint = { false },
+                            syncMessagesAcrossDevices = {},
+                            allMessageLoaded = {
+                                eventStateHistoryLoaded(true)
+                                conditionRepository.saveFlagAllHistoryLoaded(true)
+                            },
+                            notAllMessageLoaded = {
+                                eventStateHistoryLoaded(false)
+                                conditionRepository.saveFlagAllHistoryLoaded(false)
+                            },
+                            getPersonPreview = { personId ->
+                                personInteractor.getPersonPreview(personId, visitor.token)
+                            },
+                            getFileInfo = messageRepository::getFileInfo,
+                            updateSearchMessagePosition = updateSearchMessagePosition
+                        )
+                        uploadHistoryComplete()
+                    }
+            }
+            else -> Log.d("TEST_LOG_HISTORY", "uploadHistoryMessages interactor 3;")
         }
     }
 
@@ -100,7 +113,7 @@ class MessageInteractor
     suspend fun syncMessages(
         updateReadPoint: (newTimeMark: Long) -> Boolean,
         syncMessagesAcrossDevices: (indexFirstUnreadMessage: Int) -> Unit,
-        eventAllHistoryLoaded: () -> Unit,
+        eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
@@ -119,7 +132,12 @@ class MessageInteractor
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
                     syncMessagesAcrossDevices = syncMessagesAcrossDevicesWrapper,
-                    returnedEmptyPool = {},
+                    allMessageLoaded = {
+                        Log.d("TEST_LOG_HISTORY", "allMessageLoaded 12;")
+                    },
+                    notAllMessageLoaded = {
+                        Log.d("TEST_LOG_HISTORY", "notAllMessageLoaded 12;")
+                    },
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)
                     },
@@ -137,9 +155,15 @@ class MessageInteractor
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
                     syncMessagesAcrossDevices = syncMessagesAcrossDevices,
-                    returnedEmptyPool = {
-                        eventAllHistoryLoaded()
+                    allMessageLoaded = {
+                        Log.d("TEST_LOG_HISTORY", "allMessageLoaded 13;")
+                        eventStateHistoryLoaded(true)
                         conditionRepository.saveFlagAllHistoryLoaded(true)
+                    },
+                    notAllMessageLoaded = {
+                        Log.d("TEST_LOG_HISTORY", "notAllMessageLoaded 13;")
+                        eventStateHistoryLoaded(false)
+                        conditionRepository.saveFlagAllHistoryLoaded(false)
                     },
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)

@@ -1,6 +1,7 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.toData
@@ -85,6 +86,7 @@ class MessageRepository
         updateReadPoint: (newPosition: Long) -> Boolean,
         syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         allMessageLoaded: () -> Unit,
+        notAllMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
@@ -102,6 +104,7 @@ class MessageRepository
                         )
                     }.await()
                 }
+                Log.d("TEST_LOG_HISTORY", "uploadMessages size: ${listMessages?.size} list: ${listMessages};")
                 socketApi.closeHistoryListener()
                 listMessages ?: break
 
@@ -113,9 +116,10 @@ class MessageRepository
 //                        it.isContainsContent &&
 //                        it.selectedAction.isNullOrBlank()
 //                    }.size
-                    if (listMessages.isEmpty() /*|| countRealMessages < ChatParams.countDownloadedMessages*/) {
-                        allMessageLoaded()
-                    }
+//                    if (listMessages.isEmpty() /*|| countRealMessages < ChatParams.countDownloadedMessages*/) {
+//                        allMessageLoaded()
+//                    }
+                    Log.d("TEST_LOG_HISTORY", "uploadMessages allMessageLoaded 1;")
                     break
                 }
 
@@ -126,7 +130,7 @@ class MessageRepository
                 fullPullMessages.addAll(listMessages.filter { it.timestamp >= startTime })
 
                 if (firstTimeMessage == null) {
-                    allMessageLoaded()
+                    Log.d("TEST_LOG_HISTORY", "uploadMessages allMessageLoaded 2;")
                     break
                 }
                 if (firstTimeMessage <= startTime) break
@@ -134,7 +138,17 @@ class MessageRepository
                 lastTimestamp = firstTimeMessage
             }
 
-            if (fullPullMessages.isEmpty()) return listOf()
+            Log.d("TEST_LOG_HISTORY", "uploadMessages fullPullMessages size ${fullPullMessages.size};")
+            fullPullMessages.forEach {
+                Log.d("TEST_LOG_HISTORY", "uploadMessages fullPullMessages item ${it};")
+            }
+
+            if (fullPullMessages.isEmpty()) {
+                allMessageLoaded()
+                return listOf()
+            } else {
+                notAllMessageLoaded()
+            }
 
             val actionSelectionMessages = fullPullMessages.filter { !it.selectedAction.isNullOrBlank() && it.messageType == MessageType.VISITOR_MESSAGE.valueType }.map { it.selectedAction ?: "" }
             val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }

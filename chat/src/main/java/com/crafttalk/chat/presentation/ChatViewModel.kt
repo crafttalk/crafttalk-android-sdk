@@ -2,6 +2,7 @@ package com.crafttalk.chat.presentation
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
@@ -73,6 +74,7 @@ class ChatViewModel
         ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
             override fun onItemAtEndLoaded(itemAtEnd: MessageModel) {
                 super.onItemAtEndLoaded(itemAtEnd)
+                Log.d("TEST_LOG_HISTORY", "uploadMessages VM isAllHistoryLoaded: ${isAllHistoryLoaded};")
                 if (!isAllHistoryLoaded) {
                     uploadOldMessages()
                 }
@@ -89,8 +91,8 @@ class ChatViewModel
             uploadMessages()
         }
     }
-    private val eventAllHistoryLoaded: () -> Unit = {
-        isAllHistoryLoaded = true
+    private val eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit = {
+        isAllHistoryLoaded = it
     }
     private val sync: suspend () -> Unit = {
         launchUI { chatStateListener?.startSynchronization() }
@@ -98,7 +100,7 @@ class ChatViewModel
         messageInteractor.syncMessages(
             updateReadPoint = updateCurrentReadMessageTime,
             syncMessagesAcrossDevices = ::syncMessagesAcrossDevices,
-            eventAllHistoryLoaded = eventAllHistoryLoaded,
+            eventStateHistoryLoaded = eventStateHistoryLoaded,
             updateSearchMessagePosition = searchInteractor::updateMessagePosition
         )
     }
@@ -233,7 +235,7 @@ class ChatViewModel
     fun uploadOldMessages(uploadHistoryComplete: () -> Unit = {}, executeAnyway: Boolean = false) {
         launchIO {
             messageInteractor.uploadHistoryMessages(
-                eventAllHistoryLoaded = eventAllHistoryLoaded,
+                eventStateHistoryLoaded = eventStateHistoryLoaded,
                 uploadHistoryComplete = uploadHistoryComplete,
                 updateSearchMessagePosition = searchInteractor::updateMessagePosition,
                 executeAnyway = executeAnyway
