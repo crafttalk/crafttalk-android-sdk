@@ -102,7 +102,7 @@ class MessageRepository
                             timestamp = lastTimestamp
                         )
                     }.await()
-                }
+                }?.filter { it.messageType != MessageType.INITIAL_MESSAGE.valueType || ChatParams.showInitialMessage == true }
                 socketApi.closeHistoryListener()
                 listMessages ?: break
 
@@ -110,7 +110,7 @@ class MessageRepository
                     fullPullMessages.addAll(listMessages)
 //                    Раскоментить когда исправиться задача ...
 //                    val countRealMessages = listMessages.filter {
-//                        it.messageType == MessageType.VISITOR_MESSAGE.valueType &&
+//                        it.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType) &&
 //                        it.isContainsContent &&
 //                        it.selectedAction.isNullOrBlank()
 //                    }.size
@@ -122,7 +122,7 @@ class MessageRepository
 
                 val firstTimeMessage = listMessages
                     .sortedBy { it.timestamp }
-                    .find { it.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.TRANSFER_TO_OPERATOR.valueType) }?.timestamp
+                    .find { it.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType, MessageType.TRANSFER_TO_OPERATOR.valueType) }?.timestamp
 
                 fullPullMessages.addAll(listMessages.filter { it.timestamp >= startTime })
 
@@ -141,10 +141,14 @@ class MessageRepository
                 notAllMessageLoaded()
             }
 
+            if (fullPullMessages.find { it.messageType == MessageType.INITIAL_MESSAGE.valueType } != null) {
+                messagesDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+            }
+
             val actionSelectionMessages = fullPullMessages.filter { !it.selectedAction.isNullOrBlank() && it.messageType == MessageType.VISITOR_MESSAGE.valueType }.map { it.selectedAction ?: "" }
             val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }
 
-            val operatorMessagesWithContent = fullPullMessages.filter { it.isReply && it.messageType == MessageType.VISITOR_MESSAGE.valueType && it.isContainsContent }.map { networkMessage ->
+            val operatorMessagesWithContent = fullPullMessages.filter { it.isReply && it.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType) && it.isContainsContent }.map { networkMessage ->
                 val fileInfo = getFileInfo(context, networkMessage)
                 MessageEntity.mapOperatorMessage(
                     uuid = uuid,
