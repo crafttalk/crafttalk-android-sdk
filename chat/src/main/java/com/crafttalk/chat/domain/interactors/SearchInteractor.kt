@@ -156,7 +156,8 @@ class SearchInteractor
             endTime = firstMessageTime,
             updateReadPoint = { false },
             syncMessagesAcrossDevices = {},
-            returnedEmptyPool = { allMessageLoaded = true },
+            allMessageLoaded = { allMessageLoaded = true },
+            notAllMessageLoaded = { allMessageLoaded = false },
             getPersonPreview = { personId ->
                 personInteractor.getPersonPreview(personId, visitor.token)
             },
@@ -173,7 +174,8 @@ class SearchInteractor
             endTime = startTime,
             updateReadPoint = { false },
             syncMessagesAcrossDevices = {},
-            returnedEmptyPool = { allMessageLoaded = true },
+            allMessageLoaded = { allMessageLoaded = true },
+            notAllMessageLoaded = { allMessageLoaded = false },
             getPersonPreview = { personId ->
                 personInteractor.getPersonPreview(personId, visitor.token)
             },

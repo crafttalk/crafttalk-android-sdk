@@ -85,6 +85,7 @@ class MessageRepository
         updateReadPoint: (newPosition: Long) -> Boolean,
         syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         allMessageLoaded: () -> Unit,
+        notAllMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
@@ -113,9 +114,9 @@ class MessageRepository
 //                        it.isContainsContent &&
 //                        it.selectedAction.isNullOrBlank()
 //                    }.size
-                    if (listMessages.isEmpty() /*|| countRealMessages < ChatParams.countDownloadedMessages*/) {
-                        allMessageLoaded()
-                    }
+//                    if (listMessages.isEmpty() /*|| countRealMessages < ChatParams.countDownloadedMessages*/) {
+//                        allMessageLoaded()
+//                    }
                     break
                 }
 
@@ -126,7 +127,6 @@ class MessageRepository
                 fullPullMessages.addAll(listMessages.filter { it.timestamp >= startTime })
 
                 if (firstTimeMessage == null) {
-                    allMessageLoaded()
                     break
                 }
                 if (firstTimeMessage <= startTime) break
@@ -134,7 +134,12 @@ class MessageRepository
                 lastTimestamp = firstTimeMessage
             }
 
-            if (fullPullMessages.isEmpty()) return listOf()
+            if (fullPullMessages.isEmpty()) {
+                allMessageLoaded()
+                return listOf()
+            } else {
+                notAllMessageLoaded()
+            }
 
             val actionSelectionMessages = fullPullMessages.filter { !it.selectedAction.isNullOrBlank() && it.messageType == MessageType.VISITOR_MESSAGE.valueType }.map { it.selectedAction ?: "" }
             val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }
