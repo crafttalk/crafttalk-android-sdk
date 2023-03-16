@@ -173,9 +173,19 @@ class SocketApi constructor(
                 successAuthUxFun()
             }
             syncChat {
-                if ((ChatParams.initialMessageMode == InitialMessageMode.SEND_AFTER_AUTHORIZATION) || (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)) {
-                    greet()
+                if (ChatParams.showInitialMessage == false) {
+                    messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+                    if (
+                        (ChatParams.sendInitialMessageOnStartDialog == true) ||
+                        (ChatParams.sendInitialMessageOnOpen == true && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
+                    ) {
+                        greet()
+                    }
                 }
+//                ChatParams.startMessage?.let {
+//                    sendMessage(it, null)
+//                    ChatParams.startMessage = null
+//                }
             }
         }
 
@@ -201,10 +211,19 @@ class SocketApi constructor(
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
                 val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java)
+
+                if (messageSocket.messageType == MessageType.INITIAL_MESSAGE.valueType) {
+                    messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+                    if (ChatParams.showInitialMessage == false) {
+                        return@launch
+                    }
+                }
+
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.VISITOR_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
+                    MessageType.INITIAL_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
                     MessageType.MERGE_HISTORY.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
@@ -213,7 +232,11 @@ class SocketApi constructor(
                     (messageSocket.id != null || !messageDao.isNotEmpty())
                 ) {
                     when {
-                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.TRANSFER_TO_OPERATOR.valueType)) -> {
+                        (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType in listOf(
+                            MessageType.VISITOR_MESSAGE.valueType,
+                            MessageType.INITIAL_MESSAGE.valueType,
+                            MessageType.TRANSFER_TO_OPERATOR.valueType
+                        )) -> {
                             countNewMessages++
                             chatMessageListener?.getNewMessages(countNewMessages)
                         }
@@ -259,9 +282,19 @@ class SocketApi constructor(
                 successAuthUxFun()
             }
             syncChat {
-                if (ChatParams.initialMessageMode == InitialMessageMode.SEND_ON_OPEN && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
-                    greet()
+                if (ChatParams.showInitialMessage == false) {
+                    messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+                    if (
+                        ChatParams.sendInitialMessageOnOpen == true &&
+                        chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP
+                    ) {
+                        greet()
+                    }
                 }
+//                ChatParams.startMessage?.let {
+//                    sendMessage(it, null)
+//                    ChatParams.startMessage = null
+//                }
             }
         } else {
             try {
@@ -398,7 +431,7 @@ class SocketApi constructor(
                     ))
                 }
             }
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && messageSocket.isText -> {
+            (messageSocket.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType)) && messageSocket.isText -> {
                 val repliedMessageUrl = messageSocket.replyToMessage?.attachmentUrl
                 when {
                     repliedMessageUrl != null && messageSocket.replyToMessage.isFile -> {
