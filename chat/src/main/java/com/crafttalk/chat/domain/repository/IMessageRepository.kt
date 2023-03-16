@@ -45,7 +45,8 @@ interface IMessageRepository {
         endTime: Long,
         updateReadPoint: (newTimeMark: Long) -> Boolean,
         syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
-        returnedEmptyPool: () -> Unit,
+        allMessageLoaded: () -> Unit,
+        notAllMessageLoaded: () -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
