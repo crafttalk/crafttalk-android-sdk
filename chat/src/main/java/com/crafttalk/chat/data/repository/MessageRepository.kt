@@ -155,7 +155,7 @@ class MessageRepository
             }
 
             if (fullPullMessages.find { it.messageType == MessageType.INITIAL_MESSAGE.valueType } != null) {
-                messagesDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+                messagesDao.deleteAllMessageByType(namespace, MessageType.INITIAL_MESSAGE.valueType)
             }
 
             val actionSelectionMessages = fullPullMessages.filter { !it.selectedAction.isNullOrBlank() && it.messageType == MessageType.VISITOR_MESSAGE.valueType }.map { it.selectedAction ?: "" }

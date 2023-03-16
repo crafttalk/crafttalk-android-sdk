@@ -177,7 +177,7 @@ class SocketApi constructor(
             }
             syncChat {
                 if (ChatParams.showInitialMessage == false) {
-                    messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+                    messageDao.deleteAllMessageByType(namespace, MessageType.INITIAL_MESSAGE.valueType)
                     if (
                         (ChatParams.sendInitialMessageOnStartDialog == true) ||
                         (ChatParams.sendInitialMessageOnOpen == true && chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP)
@@ -216,7 +216,7 @@ class SocketApi constructor(
                 val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java)
 
                 if (messageSocket.messageType == MessageType.INITIAL_MESSAGE.valueType) {
-                    messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+                    messageDao.deleteAllMessageByType(namespace, MessageType.INITIAL_MESSAGE.valueType)
                     if (ChatParams.showInitialMessage == false) {
                         return@launch
                     }
@@ -286,7 +286,7 @@ class SocketApi constructor(
             }
             syncChat {
                 if (ChatParams.showInitialMessage == false) {
-                    messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
+                    messageDao.deleteAllMessageByType(namespace, MessageType.INITIAL_MESSAGE.valueType)
                     if (
                         ChatParams.sendInitialMessageOnOpen == true &&
                         chatStatus == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP
