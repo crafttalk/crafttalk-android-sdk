@@ -26,7 +26,7 @@ class Visitor (
         return "${uuid}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"
     }
 
-    fun addNewFiled(fieldName: String, fieldValue: Any) {
+    fun addNewField(fieldName: String, fieldValue: Any) {
         addedFields[fieldName] = fieldValue
     }
 
@@ -62,7 +62,7 @@ class Visitor (
         private const val DEFAULT_CONTRACT = "test_contract"
         private const val DEFAULT_BIRTHDAY = "28.05.1975"
 
-        fun map(args: Array<out String>): Visitor {
+        fun map(args: Array<out String>, fields: HashMap<String, Any>?): Visitor {
             var firstName: String
             var lastName: String
             var phone: String
@@ -87,7 +87,12 @@ class Visitor (
                 phone,
                 DEFAULT_CONTRACT,
                 DEFAULT_BIRTHDAY
-            )
+            ).apply {
+                addedFields.clear()
+                fields?.forEach {
+                    addNewField(it.key, it.value)
+                }
+            }
         }
 
     }
