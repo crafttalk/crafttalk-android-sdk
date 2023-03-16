@@ -2,6 +2,7 @@ package com.crafttalk.chat.domain.entity.message
 
 enum class MessageType(val valueType: Int) {
     VISITOR_MESSAGE(1), //сообщение клиента
+    INITIAL_MESSAGE(30), //сообщение, которое регулируется полем showInitialMessage
     OPERATOR_IS_TYPING(13), // оператор набирает сообщение
     OPERATOR_STOPPED_TYPING(14), // оператор закончил набирать сообщение
     READING_CONFIRMATION(4), // подтверждение прочтения сообщения клиентом  - ?
@@ -21,6 +22,7 @@ enum class MessageType(val valueType: Int) {
         fun getMessageTypeByValueType(valueType: Int): MessageType {
             return when(valueType) {
                 1 -> VISITOR_MESSAGE
+                30 -> INITIAL_MESSAGE
                 13 -> OPERATOR_IS_TYPING
                 14 -> OPERATOR_STOPPED_TYPING
                 4 -> READING_CONFIRMATION

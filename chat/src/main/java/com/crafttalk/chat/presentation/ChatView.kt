@@ -291,9 +291,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
         infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
         upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
+        ChatParams.enableSearch = chatAttr.enableSearch
         search.visibility = when {
-            (chatAttr.showInternetConnectionState || chatAttr.showChatState) && chatAttr.enableSearch -> View.VISIBLE
-            (chatAttr.showInternetConnectionState || chatAttr.showChatState) && !chatAttr.enableSearch -> View.INVISIBLE
+            chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.INVISIBLE
             else -> View.GONE
         }
         voice_input.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
@@ -510,6 +510,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             when (it) {
                 DisplayableUIObject.NOTHING -> {
                     chat_place.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    search.visibility = when (search.visibility) {
+                        View.GONE -> View.GONE
+                        else -> View.INVISIBLE
+                    }
                     auth_form.visibility = View.GONE
                     warning.visibility = View.GONE
                     if (ChatAttr.getInstance().showStartingProgress) {
@@ -520,7 +525,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 DisplayableUIObject.SYNCHRONIZATION -> {
                     auth_form.visibility = View.GONE
                     warning.visibility = View.GONE
+                    search_place.visibility = View.GONE
                     chat_place.visibility = View.VISIBLE
+                    search.visibility = when {
+                        search.visibility == View.GONE -> View.GONE
+                        ChatParams.enableSearch == true -> View.VISIBLE
+                        else -> View.INVISIBLE
+                    }
                     if (ChatAttr.getInstance().showStartingProgress) {
                         stopProgressBar(loading)
                     }
@@ -532,7 +543,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 DisplayableUIObject.CHAT -> {
                     auth_form.visibility = View.GONE
                     warning.visibility = View.GONE
+                    search_place.visibility = View.GONE
                     chat_place.visibility = View.VISIBLE
+                    search.visibility = when {
+                        search.visibility == View.GONE -> View.GONE
+                        ChatParams.enableSearch == true -> View.VISIBLE
+                        else -> View.INVISIBLE
+                    }
                     if (ChatAttr.getInstance().showStartingProgress) {
                         stopProgressBar(loading)
                     }
@@ -543,6 +560,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 DisplayableUIObject.FORM_AUTH -> {
                     chat_place.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    search.visibility = when (search.visibility) {
+                        View.GONE -> View.GONE
+                        else -> View.INVISIBLE
+                    }
                     warning.visibility = View.GONE
                     auth_form.visibility = View.VISIBLE
                     if (ChatAttr.getInstance().showStartingProgress) {
@@ -552,6 +574,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 DisplayableUIObject.WARNING -> {
                     chat_place.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    search.visibility = when (search.visibility) {
+                        View.GONE -> View.GONE
+                        else -> View.INVISIBLE
+                    }
                     auth_form.visibility = View.GONE
                     warning.visibility = View.VISIBLE
                     warning_refresh.visibility = View.VISIBLE

@@ -51,7 +51,6 @@ object Chat {
         urlChatHost: String,
         urlChatNameSpace: String,
         authType: AuthType = AuthType.AUTH_WITHOUT_FORM,
-        initialMessageMode: InitialMessageMode? = InitialMessageMode.SEND_ON_OPEN,
         operatorPreviewMode: OperatorPreviewMode = OperatorPreviewMode.CACHE,
         operatorNameMode: OperatorNameMode = OperatorNameMode.IMMUTABLE,
         clickableLinkMode: ClickableLinkMode = ClickableLinkMode.ALL,
@@ -68,7 +67,6 @@ object Chat {
         fileCallTimeout: Long? = null
     ) {
         ChatParams.authMode = authType
-        ChatParams.initialMessageMode = initialMessageMode
         ChatParams.urlChatScheme = urlChatScheme
         ChatParams.urlChatHost = urlChatHost
         ChatParams.urlChatNameSpace = urlChatNameSpace
@@ -90,6 +88,10 @@ object Chat {
 
     fun setFirebasePushToken(firebasePushToken: String) {
         ChatParams.firebasePushToken = firebasePushToken
+    }
+
+    fun setNewFieldsForRegistrationVisitor(fields: HashMap<String, Any>) {
+        ChatParams.addedFieldsForRegistrationVisitor = fields
     }
 
     fun createSession() {
@@ -137,5 +139,4 @@ object Chat {
             actionIOAfterLogOut()
         }
     }
-
 }

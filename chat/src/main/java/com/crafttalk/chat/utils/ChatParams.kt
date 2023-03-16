@@ -6,9 +6,9 @@ import java.util.concurrent.TimeUnit
 object ChatParams {
     internal var visitorUuid: String = ""
     internal var authMode: AuthType? = null
+    internal var enableSearch: Boolean? = null
     internal var pageSize = 20
     internal var countDownloadedMessages = 20
-    internal var initialMessageMode: InitialMessageMode? = null
     internal var urlChatScheme: String? = null
     internal var urlChatHost: String? = null
     internal var urlChatNameSpace: String? = null
@@ -27,6 +27,12 @@ object ChatParams {
     internal var fileCallTimeout: Long? = null
     internal var timeUnitTimeout: TimeUnit = TimeUnit.SECONDS
 
+    internal var addedFieldsForRegistrationVisitor: HashMap<String, Any>? = null
+
     internal var glueMessage: String? = null
+    internal var sendInitialMessageOnOpen: Boolean? = null
+    internal var sendInitialMessageOnStartDialog: Boolean? = null
+    internal var showInitialMessage: Boolean? = null
+
     internal var methodGetPayloadTypeWidget: (widgetId: String) -> Class<out Any>? = { null }
 }
