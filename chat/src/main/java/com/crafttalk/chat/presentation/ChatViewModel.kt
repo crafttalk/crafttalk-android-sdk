@@ -89,8 +89,8 @@ class ChatViewModel
             uploadMessages()
         }
     }
-    private val eventAllHistoryLoaded: () -> Unit = {
-        isAllHistoryLoaded = true
+    private val eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit = {
+        isAllHistoryLoaded = it
     }
     private val sync: suspend () -> Unit = {
         launchUI { chatStateListener?.startSynchronization() }
@@ -98,7 +98,7 @@ class ChatViewModel
         messageInteractor.syncMessages(
             updateReadPoint = updateCurrentReadMessageTime,
             syncMessagesAcrossDevices = ::syncMessagesAcrossDevices,
-            eventAllHistoryLoaded = eventAllHistoryLoaded,
+            eventStateHistoryLoaded = eventStateHistoryLoaded,
             updateSearchMessagePosition = searchInteractor::updateMessagePosition
         )
     }
@@ -203,7 +203,7 @@ class ChatViewModel
             launchUI {
                 delay(ChatAttr.getInstance().timeDelayed)
                 authChatInteractor.logIn(
-                    visitor = Visitor.map(args),
+                    visitor = Visitor.map(args, ChatParams.addedFieldsForRegistrationVisitor),
                     successAuthUi = ::deliverMessagesToUser,
                     sync = sync,
                     failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
@@ -233,7 +233,7 @@ class ChatViewModel
     fun uploadOldMessages(uploadHistoryComplete: () -> Unit = {}, executeAnyway: Boolean = false) {
         launchIO {
             messageInteractor.uploadHistoryMessages(
-                eventAllHistoryLoaded = eventAllHistoryLoaded,
+                eventStateHistoryLoaded = eventStateHistoryLoaded,
                 uploadHistoryComplete = uploadHistoryComplete,
                 updateSearchMessagePosition = searchInteractor::updateMessagePosition,
                 executeAnyway = executeAnyway

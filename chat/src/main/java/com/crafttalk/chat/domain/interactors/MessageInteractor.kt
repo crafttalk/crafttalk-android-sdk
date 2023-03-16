@@ -61,7 +61,7 @@ class MessageInteractor
     }
 
     suspend fun uploadHistoryMessages(
-        eventAllHistoryLoaded: () -> Unit,
+        eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit,
         uploadHistoryComplete: () -> Unit,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit,
         executeAnyway: Boolean
@@ -81,9 +81,13 @@ class MessageInteractor
                         endTime = firstMessageTime,
                         updateReadPoint = { false },
                         syncMessagesAcrossDevices = {},
-                        returnedEmptyPool = {
-                            eventAllHistoryLoaded()
+                        allMessageLoaded = {
+                            eventStateHistoryLoaded(true)
                             conditionRepository.saveFlagAllHistoryLoaded(true)
+                        },
+                        notAllMessageLoaded = {
+                            eventStateHistoryLoaded(false)
+                            conditionRepository.saveFlagAllHistoryLoaded(false)
                         },
                         getPersonPreview = { personId ->
                             personInteractor.getPersonPreview(personId, visitor.token)
@@ -100,7 +104,7 @@ class MessageInteractor
     suspend fun syncMessages(
         updateReadPoint: (newTimeMark: Long) -> Boolean,
         syncMessagesAcrossDevices: (indexFirstUnreadMessage: Int) -> Unit,
-        eventAllHistoryLoaded: () -> Unit,
+        eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
     ) {
         val visitor = visitorInteractor.getVisitor() ?: return
@@ -119,7 +123,8 @@ class MessageInteractor
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
                     syncMessagesAcrossDevices = syncMessagesAcrossDevicesWrapper,
-                    returnedEmptyPool = {},
+                    allMessageLoaded = {},
+                    notAllMessageLoaded = {},
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)
                     },
@@ -137,9 +142,13 @@ class MessageInteractor
                     endTime = 0,
                     updateReadPoint = updateReadPoint,
                     syncMessagesAcrossDevices = syncMessagesAcrossDevices,
-                    returnedEmptyPool = {
-                        eventAllHistoryLoaded()
+                    allMessageLoaded = {
+                        eventStateHistoryLoaded(true)
                         conditionRepository.saveFlagAllHistoryLoaded(true)
+                    },
+                    notAllMessageLoaded = {
+                        eventStateHistoryLoaded(false)
+                        conditionRepository.saveFlagAllHistoryLoaded(false)
                     },
                     getPersonPreview = { personId ->
                         personInteractor.getPersonPreview(personId, visitor.token)
