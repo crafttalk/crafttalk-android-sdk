@@ -94,7 +94,6 @@ Chat.init(
 - urlChatHost - указывает, какое доменное имя будет использоваться при подключении
 - urlChatNameSpace - указывает, по какому nameSpace будет происходить подключение
 - authType - может принимать AUTH_WITH_FORM или AUTH_WITHOUT_FORM. Это поле определяет, как будет проходить аутентификация для пользователя
-- initialMessageMode - может принимать SEND_ON_OPEN (по умолчанию), SEND_AFTER_AUTHORIZATION или null. Это поле определяет, в какой момент будет отправлено событие /start. SEND_ON_OPEN соответствует sendInitialMessageOnOpen, SEND_AFTER_AUTHORIZATION соответствует sendInitialMessageOnStartDialog, null - не отправлять вообще /start (соответствует showInitialMessage).
 - operatorPreviewMode - может принимать CACHE (по умолчанию) или ALWAYS_REQUEST. Это поле определяет режим сохранения иконки оператора.
 - operatorNameMode - может принимать IMMUTABLE (по умолчанию) или ACTUAL. Это поле определяет режим обновления имени оператора у старых сообщений, отправленным этим оператором.
 - clickableLinkMode - может принимать ALL (по умолчанию) или SECURE. Это поле определяет, какие из ссылок будут кликабельными, а какие нет.
