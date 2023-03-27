@@ -20,7 +20,7 @@ class WidgetContainer {
         val jsonObject = JSONObject(widget)
         if (!jsonObject.has("id")) return null
         if (!jsonObject.has("payload")) return null
-        val widgetId = jsonObject["widgetId"].toString()
+        val widgetId = jsonObject["id"].toString()
         val widgetDescription = if (jsonObject.has("description")) {
             jsonObject["description"].toString()
         } else {
