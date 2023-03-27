@@ -442,6 +442,7 @@ Drawable:
 - layout_item_operator_union_message - задает layout для смешанного(текст + фото/гифка/файл) сообщения от бота/оператора
 - layout_item_transfer_message - задает layout для сообщения от бота о переводе на оператора
 - layout_item_info_message - задает layout для сообщения склейки от бота
+- layout_item_widget_message - задает layout для виджетов
 
 ## Listeners
 

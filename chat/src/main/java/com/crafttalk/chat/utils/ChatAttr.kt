@@ -213,6 +213,7 @@ private constructor(
     val layoutItemOperatorUnionMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_union_message)
     val layoutItemTransferMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_transfer_message)
     val layoutItemInfoMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_info_message)
+    val layoutItemWidgetMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_widget_message)
 
     //    download
     val mediaFileDownloadMode = attrArr.getInt(R.styleable.ChatView_media_file_download_mode, 0).let { MediaFileDownloadMode.values()[it] }
