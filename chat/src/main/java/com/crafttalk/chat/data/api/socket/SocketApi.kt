@@ -210,7 +210,10 @@ class SocketApi constructor(
                 val gson = GsonBuilder()
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
-                val messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java)
+                val messageSocket = gson.fromJson(
+                    messageJson.toString().replace("&amp;", "&"),
+                    NetworkMessage::class.java
+                ) ?: return@launch
 
                 if (messageSocket.messageType == MessageType.INITIAL_MESSAGE.valueType) {
                     messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
@@ -379,7 +382,10 @@ class SocketApi constructor(
 
         socket?.on("history-messages-loaded") {
             viewModelScope.launch {
-                val listMessages = gson.fromJson(it[0].toString().replace("&amp;", "&"), Array<NetworkMessage>::class.java)
+                val listMessages = gson.fromJson(
+                    it[0].toString().replace("&amp;", "&"),
+                    Array<NetworkMessage>::class.java
+                ) ?: arrayOf()
                 channel.send(listMessages.toList())
             }
         }
