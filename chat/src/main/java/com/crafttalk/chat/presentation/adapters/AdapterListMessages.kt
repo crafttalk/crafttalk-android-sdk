@@ -56,7 +56,7 @@ class AdapterListMessages(
             )
             R.layout.com_crafttalk_chat_item_transfer_message -> HolderTransferMessage(parent.inflate(ChatAttr.getInstance().layoutItemTransferMessage ?: viewType))
             R.layout.com_crafttalk_chat_item_info_message -> HolderInfoMessage(parent.inflate(ChatAttr.getInstance().layoutItemInfoMessage ?: viewType))
-            R.layout.com_crafttalk_chat_item_server_widget_message -> HolderOperatorWidgetMessage(parent.inflate(viewType), parent.inflate(R.layout.com_crafttalk_chat_item_default_widget), getWidgetView, findItemsViewOnWidget, bindWidget)
+            R.layout.com_crafttalk_chat_item_server_widget_message -> HolderOperatorWidgetMessage(parent.inflate(ChatAttr.getInstance().layoutItemWidgetMessage ?: viewType), parent.inflate(R.layout.com_crafttalk_chat_item_default_widget), getWidgetView, findItemsViewOnWidget, bindWidget)
             else -> HolderDefaultMessage(parent.inflate(R.layout.com_crafttalk_chat_item_default_message))
         }
     }
