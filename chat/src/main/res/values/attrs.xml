@@ -44,6 +44,7 @@
         <attr name="color_operator_gif_message_time" format="color"/>
         <attr name="color_operator_image_message_time" format="color"/>
         <attr name="color_operator_text_message_time" format="color"/>
+        <attr name="color_operator_widget_message_time" format="color"/>
         <attr name="color_user_message_status" format="color"/>
         <attr name="color_user_file_message_status" format="color"/>
         <attr name="color_user_gif_message_status" format="color"/>
