@@ -23,7 +23,7 @@ class Visitor (
     private val addedFields = HashMap<String, Any>()
 
     override fun toString(): String {
-        return "${uuid}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"
+        return "${uuid}, ${token}, ${firstName}, ${lastName}, ${email}, ${phone}, ${contract}, ${birthday}"
     }
 
     fun addNewField(fieldName: String, fieldValue: Any) {
