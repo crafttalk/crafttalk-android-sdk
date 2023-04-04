@@ -1,10 +1,12 @@
 package com.crafttalk.chat.domain.interactors
 
+import android.util.Log
 import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.domain.repository.IMessageRepository
+import java.lang.Exception
 import javax.inject.Inject
 
 class MessageInteractor
@@ -19,8 +21,22 @@ class MessageInteractor
         messageRepository.getMessages()
 
     fun clearDbIfMessagesDuplicated() {
-        val messages = messageRepository.getAllMessages()
-        if (messages.size != messages.distinctBy { it.id }.size) {
+        Log.d("LOG_DATA_CLEAR", "clearDbIfMessagesDuplicated")
+        try {
+            val messages = messageRepository.getAllMessages()
+            Log.d("LOG_DATA_CLEAR", "clearDbIfMessagesDuplicated 2")
+            if (messages.size != messages.distinctBy { it.id }.size) {
+                Log.d("LOG_DATA_CLEAR", "clearDbIfMessagesDuplicated 3")
+                messages.forEach {
+                    Log.d("LOG_DATA_CLEAR", "item - ${it};")
+                }
+                messageRepository.removeAllMessages()
+            }
+        } catch (ex: Exception) {
+            Log.d("LOG_DATA_CLEAR", "clearDbIfMessagesDuplicated 4 msg: ${ex.message};")
+            ex.stackTrace.forEach {
+                Log.d("LOG_DATA_CLEAR", "clearDbIfMessagesDuplicated st: ${it};")
+            }
             messageRepository.removeAllMessages()
         }
     }
