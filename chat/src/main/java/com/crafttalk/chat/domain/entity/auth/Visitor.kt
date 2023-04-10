@@ -1,5 +1,7 @@
 package com.crafttalk.chat.domain.entity.auth
 
+import com.crafttalk.chat.utils.getOrNull
+import com.crafttalk.chat.utils.getStringOrNull
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
 import java.io.Serializable
@@ -95,6 +97,41 @@ class Visitor (
             }
         }
 
+        fun getVisitorFromJson(json: String?): Visitor? {
+            json ?: return null
+            val jsonObject = JSONObject(json)
+            val visitor = Visitor(
+                uuid = jsonObject.getStringOrNull("uuid").orEmpty(),
+                token = jsonObject.getStringOrNull("token").orEmpty(),
+                firstName = jsonObject.getStringOrNull("first_name").orEmpty(),
+                lastName = jsonObject.getStringOrNull("last_name").orEmpty(),
+                email = jsonObject.getStringOrNull("email"),
+                phone = jsonObject.getStringOrNull("phone"),
+                contract = jsonObject.getStringOrNull("contract"),
+                birthday = jsonObject.getStringOrNull("birthday"),
+                hash = jsonObject.getStringOrNull("hash")
+            )
+            visitor.addedFields.clear()
+            jsonObject.keys()
+                .asSequence()
+                .filter { it !in listOf(
+                    "uuid",
+                    "token",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "phone",
+                    "contract",
+                    "birthday",
+                    "hash"
+                ) }
+                .forEach { key ->
+                    jsonObject.getOrNull(key.toString())?.let { value ->
+                        visitor.addNewField(key.toString(), value)
+                    }
+                }
+            return visitor
+        }
     }
 
 }
