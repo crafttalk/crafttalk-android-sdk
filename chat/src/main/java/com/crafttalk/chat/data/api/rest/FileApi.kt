@@ -14,6 +14,7 @@ interface FileApi {
     @POST("webchat/{clientId}/upload-file")
     fun uploadFile(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
+        @Header("uuid") uuid: String = ChatParams.visitorUuid,
         @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
         @Body networkBody: NetworkBodyStructureUploadFile
     ): Call<String>
@@ -22,6 +23,7 @@ interface FileApi {
     @POST("webchat/{clientId}/upload-file")
     fun uploadFile(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
+        @Header("uuid") uuidHearder: String = ChatParams.visitorUuid,
         @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
         @Part(ApiParams.FILE_NAME) fileName: RequestBody,
         @Part(ApiParams.UUID) uuid: RequestBody,
