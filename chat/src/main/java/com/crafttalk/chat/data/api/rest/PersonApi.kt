@@ -13,7 +13,7 @@ interface PersonApi {
     @GET("webchat/{clientId}/get-operator/{personId}")
     fun getPersonPreview(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
-        @Header("uuid") uuid: String = ChatParams.visitorUuid,
+        @Header("ct-webchat-client-id") uuid: String = ChatParams.visitorUuid,
         @Path("clientId") clientId: String = ChatParams.urlChatNameSpace!!,
         @Path("personId") personId : String,
         @Query("auth_token") visitorToken: String
