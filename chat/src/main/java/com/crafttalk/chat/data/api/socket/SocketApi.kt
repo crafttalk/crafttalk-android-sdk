@@ -405,7 +405,7 @@ class SocketApi constructor(
         val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
-                messageSocket.attachmentUrl?.let { url ->
+                messageSocket.correctAttachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
                             insertMessage(MessageEntity.map(
@@ -421,7 +421,7 @@ class SocketApi constructor(
                 }
             }
             (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isFile || messageSocket.isUnknownType) -> {
-                messageSocket.attachmentUrl?.let { url ->
+                messageSocket.correctAttachmentUrl?.let { url ->
                     insertMessage(MessageEntity.map(
                         uuid = visitor.uuid,
                         networkMessage = messageSocket,
@@ -432,7 +432,7 @@ class SocketApi constructor(
                 }
             }
             (messageSocket.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType)) && messageSocket.isText -> {
-                val repliedMessageUrl = messageSocket.replyToMessage?.attachmentUrl
+                val repliedMessageUrl = messageSocket.replyToMessage?.correctAttachmentUrl
                 when {
                     repliedMessageUrl != null && messageSocket.replyToMessage.isFile -> {
                         insertMessage(MessageEntity.map(
