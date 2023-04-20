@@ -1,4 +1,4 @@
-package com.crafttalk.sampleChat
+package com.crafttalk.sampleChat.chat_with_counter
 
 import android.os.Bundle
 import android.util.Log
@@ -7,10 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.initialization.ChatMessageListener
+import com.crafttalk.sampleChat.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_chat_with_counter.*
 
-class MainActivity: AppCompatActivity() {
+class ChatActivity: AppCompatActivity() {
 
     private val mOnNavigationItemSelectedListener = object: BottomNavigationView.OnNavigationItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -48,7 +49,7 @@ class MainActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_chat_with_counter)
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if (savedInstanceState == null) {
             loadFragment(HomeFragment())
@@ -83,5 +84,4 @@ class MainActivity: AppCompatActivity() {
         super.onDestroy()
         Chat.destroySession()
     }
-
 }
