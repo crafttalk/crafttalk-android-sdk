@@ -12,6 +12,7 @@ interface MessageApi {
     @GET("webhooks/webchat/{namespace}/message_feed")
     fun uploadMessages(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
+        @Header("ct-webchat-client-id") uuidHeader: String = ChatParams.visitorUuid,
         @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!,
         @Query("visitor_uuid") uuid: String,
         @Query("last_timestamp") timestamp: Long,
@@ -22,6 +23,7 @@ interface MessageApi {
     @POST("webchat/search")
     fun searchMessages(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
+        @Header("ct-webchat-client-id") uuid: String = ChatParams.visitorUuid,
         @Body body: NetworkBodySearch
     ) : Call<NetworkSearch>
 }

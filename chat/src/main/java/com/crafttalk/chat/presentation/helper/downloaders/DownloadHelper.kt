@@ -35,6 +35,7 @@ fun downloadResource(
             val request = DownloadManager.Request(downloadUri)
             request
                 .addRequestHeader("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
+                .addRequestHeader("ct-webchat-client-id", ChatParams.visitorUuid)
                 .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
                 .setAllowedOverRoaming(false)
                 .setTitle(fileName)
