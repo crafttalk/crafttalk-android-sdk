@@ -246,6 +246,7 @@ override fun onDestroyView() {
 - color_operator_gif_message_time - устанавливает цвет времени сообщения с гифкой от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
 - color_operator_image_message_time - устанавливает цвет времени сообщения с фото от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
 - color_operator_text_message_time - устанавливает цвет времени сообщения с текстом и для смешанного сообщения (текст + фото/гифка/файл) от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
+- color_operator_widget_message_time - устанавливает цвет времени сообщения для виджета от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
 - color_user_message_status - устанавливает цвет иконок статуса для всех типов сообщений
 - color_user_file_message_status - устанавливает цвет иконок статуса для сообщения с файлом, если не указано, то используется значение из color_user_message_status
 - color_user_gif_message_status - устанавливает цвет иконок статуса для сообщения с гифкой, если не указано, то используется значение из color_user_message_status

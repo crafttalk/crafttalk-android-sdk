@@ -105,6 +105,13 @@ data class NetworkMessage (
         else -> null
     }
 
+    val correctAttachmentUrl: String?
+    get() = if (attachmentUrl?.startsWith("/webchat/file/") == true) {
+        "${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}${attachmentUrl}"
+    } else {
+        attachmentUrl
+    }
+
     companion object {
 
         fun map(messageEntity: MessageEntity) = NetworkMessage(

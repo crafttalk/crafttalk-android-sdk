@@ -68,6 +68,7 @@ private constructor(
     val colorOperatorGifMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_gif_message_time, colorOperatorMessageTime)
     val colorOperatorImageMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_image_message_time, colorOperatorMessageTime)
     val colorOperatorTextMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_text_message_time, colorOperatorMessageTime)
+    val colorOperatorWidgetMessageTime = attrArr.getColor(R.styleable.ChatView_color_operator_widget_message_time, colorOperatorMessageTime)
     private val colorUserMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_message_status, ContextCompat.getColor(context, R.color.com_crafttalk_chat_default_color_info))
     val colorUserFileMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_file_message_status, colorUserMessageStatus)
     val colorUserGifMessageStatus = attrArr.getColor(R.styleable.ChatView_color_user_gif_message_status, colorUserMessageStatus)

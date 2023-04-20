@@ -170,7 +170,7 @@ class ChatViewModel
 
     fun onStartChatView(visitor: Visitor?) {
         launchIO {
-            messageInteractor.clearDbIfMessagesDuplicated()
+            messageInteractor.clearDbIfMessagesDuplicated(context)
             launchUI {
                 delay(ChatAttr.getInstance().timeDelayed)
                 authChatInteractor.logIn(
@@ -199,7 +199,7 @@ class ChatViewModel
 
     fun registration(vararg args: String) {
         launchIO {
-            messageInteractor.clearDbIfMessagesDuplicated()
+            messageInteractor.clearDbIfMessagesDuplicated(context)
             launchUI {
                 delay(ChatAttr.getInstance().timeDelayed)
                 authChatInteractor.logIn(
@@ -216,7 +216,7 @@ class ChatViewModel
 
     fun reload() {
         launchIO {
-            messageInteractor.clearDbIfMessagesDuplicated()
+            messageInteractor.clearDbIfMessagesDuplicated(context)
             launchUI {
                 delay(ChatAttr.getInstance().timeDelayed)
                 authChatInteractor.logIn(
