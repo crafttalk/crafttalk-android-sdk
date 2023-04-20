@@ -1,5 +1,6 @@
 package com.crafttalk.chat.domain.interactors
 
+import android.content.Context
 import androidx.paging.DataSource
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.message.MessageType
@@ -18,10 +19,14 @@ class MessageInteractor
     fun getAllMessages(): DataSource.Factory<Int, MessageEntity> =
         messageRepository.getMessages()
 
-    fun clearDbIfMessagesDuplicated() {
-        val messages = messageRepository.getAllMessages()
-        if (messages.size != messages.distinctBy { it.id }.size) {
-            messageRepository.removeAllMessages()
+    fun clearDbIfMessagesDuplicated(context: Context) {
+        try {
+            val messages = messageRepository.getAllMessages()
+            if (messages.size != messages.distinctBy { it.id }.size) {
+                context.deleteDatabase("chat.db")
+            }
+        } catch (ex: Exception) {
+            context.deleteDatabase("chat.db")
         }
     }
 

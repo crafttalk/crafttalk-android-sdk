@@ -253,6 +253,10 @@ fun createCorrectGlideUrl(url: String?): GlideUrl? {
                 "Cookie",
                 "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}"
             )
+            .addHeader(
+                "ct-webchat-client-id",
+                ChatParams.visitorUuid
+            )
             .build()
     }
     return GlideUrl(url, headers)

@@ -3,13 +3,11 @@ package com.crafttalk.chat.data.repository
 import android.content.SharedPreferences
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IVisitorRepository
-import com.google.gson.Gson
 import javax.inject.Inject
 
 class VisitorRepository
 @Inject constructor(
-    private val pref: SharedPreferences,
-    private val gson: Gson
+    private val pref: SharedPreferences
 ) : IVisitorRepository {
 
     private var visitor: Visitor? = null
@@ -23,7 +21,7 @@ class VisitorRepository
     override fun getVisitorFromSharedPreferences(): Visitor? {
         return if (pref.getBoolean(FIELD_IS_VISITOR, false)) {
             val json = pref.getString(FIELD_VISITOR, "")
-            gson.fromJson(json, Visitor::class.java)
+            Visitor.getVisitorFromJson(json)
         } else {
             null
         }
