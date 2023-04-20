@@ -16,6 +16,7 @@ interface NotificationApi {
     @POST("webchat/{namespace}/set-user-subscription")
     fun subscribe(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
+        @Header("ct-webchat-client-id") uuid: String = ChatParams.visitorUuid,
         @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!,
         @Body body: NetworkSubscription
     ) : Call<Unit>
@@ -23,6 +24,7 @@ interface NotificationApi {
     @POST("webchat/{namespace}/delete-user-subscription")
     fun unsubscribe(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
+        @Header("ct-webchat-client-id") uuid: String = ChatParams.visitorUuid,
         @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!,
         @Body body: NetworkUnsubscription
     ) : Call<Unit>
@@ -30,6 +32,7 @@ interface NotificationApi {
     @POST("webchat/{namespace}/check-user-subscription")
     fun checkSubscription(
         @Header("Cookie") cookie: String = "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}",
+        @Header("ct-webchat-client-id") uuid: String = ChatParams.visitorUuid,
         @Path("namespace") clientId : String = ChatParams.urlChatNameSpace!!,
         @Body body: NetworkCheckSubscription
     ) : Call<NetworkResultCheckSubscription>

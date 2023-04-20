@@ -138,6 +138,7 @@ class FileRepository
             val url = URL(documentUrl)
             val urlConnection = url.openConnection() as HttpURLConnection
             urlConnection.setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
+            urlConnection.setRequestProperty("ct-webchat-client-id", ChatParams.visitorUuid)
             urlConnection.connect()
             val inputStream = urlConnection.inputStream
             val fileOutputStream = FileOutputStream(correctFile)

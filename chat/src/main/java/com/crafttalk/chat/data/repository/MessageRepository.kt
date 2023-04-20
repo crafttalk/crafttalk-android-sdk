@@ -247,7 +247,7 @@ class MessageRepository
     ): TransferFileInfo? {
         return when {
             (networkMessage.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType)) && (networkMessage.isImage || networkMessage.isGif) -> {
-                networkMessage.attachmentUrl?.let { url ->
+                networkMessage.correctAttachmentUrl?.let { url ->
                     val pair = getSizeMediaFile(context, url)
                     TransferFileInfo(
                         height = pair?.first,
@@ -256,7 +256,7 @@ class MessageRepository
                 }
             }
             (networkMessage.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType))  && networkMessage.isFile -> {
-                networkMessage.attachmentUrl?.let { url ->
+                networkMessage.correctAttachmentUrl?.let { url ->
                     TransferFileInfo(
                         size = getWeightFile(url) ?: getWeightMediaFile(context, url)
                     )

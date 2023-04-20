@@ -10,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
 import com.crafttalk.sampleChat.actions.*
+import com.crafttalk.sampleChat.chat_with_counter.ChatActivity
 import org.hamcrest.CoreMatchers.anyOf
 import org.junit.Rule
 import org.junit.Test
@@ -19,7 +20,7 @@ import org.junit.runner.RunWith
 class ChatTest {
 
     @get:Rule
-    val activityRule = ActivityTestRule(MainActivity::class.java)
+    val activityRule = ActivityTestRule(ChatActivity::class.java)
 
     @Test
     fun testOpenAttachSpace() {

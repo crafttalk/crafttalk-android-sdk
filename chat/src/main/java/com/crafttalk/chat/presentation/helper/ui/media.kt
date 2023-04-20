@@ -61,6 +61,7 @@ fun getWeightFile(urlPath: String): Long? {
         val url = URL(urlPath)
         val urlConnection = url.openConnection()
         urlConnection.setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
+        urlConnection.setRequestProperty("ct-webchat-client-id", ChatParams.visitorUuid)
         urlConnection.connect()
         val size = urlConnection.contentLength
 

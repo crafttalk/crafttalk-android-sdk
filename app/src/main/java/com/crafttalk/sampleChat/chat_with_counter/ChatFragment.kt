@@ -1,25 +1,15 @@
-package com.crafttalk.sampleChat
+package com.crafttalk.sampleChat.chat_with_counter
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.ChatPermissionListener
-import com.crafttalk.chat.presentation.ChatStateListener
-import com.crafttalk.chat.presentation.SearchListener
-import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
+import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.createCarouselWidget
@@ -177,5 +167,4 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     private fun showWarning(warningText: String) {
         Snackbar.make(chat_view, warningText, Snackbar.LENGTH_LONG).show()
     }
-
 }
