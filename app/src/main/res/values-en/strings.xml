@@ -15,6 +15,10 @@
     <string name="urlChatHost">release.craft-talk.com</string>
     <string name="urlChatNameSpace">webchat_ASDK</string>
 
+    <string name="webUrlChatScheme">https</string>
+    <string name="webUrlChatHost">cloud-dev.craft-talk.ru</string>
+    <string name="webUrlChatNameSpace">channel_166f69e</string>
+
     <string name="salt">C~kW]cq76(a?m[UbJ)drw+Wh6>W[3Wsj</string>
     <string name="default_notification_channel_id">0</string>
     <string name="internet_connection_warning">Waiting for network…</string>
