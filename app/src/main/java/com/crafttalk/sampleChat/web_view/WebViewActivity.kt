@@ -17,7 +17,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_web_view.*
-import android.webkit.WebView.setWebContentsDebuggingEnabled
 
 class WebViewActivity: AppCompatActivity(R.layout.activity_web_view) {
 
@@ -71,9 +70,15 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view) {
         web_view.apply {
             settings.javaScriptEnabled = true
             settings.allowFileAccess = true
+            settings.defaultTextEncodingName = "utf-8"
+
             loadUrl("${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}")
 
-            setWebContentsDebuggingEnabled(true);
+//            setWebContentsDebuggingEnabled(true)
+            addJavascriptInterface(JavaScriptInterface(applicationContext), "Android")
+            setDownloadListener { url, _, _, mimeType, _ ->
+                loadUrl(JavaScriptInterface.getBase64StringFromBlobUrl(url, mimeType))
+            }
 
             webChromeClient = object : WebChromeClient() {
 
