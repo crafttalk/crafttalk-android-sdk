@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import com.crafttalk.chat.domain.entity.message.NetworkWidget
 
 data class WidgetEntity(
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = "widgetId")
     val widgetId: String,
     @ColumnInfo(name = "description")
     val description: String,
