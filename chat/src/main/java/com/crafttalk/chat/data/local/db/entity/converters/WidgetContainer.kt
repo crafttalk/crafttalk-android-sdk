@@ -18,9 +18,9 @@ class WidgetContainer {
     fun toWidget(widget: String?): WidgetEntity? {
         widget ?: return null
         val jsonObject = JSONObject(widget)
-        if (!jsonObject.has("id")) return null
+        if (!jsonObject.has("widgetId")) return null
         if (!jsonObject.has("payload")) return null
-        val widgetId = jsonObject["id"].toString()
+        val widgetId = jsonObject["widgetId"].toString()
         val widgetDescription = if (jsonObject.has("description")) {
             jsonObject["description"].toString()
         } else {
