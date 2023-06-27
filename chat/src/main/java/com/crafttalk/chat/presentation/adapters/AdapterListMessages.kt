@@ -61,8 +61,8 @@ class AdapterListMessages(
         }
     }
 
-    fun getMessageTimestampByPosition(position: Int): Long? {
-        return getItemOrNull(position)?.timestamp ?: getItemOrNull(position - 1)?.timestamp
+    fun getMessageByPosition(position: Int): MessageModel? {
+        return getItemOrNull(position) ?: getItemOrNull(position - 1)
     }
 
     private fun getItemOrNull(position: Int): MessageModel? {

@@ -472,8 +472,16 @@ class ChatViewModel
         searchInteractor.cancelSearch()
     }
 
-    fun readMessage(lastTimestamp: Long?) {
-        val isReadNewMessage = lastTimestamp?.run(updateCurrentReadMessageTime) ?: false
+    fun readMessage(messageModel: MessageModel?) {
+        messageModel ?: return
+
+        launchIO {
+            messageInteractor.readMessage(
+                messageId = messageModel.id
+            )
+        }
+
+        val isReadNewMessage = messageModel.timestamp.run(updateCurrentReadMessageTime)
         if (isReadNewMessage) {
             updateCountUnreadMessages()
         }
@@ -499,5 +507,4 @@ class ChatViewModel
         const val MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL = 1
         const val DELAY_RENDERING_SCROLL_BTN = 100L
     }
-
 }

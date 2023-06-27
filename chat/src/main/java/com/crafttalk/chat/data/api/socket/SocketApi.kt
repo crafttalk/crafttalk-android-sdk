@@ -352,6 +352,20 @@ class SocketApi constructor(
         }
     }
 
+    fun readMessage(messageId: String) {
+        socket?.emit(
+            "visitor-message",
+            "",
+            MessageType.READING_CONFIRMATION.valueType,
+            messageId,
+            0,
+            null,
+            null,
+            null,
+            null
+        )
+    }
+
     fun selectAction(actionId: String) {
         socket?.emit("visitor-action", actionId)
     }
