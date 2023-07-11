@@ -1,6 +1,5 @@
 package com.crafttalk.chat.presentation.adapters
 
-import android.app.Activity
 import android.text.SpannableString
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +15,8 @@ import java.lang.IndexOutOfBoundsException
 
 class AdapterListMessages(
     private val downloadOrOpenDocument: (id: String, documentName: String, documentUrl: String) -> Unit,
-    private val openImage: (activity: Activity, imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
-    private val openGif: (activity: Activity, gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
+    private val openImage: (imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
+    private val openGif: (gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
     private val downloadFile: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val selectAction: (messageId: String, actionId: String) -> Unit,
     private val selectButton: (messageId: String, actionId: String, buttonId: String) -> Unit,
@@ -33,25 +32,25 @@ class AdapterListMessages(
             R.layout.com_crafttalk_chat_item_user_text_message -> HolderUserTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserTextMessage ?: viewType), selectReplyMessage, updateData)
             R.layout.com_crafttalk_chat_item_server_text_message -> HolderOperatorTextMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorTextMessage ?: viewType), selectReplyMessage, updateData, selectAction, selectButton)
             R.layout.com_crafttalk_chat_item_user_image_message -> HolderUserImageMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserImageMessage ?: viewType), downloadFile, updateData)
-            { imageName, imageUrl -> openImage(parent.context as Activity, imageName, imageUrl, downloadFile) }
+            { imageName, imageUrl -> openImage(imageName, imageUrl, downloadFile) }
             R.layout.com_crafttalk_chat_item_server_image_message -> HolderOperatorImageMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorImageMessage ?: viewType), downloadFile, updateData)
-            { imageName, imageUrl -> openImage(parent.context as Activity, imageName, imageUrl, downloadFile) }
+            { imageName, imageUrl -> openImage(imageName, imageUrl, downloadFile) }
             R.layout.com_crafttalk_chat_item_user_file_message -> HolderUserFileMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserFileMessage ?: viewType))
             { id, documentName, documentUrl -> downloadOrOpenDocument(id, documentName, documentUrl) }
             R.layout.com_crafttalk_chat_item_server_file_message -> HolderOperatorFileMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorFileMessage ?: viewType))
             { id, documentName, documentUrl -> downloadOrOpenDocument(id, documentName, documentUrl) }
             R.layout.com_crafttalk_chat_item_user_gif_message -> HolderUserGifMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserGifMessage ?: viewType), downloadFile, updateData)
-            { gifName, gifUrl -> openGif(parent.context as Activity, gifName, gifUrl, downloadFile) }
+            { gifName, gifUrl -> openGif(gifName, gifUrl, downloadFile) }
             R.layout.com_crafttalk_chat_item_server_gif_message -> HolderOperatorGifMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorGifMessage ?: viewType), downloadFile, updateData)
-            { gifName, gifUrl -> openGif(parent.context as Activity, gifName, gifUrl, downloadFile) }
+            { gifName, gifUrl -> openGif(gifName, gifUrl, downloadFile) }
             R.layout.com_crafttalk_chat_item_user_union_message -> HolderUserUnionMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserUnionMessage ?: viewType), downloadFile, updateData,
-                { gifName, gifUrl -> openGif(parent.context as Activity, gifName, gifUrl, downloadFile) },
-                { imageName, imageUrl -> openImage(parent.context as Activity, imageName, imageUrl, downloadFile) },
+                { gifName, gifUrl -> openGif(gifName, gifUrl, downloadFile) },
+                { imageName, imageUrl -> openImage(imageName, imageUrl, downloadFile) },
                 { id, documentName, documentUrl -> downloadOrOpenDocument(id, documentName, documentUrl) }
             )
             R.layout.com_crafttalk_chat_item_server_union_message -> HolderOperatorUnionMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorUnionMessage ?: viewType), selectAction, selectButton, downloadFile, updateData,
-                { gifName, gifUrl -> openGif(parent.context as Activity, gifName, gifUrl, downloadFile) },
-                { imageName, imageUrl -> openImage(parent.context as Activity, imageName, imageUrl, downloadFile) },
+                { gifName, gifUrl -> openGif(gifName, gifUrl, downloadFile) },
+                { imageName, imageUrl -> openImage(imageName, imageUrl, downloadFile) },
                 { id, documentName, documentUrl -> downloadOrOpenDocument(id, documentName, documentUrl) }
             )
             R.layout.com_crafttalk_chat_item_transfer_message -> HolderTransferMessage(parent.inflate(ChatAttr.getInstance().layoutItemTransferMessage ?: viewType))

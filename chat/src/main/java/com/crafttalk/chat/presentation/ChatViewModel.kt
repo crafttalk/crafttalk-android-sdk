@@ -1,6 +1,5 @@
 package com.crafttalk.chat.presentation
 
-import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -263,8 +262,8 @@ class ChatViewModel
         }
     }
 
-    fun openImage(activity: Activity, imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
-        ShowImageDialog.Builder(activity)
+    fun openImage(imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
+        ShowImageDialog.Builder(context)
             .setName(imageName)
             .setUrl(imageUrl)
             .setType(TypeFile.IMAGE)
@@ -272,8 +271,8 @@ class ChatViewModel
             .show()
     }
 
-    fun openGif(activity: Activity, gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
-        ShowImageDialog.Builder(activity)
+    fun openGif(gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
+        ShowImageDialog.Builder(context)
             .setName(gifName)
             .setUrl(gifUrl)
             .setType(TypeFile.GIF)
