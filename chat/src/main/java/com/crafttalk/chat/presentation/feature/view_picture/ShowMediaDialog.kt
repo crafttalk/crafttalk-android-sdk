@@ -1,8 +1,8 @@
 package com.crafttalk.chat.presentation.feature.view_picture
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -19,9 +19,9 @@ import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_gif.*
 import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_image.*
 
 class ShowImageDialog(
-    activity: Activity,
+    context: Context,
     style: Int
-): Dialog(activity, style), View.OnClickListener {
+): Dialog(context, style), View.OnClickListener {
 
     override fun onClick(view: View) {
         when(view.id) {
@@ -44,7 +44,7 @@ class ShowImageDialog(
         private var dialog: ShowImageDialog? = null
 
         private fun newInstance(builder: Builder): ShowImageDialog {
-            val dialog = ShowImageDialog(builder.activity, R.style.ThemeFullscreen)
+            val dialog = ShowImageDialog(builder.context, R.style.ThemeFullscreen)
             dialog.name = builder.mediaFileName
             dialog.url = builder.mediaFileUrl
             dialog.type = builder.type
@@ -78,7 +78,7 @@ class ShowImageDialog(
 
     }
 
-    class Builder(val activity: Activity) {
+    class Builder(val context: Context) {
         var mediaFileName: String? = null
         var mediaFileUrl: String? = null
         var type: TypeFile? = null

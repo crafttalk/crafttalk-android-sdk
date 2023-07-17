@@ -66,6 +66,8 @@ interface IMessageRepository {
 
     suspend fun sendMessages(message: String, repliedMessageId: String?)
 
+    suspend fun readMessage(messageId: String)
+
     suspend fun searchTimestampsMessages(uuid: String, searchText: String): NetworkSearch?
 
     suspend fun selectAction(messageId: String, actionId: String)
