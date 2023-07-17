@@ -284,6 +284,10 @@ class MessageRepository
         socketApi.sendMessage(message, repliedMessage)
     }
 
+    override suspend fun readMessage(messageId: String) {
+        socketApi.readMessage(messageId)
+    }
+
     override suspend fun searchTimestampsMessages(uuid: String, searchText: String): NetworkSearch? {
         return messageApi.searchMessages(
             body = NetworkBodySearch(
