@@ -53,6 +53,10 @@ class MessageInteractor
         messageRepository.sendMessages(message, repliedMessageId)
     }
 
+    suspend fun readMessage(messageId: String) {
+        messageRepository.readMessage(messageId)
+    }
+
     suspend fun selectActionInMessage(messageId: String, actionId: String) {
         messageRepository.selectAction(messageId, actionId)
     }
