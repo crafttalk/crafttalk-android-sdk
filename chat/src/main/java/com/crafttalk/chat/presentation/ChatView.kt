@@ -406,6 +406,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private fun setFeedbackListener() {
         user_feedback.setOnTouchListener { view, motionEvent ->
             var countStars = ceil((motionEvent.rawX - feedback_star_1.left) / (feedback_star_2.left - feedback_star_1.left).toDouble()).toInt()
+            if (countStars < 1) countStars = 1
             if (countStars > 5) countStars = 5
             when {
                 motionEvent.action == MotionEvent.ACTION_MOVE -> giveFeedback(countStars, false)
