@@ -1,6 +1,7 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.toData
@@ -134,6 +135,10 @@ class MessageRepository
                 lastTimestamp = firstTimeMessage
             }
 
+            fullPullMessages.forEach {
+                Log.d("TEST_SYNC", "item fullPullMessages: ${it};")
+            }
+
             if (fullPullMessages.isEmpty()) {
                 allMessageLoaded()
                 return listOf()
@@ -203,6 +208,10 @@ class MessageRepository
                 addAll(operatorMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
                 addAll(userMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
                 addAll(messagesAboutJoin.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
+            }
+
+            resultMessages.forEach {
+                Log.d("TEST_SYNC", "item resultMessages: ${it};")
             }
 
             ChatParams.glueMessage?.let { msg ->
