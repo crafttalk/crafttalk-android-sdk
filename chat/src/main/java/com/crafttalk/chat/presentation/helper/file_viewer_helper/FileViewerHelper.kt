@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.FileProvider
@@ -29,7 +31,11 @@ class FileViewerHelper {
         fun pickFile() {
             pickFile?.launch(pickSettings)
         }
-        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        val permissions = if (Build.VERSION.SDK_INT >= TIRAMISU) {
+            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
         checkPermission(
             permissions,
             fragment.requireContext(),

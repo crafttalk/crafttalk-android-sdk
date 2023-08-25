@@ -67,8 +67,10 @@ class BottomSheetFileViewer : BottomSheetDialogFragment() {
         val menu = MenuBuilder(context)
         menuInflater.inflate(menuRes, menu)
         for (item in menu.iterator()) {
-            val option = Option(item.itemId, item.title, item.icon)
-            options.add(option)
+            item.title?.let { title ->
+                val option = Option(item.itemId, title, item.icon)
+                options.add(option)
+            }
         }
     }
 
