@@ -91,7 +91,7 @@ class MessageRepository
         getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
     ): List<MessageEntity> {
-
+        Log.d("TEST_SYNC", "uploadMessages uuid - ${uuid};")
         try {
             val fullPullMessages= mutableListOf<NetworkMessage>()
 
@@ -136,7 +136,7 @@ class MessageRepository
             }
 
             fullPullMessages.forEach {
-                Log.d("TEST_SYNC", "item fullPullMessages: ${it};")
+                Log.d("TEST_SYNC", "item fullPullMessages: uuid - ${uuid}; ${it};")
             }
 
             if (fullPullMessages.isEmpty()) {
@@ -211,7 +211,7 @@ class MessageRepository
             }
 
             resultMessages.forEach {
-                Log.d("TEST_SYNC", "item resultMessages: ${it};")
+                Log.d("TEST_SYNC", "item resultMessages: uuid - ${uuid}; ${it};")
             }
 
             ChatParams.glueMessage?.let { msg ->

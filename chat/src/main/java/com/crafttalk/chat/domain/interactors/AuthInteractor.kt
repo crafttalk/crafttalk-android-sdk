@@ -42,6 +42,7 @@ class AuthInteractor
         if (!currentVisitor?.uuid.isNullOrBlank()) {
             ChatParams.visitorUuid = currentVisitor?.uuid.orEmpty()
         }
+        Log.d("TEST_SYNC", "logIn visitor - ${visitor}; currentVisitor - ${currentVisitor} visitorUuid =  ${ChatParams.visitorUuid}")
 
         val successAuthUiWrapper = {
             if (conditionInteractor.getStatusChat() == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
