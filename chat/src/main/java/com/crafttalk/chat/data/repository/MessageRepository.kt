@@ -91,7 +91,7 @@ class MessageRepository
         getFileInfo: suspend (context: Context, networkMessage: NetworkMessage) -> TransferFileInfo?,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit
     ): List<MessageEntity> {
-        Log.d("TEST_SYNC", "uploadMessages uuid - ${uuid};")
+        Log.d("TEST_SYNC", "uploadMessages uuid - ${uuid}; startTime - ${startTime}; endTime - ${endTime};")
         try {
             val fullPullMessages= mutableListOf<NetworkMessage>()
 

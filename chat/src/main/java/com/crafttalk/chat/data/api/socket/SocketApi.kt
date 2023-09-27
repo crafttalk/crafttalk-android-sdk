@@ -202,9 +202,11 @@ class SocketApi constructor(
 
         socket.on("message") {
             viewModelScope.launch {
+                Log.d("TEST_SYNC", "message - ${it[0]};")
                 Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
                 val currentTimestamp = System.currentTimeMillis()
+                Log.d("TEST_SYNC", "message messageJson - ${messageJson}; currentTimestamp - ${currentTimestamp}")
                 Log.d(TAG_SOCKET_EVENT, "json message___ methon message - $messageJson")
 
                 val gson = GsonBuilder()
@@ -215,6 +217,7 @@ class SocketApi constructor(
                     NetworkMessage::class.java
                 ) ?: return@launch
 
+                Log.d("TEST_SYNC", "messageSocket - ${messageSocket};")
                 if (messageSocket.messageType == MessageType.INITIAL_MESSAGE.valueType) {
                     messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
                     if (ChatParams.showInitialMessage == false) {
@@ -400,10 +403,18 @@ class SocketApi constructor(
                     it[0].toString().replace("&amp;", "&"),
                     Array<NetworkMessage>::class.java
                 ) ?: arrayOf()
+                Log.d("TEST_SYNC", "history-messages-loaded size - ${listMessages.size}; listMessages - ${listMessages};")
+                listMessages.forEach {
+                    Log.d("TEST_SYNC", "history-messages-loaded message - ${it};")
+
+                }
                 channel.send(listMessages.toList())
             }
         }
-        socket?.emit("history-messages-requested", timestamp, visitor.token, ChatParams.urlChatHost) ?: channel.send(null)
+
+        Log.d("TEST_SYNC", "history-messages-requested timestamp - ${timestamp};")
+
+        socket?.emit("history-messages-requested", timestamp, null, ChatParams.urlChatHost) ?: channel.send(null)
 
         return viewModelScope.async {
             channel.receive()
