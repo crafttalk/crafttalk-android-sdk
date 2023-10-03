@@ -474,10 +474,12 @@ class ChatViewModel
     fun readMessage(messageModel: MessageModel?) {
         messageModel ?: return
 
-        launchIO {
-            messageInteractor.readMessage(
-                messageId = messageModel.id
-            )
+        if (messageModel.parentMsgId === null) {
+            launchIO {
+                messageInteractor.run {
+                    readMessage(messageId = messageModel.id)
+                }
+            }
         }
 
         val isReadNewMessage = messageModel.timestamp.run(updateCurrentReadMessageTime)

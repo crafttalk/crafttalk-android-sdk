@@ -19,17 +19,20 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
     return when {
         localMessage.messageType == MessageType.TRANSFER_TO_OPERATOR.valueType -> TransferMessageItem(
             localMessage.id,
+            localMessage.parentMsgId,
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
             localMessage.operatorPreview
         )
         localMessage.message != null && localMessage.messageType == MessageType.INFO_MESSAGE.valueType -> InfoMessageItem(
             localMessage.id,
+            localMessage.parentMsgId,
             localMessage.message.convertToSpannableString(false, localMessage.spanStructureList, context),
             localMessage.timestamp
         )
         localMessage.widget != null && localMessage.messageType == MessageType.VISITOR_MESSAGE.valueType -> WidgetMessageItem(
             id = localMessage.id,
+            parentMsgId = localMessage.parentMsgId,
             message = localMessage.message?.convertToSpannableString(false, localMessage.spanStructureList, context),
             widgetId = localMessage.widget.widgetId,
             payload = localMessage.widget.payload,
@@ -40,6 +43,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (localMessage.attachmentUrl == null) -> TextMessageItem(
             id = localMessage.id,
+            parentMsgId = localMessage.parentMsgId,
             role = if (localMessage.isReply) Role.OPERATOR else Role.USER,
             message = localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
             actions = localMessage.actions?.let { listActions -> actionModelMapper(listActions) },
@@ -54,6 +58,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.GIF -> GifMessageItem(
             localMessage.id,
+            localMessage.parentMsgId,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
@@ -70,6 +75,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.IMAGE -> ImageMessageItem(
             localMessage.id,
+            localMessage.parentMsgId,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
@@ -86,6 +92,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.FILE -> FileMessageItem(
             localMessage.id,
+            localMessage.parentMsgId,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,
             FileModel(
                 url = localMessage.attachmentUrl!!,
@@ -100,6 +107,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         (localMessage.message != null && localMessage.message.isNotEmpty()) && (!localMessage.attachmentUrl.isNullOrEmpty() && !localMessage.attachmentName.isNullOrEmpty() && localMessage.attachmentType != null) -> UnionMessageItem(
             id = localMessage.id,
+            parentMsgId = localMessage.parentMsgId,
             role = if (localMessage.isReply) Role.OPERATOR else Role.USER,
             message = localMessage.message.convertToSpannableString(!localMessage.isReply, localMessage.spanStructureList, context),
             actions = localMessage.actions?.let { listActions -> actionModelMapper(listActions) },
@@ -123,6 +131,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
         )
         else -> DefaultMessageItem(
             localMessage.id,
+            localMessage.parentMsgId,
             localMessage.timestamp
         )
     }

@@ -8,6 +8,7 @@ import com.crafttalk.chat.domain.entity.message.MessageType as StateMessage
 
 sealed class MessageModel(
     open val id: String,
+    open val parentMsgId: String? = null,
     open val role: Role,
     open val timestamp: Long,
     open val authorName: String,
@@ -22,13 +23,15 @@ sealed class MessageModel(
 
 data class DefaultMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     override val timestamp: Long
-) : MessageModel(id, NEUTRAL, timestamp, "", null, StateMessage.DEFAULT, false) {
+) : MessageModel(id, parentMsgId, NEUTRAL, timestamp, "", null, StateMessage.DEFAULT, false) {
     override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_default_message
 }
 
 data class TextMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     override val role: Role,
     val message: SpannableString,
     val actions: List<ActionItem>?,
@@ -40,7 +43,7 @@ data class TextMessageItem(
     override val authorName: String,
     override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+) : MessageModel(id, parentMsgId, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.com_crafttalk_chat_item_user_text_message
@@ -52,13 +55,14 @@ data class TextMessageItem(
 
 data class ImageMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     override val role: Role,
     val image: FileModel,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+) : MessageModel(id, parentMsgId, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.com_crafttalk_chat_item_user_image_message
@@ -70,13 +74,14 @@ data class ImageMessageItem(
 
 data class GifMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     override val role: Role,
     val gif: FileModel,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+) : MessageModel(id, parentMsgId, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout(): Int {
         return when(role) {
             USER -> R.layout.com_crafttalk_chat_item_user_gif_message
@@ -88,13 +93,14 @@ data class GifMessageItem(
 
 data class FileMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     override val role: Role,
     val document: FileModel,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+) : MessageModel(id, parentMsgId, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout() : Int {
         return when(role) {
             USER -> R.layout.com_crafttalk_chat_item_user_file_message
@@ -106,6 +112,7 @@ data class FileMessageItem(
 
 data class UnionMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     override val role: Role,
     val message: SpannableString,
     val actions: List<ActionItem>?,
@@ -117,7 +124,7 @@ data class UnionMessageItem(
     override val authorName: String,
     override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+) : MessageModel(id, parentMsgId, role, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout() : Int {
         return when(role) {
             USER -> R.layout.com_crafttalk_chat_item_user_union_message
@@ -129,23 +136,26 @@ data class UnionMessageItem(
 
 data class TransferMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?
-) : MessageModel(id, NEUTRAL, timestamp, authorName, authorPreview, StateMessage.TRANSFER_TO_OPERATOR) {
+) : MessageModel(id, parentMsgId, NEUTRAL, timestamp, authorName, authorPreview, StateMessage.TRANSFER_TO_OPERATOR) {
     override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_transfer_message
 }
 
 data class InfoMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     val message: SpannableString,
     override val timestamp: Long
-) : MessageModel(id, NEUTRAL, timestamp, "", null, StateMessage.INFO_MESSAGE) {
+) : MessageModel(id, parentMsgId, NEUTRAL, timestamp, "", null, StateMessage.INFO_MESSAGE) {
     override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_info_message
 }
 
 data class WidgetMessageItem(
     override val id: String,
+    override val parentMsgId: String?,
     val message: SpannableString?,
     val widgetId: String,
     val payload: Any,
@@ -153,6 +163,6 @@ data class WidgetMessageItem(
     override val authorName: String,
     override val authorPreview: String?,
     override val stateCheck: StateMessage
-) : MessageModel(id, OPERATOR, timestamp, authorName, authorPreview, stateCheck) {
+) : MessageModel(id, parentMsgId, OPERATOR, timestamp, authorName, authorPreview, stateCheck) {
     override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_server_widget_message
 }
