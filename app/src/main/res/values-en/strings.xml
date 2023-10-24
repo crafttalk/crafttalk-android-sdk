@@ -11,6 +11,10 @@
 <!--    <string name="urlChatHost">presale.craft-talk.com</string>-->
 <!--    <string name="urlChatNameSpace">webchat_presale</string>-->
 
+    <string name="chat_bottom_sheet_file_viewer_image_from_gallery">Image</string>
+    <string name="chat_bottom_sheet_file_viewer_image_from_camera">Camera</string>
+    <string name="chat_bottom_sheet_file_viewer_document_from_gallery">Document</string>
+
     <string name="urlChatScheme">https</string>
     <string name="urlChatHost">release.craft-talk.com</string>
     <string name="urlChatNameSpace">webchat_ASDK</string>
