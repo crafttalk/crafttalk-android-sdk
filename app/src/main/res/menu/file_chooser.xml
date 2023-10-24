@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/image"
+        android:icon="@drawable/chat_ic_image"
+        android:title="@string/chat_bottom_sheet_file_viewer_image_from_gallery" />
+
+    <item
+        android:id="@+id/document"
+        android:icon="@drawable/chat_ic_document"
+        android:title="@string/chat_bottom_sheet_file_viewer_document_from_gallery" />
+
+    <item
+        android:id="@+id/camera"
+        android:icon="@drawable/chat_ic_camera"
+        android:title="@string/chat_bottom_sheet_file_viewer_image_from_camera" />
+
+</menu>
