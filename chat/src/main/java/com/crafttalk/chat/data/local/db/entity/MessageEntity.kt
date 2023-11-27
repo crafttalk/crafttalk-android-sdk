@@ -116,8 +116,7 @@ data class MessageEntity(
     val repliedMessageAttachmentWidth: Int? = null,
 
     @ColumnInfo(name = "dialog_id")
-    val dialogId: String? = null,
-
+    val dialogId: String? = null
 ) {
 
     fun hasSelectedAction(): Boolean {

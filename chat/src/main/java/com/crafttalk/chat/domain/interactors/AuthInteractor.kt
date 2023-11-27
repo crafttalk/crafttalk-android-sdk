@@ -34,7 +34,7 @@ class AuthInteractor
         successAuthUx: suspend () -> Unit = {},
         failAuthUx: suspend () -> Unit = {},
         sync: suspend () -> Unit = {},
-        updateCurrentReadMessageTime: (Long) -> Boolean = { false },
+        updateCurrentReadMessageTime: (List<Pair<String, Long>>) -> Boolean = { false },
         firstLogInWithForm: () -> Unit = {},
         chatEventListener: ChatEventListener? = null
     ) {
@@ -71,13 +71,14 @@ class AuthInteractor
             }
         }
 
-        val updateCurrentReadMessageTimeWrapper: (newTimeMark: Long) -> Unit = { newTimeMark ->
+        val updateCurrentReadMessageTimeWrapper: (newTimeMarks: List<Pair<String, Long>>) -> Unit = { newTimeMarks ->
             when (conditionInteractor.getStatusChat()) {
-                ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP -> updateCurrentReadMessageTime(newTimeMark)
+                ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP -> updateCurrentReadMessageTime(newTimeMarks)
                 ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP -> {
                     val currentReadMessageTime = conditionInteractor.getCurrentReadMessageTime()
-                    if (newTimeMark > currentReadMessageTime) {
-                        conditionInteractor.saveCurrentReadMessageTime(newTimeMark)
+                    val lastTime = newTimeMarks.lastOrNull()?.second
+                    if (lastTime != null && lastTime > currentReadMessageTime) {
+                        conditionInteractor.saveCurrentReadMessageTime(lastTime)
                     }
                 }
             }

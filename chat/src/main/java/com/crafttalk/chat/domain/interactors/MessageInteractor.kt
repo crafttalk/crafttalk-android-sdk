@@ -111,7 +111,7 @@ class MessageInteractor
 
     // при переходе на холд добавить вызов метода, обновляющего состояния у сообщений, находящихся в статусе "отправляется"
     suspend fun syncMessages(
-        updateReadPoint: (newTimeMark: Long) -> Boolean,
+        updateReadPoint: (newTimeMarks: List<Pair<String, Long>>) -> Boolean,
         syncMessagesAcrossDevices: (indexFirstUnreadMessage: Int) -> Unit,
         eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit,
         updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit

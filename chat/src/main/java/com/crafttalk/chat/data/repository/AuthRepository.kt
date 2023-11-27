@@ -23,7 +23,7 @@ class AuthRepository
         successAuthUx: suspend () -> Unit,
         failAuthUx: suspend () -> Unit,
         sync: suspend () -> Unit,
-        updateCurrentReadMessageTime: (newTimeMark: Long) -> Unit,
+        updateCurrentReadMessageTime: (newTimeMarks: List<Pair<String, Long>>) -> Unit,
         updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,

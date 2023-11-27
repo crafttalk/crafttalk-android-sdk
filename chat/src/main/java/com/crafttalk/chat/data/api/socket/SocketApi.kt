@@ -44,7 +44,7 @@ class SocketApi constructor(
     private var successAuthUxFun: suspend () -> Unit = {}
     private var failAuthUxFun: suspend () -> Unit = {}
     private var syncMessages: suspend () -> Unit = {}
-    private var updateCurrentReadMessageTime: (newReadPoint: Long) -> Unit = {}
+    private var updateCurrentReadMessageTime: (newReadPoints: List<Pair<String, Long>>) -> Unit = {}
     private var updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit = { _,_ -> }
     private var updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit = {}
     private var getPersonPreview: suspend (personId: String) -> String? = { null }
@@ -123,7 +123,7 @@ class SocketApi constructor(
         successAuthUx: suspend () -> Unit,
         failAuthUx: suspend () -> Unit,
         sync: suspend () -> Unit,
-        updateCurrentReadMessageTime: (newTimeMark: Long) -> Unit,
+        updateCurrentReadMessageTime: (newTimeMarks: List<Pair<String, Long>>) -> Unit,
         updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit,
         getPersonPreview: suspend (personId: String) -> String?,
         updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit,
@@ -377,7 +377,11 @@ class SocketApi constructor(
     fun mergeNewMessages() {
         isSynchronized = true
         val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp
-        maxUserTimestamp?.run(updateCurrentReadMessageTime)
+        if (maxUserTimestamp != null) {
+            val messagesForUpdateReadPoint = bufferNewMessages.filter { it.timestamp <= maxUserTimestamp }
+                .map { Pair(it.id, it.timestamp) }
+            updateCurrentReadMessageTime(messagesForUpdateReadPoint)
+        }
         updateCountUnreadMessages(bufferNewMessages.filter { it.timestamp > (maxUserTimestamp ?: 0) }.size, maxUserTimestamp != null)
         bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(it.id) }.let { messages ->
             viewModelScope.launch {
@@ -507,7 +511,7 @@ class SocketApi constructor(
     private fun insertMessage(message: MessageEntity) {
         if (isSynchronized) {
             if (!message.isReply) {
-                updateCurrentReadMessageTime(message.timestamp)
+//                Log.d("TEST_DATA_LOP_S", "insertMessage")
                 updateCountUnreadMessages(0, true)
             } else {
                 updateCountUnreadMessages(1, false)

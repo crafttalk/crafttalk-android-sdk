@@ -1,6 +1,7 @@
 package com.crafttalk.chat.presentation
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
@@ -94,6 +95,7 @@ class ChatViewModel
     private val sync: suspend () -> Unit = {
         launchUI { chatStateListener?.startSynchronization() }
         displayableUIObject.postValue(DisplayableUIObject.SYNCHRONIZATION)
+        Log.d("TEST_DATA_LOP_S", "sync")
         messageInteractor.syncMessages(
             updateReadPoint = updateCurrentReadMessageTime,
             syncMessagesAcrossDevices = ::syncMessagesAcrossDevices,
@@ -101,11 +103,28 @@ class ChatViewModel
             updateSearchMessagePosition = searchInteractor::updateMessagePosition
         )
     }
-    private val updateCurrentReadMessageTime: (Long) -> Boolean = { newTimeMark ->
-        if (newTimeMark > currentReadMessageTime) {
-            currentReadMessageTime = newTimeMark
+    private val updateCurrentReadMessageTime: (List<Pair<String, Long>>) -> Boolean = { newTimeMarks ->
+        Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 1 newTimeMark - $newTimeMarks; currentReadMessageTime - ${currentReadMessageTime}")
+        newTimeMarks.forEach { pair ->
+            val id = pair.first
+            val time = pair.second
+            if (time > currentReadMessageTime) {
+                launchIO {
+                    Log.d("TEST_DATA_LOP", "readMessage id - ${id}; time - ${time};")
+                    messageInteractor.readMessage(
+                        messageId = id
+                    )
+                }
+            }
+        }
+        val maxTime = newTimeMarks.maxByOrNull { it.second }?.second
+        Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 2 currentReadMessageTime - $currentReadMessageTime; maxTime - $maxTime;")
+        if (maxTime != null && maxTime > currentReadMessageTime) {
+            currentReadMessageTime = maxTime
+            Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 3 true;")
             true
         } else {
+            Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 4 false;")
             false
         }
     }
@@ -474,13 +493,10 @@ class ChatViewModel
     fun readMessage(messageModel: MessageModel?) {
         messageModel ?: return
 
-        launchIO {
-            messageInteractor.readMessage(
-                messageId = messageModel.id
-            )
-        }
-
-        val isReadNewMessage = messageModel.timestamp.run(updateCurrentReadMessageTime)
+        val isReadNewMessage = updateCurrentReadMessageTime(
+            listOf(Pair(messageModel.id, messageModel.timestamp))
+        )
+        Log.d("TEST_DATA_LOP", "VM readMessage 2 isReadNewMessage - $isReadNewMessage; messageModel - $messageModel;")
         if (isReadNewMessage) {
             updateCountUnreadMessages()
         }

@@ -12,8 +12,8 @@ class ConfigurationInteractor
     fun getConfiguration() {
         val config = configurationRepository.getConfiguration() ?: return
         ChatParams.glueMessage = config.chatAnnouncement
-        ChatParams.sendInitialMessageOnOpen = config.sendInitialMessageOnOpen
-        ChatParams.sendInitialMessageOnStartDialog = config.sendInitialMessageOnStartDialog
+        ChatParams.sendInitialMessageOnOpen = true//config.sendInitialMessageOnOpen
+        ChatParams.sendInitialMessageOnStartDialog = false//config.sendInitialMessageOnStartDialog
         ChatParams.showInitialMessage = config.showInitialMessage
     }
 

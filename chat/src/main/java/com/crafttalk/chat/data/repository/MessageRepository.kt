@@ -1,6 +1,7 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.toData
@@ -82,7 +83,7 @@ class MessageRepository
         uuid: String,
         startTime: Long?,
         endTime: Long,
-        updateReadPoint: (newPosition: Long) -> Boolean,
+        updateReadPoint: (newPositions: List<Pair<String, Long>>) -> Boolean,
         syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         allMessageLoaded: () -> Unit,
         notAllMessageLoaded: () -> Unit,
@@ -196,13 +197,19 @@ class MessageRepository
                 )
             }
 
-            val maxTimestampUserMessage = userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp
-            maxTimestampUserMessage?.run(updateReadPoint)
-
             val resultMessages = mutableListOf<MessageEntity>().apply {
                 addAll(operatorMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
                 addAll(userMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
                 addAll(messagesAboutJoin.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
+            }
+
+            val maxTimestampUserMessage = userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp
+            Log.d("TEST_DATA_LOP", "rep maxTimestampUserMessage - ${maxTimestampUserMessage};")
+            if (maxTimestampUserMessage != null) {
+                val messagesForUpdateReadPoint = resultMessages.filter { it.timestamp <= maxTimestampUserMessage }
+                        .map { Pair(it.id, it.timestamp) }
+                Log.d("TEST_DATA_LOP", "rep messagesForUpdateReadPoint - ${messagesForUpdateReadPoint};")
+                updateReadPoint(messagesForUpdateReadPoint)
             }
 
             ChatParams.glueMessage?.let { msg ->

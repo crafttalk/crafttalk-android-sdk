@@ -43,7 +43,7 @@ interface IMessageRepository {
         uuid: String,
         startTime: Long?,
         endTime: Long,
-        updateReadPoint: (newTimeMark: Long) -> Boolean,
+        updateReadPoint: (newTimeMarks: List<Pair<String, Long>>) -> Boolean,
         syncMessagesAcrossDevices: (countUnreadMessages: Int) -> Unit,
         allMessageLoaded: () -> Unit,
         notAllMessageLoaded: () -> Unit,
