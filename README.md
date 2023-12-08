@@ -2,6 +2,25 @@
 
 [![](https://jitpack.io/v/crafttalk/crafttalk-android-sdk.svg)](https://jitpack.io/#crafttalk/crafttalk-android-sdk)
 
+## иструкция для web view 
+
+Скачать SDK с гитхаба
+В нём хранится как нативная реализация так и вебвью
+вебвью хранится в ```crafttalk-android-sdk\app\src\main\java\com\crafttalk\sampleChat\web_view```
+
+достаточно будет скопировать код
+хранящийся в ```crafttalk-android-sdk\app\src\main\java\com\crafttalk\sampleChat\web_view```
+
+в файле AuthFreqment.kt можно посмотреть какие данные передаются в окно с чатом для идентификации пользователя
+
+в файле crafttalk-android-sdk\app\src\main\res\values\strings.xml хранятся переменные строки
+```
+    <string name="webUrlChatScheme">https</string>
+    <string name="webUrlChatHost">ваш сайт</string>
+    <string name="webUrlChatNameSpace">канал</string>
+```
+также чат умеет отправлять фото и документы для которых требуются разрешения
+
 ## Dependency
 
 Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
