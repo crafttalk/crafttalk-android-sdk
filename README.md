@@ -13,7 +13,7 @@
 
 в файле AuthFreqment.kt можно посмотреть какие данные передаются в окно с чатом для идентификации пользователя
 
-в файле crafttalk-android-sdk\app\src\main\res\values\strings.xml хранятся переменные строки
+в файле crafttalk-android-sdk\app\src\main\res\values\strings.xml хранятся переменные строки в которых указан адрес до веб чата
 ```
     <string name="webUrlChatScheme">https</string>
     <string name="webUrlChatHost">ваш сайт</string>
@@ -574,19 +574,19 @@ chatView.setOnStateStartingProgressListener(object : StateStartingProgressListen
 - тип элемента должен быть такой же, как и в реализации по умолчанию
 - id должен быть такой же, как и в реализации по умолчанию
 
-Пример можно найти [тут](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/app/src/main/res/layout/layout_item_user_text_message.xml)
+Пример можно найти [тут](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_user_text_message.xml)
 
 Реализации по умолчанию:
-- [текстовое сообщение пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_text_message.xml)
-- [сообщение с фото от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_image_message.xml)
-- [сообщение с гифкой от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_gif_message.xml)
-- [сообщение с файлом от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_file_message.xml)
-- [смешанное(текст + фото/гифка/файл) сообщение от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_user_union_message.xml)
-- [текстовое сообщение бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_text_message.xml)
-- [сообщение с фото от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_image_message.xml)
-- [сообщение с гифкой от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_gif_message.xml)
-- [сообщение с файлом от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_file_message.xml)
-- [смешанное(текст + фото/гифка/файл) сообщение от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/item_server_union_message.xml)
+- [текстовое сообщение пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_user_text_message.xml)
+- [сообщение с фото от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_user_image_message.xml)
+- [сообщение с гифкой от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_user_gif_message.xml)
+- [сообщение с файлом от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_user_file_message.xml)
+- [смешанное(текст + фото/гифка/файл) сообщение от пользователя](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_user_union_message.xml)
+- [текстовое сообщение бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_server_text_message.xml)
+- [сообщение с фото от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_server_image_message.xml)
+- [сообщение с гифкой от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_server_gif_message.xml)
+- [сообщение с файлом от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_server_file_message.xml)
+- [смешанное(текст + фото/гифка/файл) сообщение от бота/оператора](https://github.com/crafttalk/crafttalk-android-sdk/blob/master/chat/src/main/res/layout/com_crafttalk_chat_item_server_union_message.xml)
 
 License
 --------
