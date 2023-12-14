@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class NetworkAction (
     @SerializedName(value = "action_id")
-    val actionId: String,
+    var actionId: String,
     @SerializedName (value = "action_text")
     val actionText: String
 ) {
