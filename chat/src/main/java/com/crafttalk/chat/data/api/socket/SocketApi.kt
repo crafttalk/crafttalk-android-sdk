@@ -247,7 +247,13 @@ class SocketApi constructor(
                     if (messageSocket.id == null) {
                         messageSocket.id = System.currentTimeMillis().toString()
                     }
-                    updateDataInDatabase(messageSocket, currentTimestamp)
+                    try {
+                        updateDataInDatabase(messageSocket, currentTimestamp)
+                    }
+                    catch (e: Exception){
+                        Log.d("CT_DATABASE_ERROR","Произошла ошибка при добвалении в базу данных. Инфо: " + e.message)
+                    }
+
                 }
             }
         }

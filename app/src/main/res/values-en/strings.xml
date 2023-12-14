@@ -16,12 +16,12 @@
     <string name="chat_bottom_sheet_file_viewer_document_from_gallery">Document</string>
 
     <string name="urlChatScheme">https</string>
-    <string name="urlChatHost">release.craft-talk.com</string>
-    <string name="urlChatNameSpace">webchat_ASDK</string>
+    <string name="urlChatHost">cloud-dev-external.craft-talk.com</string>
+    <string name="urlChatNameSpace">channel_ce93c1</string>
 
     <string name="webUrlChatScheme">https</string>
-    <string name="webUrlChatHost">release.craft-talk.com</string>
-    <string name="webUrlChatNameSpace">wwebchat_test</string>
+    <string name="webUrlChatHost">cloud-dev-external.craft-talk.com</string>
+    <string name="webUrlChatNameSpace">channel_ce93c1</string>
 
     <string name="salt">C~kW]cq76(a?m[UbJ)drw+Wh6>W[3Wsj</string>
     <string name="default_notification_channel_id">0</string>
