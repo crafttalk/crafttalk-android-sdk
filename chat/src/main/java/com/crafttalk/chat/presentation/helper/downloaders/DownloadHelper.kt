@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import androidx.core.content.ContextCompat
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -52,11 +53,50 @@ fun downloadResource(
             updateDownloadID(null)
         }
     }
-    val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    checkPermission(
-        permissions,
-        context,
-        { noPermission(permissions) { downloadFile(context, fileName, fileUrl, fileType, downloadListener, updateDownloadID) } }
-    ) { downloadFile(context, fileName, fileUrl, fileType, downloadListener, updateDownloadID) }
+    //Данный код проверяет версию андроид и запрашивает право сохранения изображений в зависимости от версии
+    if (Build.VERSION.SDK_INT < 32) {
+        //для версии ниже андроид 13
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        checkPermission(
+            permissions,
+            context,
+            {
+                noPermission(permissions) {
+                    downloadFile(
+                        context,
+                        fileName,
+                        fileUrl,
+                        fileType,
+                        downloadListener,
+                        updateDownloadID
+                    )
+                }
+            }
+        ) { downloadFile(context, fileName, fileUrl, fileType, downloadListener, updateDownloadID) }
+    } else
+    {
+        //для версий старше или равных андроид 13
+        val permissions = arrayOf(
+            Manifest.permission.READ_MEDIA_IMAGES
+        )
+        checkPermission(
+            permissions,
+            context,
+            {
+                noPermission(permissions) {
+                    downloadFile(
+                        context,
+                        fileName,
+                        fileUrl,
+                        fileType,
+                        downloadListener,
+                        updateDownloadID
+                    )
+                }
+            }
+        ) { downloadFile(context, fileName, fileUrl, fileType, downloadListener, updateDownloadID) }
+    }
 }
 
