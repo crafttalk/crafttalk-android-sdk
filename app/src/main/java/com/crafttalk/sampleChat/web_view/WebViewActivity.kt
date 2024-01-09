@@ -137,7 +137,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
 
             webChromeClient = object : WebChromeClient() {
                 override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-                    Log.d("TEST_DOWNLOAD", "consoleMessage: ${consoleMessage?.message()};")
+                    Log.d("CTALK_TEST_DOWNLOAD", "consoleMessage: ${consoleMessage?.message()};")
                     getVisitorUuid()
                     return true
                 }
@@ -189,7 +189,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
         if (visitorUuid == null) {
             val key = "webchat-${getString(R.string.webUrlChatNameSpace)}-uuid"
             evaluateJavascript("javascript:window.localStorage.getItem('$key')") {
-                Log.d("TEST_DATA", "get - $it;")
+                Log.d("CTALK_TEST_DATA", "get - $it;")
                 visitorUuid = it
                 if (visitorUuid != null) {
                     thread {
@@ -197,7 +197,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
                     }
                     Handler().postDelayed({
                         notificationRepository?.checkSubscription(visitorUuid!!, getString(R.string.webUrlChatNameSpace), false) {
-                            Log.d("TEST_DATA", "checkSubscription - $it;")
+                            Log.d("CTALK_TEST_DATA", "checkSubscription - $it;")
                         }
                     }, 10000)
                 }

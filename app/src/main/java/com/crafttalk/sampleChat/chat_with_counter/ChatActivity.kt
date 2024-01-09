@@ -65,7 +65,7 @@ class ChatActivity: AppCompatActivity() {
         Chat.createSession()
         Chat.setOnChatMessageListener(object : ChatMessageListener {
             override fun getNewMessages(countMessages: Int) {
-                Log.d("TEST_GET_MSG", "get new messages count - ${countMessages};")
+                Log.d("CTALK_TEST_GET_MSG", "get new messages count - ${countMessages};")
             }
         })
     }

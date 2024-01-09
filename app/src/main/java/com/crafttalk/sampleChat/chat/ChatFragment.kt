@@ -32,7 +32,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
             callbackResult(isGranted)
         }
 
-        Log.d("TEST_DALO", "data 2: ${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false)}; " +
+        Log.d("CTALK_TEST_DALO", "data 2: ${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false)}; " +
                 "${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true}" +
                 "${activity?.intent?.getSerializableExtra("key_visitor")};")
 
@@ -45,7 +45,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
             authType = (if (activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true)
                 AuthType.AUTH_WITH_FORM
             else
-                AuthType.AUTH_WITHOUT_FORM).apply { Log.d("TEST_DALO", "type: ${this};") },
+                AuthType.AUTH_WITHOUT_FORM).apply { Log.d("CTALK_TEST_DALO", "type: ${this};") },
             fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
         )
         Chat.createSession()
@@ -180,7 +180,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 null
             else
                 (activity?.intent?.getSerializableExtra("key_visitor") as? Visitor)!!).apply {
-                Log.d("TEST_DALO", "getVisitor: ${this};")
+                Log.d("CTALK_TEST_DALO", "getVisitor: ${this};")
             }
         )
         chat_view.onResume()

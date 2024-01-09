@@ -59,7 +59,7 @@ class PersonRepository
                 else -> null
             }
         } catch (ex: Exception) {
-            Log.e("FAIL_REQUEST", "getPersonPreview fail: ${ex.message}")
+            Log.e("CTALK_FAIL_REQUEST", "getPersonPreview fail: ${ex.message}")
             null
         }
     }

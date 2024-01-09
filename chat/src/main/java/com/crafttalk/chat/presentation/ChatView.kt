@@ -28,6 +28,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.observe
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -507,7 +508,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
         }
         viewModel.displayableUIObject.observe(lifecycleOwner) {
-            Log.d("CHAT_VIEW", "displayableUIObject - ${it};")
+            Log.d("CTALK_CHAT_VIEW", "displayableUIObject - ${it};")
             when (it) {
                 DisplayableUIObject.NOTHING -> {
                     chat_place.visibility = View.GONE
@@ -1042,7 +1043,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     private fun scroll(countUnreadMessages: Int, isSearchScroll: Boolean = false) {
-        Log.d("SEARCH_LOG", "scroll countUnreadMessages: ${countUnreadMessages}; isSearchScroll: $isSearchScroll;")
+        Log.d("CTALK_SEARCH_LOG", "scroll countUnreadMessages: ${countUnreadMessages}; isSearchScroll: $isSearchScroll;")
         fun scrollToDesiredPosition(position: Int, actionScroll: (position: Int) -> Unit) {
             if (adapterListMessages.currentList?.getOrNull(position) == null) {
                 list_with_message.smoothScrollToPosition(position)

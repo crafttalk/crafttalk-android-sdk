@@ -14,6 +14,8 @@ import com.crafttalk.chat.domain.entity.file.NetworkBodyStructureUploadFile
 import com.crafttalk.chat.domain.entity.file.TypeUpload
 import com.crafttalk.chat.domain.repository.IFileRepository
 import com.crafttalk.chat.utils.ChatParams
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_FILE_UPLOAD
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_FILE_UPLOAD_MEDIA
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -47,13 +49,13 @@ class FileRepository
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 handleUploadFile(response.code(), response.message())
-                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
+                Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 when (t.message) {
                     TIMEOUT_CONST -> handleUploadFile(TIMEOUT_CODE, "")
                 }
-                Log.d("UPLOAD_TEST", "Fail upload! - ${t.message};")
+                Log.d(TAG_FILE_UPLOAD, "Fail upload! - ${t.message};")
             }
         })
     }
@@ -78,13 +80,13 @@ class FileRepository
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 handleUploadFile(response.code(), response.message())
-                Log.d("UPLOAD_TEST", "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
+                Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 when (t.message) {
                     TIMEOUT_CONST -> handleUploadFile(TIMEOUT_CODE, "")
                 }
-                Log.d("UPLOAD_TEST", "Fail upload! - ${t.message};")
+                Log.d(TAG_FILE_UPLOAD, "Fail upload! - ${t.message};")
             }
         })
     }
@@ -106,16 +108,16 @@ class FileRepository
 
     override fun uploadMediaFile(visitor: Visitor, bitmap: Bitmap, type: TypeUpload, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val fileName = "createPhoto${System.currentTimeMillis()}.jpg"
-        Log.d("TEST_DAYA_M", "uploadMediaFile t - ${type}; ")
+        Log.d(TAG_FILE_UPLOAD_MEDIA, "uploadMediaFile t - ${type}; ")
         when (type) {
             TypeUpload.JSON -> {
                 val fileRequestBody = fileRequestHelper.generateJsonRequestBody(bitmap)
-                Log.d("TEST_DAYA_M", "uploadMediaFile fileRequestBody1 - ${fileRequestBody}; ")
+                Log.d(TAG_FILE_UPLOAD_MEDIA, "uploadMediaFile fileRequestBody1 - ${fileRequestBody}; ")
                 uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {
                 val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(bitmap, fileName)
-                Log.d("TEST_DAYA_M", "uploadMediaFile fileRequestBody2 - ${fileRequestBody}; ")
+                Log.d(TAG_FILE_UPLOAD_MEDIA, "uploadMediaFile fileRequestBody2 - ${fileRequestBody}; ")
                 uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
         }

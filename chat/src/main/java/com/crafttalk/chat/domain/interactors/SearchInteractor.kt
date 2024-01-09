@@ -65,7 +65,7 @@ class SearchInteractor
         searchItems.clear()
         val searchResult = messageRepository.searchTimestampsMessages(uuid, searchText)?.messages
 
-        Log.d("SEARCH_LOG", "search count: ${searchResult?.size};")
+        Log.d("CTALK_SEARCH_LOG", "search count: ${searchResult?.size};")
         yield()
 
         var searchAllCount = 0
@@ -78,7 +78,7 @@ class SearchInteractor
             }
         }
 
-        Log.d("SEARCH_LOG", "searchAllCount: ${searchAllCount};")
+        Log.d("CTALK_SEARCH_LOG", "searchAllCount: ${searchAllCount};")
 
         if (searchResult.isNullOrEmpty() || searchAllCount == 0) {
             return null
@@ -109,7 +109,7 @@ class SearchInteractor
                     networkMessage.isText -> networkMessage.message?.convertTextToNormalString(arrayListOf())?.countContains(searchText).apply { Log.d("SEARCH_LOG", "countContains 4 res: $this") } ?: 0
                     else -> 0
                 }
-                Log.d("SEARCH_LOG", "countMatchInMsg: $countMatchInMsg; messagePosition: $messagePosition; networkMessage: $networkMessage;")
+                Log.d("CTALK_SEARCH_LOG", "countMatchInMsg: $countMatchInMsg; messagePosition: $messagePosition; networkMessage: $networkMessage;")
                 for(i in 1..countMatchInMsg) {
                     yield()
                     currentSearchPosition++
@@ -133,7 +133,7 @@ class SearchInteractor
         }
 
         searchItems.forEach {
-            Log.d("SEARCH_LOG", "searchItems item: ${it};")
+            Log.d("CTALK_SEARCH_LOG", "searchItems item: ${it};")
         }
 
         val firstItem = searchItems.firstOrNull()
@@ -143,7 +143,7 @@ class SearchInteractor
             additionalLoadingMessages()
         }
         return firstItem.apply {
-            Log.d("SEARCH_LOG", "searchItems first: ${this};")
+            Log.d("CTALK_SEARCH_LOG", "searchItems first: ${this};")
         }
     }
 

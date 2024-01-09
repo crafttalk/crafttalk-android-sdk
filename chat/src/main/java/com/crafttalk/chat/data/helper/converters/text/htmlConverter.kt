@@ -225,7 +225,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                                 jumpIndex = it.endIndex
                             }
                         } catch (ex: StringIndexOutOfBoundsException) {
-                            Log.e("FAIL_PARSE", "getAttrTag fail - ${ex.message}")
+                            Log.e("CTALK_FAIL_PARSE", "getAttrTag fail - ${ex.message}")
                         }
                     }
                 } else {
