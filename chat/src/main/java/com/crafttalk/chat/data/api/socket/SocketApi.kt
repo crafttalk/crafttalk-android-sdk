@@ -218,7 +218,7 @@ class SocketApi constructor(
                 val gson = GsonBuilder()
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
-                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,30,false,null,0,"")
+                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0,"АШИБКА")
                 try {
                 messageSocket = gson.fromJson(
                     messageJson.toString().replace("&amp;", "&"),
