@@ -49,10 +49,10 @@ class NotificationRepository constructor(
                 )
                     .enqueue(object : Callback<Unit> {
                         override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                            Log.d("TEST_DATA", "onResponse - ${response.code()};")
+                            Log.d("CTALK_CTALK_TEST_DATA", "onResponse - ${response.code()};")
                         }
                         override fun onFailure(call: Call<Unit>, t: Throwable) {
-                            Log.d("TEST_DATA", "onFailure - ${t.message};")
+                            Log.d("CTALK_CTALK_TEST_DATA", "onFailure - ${t.message};")
                         }
                     })
             }

@@ -95,7 +95,7 @@ class ChatViewModel
     private val sync: suspend () -> Unit = {
         launchUI { chatStateListener?.startSynchronization() }
         displayableUIObject.postValue(DisplayableUIObject.SYNCHRONIZATION)
-        Log.d("TEST_DATA_LOP_S", "sync")
+        Log.d("CTALK_TEST_DATA_LOP_S", "sync")
         messageInteractor.syncMessages(
             updateReadPoint = updateCurrentReadMessageTime,
             syncMessagesAcrossDevices = ::syncMessagesAcrossDevices,
@@ -104,13 +104,13 @@ class ChatViewModel
         )
     }
     private val updateCurrentReadMessageTime: (List<Pair<String, Long>>) -> Boolean = { newTimeMarks ->
-        Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 1 newTimeMark - $newTimeMarks; currentReadMessageTime - ${currentReadMessageTime}")
+        Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 1 newTimeMark - $newTimeMarks; currentReadMessageTime - ${currentReadMessageTime}")
         newTimeMarks.forEach { pair ->
             val id = pair.first
             val time = pair.second
             if (time > currentReadMessageTime) {
                 launchIO {
-                    Log.d("TEST_DATA_LOP", "readMessage id - ${id}; time - ${time};")
+                    Log.d("CTALK_TEST_DATA_LOP", "readMessage id - ${id}; time - ${time};")
                     messageInteractor.readMessage(
                         messageId = id
                     )
@@ -118,13 +118,13 @@ class ChatViewModel
             }
         }
         val maxTime = newTimeMarks.maxByOrNull { it.second }?.second
-        Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 2 currentReadMessageTime - $currentReadMessageTime; maxTime - $maxTime;")
+        Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 2 currentReadMessageTime - $currentReadMessageTime; maxTime - $maxTime;")
         if (maxTime != null && maxTime > currentReadMessageTime) {
             currentReadMessageTime = maxTime
-            Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 3 true;")
+            Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 3 true;")
             true
         } else {
-            Log.d("TEST_DATA_LOP", "updateCurrentReadMessageTime 4 false;")
+            Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 4 false;")
             false
         }
     }
@@ -496,7 +496,7 @@ class ChatViewModel
         val isReadNewMessage = updateCurrentReadMessageTime(
             listOf(Pair(messageModel.id, messageModel.timestamp))
         )
-        Log.d("TEST_DATA_LOP", "VM readMessage 2 isReadNewMessage - $isReadNewMessage; messageModel - $messageModel;")
+        Log.d("CTALK_TEST_DATA_LOP", "VM readMessage 2 isReadNewMessage - $isReadNewMessage; messageModel - $messageModel;")
         if (isReadNewMessage) {
             updateCountUnreadMessages()
         }

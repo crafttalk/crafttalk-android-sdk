@@ -48,7 +48,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                             try {
                                 context.startActivity(intent)
                             } catch (ex: Exception) {
-                                Log.d("LOG_CONVERTER", "Fail onClick ${it.url};")
+                                Log.d("CTALK_LOG_CONVERTER", "Fail onClick ${it.url};")
                             }
                         }
                     }, it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -118,7 +118,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                 }
             }
         } catch(ex: IndexOutOfBoundsException) {
-            Log.e("ERROR_IN_CONVERTER", "msg: ${this}, authorIsUser: ${authorIsUser}; spanStructureList: ${spanStructureList};")
+            Log.e("CTALK_ERROR_IN_CONVERTER", "msg: ${this}, authorIsUser: ${authorIsUser}; spanStructureList: ${spanStructureList};")
         }
     }
     return result

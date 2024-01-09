@@ -1,12 +1,14 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.ChatStatus
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_CONDITION_STATUS
 import javax.inject.Inject
 
 class ConditionRepository

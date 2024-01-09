@@ -144,7 +144,7 @@ class AuthInteractor
             notificationInteractor.unsubscribeNotification()
             authRepository.logOut(filesDir)
         } catch (ex: Exception) {
-            Log.e("FAIL logOut", "${ex.message}")
+            Log.e("CTALK_FAIL logOut", "${ex.message}")
         }
         conditionInteractor.clearDataChatState()
         visitorInteractor.clearDataVisitor()

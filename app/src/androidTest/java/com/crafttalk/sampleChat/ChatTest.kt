@@ -29,7 +29,7 @@ class ChatTest {
         onView(withId(R.id.camera)).check(doesNotExist())
         onView(withId(R.id.entry_field)).perform(clearText())
         onView(withId(R.id.send_message)).perform(click())
-        Log.d("TEST_LIST", "test")
+        //Log.d("CTALK_TEST_LIST", "test")
         onView(isRoot()).perform(waitFor(5000))
         onView(withId(R.id.entry_field)).perform(typeText("sfbsdif dif sdiufdh fygfd uofygfuwg wyfdfidohfuoufdifd fid ifd id sdfd fd "))
         onView(withId(R.id.camera)).check(doesNotExist())//.check(matches(isDisplayed()))

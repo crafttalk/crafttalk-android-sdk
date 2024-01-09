@@ -30,7 +30,7 @@ class TLSSocketFactory(
                     sslContext.init(null, arrayOf(trustManager), null)
                     sslSocketFactory(TLSSocketFactory(sslContext.socketFactory), trustManager)
                 } catch (e: Exception) {
-                    Log.e("ERROR_TLS", "Error while setting TLS 1.2 compatibility")
+                    Log.e("CTALK_ERROR_TLS", "Error while setting TLS 1.2 compatibility")
                 }
             }
         }

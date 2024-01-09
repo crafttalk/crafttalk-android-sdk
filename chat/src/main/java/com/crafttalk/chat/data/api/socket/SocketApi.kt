@@ -16,6 +16,7 @@ import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightMediaFile
 import com.crafttalk.chat.utils.*
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_DATABASE_INSERT
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
 import com.google.gson.Gson
@@ -29,6 +30,7 @@ import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
 import okhttp3.OkHttpClient
+import java.util.UUID
 
 class SocketApi constructor(
     private val okHttpClient: OkHttpClient,
@@ -85,6 +87,7 @@ class SocketApi constructor(
                 }
                 isAuthorized = false
                 isSynchronized = false
+                Log.e(TAG_SOCKET,"Can't create socket. Incorrect URI, maybe: " + "${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}")
                 null
             }
         }
@@ -94,18 +97,22 @@ class SocketApi constructor(
         isSendGreet = false
         socket?.off()
         socket = null
+        Log.i(TAG_SOCKET_EVENT, "Socket destroyed")
     }
 
     fun dropChat() {
         socket?.disconnect()
+        Log.i(TAG_SOCKET_EVENT, "Socket disconnect")
     }
 
     fun setInternetConnectionListener(listener: ChatInternetConnectionListener) {
         this.chatInternetConnectionListener = listener
+        Log.d(TAG_SOCKET_EVENT,"setInternetConnectionListener")
     }
 
     fun setMessageListener(listener: ChatMessageListener) {
         this.chatMessageListener = listener
+        Log.d(TAG_SOCKET_EVENT,"setMessageListener")
     }
 
     fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {
@@ -146,17 +153,17 @@ class SocketApi constructor(
     private fun setAllListeners(socket: Socket) {
 
         socket.on("connect") {
-            Log.d(TAG_SOCKET_EVENT, "connect connecting - ${socket.connected()}")
+            Log.d(TAG_SOCKET_EVENT, "connect connecting event- ${socket.connected()}")
             authenticationUser(socket)
         }
 
         socket.on("reconnect") {
-            Log.d(TAG_SOCKET_EVENT, "reconnect")
+            Log.d(TAG_SOCKET_EVENT, "reconnect event")
             chatInternetConnectionListener?.reconnect()
         }
 
         socket.on("hide") {
-            Log.d(TAG_SOCKET_EVENT, "hide")
+            Log.d(TAG_SOCKET_EVENT, "hide event")
             isAuthorized = false
             isSynchronized = false
             failAuthUiFun()
@@ -166,7 +173,7 @@ class SocketApi constructor(
         }
 
         socket.on("authorized") {
-            Log.d(TAG_SOCKET_EVENT, "authorized")
+            Log.d(TAG_SOCKET_EVENT, "authorized event")
             isAuthorized = true
             successAuthUiFun()
             viewModelScope.launch {
@@ -190,7 +197,7 @@ class SocketApi constructor(
         }
 
         socket.on("authorization-required") {
-            Log.d(TAG_SOCKET_EVENT, "authorization-required")
+            Log.d(TAG_SOCKET_EVENT, "authorization-required event")
             if (it[0] as Boolean) {
                 socket.emit(
                     "authorize",
@@ -202,26 +209,25 @@ class SocketApi constructor(
 
         socket.on("message") {
             viewModelScope.launch {
-                Log.d(TAG_SOCKET, "message, size = ${it.size}; it = $it")
+                Log.d(TAG_SOCKET, "message, size event= ${it.size}; it = $it")
                 val messageJson = it[0] as JSONObject
+
                 val currentTimestamp = System.currentTimeMillis()
                 Log.d(TAG_SOCKET_EVENT, "json message___ methon message - $messageJson")
 
                 val gson = GsonBuilder()
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
-                val messageSocket = gson.fromJson(
+                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0,"АШИБКА")
+                try {
+                messageSocket = gson.fromJson(
                     messageJson.toString().replace("&amp;", "&"),
                     NetworkMessage::class.java
                 ) ?: return@launch
-
-                if (messageSocket.messageType == MessageType.INITIAL_MESSAGE.valueType) {
-                    messageDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
-                    if (ChatParams.showInitialMessage == false) {
-                        return@launch
-                    }
                 }
-
+                catch (e: Exception){
+                    Log.e(TAG_SOCKET, "An error occurred while getting message from server. Info: " + e.message)
+                }
                 when (messageSocket.messageType) {
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
@@ -231,7 +237,7 @@ class SocketApi constructor(
                     MessageType.MERGE_HISTORY.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
                 if (
-                    (!messageJson.toString().contains(""""message":"\/start"""") && !messageJson.toString().contains(""""message":"/start"""")) &&
+                    (!messageSocket.toString().contains(""""message":"\/start"""") && !messageSocket.toString().contains(""""message":"/start"""")) &&
                     (messageSocket.id != null || !messageDao.isNotEmpty())
                 ) {
                     when {
@@ -247,11 +253,12 @@ class SocketApi constructor(
                     if (messageSocket.id == null) {
                         messageSocket.id = System.currentTimeMillis().toString()
                     }
+
                     try {
                         updateDataInDatabase(messageSocket, currentTimestamp)
                     }
                     catch (e: Exception){
-                        Log.d("CT_DATABASE_ERROR","Произошла ошибка при добвалении в базу данных. Инфо: " + e.message)
+                        Log.e(TAG_DATABASE_INSERT,"An error occurred while adding to the database. Info: " + e.message)
                     }
 
                 }

@@ -1,11 +1,13 @@
 package com.crafttalk.chat.data.repository
 
+import android.util.Log
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IAuthRepository
 import com.crafttalk.chat.presentation.ChatEventListener
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_AUTH_REPOSITORY
 import java.io.File
 import javax.inject.Inject
 
@@ -42,6 +44,7 @@ class AuthRepository
             updatePersonName,
             chatEventListener
         )
+        Log.i(TAG_AUTH_REPOSITORY,"login user with id: " + visitor.uuid + " successful")
     }
 
     override fun logOut(filesDir: File) {
@@ -50,6 +53,7 @@ class AuthRepository
             File(filesDir, fileName).delete()
         }
         messageDao.deleteAllMessages()
+        Log.i(TAG_AUTH_REPOSITORY,"logOut user successful")
     }
 
 }
