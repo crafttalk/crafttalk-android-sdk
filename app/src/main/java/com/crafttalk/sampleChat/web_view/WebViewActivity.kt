@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_web_view.*
 import kotlinx.android.synthetic.main.fragment_chat.*
 import java.util.*
 import android.webkit.*
+import android.webkit.WebView.setWebContentsDebuggingEnabled
 import com.crafttalk.sampleChat.web_view.data.api.NotificationApi
 import com.crafttalk.sampleChat.web_view.data.repository.NotificationRepository
 import com.google.gson.Gson
@@ -128,7 +129,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
 
             loadUrl("${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}")
 
-//            setWebContentsDebuggingEnabled(true)
+            setWebContentsDebuggingEnabled(true)
             addJavascriptInterface(JavaScriptInterface(this@WebViewActivity), "Android")
             setDownloadListener { url, _, _, mimeType, _ ->
                 loadUrl(JavaScriptInterface.getBase64StringFromBlobUrl(url, mimeType))
