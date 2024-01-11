@@ -253,6 +253,7 @@ class SocketApi constructor(
                     }
 
                     try {
+                        Log.d(TAG_DATABASE_INSERT, "Insert in database message: " + messageSocket.id.toString() + messageSocket.message.toString())
                         updateDataInDatabase(messageSocket, currentTimestamp)
                     }
                     catch (e: Exception){
