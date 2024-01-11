@@ -2,7 +2,7 @@
 
 [![](https://jitpack.io/v/crafttalk/crafttalk-android-sdk.svg)](https://jitpack.io/#crafttalk/crafttalk-android-sdk)
 
-## иструкция для web view 
+## Инструкция для запуска web view 
 
 Скачать SDK с гитхаба
 В нём хранится как нативная реализация так и вебвью
