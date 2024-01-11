@@ -218,12 +218,10 @@ class SocketApi constructor(
                 val gson = GsonBuilder()
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
-                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0,"АШИБКА")
+                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0,"")
                 try {
-                messageSocket = gson.fromJson(
-                    messageJson.toString().replace("&amp;", "&"),
-                    NetworkMessage::class.java
-                ) ?: return@launch
+                    //messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java) ?: return@launch //philip, понятия не имею для чего это было сделано
+                    messageSocket = gson.fromJson(messageJson.toString(), NetworkMessage::class.java) ?: return@launch
                 }
                 catch (e: Exception){
                     Log.e(TAG_SOCKET, "An error occurred while getting message from server. Info: " + e.message)
