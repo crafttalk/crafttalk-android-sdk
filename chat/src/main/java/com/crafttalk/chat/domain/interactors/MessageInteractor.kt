@@ -53,6 +53,13 @@ class MessageInteractor
         messageRepository.sendMessages(message, repliedMessageId)
     }
 
+    suspend fun sendServiceMessageUserIsTypingText(message: String){
+        messageRepository.sendServiceMessageUserIsTypingText(message)
+    }
+    suspend fun sendServiceMessageUserStopTypingText() {
+        messageRepository.sendServiceMessageUserStopTypingText()
+    }
+
     suspend fun readMessage(messageId: String) {
         messageRepository.readMessage(messageId)
     }

@@ -17,7 +17,7 @@ import com.crafttalk.chat.utils.ChatAttr
 
 fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageModel {
     return when {
-        localMessage.messageType == MessageType.TRANSFER_TO_OPERATOR.valueType -> TransferMessageItem(
+        localMessage.messageType == MessageType.CONNECTED_OPERATOR.valueType -> TransferMessageItem(
             localMessage.id,
             localMessage.timestamp,
             if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
@@ -28,7 +28,7 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             localMessage.message.convertToSpannableString(false, localMessage.spanStructureList, context),
             localMessage.timestamp
         )
-        localMessage.widget != null && localMessage.messageType == MessageType.VISITOR_MESSAGE.valueType -> WidgetMessageItem(
+        localMessage.widget != null && localMessage.messageType == MessageType.MESSAGE.valueType -> WidgetMessageItem(
             id = localMessage.id,
             message = localMessage.message?.convertToSpannableString(false, localMessage.spanStructureList, context),
             widgetId = localMessage.widget.widgetId,

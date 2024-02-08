@@ -66,6 +66,10 @@ interface IMessageRepository {
 
     suspend fun sendMessages(message: String, repliedMessageId: String?)
 
+    suspend fun sendServiceMessageUserIsTypingText(message: String)
+
+    suspend fun sendServiceMessageUserStopTypingText()
+
     suspend fun readMessage(messageId: String)
 
     suspend fun searchTimestampsMessages(uuid: String, searchText: String): NetworkSearch?

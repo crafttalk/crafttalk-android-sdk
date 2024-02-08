@@ -49,7 +49,7 @@ class FileRepository
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 handleUploadFile(response.code(), response.message())
-                Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
+                Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()};")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 when (t.message) {
@@ -80,7 +80,7 @@ class FileRepository
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 handleUploadFile(response.code(), response.message())
-                Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()}; ${request.request().url}")
+                Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()};")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
                 when (t.message) {

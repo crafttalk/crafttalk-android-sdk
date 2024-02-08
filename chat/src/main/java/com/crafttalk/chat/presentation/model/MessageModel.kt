@@ -132,7 +132,7 @@ data class TransferMessageItem(
     override val timestamp: Long,
     override val authorName: String,
     override val authorPreview: String?
-) : MessageModel(id, NEUTRAL, timestamp, authorName, authorPreview, StateMessage.TRANSFER_TO_OPERATOR) {
+) : MessageModel(id, NEUTRAL, timestamp, authorName, authorPreview, StateMessage.CONNECTED_OPERATOR) {
     override fun getLayout(): Int = R.layout.com_crafttalk_chat_item_transfer_message
 }
 

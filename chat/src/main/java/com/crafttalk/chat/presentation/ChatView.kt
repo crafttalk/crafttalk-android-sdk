@@ -74,6 +74,9 @@ import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.ceil
+import com.crafttalk.chat.di.modules.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
@@ -317,7 +320,27 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
         voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
     }
+    val executorService = Executors.newSingleThreadScheduledExecutor()
+    val task = Runnable {
+            val deltaTime = viewModel.userTypingInterval
+            if (System.currentTimeMillis() >= currentTimestamp + deltaTime ){
+                viewModel.sendServiceMessageUserIsTypingText(entry_field.text.toString())
+                currentTimestamp = System.currentTimeMillis()
+            }
+    }
 
+    val userStopTypingTask = Runnable {
+        viewModel.sendServiceMessageUserStopTypingText()
+    }
+
+    private var currentTimestamp = System.currentTimeMillis()
+    fun sendServiceMessageUserIsTypingText(){
+        val deltaTime = viewModel.userTypingInterval
+        if (System.currentTimeMillis() >= currentTimestamp + deltaTime ){
+            viewModel.sendServiceMessageUserIsTypingText(entry_field.text.toString())
+            currentTimestamp = System.currentTimeMillis()
+        }
+    }
     @SuppressLint("ClickableViewAccessibility")
     private fun setAllListeners() {
         phone_user.apply {
@@ -349,6 +372,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
                 } else {
                     send_message.setImageDrawable(ChatAttr.getInstance().drawableSendMessage)
+                }
+                if (viewModel.userTyping == true) {
+                    sendServiceMessageUserIsTypingText()
+                    executorService.schedule(task, viewModel.userTypingInterval.toLong() + 200, TimeUnit.MILLISECONDS)
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -598,6 +625,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE -> {
                     state_action_operator.visibility = View.GONE
+                }
+                DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER -> {
+                    viewModel.feedbackContainerVisible.value = false
                 }
             }
         }
@@ -988,6 +1018,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         viewModel.sendMessage(message, viewModel.replyMessage.value?.id)
                         viewModel.replyMessage.value = null
                         entry_field.text.clear()
+                        executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
                     }
                     message.isEmpty() -> {
                         send_message.isClickable = false
@@ -1000,6 +1031,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         viewModel.replyMessage.value = null
                         hideSoftKeyboard(this)
                         entry_field.text.clear()
+                        executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
                     }
                 }
             }

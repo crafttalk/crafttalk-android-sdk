@@ -123,7 +123,7 @@ class MessageRepository
 
                 val firstTimeMessage = listMessages
                     .sortedBy { it.timestamp }
-                    .find { it.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType, MessageType.TRANSFER_TO_OPERATOR.valueType) }?.timestamp
+                    .find { it.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType, MessageType.CONNECTED_OPERATOR.valueType) }?.timestamp
 
                 fullPullMessages.addAll(listMessages.filter { it.timestamp >= startTime })
 
@@ -146,10 +146,10 @@ class MessageRepository
                 messagesDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
             }
 
-            val actionSelectionMessages = fullPullMessages.filter { !it.selectedAction.isNullOrBlank() && it.messageType == MessageType.VISITOR_MESSAGE.valueType }.map { it.selectedAction ?: "" }
-            val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }
+            val actionSelectionMessages = fullPullMessages.filter { !it.selectedAction.isNullOrBlank() && it.messageType == MessageType.MESSAGE.valueType }.map { it.selectedAction ?: "" }
+            val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATOR.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }
 
-            val operatorMessagesWithContent = fullPullMessages.filter { it.isReply && it.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType) && it.isContainsContent }.map { networkMessage ->
+            val operatorMessagesWithContent = fullPullMessages.filter { it.isReply && it.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType) && it.isContainsContent }.map { networkMessage ->
                 val fileInfo = getFileInfo(context, networkMessage)
                 MessageEntity.mapOperatorMessage(
                     uuid = uuid,
@@ -164,12 +164,12 @@ class MessageRepository
                 )
             }
 
-            val userMessagesWithContent = fullPullMessages.filter { !it.isReply &&  it.messageType == MessageType.VISITOR_MESSAGE.valueType && it.isContainsContent }.map { networkMessage ->
+            val userMessagesWithContent = fullPullMessages.filter { !it.isReply &&  it.messageType == MessageType.MESSAGE.valueType && it.isContainsContent }.map { networkMessage ->
                 val statusesConcreteMessage: List<Int> = messageStatuses.filter { it.parentMessageId == networkMessage.idFromChannel }.map { it.messageType }
                 val newStatus: Int = when {
                     statusesConcreteMessage.contains(MessageType.RECEIVED_BY_OPERATOR.valueType) -> MessageType.RECEIVED_BY_OPERATOR.valueType
-                    statusesConcreteMessage.contains(MessageType.RECEIVED_BY_MEDIATO.valueType) -> MessageType.RECEIVED_BY_MEDIATO.valueType
-                    else -> MessageType.VISITOR_MESSAGE.valueType
+                    statusesConcreteMessage.contains(MessageType.RECEIVED_BY_MEDIATOR.valueType) -> MessageType.RECEIVED_BY_MEDIATOR.valueType
+                    else -> MessageType.MESSAGE.valueType
                 }
                 val fileInfo = getFileInfo(context, networkMessage)
                 val repliedFileInfo = networkMessage.replyToMessage?.let { getFileInfo(context, it) }
@@ -188,7 +188,7 @@ class MessageRepository
                 )
             }
 
-            val messagesAboutJoin = fullPullMessages.filter { it.messageType == MessageType.TRANSFER_TO_OPERATOR.valueType }.map { networkMessage ->
+            val messagesAboutJoin = fullPullMessages.filter { it.messageType == MessageType.CONNECTED_OPERATOR.valueType }.map { networkMessage ->
                 MessageEntity.mapOperatorJoinMessage(
                     uuid = uuid,
                     networkMessage = networkMessage,
@@ -253,7 +253,7 @@ class MessageRepository
         networkMessage: NetworkMessage
     ): TransferFileInfo? {
         return when {
-            (networkMessage.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType)) && (networkMessage.isImage || networkMessage.isGif) -> {
+            (networkMessage.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.RECEIVED_BY_MEDIATOR.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType)) && (networkMessage.isImage || networkMessage.isGif) -> {
                 networkMessage.correctAttachmentUrl?.let { url ->
                     val pair = getSizeMediaFile(context, url)
                     TransferFileInfo(
@@ -262,7 +262,7 @@ class MessageRepository
                     )
                 }
             }
-            (networkMessage.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.RECEIVED_BY_MEDIATO.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType))  && networkMessage.isFile -> {
+            (networkMessage.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.RECEIVED_BY_MEDIATOR.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType))  && networkMessage.isFile -> {
                 networkMessage.correctAttachmentUrl?.let { url ->
                     TransferFileInfo(
                         size = getWeightFile(url) ?: getWeightMediaFile(context, url)
@@ -276,6 +276,14 @@ class MessageRepository
     override suspend fun sendMessages(message: String, repliedMessageId: String?) {
         val repliedMessage = repliedMessageId?.let { messagesDao.getMessageById(it) }?.let { NetworkMessage.map(it) }
         socketApi.sendMessage(message, repliedMessage)
+    }
+
+    override suspend fun sendServiceMessageUserIsTypingText(message: String){
+        socketApi.sendServiceMessageUserIsTypingText(message)
+    }
+
+    override suspend fun sendServiceMessageUserStopTypingText(){
+        socketApi.sendServiceMessageUserStopTypingText()
     }
 
     override suspend fun readMessage(messageId: String) {
