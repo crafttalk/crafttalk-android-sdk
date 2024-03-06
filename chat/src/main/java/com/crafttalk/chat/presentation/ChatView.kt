@@ -95,6 +95,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             Context.LAYOUT_INFLATER_SERVICE
         ) as LayoutInflater
     }
+    private var dontSendPreviewToOperator: Boolean = false
     private var speechRecognizer: SpeechRecognizer? = null
     private var speechRecognizerIntent: Intent? = null
     private val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
@@ -324,10 +325,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     val executorService = Executors.newSingleThreadScheduledExecutor()
     val sendServiceMessageUserIsTypingTextTask = Runnable {
             val deltaTime = viewModel.userTypingInterval
-            if (System.currentTimeMillis() >= currentTimestamp + deltaTime ){
+        if (!dontSendPreviewToOperator) {
+            if (System.currentTimeMillis() >= currentTimestamp + deltaTime) {
                 viewModel.sendServiceMessageUserIsTypingText(entry_field.text.toString())
                 currentTimestamp = System.currentTimeMillis()
             }
+        }
     }
 
     val userStopTypingTask = Runnable {
@@ -368,6 +371,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     send_message.setImageDrawable(ChatAttr.getInstance().drawableSendMessage)
                 }
                 if (viewModel.userTyping == true) {
+                    dontSendPreviewToOperator = false
                     executorService.schedule(sendServiceMessageUserIsTypingTextTask, viewModel.userTypingInterval.toLong() + 200, TimeUnit.MILLISECONDS)
                 }
             }
@@ -1043,6 +1047,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         viewModel.replyMessage.value = null
                         entry_field.text.clear()
                         executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
+                        dontSendPreviewToOperator = true
                     }
                     message.isEmpty() -> {
                         send_message.isClickable = false
@@ -1056,6 +1061,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         hideSoftKeyboard(this)
                         entry_field.text.clear()
                         executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
+                        dontSendPreviewToOperator = true
                     }
                 }
             }
