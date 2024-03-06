@@ -51,6 +51,8 @@ class ChatViewModel
     val mergeHistoryProgressVisible = MutableLiveData(false)
     var userTypingInterval:Int = 1000
     var userTyping:Boolean = true
+    var chatIsClosed:Boolean = false
+    var chatClosedMessage:String = ""
 
     var searchText: String? = null
     val showSearchNavigate: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -180,6 +182,11 @@ class ChatViewModel
         override fun updateDialogScore(){displayableUIObject.postValue(DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER)}
         override fun setUserTypingInterval(int: Int) {userTypingInterval = int}
         override fun setUserTyping(boolean: Boolean) {userTyping = boolean }
+        override fun setChatStateClosed(boolean: Boolean, string: String) {
+            chatIsClosed = boolean
+            chatClosedMessage = string
+            displayableUIObject.postValue(DisplayableUIObject.CHATCLOSED)
+        }
     }
     var uploadFileListener: UploadFileListener? = null
 

@@ -9,6 +9,21 @@
     android:id="@+id/chat_layout">
 
     <TextView
+        android:id="@+id/chatOffMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="15dp"
+        android:text="@string/com_crafttalk_chat_entry_field_hint_chat_off"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_regular"
+        android:textFontWeight="400"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/search"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+    <TextView
         android:id="@+id/warningConnection"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -19,7 +34,7 @@
         android:textFontWeight="400"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/search"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone" />
 
@@ -64,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="warningConnection,infoChatState,search_place" />
+        app:constraint_referenced_ids="warningConnection,infoChatState,search_place,chatOffMessage" />
 
     <View
         android:id="@+id/upper_limiter"

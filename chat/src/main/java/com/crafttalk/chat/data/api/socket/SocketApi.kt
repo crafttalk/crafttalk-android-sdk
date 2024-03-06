@@ -79,7 +79,19 @@ class SocketApi(
      */
     private val getSettingsFromServerTask = Runnable {
         try {
-            val apiResponse = URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
+            val apiResponse:String = URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
+            //var i = JSONObject(apiResponse)
+
+            //var testModel = gson.fromJson(i.toString(),SettingFromServerJSON::class.java)
+            // var testModel = gson.fromJson(,SettingFromServerJSON::class.java)
+            //settingJSON = SettingFromServerJSON()
+
+            //settingJSON = gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
+            //val settingFromServerJSON = Gson().fromJson(apiResponse, configuration::class.java)
+
+            /**
+             *  устанваливает интревал отправки печатемого пользователем сообщения
+             */
             if (apiResponse.contains("\"sendUserIsTyping\":true")){
                 val str = apiResponse
                 // Находим индекс начала числа
@@ -91,11 +103,29 @@ class SocketApi(
                 // Преобразуем строку в число
                 val number = numberStr.toInt()
                 // Выводим число
-                //println("Число: $number")
                 chatEventListener?.setUserTypingInterval(number)
             }
             else {
                 chatEventListener?.setUserTyping(false)
+            }
+
+            /**
+             * Проверяет доступен ли чат для общения
+             */
+            if (apiResponse.contains("\"block\":false")){
+                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat not closed")
+            }
+            else {
+                val str = apiResponse
+
+                val startIndex = str.indexOf("\"blockMessage\":\"") + "\"blockMessage\":\"".length
+
+                val endIndex = str.indexOf("\",\"",startIndex)
+
+                val blockMessageStr = str.substring(startIndex, endIndex)
+
+                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat closed")
+                chatEventListener?.setChatStateClosed(true,  blockMessageStr)
             }
         }
         catch (e:Exception){
@@ -256,7 +286,7 @@ class SocketApi(
                 val gson = GsonBuilder()
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
-                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0,"")
+                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0)
                 try {
                     //messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java) ?: return@launch //philip, понятия не имею для чего это было сделано
                     messageSocket = gson.fromJson(messageJson.toString(), NetworkMessage::class.java) ?: return@launch

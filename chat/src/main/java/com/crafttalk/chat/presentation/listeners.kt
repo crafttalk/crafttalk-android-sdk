@@ -51,6 +51,7 @@ interface ChatEventListener {
     fun updateDialogScore()
     fun setUserTypingInterval(int: Int)
     fun setUserTyping(boolean: Boolean)
+    fun setChatStateClosed(boolean: Boolean, string: String)
     fun showUploadHistoryBtn()
     fun synchronized()
 }
