@@ -8,6 +8,7 @@ import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -74,6 +75,9 @@ import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.ceil
+import com.crafttalk.chat.di.modules.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
@@ -91,6 +95,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             Context.LAYOUT_INFLATER_SERVICE
         ) as LayoutInflater
     }
+    private var dontSendPreviewToOperator: Boolean = false
     private var speechRecognizer: SpeechRecognizer? = null
     private var speechRecognizerIntent: Intent? = null
     private val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
@@ -317,7 +322,22 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
         voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
     }
+    val executorService = Executors.newSingleThreadScheduledExecutor()
+    val sendServiceMessageUserIsTypingTextTask = Runnable {
+            val deltaTime = viewModel.userTypingInterval
+        if (!dontSendPreviewToOperator) {
+            if (System.currentTimeMillis() >= currentTimestamp + deltaTime) {
+                viewModel.sendServiceMessageUserIsTypingText(entry_field.text.toString())
+                currentTimestamp = System.currentTimeMillis()
+            }
+        }
+    }
 
+    val userStopTypingTask = Runnable {
+        viewModel.sendServiceMessageUserStopTypingText()
+    }
+
+    private var currentTimestamp = System.currentTimeMillis()
     @SuppressLint("ClickableViewAccessibility")
     private fun setAllListeners() {
         phone_user.apply {
@@ -349,6 +369,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
                 } else {
                     send_message.setImageDrawable(ChatAttr.getInstance().drawableSendMessage)
+                }
+                if (viewModel.userTyping == true) {
+                    dontSendPreviewToOperator = false
+                    executorService.schedule(sendServiceMessageUserIsTypingTextTask, viewModel.userTypingInterval.toLong() + 200, TimeUnit.MILLISECONDS)
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -466,8 +490,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             .inject(this)
         this.parentFragment = fragment
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
+            context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_NOT_EXPORTED)
+        }else {
+            if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
+            context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        }
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
-        context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         settingVoiceInput()
 
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
@@ -484,6 +515,19 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.DOCUMENTS_LIMIT).map { File(it, TypeFile.FILE) })
                 FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.DOCUMENTS_LIMIT_EXCEEDED)
             } else viewModel.sendFiles(listUri.map { File(it, TypeFile.FILE) })
+        }
+        //сомнительный код, условие всегда ложно
+        if (viewModel.chatIsClosed)
+        {
+            chatOffMessage.visibility = View.VISIBLE
+            try {
+                chatOffMessage.text = viewModel.chatClosedMessage
+            }
+            catch (e: Exception){
+                Log.e("",e.toString())
+            }
+            entry_field.inputType = 0
+            entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint_chat_off)
         }
 
         setAllListeners()
@@ -510,6 +554,18 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.displayableUIObject.observe(lifecycleOwner) {
             Log.d("CTALK_CHAT_VIEW", "displayableUIObject - ${it};")
             when (it) {
+                DisplayableUIObject.CHATCLOSED -> {
+                    chatOffMessage.visibility = View.VISIBLE
+                    try {
+                        chatOffMessage.text = viewModel.chatClosedMessage
+                    }
+                    catch (e: Exception){
+                        Log.e("",e.toString())
+                    }
+                    entry_field.inputType = 0
+                    entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint_chat_off)
+                }
+
                 DisplayableUIObject.NOTHING -> {
                     chat_place.visibility = View.GONE
                     search_place.visibility = View.GONE
@@ -598,6 +654,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE -> {
                     state_action_operator.visibility = View.GONE
+                }
+                DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER -> {
+                    viewModel.feedbackContainerVisible.value = false
                 }
             }
         }
@@ -905,7 +964,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         )?.show()
                     }
                 }
-
                 entry_field.text.clear()
                 entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint)
                 voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
@@ -988,6 +1046,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         viewModel.sendMessage(message, viewModel.replyMessage.value?.id)
                         viewModel.replyMessage.value = null
                         entry_field.text.clear()
+                        executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
+                        dontSendPreviewToOperator = true
                     }
                     message.isEmpty() -> {
                         send_message.isClickable = false
@@ -1000,6 +1060,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         viewModel.replyMessage.value = null
                         hideSoftKeyboard(this)
                         entry_field.text.clear()
+                        executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
+                        dontSendPreviewToOperator = true
                     }
                 }
             }
@@ -1024,6 +1086,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
             R.id.search -> {
+                chatOffMessage.visibility = View.GONE
                 warningConnection.visibility = View.GONE
                 infoChatState.visibility = View.GONE
                 search.visibility = View.GONE
@@ -1031,6 +1094,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 hideSoftKeyboard(this)
             }
             R.id.search_cancel -> {
+                if (viewModel.chatIsClosed) {chatOffMessage.visibility = View.VISIBLE}
                 search_place.visibility = View.GONE
                 warningConnection.visibility = View.GONE
                 infoChatState.visibility = View.INVISIBLE

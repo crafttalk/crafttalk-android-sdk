@@ -48,6 +48,10 @@ interface ChatEventListener {
     fun operatorStartWriteMessage()
     fun operatorStopWriteMessage()
     fun finishDialog()
+    fun updateDialogScore()
+    fun setUserTypingInterval(int: Int)
+    fun setUserTyping(boolean: Boolean)
+    fun setChatStateClosed(boolean: Boolean, string: String)
     fun showUploadHistoryBtn()
     fun synchronized()
 }

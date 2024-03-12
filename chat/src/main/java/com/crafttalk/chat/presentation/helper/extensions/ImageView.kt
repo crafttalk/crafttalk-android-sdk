@@ -24,7 +24,7 @@ import com.crafttalk.chat.utils.ChatParams
 fun ImageView.setStatusMessage(message: MessageModel) {
     if (message.role == Role.USER && ChatAttr.getInstance().showUserMessageStatus) {
         visibility = when (message.stateCheck) {
-            MessageType.RECEIVED_BY_MEDIATO -> {
+            MessageType.RECEIVED_BY_MEDIATOR -> {
                 Glide.with(context)
                     .load(R.drawable.com_crafttalk_chat_ic_check)
                     .into(this)

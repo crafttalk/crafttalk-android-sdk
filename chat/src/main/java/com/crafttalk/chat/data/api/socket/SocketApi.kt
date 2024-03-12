@@ -18,21 +18,27 @@ import com.crafttalk.chat.presentation.helper.ui.getWeightMediaFile
 import com.crafttalk.chat.utils.*
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_DATABASE_INSERT
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_API_SETTING
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_EVENT
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
-import okhttp3.OkHttpClient
-import java.util.UUID
+import java.net.URL
+import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
-class SocketApi constructor(
+
+class SocketApi(
     private val okHttpClient: OkHttpClient,
     private val messageDao: MessagesDao,
     private val gson: Gson,
@@ -65,6 +71,67 @@ class SocketApi constructor(
     private val viewModelJob = Job()
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
     private var isSendGreet = false
+
+    val executorService = Executors.newSingleThreadScheduledExecutor()
+
+    /**
+     * Получает с сервера json файл с настройками канала, парсит полученый файл и применяет полученные настройки
+     */
+    private val getSettingsFromServerTask = Runnable {
+        try {
+            val apiResponse:String = URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
+            //var i = JSONObject(apiResponse)
+
+            //var testModel = gson.fromJson(i.toString(),SettingFromServerJSON::class.java)
+            // var testModel = gson.fromJson(,SettingFromServerJSON::class.java)
+            //settingJSON = SettingFromServerJSON()
+
+            //settingJSON = gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
+            //val settingFromServerJSON = Gson().fromJson(apiResponse, configuration::class.java)
+
+            /**
+             *  устанваливает интревал отправки печатемого пользователем сообщения
+             */
+            if (apiResponse.contains("\"sendUserIsTyping\":true")){
+                val str = apiResponse
+                // Находим индекс начала числа
+                val startIndex = str.indexOf("\"userTypingInterval\":") + "\"userTypingInterval\":".length
+                // Находим индекс конца числа
+                val endIndex = str.indexOf(',',startIndex)
+                // Извлекаем строку с числом
+                val numberStr = str.substring(startIndex, endIndex)
+                // Преобразуем строку в число
+                val number = numberStr.toInt()
+                // Выводим число
+                chatEventListener?.setUserTypingInterval(number)
+            }
+            else {
+                chatEventListener?.setUserTyping(false)
+            }
+
+            /**
+             * Проверяет доступен ли чат для общения
+             */
+            if (apiResponse.contains("\"block\":false")){
+                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat not closed")
+            }
+            else {
+                val str = apiResponse
+
+                val startIndex = str.indexOf("\"blockMessage\":\"") + "\"blockMessage\":\"".length
+
+                val endIndex = str.indexOf("\",\"",startIndex)
+
+                val blockMessageStr = str.substring(startIndex, endIndex)
+
+                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat closed")
+                chatEventListener?.setChatStateClosed(true,  blockMessageStr)
+            }
+        }
+        catch (e:Exception){
+            Log.e(TAG_SOCKET_API_SETTING,e.message.toString())
+        }
+    }
 
     fun initSocket() {
         if (socket == null) {
@@ -148,6 +215,7 @@ class SocketApi constructor(
         chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
         socket?.run(::connectUser)
+        executorService.schedule(getSettingsFromServerTask,0,TimeUnit.MILLISECONDS)
     }
 
     private fun setAllListeners(socket: Socket) {
@@ -218,7 +286,7 @@ class SocketApi constructor(
                 val gson = GsonBuilder()
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
-                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0,"")
+                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0)
                 try {
                     //messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java) ?: return@launch //philip, понятия не имею для чего это было сделано
                     messageSocket = gson.fromJson(messageJson.toString(), NetworkMessage::class.java) ?: return@launch
@@ -227,22 +295,23 @@ class SocketApi constructor(
                     Log.e(TAG_SOCKET, "An error occurred while getting message from server. Info: " + e.message)
                 }
                 when (messageSocket.messageType) {
+                    MessageType.UPDATE_DIALOG_SCORE.valueType -> chatEventListener?.updateDialogScore()
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
-                    MessageType.VISITOR_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
+                    MessageType.MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.INITIAL_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
-                    MessageType.MERGE_HISTORY.valueType -> chatEventListener?.showUploadHistoryBtn()
+                    MessageType.USER_WAS_MERGED.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
                 if (
-                    (!messageSocket.toString().contains(""""message":"\/start"""") && !messageSocket.toString().contains(""""message":"/start"""")) &&
+                    (!messageSocket.toString().contains(""""message":"\/start"""") && !messageSocket.toString().contains(""""message":"/start"""") && !messageSocket.toString().contains("/start") && !messageSocket.toString().contains("""\/start""")) &&
                     (messageSocket.id != null || !messageDao.isNotEmpty())
                 ) {
                     when {
                         (chatStatus == ChatStatus.NOT_ON_CHAT_SCREEN_FOREGROUND_APP) && (messageSocket.messageType in listOf(
-                            MessageType.VISITOR_MESSAGE.valueType,
+                            MessageType.MESSAGE.valueType,
                             MessageType.INITIAL_MESSAGE.valueType,
-                            MessageType.TRANSFER_TO_OPERATOR.valueType
+                            MessageType.CONNECTED_OPERATOR.valueType
                         )) -> {
                             countNewMessages++
                             chatMessageListener?.getNewMessages(countNewMessages)
@@ -330,9 +399,23 @@ class SocketApi constructor(
     private fun greet() {
         if (socket != null && socket!!.connected() && !isSendGreet) {
             isSendGreet = true
-            socket?.emit("visitor-message", "/start", MessageType.VISITOR_MESSAGE.valueType, null, 0, null, null, null)
+            socket?.emit("visitor-message", "/start", MessageType.MESSAGE.valueType, null, 0, null, null, null)
         }
     }
+
+    /**
+     * Функция отправляет на сервер оператору текст который в данный момент печтатет пользователь
+     *
+     * @param message текст который в данные момент находится у пользователя в поле для ввода
+     */
+    fun sendServiceMessageUserIsTypingText(message: String){
+        socket?.emit("visitor-message", message, MessageType.USER_MESSAGE_SENT.valueType, null, 0, null, null)
+    }
+
+    fun sendServiceMessageUserStopTypingText(){
+        socket?.emit("visitor-message", "", MessageType.USER_STOPPED_TYPING.valueType, null, 0, null, null)
+    }
+
 
     fun sendMessage(message: String, repliedMessage: NetworkMessage?) {
         if (ChatAttr.getInstance().replyEnable) {
@@ -342,7 +425,7 @@ class SocketApi constructor(
             socket?.emit(
                 "visitor-message",
                 message,
-                MessageType.VISITOR_MESSAGE.valueType,
+                MessageType.MESSAGE.valueType,
                 null,
                 0,
                 null,
@@ -354,7 +437,7 @@ class SocketApi constructor(
             socket?.emit(
                 "visitor-message",
                 message,
-                MessageType.VISITOR_MESSAGE.valueType,
+                MessageType.MESSAGE.valueType,
                 null,
                 0,
                 null,
@@ -440,7 +523,7 @@ class SocketApi constructor(
     private suspend fun updateDataInDatabase(messageSocket: NetworkMessage, currentTimestamp: Long) {
         val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
+            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
                 messageSocket.correctAttachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
@@ -456,7 +539,7 @@ class SocketApi constructor(
                     }
                 }
             }
-            (MessageType.VISITOR_MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isFile || messageSocket.isUnknownType) -> {
+            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isFile || messageSocket.isUnknownType) -> {
                 messageSocket.correctAttachmentUrl?.let { url ->
                     insertMessage(MessageEntity.map(
                         uuid = visitor.uuid,
@@ -467,7 +550,7 @@ class SocketApi constructor(
                     ))
                 }
             }
-            (messageSocket.messageType in listOf(MessageType.VISITOR_MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType)) && messageSocket.isText -> {
+            (messageSocket.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType)) && messageSocket.isText -> {
                 val repliedMessageUrl = messageSocket.replyToMessage?.correctAttachmentUrl
                 when {
                     repliedMessageUrl != null && messageSocket.replyToMessage.isFile -> {
@@ -503,12 +586,12 @@ class SocketApi constructor(
                     }
                 }
             }
-            (MessageType.RECEIVED_BY_MEDIATO.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
+            (MessageType.RECEIVED_BY_MEDIATOR.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
                     messageDao.updateMessage(parentId, messageSocket.messageType)
                 }
             }
-            (MessageType.TRANSFER_TO_OPERATOR.valueType == messageSocket.messageType) -> {
+            (MessageType.CONNECTED_OPERATOR.valueType == messageSocket.messageType) -> {
                 insertMessage(MessageEntity.mapOperatorJoinMessage(
                     uuid = visitor.uuid,
                     networkMessage = messageSocket,

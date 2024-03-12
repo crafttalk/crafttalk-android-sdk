@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.crafttalk.chat.R
@@ -48,6 +49,10 @@ class ChatViewModel
     val openDocument = MutableLiveData<Pair<IOFile?, Boolean>?>()
     val mergeHistoryBtnVisible = MutableLiveData(false)
     val mergeHistoryProgressVisible = MutableLiveData(false)
+    var userTypingInterval:Int = 1000
+    var userTyping:Boolean = true
+    var chatIsClosed:Boolean = false
+    var chatClosedMessage:String = ""
 
     var searchText: String? = null
     val showSearchNavigate: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -173,6 +178,14 @@ class ChatViewModel
         override fun synchronized() {
             launchUI { chatStateListener?.endSynchronization() }
             displayableUIObject.postValue(DisplayableUIObject.CHAT)
+        }
+        override fun updateDialogScore(){displayableUIObject.postValue(DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER)}
+        override fun setUserTypingInterval(int: Int) {userTypingInterval = int}
+        override fun setUserTyping(boolean: Boolean) {userTyping = boolean }
+        override fun setChatStateClosed(boolean: Boolean, string: String) {
+            chatIsClosed = boolean
+            chatClosedMessage = string
+            displayableUIObject.postValue(DisplayableUIObject.CHATCLOSED)
         }
     }
     var uploadFileListener: UploadFileListener? = null
@@ -341,6 +354,19 @@ class ChatViewModel
                 message = message,
                 repliedMessageId = repliedMessageId
             )
+        }
+    }
+
+    fun sendServiceMessageUserIsTypingText(message: String){
+        launchIO {
+            messageInteractor.sendServiceMessageUserIsTypingText(message)
+        }
+
+    }
+
+    fun sendServiceMessageUserStopTypingText(){
+        launchIO {
+            messageInteractor.sendServiceMessageUserStopTypingText()
         }
     }
 
