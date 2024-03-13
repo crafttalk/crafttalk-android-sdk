@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="40dp"
+    android:paddingHorizontal="30dp"
     android:background="@color/com_crafttalk_chat_gray_f5f5f5">
 
     <TextView
@@ -13,8 +13,10 @@
         android:layout_height="wrap_content"
         android:text="@string/com_crafttalk_chat_feedback_title"
         android:gravity="center"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +28,7 @@
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
         android:tint="@color/com_crafttalk_chat_black"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_2"
         app:layout_constraintBottom_toTopOf="@id/close_feedback" />
@@ -37,7 +39,7 @@
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
         android:tint="@color/com_crafttalk_chat_black"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_1"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_3"
         app:layout_constraintBottom_toTopOf="@id/close_feedback" />
@@ -48,7 +50,7 @@
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
         android:tint="@color/com_crafttalk_chat_black"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_2"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_4"
         app:layout_constraintBottom_toTopOf="@id/close_feedback" />
@@ -59,7 +61,7 @@
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
         android:tint="@color/com_crafttalk_chat_black"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_3"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_5"
         app:layout_constraintBottom_toTopOf="@id/close_feedback" />
@@ -70,7 +72,7 @@
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
         android:tint="@color/com_crafttalk_chat_black"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/close_feedback" />
@@ -79,7 +81,7 @@
         android:id="@+id/close_feedback"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:padding="8dp"
         android:src="@drawable/com_crafttalk_chat_ic_arrow_down"
         android:tint="@color/com_crafttalk_chat_gray_8d8d8d"
         app:layout_constraintStart_toStartOf="parent"

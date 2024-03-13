@@ -30,7 +30,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_switch_place"
-        app:layout_constraintBottom_toTopOf="@id/reply_preview"
+        app:layout_constraintBottom_toTopOf="@id/user_feedback"
         tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
         tools:itemCount="1" />
 
@@ -113,20 +113,31 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        app:layout_constraintBottom_toTopOf="@+id/user_feedback"
         tools:visibility="visible" />
 
     <TextView
         android:id="@+id/company_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/com_crafttalk_chat_name_company"
         android:background="@color/com_crafttalk_chat_white_transparent_75"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
         android:gravity="right"
         android:paddingEnd="8dp"
         android:paddingBottom="8dp"
-        android:fontFamily="@font/com_crafttalk_chat_ubuntu_medium"
+        android:text="@string/com_crafttalk_chat_name_company"
         android:textFontWeight="700"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/lower_limit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+    <include
+        android:id="@+id/user_feedback"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        layout="@layout/com_crafttalk_chat_layout_user_feedback"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

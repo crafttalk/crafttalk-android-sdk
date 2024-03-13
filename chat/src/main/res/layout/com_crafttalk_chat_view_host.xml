@@ -123,16 +123,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="gone" />
 
-    <include
-        android:id="@+id/user_feedback"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        layout="@layout/com_crafttalk_chat_layout_user_feedback"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:visibility="gone" />
+
 
     <ProgressBar
         android:id="@+id/loading"
