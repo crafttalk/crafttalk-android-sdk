@@ -4,13 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.auth.Visitor
-import com.crafttalk.chat.domain.entity.file.File as DomainFile
-import java.io.File as IOFile
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.domain.interactors.*
@@ -25,6 +22,9 @@ import com.crafttalk.chat.utils.ChatParams
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import javax.inject.Inject
+import com.crafttalk.chat.domain.entity.file.File as DomainFile
+import java.io.File as IOFile
+
 
 class ChatViewModel
 @Inject constructor(
@@ -37,7 +37,6 @@ class ChatViewModel
     private val configurationInteractor: ConfigurationInteractor,
     private val context: Context
 ) : BaseViewModel() {
-
     var currentReadMessageTime = conditionInteractor.getCurrentReadMessageTime()
     var isAllHistoryLoaded = conditionInteractor.checkFlagAllHistoryLoaded()
     var initialLoadKey = conditionInteractor.getInitialLoadKey()
