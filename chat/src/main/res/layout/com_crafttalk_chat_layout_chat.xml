@@ -8,14 +8,16 @@
 
     <include
         android:id="@+id/search_switch_place"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
         layout="@layout/com_crafttalk_chat_include_search_switch"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/list_with_message"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
+        app:layout_constraintVertical_bias="0.0"
+        tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_with_message"
