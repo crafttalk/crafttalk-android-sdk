@@ -1,246 +1,160 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fl_auth"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fl_auth"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
         android:text="Настройка авторизации"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp" />
 
     <EditText
         android:id="@+id/uuid_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_field"
         android:hint="Введите uuid пользователя"
+        android:textSize="16sp"
+        android:textColor="#000"
         android:inputType="text"
         android:maxLines="1"
+        android:background="@drawable/background_field"
         android:padding="8dp"
-        android:textAlignment="center"
-        android:textColor="#000"
-        android:textSize="16sp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/first_name_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_field"
         android:hint="Введите имя пользователя"
+        android:textSize="16sp"
+        android:textColor="#000"
         android:inputType="text"
         android:maxLines="1"
+        android:background="@drawable/background_field"
         android:padding="8dp"
-        android:textAlignment="center"
-        android:textColor="#000"
-        android:textSize="16sp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/last_name_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_field"
         android:hint="Введите фамилию пользователя"
+        android:textSize="16sp"
+        android:textColor="#000"
         android:inputType="text"
         android:maxLines="1"
+        android:background="@drawable/background_field"
         android:padding="8dp"
-        android:textAlignment="center"
-        android:textColor="#000"
-        android:textSize="16sp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/salt_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_field"
         android:hint="Введите соль"
+        android:textSize="16sp"
+        android:textColor="#000"
         android:inputType="text"
         android:maxLines="1"
+        android:background="@drawable/background_field"
         android:padding="8dp"
-        android:textAlignment="center"
-        android:textColor="#000"
-        android:textSize="16sp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_gravity="center" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_auth_with_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
         android:text="Авторизация через форму"
         android:theme="@style/SwitchTheme"
-        app:switchPadding="8dp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        app:switchPadding="8dp"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal">
+        android:layout_marginHorizontal="16dp" />
 
-        <Button
-            android:id="@+id/sign_in_with_auth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/background_auth_button"
-            android:enabled="false"
-            android:gravity="center"
-            android:padding="12dp"
-            android:text="Войти с авторизацией"
-            android:textColor="#fff"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/sign_in_anonymously"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/background_auth_button"
-            android:enabled="true"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="Войти ананимно"
-            android:textColor="#fff"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/sign_in_chat_with_counter"
-            android:layout_width="245dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/background_auth_button"
-            android:enabled="true"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="Чат с поддержкой счетчика непрочитанных сообщений"
-            android:textColor="#fff"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/sign_in_web_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/background_auth_button"
-            android:enabled="true"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="WebView"
-            android:textColor="#fff"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <TextView
+    <Button
+        android:id="@+id/sign_in_with_auth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
+        android:text="Войти с авторизацией"
+        android:textSize="14sp"
+        android:textColor="#fff"
         android:gravity="center"
-        android:text="Настройки подключения"
-        android:textSize="18sp" />
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/background_auth_button"
+        android:padding="8dp"
+        android:enabled="false" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/sign_in_anonymously"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Войти ананимно"
+        android:textSize="14sp"
+        android:textColor="#fff"
+        android:gravity="center"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal">
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/background_auth_button"
+        android:padding="8dp"
+        android:enabled="true" />
 
-        <EditText
-            android:id="@+id/serverURL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/background_field"
-            android:hint="@string/urlChatHost"
-            android:inputType="text"
-            android:maxLines="1"
-            android:padding="8dp"
-            android:textAlignment="center"
-            android:textColor="#000"
-            android:textSize="16sp"
-            android:layout_weight="10"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#000"
+        android:layout_marginTop="16dp" />
 
-        <Button
-            android:id="@+id/apply_new_server"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="8dp"
-            android:layout_marginHorizontal="16dp"
-            android:text="Apply" />
-    </LinearLayout>
-
-    <LinearLayout
+    <Button
+        android:id="@+id/sign_in_chat_with_counter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Чат с поддержкой счетчика непрочитанных сообщений"
+        android:textSize="14sp"
+        android:textColor="#fff"
+        android:gravity="center"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal">
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/background_auth_button"
+        android:padding="8dp"
+        android:enabled="true" />
 
-        <EditText
-            android:id="@+id/server_chat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/background_field"
-            android:hint="@string/urlChatNameSpace"
-            android:inputType="text"
-            android:maxLines="1"
-            android:padding="8dp"
-            android:textAlignment="center"
-            android:textColor="#000"
-            android:textSize="16sp"
-            android:layout_weight="10"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#000"
+        android:layout_marginTop="16dp" />
 
-        <Button
-            android:id="@+id/apply_new_channel_chat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="8dp"
-            android:layout_marginHorizontal="16dp"
-            android:text="Apply" /></LinearLayout>
+    <Button
+        android:id="@+id/sign_in_web_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WebView"
+        android:textSize="14sp"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/background_auth_button"
+        android:padding="8dp"
+        android:enabled="true" />
 
 </LinearLayout>
