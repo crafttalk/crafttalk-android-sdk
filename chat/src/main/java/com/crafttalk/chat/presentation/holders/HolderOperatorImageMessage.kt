@@ -17,8 +17,7 @@ class HolderOperatorImageMessage(
     view: View,
     private val download: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit,
     private val updateData: (id: String, height: Int, width: Int) -> Unit,
-    private val clickHandler: (imageName: String, imageUrl: String) -> Unit
-) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
+    private val clickHandler: (imageName: String, imageUrl: String) -> Unit) : BaseViewHolder<ImageMessageItem>(view), View.OnClickListener {
     private val contentContainer: View? = view.findViewById(R.id.content_container)
     private val warningContainer: ViewGroup? = view.findViewById(R.id.server_image_warning)
 
