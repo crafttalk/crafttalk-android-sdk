@@ -1,5 +1,37 @@
 package com.crafttalk.chat.domain.entity.message
 
+/**
+ *      Коды сообщений
+ *      -2 -> INFO_MESSAGE
+ *      0 -> INITIAL
+ *      1 -> MESSAGE
+ *      2 -> SENT_CONFIRMATION
+ *      4 -> READING_CONFIRMATION
+ *      5 -> FAILED_CONFIRMATION
+ *      8 -> DELETED
+ *      9 -> PHONE_NUMBER
+ *      10 -> LOCATION
+ *      11 -> RECEIVED_BY_MEDIATOR
+ *      12 -> RECEIVED_BY_OPERATOR
+ *      13 -> OPERATOR_IS_TYPING
+ *      14 -> OPERATOR_STOPPED_TYPING
+ *      15 -> UPDATE_DIALOG_SCORE
+ *      16 -> FINISH_DIALOG
+ *      17 -> CLOSE_DIALOG_INTENTION
+ *      18 -> CONNECTED_OPERATOR
+ *      19 -> UPDATE_NEGATIVE_REASON
+ *      20 -> AUTO_GREETING
+ *      21 -> UPDATE_DIALOG_NEGATIVE_REASON
+ *      22 -> UPDATE_USER_DATA
+ *      23 -> CLIENT_HOLD
+ *      24 -> UPDATE_DIALOG_USEFULNESS
+ *      25 -> USER_WAS_MERGED
+ *      26 -> USER_WAS_AUTHORIZED
+ *      27 -> USER_WAS_DEAUTHORIZED
+ *      28 -> USER_MESSAGE_SENT
+ *      29 -> USER_STOPPED_TYPING
+ *      30 -> INITIAL_MESSAGE
+ */
 enum class MessageType(val valueType: Int) {
     INITIAL(0), //Стартовое  сообщение,  отправляемое  каналами. Например, /start в Telegram
     MESSAGE(1), //Обычное  отображаемое  сообщение,  отправленное пользователем или оператором
@@ -39,20 +71,34 @@ enum class MessageType(val valueType: Int) {
     companion object {
         fun getMessageTypeByValueType(valueType: Int): MessageType {
             return when(valueType) {
+                0 -> INITIAL
                 1 -> MESSAGE
-                30 -> INITIAL_MESSAGE
-                13 -> OPERATOR_IS_TYPING
-                14 -> OPERATOR_STOPPED_TYPING
+                2 -> SENT_CONFIRMATION
                 4 -> READING_CONFIRMATION
+                5 -> FAILED_CONFIRMATION
+                8 -> DELETED
+                9 -> PHONE_NUMBER
+                10 -> LOCATION
                 11 -> RECEIVED_BY_MEDIATOR
                 12 -> RECEIVED_BY_OPERATOR
+                13 -> OPERATOR_IS_TYPING
+                14 -> OPERATOR_STOPPED_TYPING
                 15 -> UPDATE_DIALOG_SCORE
-                17 -> CLOSE_DIALOG_INTENTION
                 16 -> FINISH_DIALOG
-                19 -> UPDATE_NEGATIVE_REASON
-                23 -> CLIENT_HOLD
+                17 -> CLOSE_DIALOG_INTENTION
                 18 -> CONNECTED_OPERATOR
+                19 -> UPDATE_NEGATIVE_REASON
+                20 -> AUTO_GREETING
+                21 -> UPDATE_DIALOG_NEGATIVE_REASON
+                22 -> UPDATE_USER_DATA
+                23 -> CLIENT_HOLD
+                24 -> UPDATE_DIALOG_USEFULNESS
                 25 -> USER_WAS_MERGED
+                26 -> USER_WAS_AUTHORIZED
+                27 -> USER_WAS_DEAUTHORIZED
+                28 -> USER_MESSAGE_SENT
+                29 -> USER_STOPPED_TYPING
+                30 -> INITIAL_MESSAGE
                 -2 -> INFO_MESSAGE
                 else -> DEFAULT
             }

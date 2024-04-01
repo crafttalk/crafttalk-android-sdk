@@ -11,7 +11,7 @@
     <!--    Chat-->
     <string name="com_crafttalk_chat_stete_synchronization">Синхронизация</string>
     <string name="com_crafttalk_chat_internet_connection_warning">Нет доступа к сети…</string>
-    <string name="com_crafttalk_chat_name_company">автор CraftTalk</string>
+    <string name="com_crafttalk_chat_name_company">Создано в CraftTalk 😋</string>
     <string name="com_crafttalk_chat_state_action_operator">Оператор печатает сообщение…</string>
     <string name="com_crafttalk_chat_entry_field_hint">Введите сообщение…</string>
     <string name="com_crafttalk_chat_entry_field_hint_chat_off">Чат недоступен…</string>
