@@ -475,7 +475,7 @@ class SocketApi(
      */
     fun giveFeedbackOnOperator(countStars: Int?, finishReason:String?, dialogID:String?) {
         Log.i("TAG_SOCKET_EVENT", dialogID ?: "Ошибка: Шальное null исключение")
-        socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, finishReason, null, null, null, dialogID, dialogID)
+        socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, finishReason, null, null, null, dialogID, "finish_dialog")
     }
 
     fun mergeNewMessages() {
