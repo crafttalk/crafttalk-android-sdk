@@ -1,12 +1,17 @@
 package com.crafttalk.sampleChat.web_view
 
+import android.Manifest
+import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Environment
 import android.util.Base64
 import android.webkit.JavascriptInterface
@@ -20,9 +25,16 @@ import java.io.IOException
 import java.lang.Exception
 import java.util.*
 import android.net.Uri
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.crafttalk.chat.presentation.helper.permission.requestPermissionWithAction
+import com.crafttalk.sampleChat.web_view.contracts.TakePicture
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_web_view.*
 
-class JavaScriptInterface(private val context: Context) {
-
+class JavaScriptInterface(private val context: Context, private val activity:Activity) {
     @JavascriptInterface
     @Throws(IOException::class)
     fun getBase64FromBlobData(base64Data: String) {
@@ -31,6 +43,20 @@ class JavaScriptInterface(private val context: Context) {
 
     @Throws(IOException::class)
     private fun convertBase64StringToFile(base64PDf: String) {
+        val permissionStatus = ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE)
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED){
+            download(base64PDf)
+        } else {
+            val code:Int = 1
+            ActivityCompat.requestPermissions(activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                code)
+            download(base64PDf)
+
+        }
+    }
+
+    private fun download(base64PDf: String){
         val extension = MimeTypeMap.getSingleton()
             .getExtensionFromMimeType(fileMimeType)
         val file = File(
@@ -55,7 +81,6 @@ class JavaScriptInterface(private val context: Context) {
             Toast.makeText(context, "Не удалось скачать файл =(", Toast.LENGTH_LONG).show()
         }
     }
-
     private fun getUriForFile(context: Context, file: File): Uri = FileProvider
         .getUriForFile(
             context,

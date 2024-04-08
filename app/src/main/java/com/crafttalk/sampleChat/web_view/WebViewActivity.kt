@@ -130,7 +130,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
             loadUrl("${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}")
 
             setWebContentsDebuggingEnabled(true)
-            addJavascriptInterface(JavaScriptInterface(this@WebViewActivity), "Android")
+            addJavascriptInterface(JavaScriptInterface(this@WebViewActivity, this@WebViewActivity), "Android")
             setDownloadListener { url, _, _, mimeType, _ ->
                 loadUrl(JavaScriptInterface.getBase64StringFromBlobUrl(url, mimeType))
             }
