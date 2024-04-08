@@ -748,7 +748,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
 
             try {
+
                 val intentChooser = Intent.createChooser(documentIntent, context.getString(R.string.com_crafttalk_chat_string_chooser_open_file_action_view))
+
+                context.startActivity(intentChooser)
                 if (documentIntent.resolveActivity(context.packageManager) != null) {
                     context.startActivity(intentChooser)
                 } else {
