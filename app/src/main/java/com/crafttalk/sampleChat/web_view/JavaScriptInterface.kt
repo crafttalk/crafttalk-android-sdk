@@ -43,13 +43,13 @@ class JavaScriptInterface(private val context: Context, private val activity:Act
 
     @Throws(IOException::class)
     private fun convertBase64StringToFile(base64PDf: String) {
-        val permissionStatus = ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE)
+        val permissionStatus = ContextCompat.checkSelfPermission(context, READ_MEDIA_IMAGES)
         if (permissionStatus == PackageManager.PERMISSION_GRANTED){
             download(base64PDf)
         } else {
             val code:Int = 1
             ActivityCompat.requestPermissions(activity,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                arrayOf(READ_MEDIA_IMAGES),
                 code)
             download(base64PDf)
 
