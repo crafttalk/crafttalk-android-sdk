@@ -294,13 +294,16 @@ class SocketApi(
                 catch (e: Exception){
                     Log.e(TAG_SOCKET, "An error occurred while getting message from server. Info: " + e.message)
                 }
+                if (messageSocket.attachmentName == null){
+                    messageSocket.attachmentName = UUID.randomUUID().toString()
+                }
                 when (messageSocket.messageType) {
                     MessageType.UPDATE_DIALOG_SCORE.valueType -> chatEventListener?.updateDialogScore()
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.INITIAL_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
-                    MessageType.FINISH_DIALOG.valueType -> chatEventListener?.finishDialog()
+                    MessageType.FINISH_DIALOG.valueType -> {chatEventListener?.finishDialog(); messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"; updateDataInDatabase(messageSocket, currentTimestamp)}
                     MessageType.USER_WAS_MERGED.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
                 if (

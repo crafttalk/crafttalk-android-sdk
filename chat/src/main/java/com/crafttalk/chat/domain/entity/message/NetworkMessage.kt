@@ -15,7 +15,7 @@ data class NetworkMessage (
     val idFromChannel: String? = null,
 
     @SerializedName (value = "message_type")
-    val messageType: Int,
+    var messageType: Int,
 
     @SerializedName (value = "isReply")
     val isReply : Boolean,
@@ -48,7 +48,7 @@ data class NetworkMessage (
     val attachmentType: String? = null,
 
     @SerializedName (value = "attachment_name")
-    val attachmentName: String? = null,
+    var attachmentName: String? = null,
 
     @SerializedName (value = "operator_id")
     val operatorId: String? = null,
@@ -80,7 +80,7 @@ data class NetworkMessage (
             !attachmentType.isNullOrEmpty() &&
             (attachmentType == "IMAGE" || attachmentType.toLowerCase(
                 ChatParams.locale!!).startsWith("image")) &&
-            attachmentName.contains(".GIF", true)
+            attachmentName!!.contains(".GIF", true)
 
     val isFile: Boolean
     get() = !attachmentUrl.isNullOrEmpty() &&
