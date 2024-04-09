@@ -493,7 +493,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
             context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
-                Context.RECEIVER_NOT_EXPORTED)
+                Context.RECEIVER_EXPORTED)
         }else {
             if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
             context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
