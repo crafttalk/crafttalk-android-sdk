@@ -994,7 +994,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onDestroyView() {
-        viewModel.giveFeedbackOnOperator(null,"CLOSED_BY_CLIENT", viewModel.dialogID1)
         speechRecognizer?.destroy()
     }
 
