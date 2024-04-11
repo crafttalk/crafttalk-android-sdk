@@ -1,8 +1,6 @@
 package com.crafttalk.sampleChat.web_view
 
-import android.Manifest
 import android.Manifest.permission.READ_MEDIA_IMAGES
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Notification
@@ -25,13 +23,8 @@ import java.io.IOException
 import java.lang.Exception
 import java.util.*
 import android.net.Uri
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.crafttalk.chat.presentation.helper.permission.requestPermissionWithAction
-import com.crafttalk.sampleChat.web_view.contracts.TakePicture
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_web_view.*
 
 class JavaScriptInterface(private val context: Context, private val activity:Activity) {
@@ -75,8 +68,10 @@ class JavaScriptInterface(private val context: Context, private val activity:Act
             Toast.makeText(context, "Не удалось скачать файл =(", Toast.LENGTH_LONG).show()
         }
         if (file.exists()) {
+            Toast.makeText(context, "Файл загружен!", Toast.LENGTH_LONG).show()
             // Что делать дальше решайте сами, можно кинуть натификацию или еще что выдумать...
             sendNotification(file)
+
         } else {
             Toast.makeText(context, "Не удалось скачать файл =(", Toast.LENGTH_LONG).show()
         }
