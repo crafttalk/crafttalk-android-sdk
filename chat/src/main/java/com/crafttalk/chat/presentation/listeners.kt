@@ -47,7 +47,7 @@ interface NavigationListener {
 interface ChatEventListener {
     fun operatorStartWriteMessage()
     fun operatorStopWriteMessage()
-    fun finishDialog()
+    fun finishDialog(dialogId:String?)
     fun updateDialogScore()
     fun setUserTypingInterval(int: Int)
     fun setUserTyping(boolean: Boolean)

@@ -1170,7 +1170,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         if (isLastDecision) {
             user_feedback.setOnTouchListener(null)
-            viewModel.giveFeedbackOnOperator(countStars)
+            viewModel.giveFeedbackOnOperator(countStars,null, viewModel.dialogID1)
             user_feedback.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
                 viewModel.feedbackContainerVisible.value = false
                 feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)

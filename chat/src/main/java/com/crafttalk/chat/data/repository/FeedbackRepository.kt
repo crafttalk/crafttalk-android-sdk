@@ -9,8 +9,8 @@ class FeedbackRepository
     private val socketApi: SocketApi
 ) : IFeedbackRepository {
 
-    override fun giveFeedbackOnOperator(countStars: Int) {
-        socketApi.giveFeedbackOnOperator(countStars)
+    override fun giveFeedbackOnOperator(countStars: Int?, finishReason:String?, dialogID:String?) {
+        socketApi.giveFeedbackOnOperator(countStars, finishReason, dialogID)
     }
 
 }
