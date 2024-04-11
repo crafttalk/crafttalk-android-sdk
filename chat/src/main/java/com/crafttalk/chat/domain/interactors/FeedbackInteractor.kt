@@ -8,8 +8,8 @@ class FeedbackInteractor
     private val feedbackRepository: IFeedbackRepository
 ) {
 
-    fun giveFeedbackOnOperator(countStars: Int) {
-        feedbackRepository.giveFeedbackOnOperator(countStars)
+    fun giveFeedbackOnOperator(countStars: Int?, finishReason:String?, dialogID:String?) {
+        feedbackRepository.giveFeedbackOnOperator(countStars, finishReason, dialogID)
     }
 
 }

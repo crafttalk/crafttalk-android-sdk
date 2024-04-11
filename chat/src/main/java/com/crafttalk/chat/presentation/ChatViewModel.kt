@@ -52,6 +52,7 @@ class ChatViewModel
     var userTyping:Boolean = true
     var chatIsClosed:Boolean = false
     var chatClosedMessage:String = ""
+    var dialogID1:String? = null
 
     var searchText: String? = null
     val showSearchNavigate: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -172,7 +173,10 @@ class ChatViewModel
     private val chatEventListener = object : ChatEventListener {
         override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
         override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
-        override fun finishDialog() { feedbackContainerVisible.postValue(true) }
+        override fun finishDialog(dialogId:String?) {
+            feedbackContainerVisible.postValue(true)
+            dialogID1 = dialogId
+        }
         override fun showUploadHistoryBtn() { mergeHistoryListener.showDialog() }
         override fun synchronized() {
             launchUI { chatStateListener?.endSynchronization() }
@@ -334,10 +338,17 @@ class ChatViewModel
             replyMessagePosition.postValue(messageInteractor.getCountMessagesInclusiveTimestampById(messageId))
         }
     }
-
-    fun giveFeedbackOnOperator(countStars: Int) {
+    /**Отправляет системное сообщение с оценкой диалога
+     * Вызывается когда пользоватль нажимает на звездочки
+     *
+     *      countStars: Int -- оценка диалога от 1 до 5.
+     *      finishReason:String -- причина закрытия, по умолчанию null,
+     *      Если клиент закрывает чат не оценивая диалог то нужно отправить "CLOSED_BY_CLIENT".
+     *      dialogID:String -- ID диалога который нужно оценить, если null то оценивается самый последний диалог
+     */
+    fun giveFeedbackOnOperator(countStars: Int?, finishReason:String?, dialogID:String?) {
         launchIO {
-            feedbackInteractor.giveFeedbackOnOperator(countStars)
+            feedbackInteractor.giveFeedbackOnOperator(countStars, finishReason, dialogID)
         }
     }
 

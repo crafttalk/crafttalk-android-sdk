@@ -303,7 +303,9 @@ class SocketApi(
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.INITIAL_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
+
                     MessageType.FINISH_DIALOG.valueType -> {chatEventListener?.finishDialog(); messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"; updateDataInDatabase(messageSocket, currentTimestamp)}
+
                     MessageType.USER_WAS_MERGED.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
                 if (
@@ -468,8 +470,17 @@ class SocketApi(
         socket?.emit("visitor-action", actionId)
     }
 
-    fun giveFeedbackOnOperator(countStars: Int) {
-        socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, null, null)
+    /**Отправляет системное сообщение с оценкой диалога
+     * Вызывается когда пользователь нажимает на звездочки
+     *
+     *      countStars: Int -- оценка диалога от 1 до 5.
+     *      finishReason:String -- причина закрытия, по умолчанию null,
+     *      Если клиент закрывает чат не оценивая диалог то нужно отправить "CLOSED_BY_CLIENT".
+     *      dialogID:String -- ID диалога который нужно оценить, если null то оценивается самый последний диалог
+     */
+    fun giveFeedbackOnOperator(countStars: Int?, finishReason:String?, dialogID:String?) {
+        Log.i("TAG_SOCKET_EVENT", dialogID ?: "Ошибка: Шальное null исключение")
+        socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, finishReason, null, null, null, dialogID, "finish_dialog")
     }
 
     fun mergeNewMessages() {

@@ -749,11 +749,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
             try {
                 val intentChooser = Intent.createChooser(documentIntent, context.getString(R.string.com_crafttalk_chat_string_chooser_open_file_action_view))
-                if (documentIntent.resolveActivity(context.packageManager) != null) {
-                    context.startActivity(intentChooser)
-                } else {
-                    downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_open_file_fail))
-                }
+                context.startActivity(intentChooser)
             } catch (ex: ActivityNotFoundException) {
                 downloadFileListener.failDownload(context.getString(R.string.com_crafttalk_chat_open_file_fail))
             }
@@ -1170,7 +1166,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         if (isLastDecision) {
             user_feedback.setOnTouchListener(null)
-            viewModel.giveFeedbackOnOperator(countStars)
+            viewModel.giveFeedbackOnOperator(countStars,null, viewModel.dialogID1)
             user_feedback.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
                 viewModel.feedbackContainerVisible.value = false
                 feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
