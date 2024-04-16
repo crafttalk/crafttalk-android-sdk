@@ -39,6 +39,13 @@ data class ImageTag(
     val width: Int,
     val height: Int
 ): Tag("img", pointStart, pointEnd)
+
+data class OrderedListTag(
+    override val pointStart: Int,
+    override var pointEnd: Int,
+    val countNesting: Int
+): Tag("ol", pointStart, pointEnd)
+
 data class HostListTag(
     override val pointStart: Int,
     override var pointEnd: Int,

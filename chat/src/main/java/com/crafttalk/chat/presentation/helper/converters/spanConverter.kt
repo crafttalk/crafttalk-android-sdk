@@ -10,6 +10,7 @@ import android.text.SpannableString
 import android.text.style.*
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatAttr
 import java.lang.Exception
@@ -98,6 +99,17 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                 }
+                is OrderedListTag -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    result.setSpan(
+                        BulletSpan(
+                            10,
+                            16711935,
+                            6
+                        ), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    }
+                }
                 is PhoneTag -> {
                     result.setSpan(object : ClickableSpan() {
                         override fun onClick(widget: View) {
@@ -118,7 +130,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                 }
             }
         } catch(ex: IndexOutOfBoundsException) {
-            Log.e("CTALK_ERROR_IN_CONVERTER", "msg: ${this}, authorIsUser: ${authorIsUser}; spanStructureList: ${spanStructureList};")
+            Log.e("CTALK_ERROR_INCONVERTER", "msg: ${this}, authorIsUser: ${authorIsUser}; spanStructureList: ${spanStructureList};")
         }
     }
     return result

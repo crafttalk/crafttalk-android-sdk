@@ -40,7 +40,9 @@ fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
     }
     return when {
         this.replace("\n", "").let {
-            it.matches(Regex(".*<(strong|i|a|img|ul|li|br|p).*")) ||
+            it.matches(Regex(".*<(span class=\"ct-markdown__bold\"|span class=\"ct-markdown__italic\"|span class=\"ct-markdown__strikethrough\"|ol class=\"ct-markdown__ol-list\").*")) ||
+
+            it.matches(Regex(".*<(strong|i|a|img|ul|li|ol|br|p).*")) ||
             it.matches(Regex(".*&(nbsp|pound|euro|para|sect|copy|reg|trade|deg|plusmn|frac14|frac12|frac34|times|divide|fnof);.*")) ||
             it.matches(Regex(".*&(larr|uarr|rarr|darr|harr);.*")) ||
             it.matches(Regex(".*&(spades|clubs|hearts|diams|quot|amp|lt|gt);.*")) ||
@@ -131,6 +133,11 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
 
     fun addTag(tagName: String, listAttrs: List<AttrTag>, startIndex: Int, endIndex: Int) {
         when (tagName) {
+            "span class=\"ct-markdown__bold\"" -> listTag.add(BTag(startIndex + 1, endIndex))
+            "span class=\"ct-markdown__italic\"" -> listTag.add(ItalicTag(startIndex + 1, endIndex))
+            "span class=\"ct-markdown__strikethrough\"" -> listTag.add(StrikeTag(startIndex + 1, endIndex))
+            "ol class=\"ct-markdown__ol-list\"" -> listTag.add(OrderedListTag(startIndex + 1, endIndex, 1))
+
             "strike" -> listTag.add(StrikeTag(startIndex + 1, endIndex))
             "strong" -> listTag.add(StrongTag(startIndex + 1, endIndex))
             "b" -> listTag.add(BTag(startIndex + 1, endIndex))
@@ -172,7 +179,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
         addTag(tagName, listAttrs, startIndex, -1)
     }
     fun updateStateTag(tagName: String, endIndex: Int) {
-        listTag.findLast { it.name == tagName && it.pointEnd == -1 }?.let { it.pointEnd = endIndex }
+        listTag.findLast {  it.pointEnd == -1 }?.let { it.pointEnd = endIndex }
     }
 
     fun checkCloseTag(startIndex: Int): Boolean {
@@ -182,7 +189,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
     fun replyOrExecuteTag(tagName: String, isOpenTag: Boolean, resultString: StringBuilder, block: () -> Unit) {
         when {
             tagName == "p" -> {
-                resultString.append("\n\n")
+                //resultString.append("\n\n")
             }
             tagName == "br" -> {
                 resultString.append("\n")
@@ -195,6 +202,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
         }
     }
 
+    /****/
     val result = StringBuilder()
     val length = this.length
     val tagName = StringBuilder()
@@ -207,6 +215,9 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
     var isFillAttrTag = false
     var jumpIndex = -1
 
+    /**Хранит открывающий span тег для MarkDown разметки. Так как закрывающий
+     *  тег не имеет информации о форматировании и служит лишь закрывающим тегом**/
+    var lastSpanTag:String = ""
     this.forEachIndexed { index, char ->
         if (jumpIndex != -1 && index <= jumpIndex) {
             if (index == jumpIndex) {
@@ -216,20 +227,28 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
         }
         when (char) {
             ' ' -> {
-                if (isSelectTag) {
-                    if ((isSingleTag || !isCloseTag) && !isReplaceTag) {
-                        try {
-                            getAttrTag(index, isSingleTag)?.let {
-                                isFillAttrTag = true
-                                listAttrsTag.add(it.attrTag)
-                                jumpIndex = it.endIndex
-                            }
-                        } catch (ex: StringIndexOutOfBoundsException) {
-                            Log.e("CTALK_FAIL_PARSE", "getAttrTag fail - ${ex.message}")
-                        }
+                if (tagName.toString() == "span"){
+                    when (true) {
+                        isFillAttrTag -> return@forEachIndexed
+                        isSelectTag -> tagName.append(char)
+                        else -> result.append(char)
                     }
                 } else {
-                    result.append(char)
+                    if ((isSelectTag)) {
+                        if ((isSingleTag || !isCloseTag) && !isReplaceTag) {
+                            try {
+                                getAttrTag(index, isSingleTag)?.let {
+                                    isFillAttrTag = true
+                                    listAttrsTag.add(it.attrTag)
+                                    jumpIndex = it.endIndex
+                                }
+                            } catch (ex: StringIndexOutOfBoundsException) {
+                                Log.e("CTALK_FAIL_PARSE", "getAttrTag fail - ${ex.message}")
+                            }
+                        }
+                    } else {
+                        result.append(char)
+                    }
                 }
             }
             '&' -> {
@@ -285,12 +304,21 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                     }
                     !isSingleTag && isCloseTag -> {
                         replyOrExecuteTag(tagName.toString().trim(), false, result) {
-                            updateStateTag(tagName.toString().trim(), result.lastIndex)
+                            if (tagName.toString() == "span"){
+                                updateStateTag(lastSpanTag.trim(), result.lastIndex)
+                            } else {
+                                updateStateTag(tagName.toString().trim(), result.lastIndex)
+                            }
                         }
                     }
                     !isSingleTag && !isCloseTag -> {
+                        if (tagName.toString() == "span class=\"ct-markdown__bold\"" ||
+                            tagName.toString() == "span class=\"ct-markdown__italic\""||
+                            tagName.toString() == "span class=\"ct-markdown__strikethrough\""){
+                            lastSpanTag = tagName.toString()
+                        }
                         replyOrExecuteTag(tagName.toString().trim(), true, result) {
-                            addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex)
+                                addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex)
                         }
                     }
                 }
