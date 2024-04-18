@@ -16,20 +16,35 @@ import kotlin.Exception
 
 fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: List<Tag>, context: Context): SpannableString {
     var tempString = this
+    var bias = 0
     spanStructureList.forEach {
         try {
             when (it){
                 is OrderedListTag -> {
-                    var bias = 0
+                    bias = 0
                     var positionOfElementInList = 1
                 for (element in spanStructureList){
                     if (it.pointStart < element.pointStart && it.pointEnd >= element.pointEnd ){
-                        var firstPartOfString = tempString.subSequence(0, element.pointStart + bias)
-                        var lastPartOfString = tempString.subSequence(element.pointStart + bias, tempString.length)
-                        tempString = firstPartOfString.toString() + positionOfElementInList.toString()+ ") " + lastPartOfString
-                        positionOfElementInList++
-                        bias += 3
-                        Log.i("","")
+                        if (element.name == "li") {
+                            var firstPartOfString =
+                                tempString.subSequence(0, element.pointStart + bias)
+                            var lastPartOfString =
+                                tempString.subSequence(element.pointStart + bias, tempString.length)
+                            tempString =
+                                firstPartOfString.toString() + positionOfElementInList.toString() + ") " + lastPartOfString
+                            positionOfElementInList++
+                            bias += 3
+                            }
+                        else {
+                                element.pointStart = element.pointStart + bias
+                                element.pointEnd = element.pointEnd + bias
+                            }
+                        }
+                    }
+                    for (i in spanStructureList){
+                        if (it.pointEnd <= i.pointStart){
+                            i.pointEnd += bias
+                            i.pointStart += bias
                         }
                     }
                 }
@@ -101,7 +116,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                 }
                 is HostListTag -> {
                     result.setSpan(
-                        LeadingMarginSpan.Standard(80),
+                        LeadingMarginSpan.Standard(10),
                         it.pointStart,
                         it.pointEnd + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -111,7 +126,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                 result.setSpan(
                                     BulletSpan(
-                                        10,
+                                        2,
                                         ChatAttr.getInstance().colorTextOperatorMessage,
                                         6
                                     ), element.pointStart, element.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
