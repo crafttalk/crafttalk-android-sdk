@@ -40,6 +40,10 @@ class TagDeserializer(val gson: Gson): JsonDeserializer<List<Tag>> {
                     if (!jsonObject.has("countNesting")) return@forEach
                     result.add(HostListTag(pointStart, pointEnd, jsonObject.get("countNesting").asInt))
                 }
+                "ol" -> {
+                    if (!jsonObject.has("countNesting")) return@forEach
+                    result.add(OrderedListTag(pointStart, pointEnd, jsonObject.get("countNesting").asInt))
+                }
                 "phone" -> {
                     if (!jsonObject.has("phone")) return@forEach
                     result.add(PhoneTag(pointStart, pointEnd, jsonObject.get("phone").asString))

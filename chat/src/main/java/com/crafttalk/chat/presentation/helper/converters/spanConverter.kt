@@ -10,13 +10,37 @@ import android.text.SpannableString
 import android.text.style.*
 import android.util.Log
 import android.view.View
-import androidx.annotation.RequiresApi
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatAttr
-import java.lang.Exception
+import kotlin.Exception
 
 fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: List<Tag>, context: Context): SpannableString {
-    val result = SpannableString(this)
+    var tempString = this
+    spanStructureList.forEach {
+        try {
+            when (it){
+                is OrderedListTag -> {
+                    var bias = 0
+                    var positionOfElementInList = 1
+                for (element in spanStructureList){
+                    if (it.pointStart < element.pointStart && it.pointEnd >= element.pointEnd ){
+                        var firstPartOfString = tempString.subSequence(0, element.pointStart + bias)
+                        var lastPartOfString = tempString.subSequence(element.pointStart + bias, tempString.length)
+                        tempString = firstPartOfString.toString() + positionOfElementInList.toString()+ ") " + lastPartOfString
+                        positionOfElementInList++
+                        bias += 3
+                        Log.i("","")
+                        }
+                    }
+                }
+            }
+        }
+        catch (e:Exception){
+            Log.e ("",e.toString())
+        }
+    }
+
+    val result = SpannableString(tempString)
     spanStructureList.forEach {
         try {
             when (it) {
@@ -74,22 +98,6 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
 //                )
                 }
                 is ItemListTag -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        result.setSpan(
-                            BulletSpan(
-                                10,
-                                ChatAttr.getInstance().colorTextOperatorMessage,
-                                6
-                            ), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    } else {
-                        result.setSpan(
-                            BulletSpan(),
-                            it.pointStart,
-                            it.pointEnd + 1,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
                 }
                 is HostListTag -> {
                     result.setSpan(
@@ -98,17 +106,35 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                         it.pointEnd + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
+                    for (element in spanStructureList){
+                        if (it.pointStart < element.pointStart && it.pointEnd >= element.pointEnd ){
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                result.setSpan(
+                                    BulletSpan(
+                                        10,
+                                        ChatAttr.getInstance().colorTextOperatorMessage,
+                                        6
+                                    ), element.pointStart, element.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                            } else {
+                                result.setSpan(
+                                    BulletSpan(),
+                                    element.pointStart,
+                                    element.pointEnd + 1,
+                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                            }
+                        }
+                    }
+
                 }
                 is OrderedListTag -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    result.setSpan(
-                        BulletSpan(
-                            10,
-                            16711935,
-                            6
-                        ), it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    for (element in spanStructureList){
+                        if (it.pointStart < element.pointStart && it.pointEnd >= element.pointEnd ){
+
+                        }
                     }
+
                 }
                 is PhoneTag -> {
                     result.setSpan(object : ClickableSpan() {
@@ -135,3 +161,5 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
     }
     return result
 }
+
+

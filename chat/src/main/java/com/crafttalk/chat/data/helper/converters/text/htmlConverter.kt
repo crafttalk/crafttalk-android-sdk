@@ -136,7 +136,15 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
             "span class=\"ct-markdown__bold\"" -> listTag.add(BTag(startIndex + 1, endIndex))
             "span class=\"ct-markdown__italic\"" -> listTag.add(ItalicTag(startIndex + 1, endIndex))
             "span class=\"ct-markdown__strikethrough\"" -> listTag.add(StrikeTag(startIndex + 1, endIndex))
-            "ol class=\"ct-markdown__ol-list\"" -> listTag.add(OrderedListTag(startIndex + 1, endIndex, 1))
+            "ol class=\"ct-markdown__ol-list\"" -> {
+                listTag.add(
+                    OrderedListTag(
+                        startIndex + 1,
+                        endIndex,
+                        ((listTag.findLast { it.javaClass == OrderedListTag::class && it.pointEnd == -1 } as? OrderedListTag)?.countNesting ?: -1) + 1
+                    )
+                )
+            }
 
             "strike" -> listTag.add(StrikeTag(startIndex + 1, endIndex))
             "strong" -> listTag.add(StrongTag(startIndex + 1, endIndex))
@@ -173,6 +181,17 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                     )
                 )
             }
+            "ol" -> {
+                listTag.add(
+                    OrderedListTag(
+                        startIndex + 1,
+                        endIndex,
+                        ((listTag.findLast { it.javaClass == OrderedListTag::class && it.pointEnd == -1 } as? OrderedListTag)?.countNesting ?: -1) + 1
+                    )
+                )
+
+
+            }
         }
     }
     fun addTag(tagName: String, listAttrs: List<AttrTag>, startIndex: Int) {
@@ -195,6 +214,10 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                 resultString.append("\n")
             }
             tagName == "li" && isOpenTag -> {
+                resultString.append("\n")
+                block()
+            }
+            tagName == "ol" && isOpenTag -> {
                 resultString.append("\n")
                 block()
             }
@@ -314,7 +337,8 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                     !isSingleTag && !isCloseTag -> {
                         if (tagName.toString() == "span class=\"ct-markdown__bold\"" ||
                             tagName.toString() == "span class=\"ct-markdown__italic\""||
-                            tagName.toString() == "span class=\"ct-markdown__strikethrough\""){
+                            tagName.toString() == "span class=\"ct-markdown__strikethrough\""||
+                            tagName.toString() == "ol class=\"ct-markdown__ol-list\""){
                             lastSpanTag = tagName.toString()
                         }
                         replyOrExecuteTag(tagName.toString().trim(), true, result) {
