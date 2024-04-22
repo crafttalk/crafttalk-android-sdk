@@ -31,7 +31,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                             var lastPartOfString =
                                 tempString.subSequence(element.pointStart + bias, tempString.length)
                             tempString =
-                                firstPartOfString.toString() + positionOfElementInList.toString() + ") " + lastPartOfString
+                                "$firstPartOfString$positionOfElementInList) $lastPartOfString"
                             positionOfElementInList++
                             bias += 3
                             }
@@ -121,23 +121,28 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                         it.pointEnd + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    for (element in spanStructureList){
-                        if (it.pointStart < element.pointStart && it.pointEnd >= element.pointEnd ){
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                result.setSpan(
-                                    BulletSpan(
-                                        2,
-                                        ChatAttr.getInstance().colorTextOperatorMessage,
-                                        6
-                                    ), element.pointStart, element.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                                )
-                            } else {
-                                result.setSpan(
-                                    BulletSpan(),
-                                    element.pointStart,
-                                    element.pointEnd + 1,
-                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                                )
+                    for (element in spanStructureList) {
+                        if (element.name == "li") {
+                            if (it.pointStart < element.pointStart && it.pointEnd >= element.pointEnd) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                    result.setSpan(
+                                        BulletSpan(
+                                            2,
+                                            ChatAttr.getInstance().colorTextOperatorMessage,
+                                            6
+                                        ),
+                                        element.pointStart,
+                                        element.pointEnd + 1,
+                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                    )
+                                } else {
+                                    result.setSpan(
+                                        BulletSpan(),
+                                        element.pointStart,
+                                        element.pointEnd + 1,
+                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                    )
+                                }
                             }
                         }
                     }

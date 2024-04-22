@@ -40,8 +40,7 @@ fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
     }
     return when {
         this.replace("\n", "").let {
-            it.matches(Regex(".*<(span class=\"ct-markdown__bold\"|span class=\"ct-markdown__italic\"|span class=\"ct-markdown__strikethrough\"|ol class=\"ct-markdown__ol-list\").*")) ||
-
+            it.matches(Regex(".*(ct-markdown).*")) ||
             it.matches(Regex(".*<(strong|i|a|img|ul|li|ol|br|p).*")) ||
             it.matches(Regex(".*&(nbsp|pound|euro|para|sect|copy|reg|trade|deg|plusmn|frac14|frac12|frac34|times|divide|fnof);.*")) ||
             it.matches(Regex(".*&(larr|uarr|rarr|darr|harr);.*")) ||
@@ -250,7 +249,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
         }
         when (char) {
             ' ' -> {
-                if (tagName.toString() == "span"){
+                if ((tagName.toString() == "span") || (tagName.toString() == "ol")){
                     when (true) {
                         isFillAttrTag -> return@forEachIndexed
                         isSelectTag -> tagName.append(char)
@@ -334,13 +333,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                             }
                         }
                     }
-                    !isSingleTag && !isCloseTag -> {
-                        if (tagName.toString() == "span class=\"ct-markdown__bold\"" ||
-                            tagName.toString() == "span class=\"ct-markdown__italic\""||
-                            tagName.toString() == "span class=\"ct-markdown__strikethrough\""||
-                            tagName.toString() == "ol class=\"ct-markdown__ol-list\""){
-                            lastSpanTag = tagName.toString()
-                        }
+                   !isSingleTag && !isCloseTag -> {
                         replyOrExecuteTag(tagName.toString().trim(), true, result) {
                                 addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex)
                         }
