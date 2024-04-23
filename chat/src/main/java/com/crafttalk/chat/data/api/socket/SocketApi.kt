@@ -304,7 +304,7 @@ class SocketApi(
                     MessageType.MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.INITIAL_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
 
-                    MessageType.FINISH_DIALOG.valueType -> {chatEventListener?.finishDialog(); messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"; updateDataInDatabase(messageSocket, currentTimestamp)}
+                    MessageType.FINISH_DIALOG.valueType -> {chatEventListener?.finishDialog(messageSocket.dialogId); messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"; updateDataInDatabase(messageSocket, currentTimestamp)}
 
                     MessageType.USER_WAS_MERGED.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
