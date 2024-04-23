@@ -104,7 +104,7 @@
         android:id="@+id/sign_in_anonymously"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Войти ананимно"
+        android:text="Войти инкогнито"
         android:textSize="14sp"
         android:textColor="#fff"
         android:gravity="center"
