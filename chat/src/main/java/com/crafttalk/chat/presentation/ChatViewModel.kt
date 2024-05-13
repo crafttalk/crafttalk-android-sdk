@@ -301,15 +301,6 @@ class ChatViewModel
     }
 
     fun openImage(imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
-        //ShowImageDialog.Builder(context)
-        //    .setName(imageName)
-        //    .setUrl(imageUrl)
-        //    .setType(TypeFile.IMAGE)
-        //    .setFunDownload(downloadFun)
-        //.show()
-        //ShowImageDialog(context,0)
-        //val intent = Intent(context ,)
-        //startActivity(intent)
         val intent = Intent(context, ShowMediaDialog2::class.java)
         intent.putExtra("url",imageUrl)
         intent.putExtra("imageName", imageName)
@@ -318,13 +309,6 @@ class ChatViewModel
     }
 
     fun openGif(gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
-        //ShowImageDialog.Builder(context)
-        //    .setName(gifName)
-        //    .setUrl(gifUrl)
-        //    .setType(TypeFile.GIF)
-        //    .setFunDownload(downloadFun)
-        //    .show()
-
         val intent = Intent(context, ShowMediaDialog2::class.java)
         intent.putExtra("url",gifUrl)
         intent.putExtra("imageName", gifName)
