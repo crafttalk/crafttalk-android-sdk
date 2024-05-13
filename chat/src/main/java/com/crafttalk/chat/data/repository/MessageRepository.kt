@@ -204,11 +204,11 @@ class MessageRepository
             }
 
             val maxTimestampUserMessage = userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp
-            Log.d("CTALK_TEST_DATA_LOP", "rep maxTimestampUserMessage - ${maxTimestampUserMessage};")
+            //Log.d("CTALK_TEST_DATA_LOP", "rep maxTimestampUserMessage - ${maxTimestampUserMessage};")
             if (maxTimestampUserMessage != null) {
                 val messagesForUpdateReadPoint = resultMessages.filter { it.timestamp <= maxTimestampUserMessage }
                         .map { Pair(it.id, it.timestamp) }
-                Log.d("CTALK_TEST_DATA_LOP", "rep messagesForUpdateReadPoint - ${messagesForUpdateReadPoint};")
+                //Log.d("CTALK_TEST_DATA_LOP", "rep messagesForUpdateReadPoint - ${messagesForUpdateReadPoint};")
                 updateReadPoint(messagesForUpdateReadPoint)
             }
 

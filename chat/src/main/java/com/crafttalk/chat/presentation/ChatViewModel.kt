@@ -1,7 +1,9 @@
 package com.crafttalk.chat.presentation
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
@@ -13,6 +15,7 @@ import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.domain.interactors.*
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
+import com.crafttalk.chat.presentation.feature.view_picture.ShowMediaDialog2
 import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
 import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
 import com.crafttalk.chat.presentation.helper.mappers.messageSearchMapper
@@ -109,13 +112,13 @@ class ChatViewModel
         )
     }
     private val updateCurrentReadMessageTime: (List<Pair<String, Long>>) -> Boolean = { newTimeMarks ->
-        Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 1 newTimeMark - $newTimeMarks; currentReadMessageTime - ${currentReadMessageTime}")
+        //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 1 newTimeMark - $newTimeMarks; currentReadMessageTime - ${currentReadMessageTime}")
         newTimeMarks.forEach { pair ->
             val id = pair.first
             val time = pair.second
             if (time > currentReadMessageTime) {
                 launchIO {
-                    Log.d("CTALK_TEST_DATA_LOP", "readMessage id - ${id}; time - ${time};")
+                    //Log.d("CTALK_TEST_DATA_LOP", "readMessage id - ${id}; time - ${time};")
                     messageInteractor.readMessage(
                         messageId = id
                     )
@@ -123,13 +126,13 @@ class ChatViewModel
             }
         }
         val maxTime = newTimeMarks.maxByOrNull { it.second }?.second
-        Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 2 currentReadMessageTime - $currentReadMessageTime; maxTime - $maxTime;")
+        //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 2 currentReadMessageTime - $currentReadMessageTime; maxTime - $maxTime;")
         if (maxTime != null && maxTime > currentReadMessageTime) {
             currentReadMessageTime = maxTime
-            Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 3 true;")
+            //.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 3 true;")
             true
         } else {
-            Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 4 false;")
+            //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 4 false;")
             false
         }
     }
@@ -298,21 +301,36 @@ class ChatViewModel
     }
 
     fun openImage(imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
-        ShowImageDialog.Builder(context)
-            .setName(imageName)
-            .setUrl(imageUrl)
-            .setType(TypeFile.IMAGE)
-            .setFunDownload(downloadFun)
-            .show()
+        //ShowImageDialog.Builder(context)
+        //    .setName(imageName)
+        //    .setUrl(imageUrl)
+        //    .setType(TypeFile.IMAGE)
+        //    .setFunDownload(downloadFun)
+        //.show()
+        //ShowImageDialog(context,0)
+        //val intent = Intent(context ,)
+        //startActivity(intent)
+        val intent = Intent(context, ShowMediaDialog2::class.java)
+        intent.putExtra("url",imageUrl)
+        intent.putExtra("imageName", imageName)
+        intent.putExtra("typeFile",TypeFile.IMAGE.toString())
+        startActivity(context,intent,null)
     }
 
     fun openGif(gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
-        ShowImageDialog.Builder(context)
-            .setName(gifName)
-            .setUrl(gifUrl)
-            .setType(TypeFile.GIF)
-            .setFunDownload(downloadFun)
-            .show()
+        //ShowImageDialog.Builder(context)
+        //    .setName(gifName)
+        //    .setUrl(gifUrl)
+        //    .setType(TypeFile.GIF)
+        //    .setFunDownload(downloadFun)
+        //    .show()
+
+        val intent = Intent(context, ShowMediaDialog2::class.java)
+        intent.putExtra("url",gifUrl)
+        intent.putExtra("imageName", gifName)
+        intent.putExtra("typeFile",TypeFile.GIF.toString())
+        startActivity(context,intent,null)
+
     }
 
     fun selectAction(messageId: String, actionId: String) {
@@ -532,7 +550,7 @@ class ChatViewModel
         val isReadNewMessage = updateCurrentReadMessageTime(
             listOf(Pair(messageModel.id, messageModel.timestamp))
         )
-        Log.d("CTALK_TEST_DATA_LOP", "VM readMessage 2 isReadNewMessage - $isReadNewMessage; messageModel - $messageModel;")
+        //Log.d("CTALK_TEST_DATA_LOP", "VM readMessage 2 isReadNewMessage - $isReadNewMessage; messageModel - $messageModel;")
         if (isReadNewMessage) {
             updateCountUnreadMessages()
         }
