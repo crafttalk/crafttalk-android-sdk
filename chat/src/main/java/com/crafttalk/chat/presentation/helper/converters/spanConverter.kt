@@ -12,11 +12,13 @@ import android.util.Log
 import android.view.View
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_SPAN_CONVERTER
 import kotlin.Exception
 
 fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: List<Tag>, context: Context): SpannableString {
     var tempString = this
     var bias = 0
+    Log.d(TAG_SPAN_CONVERTER,"start add span to message -> $this")
     spanStructureList.forEach {
         try {
             when (it){
@@ -179,6 +181,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
             Log.e("CTALK_ERROR_INCONVERTER", "msg: ${this}, authorIsUser: ${authorIsUser}; spanStructureList: ${spanStructureList};")
         }
     }
+    Log.d(TAG_SPAN_CONVERTER,"finish add span to message -> $result")
     return result
 }
 

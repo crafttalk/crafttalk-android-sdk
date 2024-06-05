@@ -1,5 +1,6 @@
 package com.crafttalk.chat.data.local.db.entity
 
+import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -12,6 +13,7 @@ import com.crafttalk.chat.domain.entity.message.NetworkButtonOperation
 import com.crafttalk.chat.domain.entity.tags.Tag
 import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_MESSAGE_ENTITY_DEBUG
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
@@ -196,6 +198,7 @@ data class MessageEntity(
             repliedMessageMediaFileWidth: Int? = null,
         ): MessageEntity {
             val list = arrayListOf<Tag>()
+            Log.d(TAG_MESSAGE_ENTITY_DEBUG,"Got common message")
             val message = networkMessage.message?.convertTextToNormalString(list)
             val repliedList = arrayListOf<Tag>()
             val repliedMessage = networkMessage.replyToMessage?.message?.convertTextToNormalString(repliedList)
@@ -249,6 +252,7 @@ data class MessageEntity(
             mediaFileWidth: Int? = null
         ): MessageEntity {
             val list = arrayListOf<Tag>()
+            Log.d(TAG_MESSAGE_ENTITY_DEBUG,"Got operator message")
             val message = networkMessage.message?.convertTextToNormalString(list)
 
             return MessageEntity(
@@ -292,6 +296,7 @@ data class MessageEntity(
             repliedMessageMediaFileWidth: Int? = null,
         ): MessageEntity {
             val list = arrayListOf<Tag>()
+            Log.d(TAG_MESSAGE_ENTITY_DEBUG,"Got user message")
             val message = networkMessage.message?.convertTextToNormalString(list)
             val repliedList = arrayListOf<Tag>()
             val repliedMessage = networkMessage.replyToMessage?.message?.convertTextToNormalString(repliedList)
@@ -358,6 +363,7 @@ data class MessageEntity(
             arrivalTime: Long
         ): MessageEntity {
             val list = arrayListOf<Tag>()
+            Log.d(TAG_MESSAGE_ENTITY_DEBUG,"Got info message")
             val message = infoMessage.convertTextToNormalString(list)
 
             return MessageEntity(
