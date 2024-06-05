@@ -6,10 +6,12 @@ import android.util.Log
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ClickableLinkMode
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_HTML_CONVERTER_DEBUG
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
+    Log.d(TAG_HTML_CONVERTER_DEBUG,"Start: convertTextToNormalString")
     fun <T: Tag> setTagsByPatterns(text: String, regexs: Array<CharSequence>, factory : (startPosition: Int, endPosition: Int, value: String) -> T, listTag: ArrayList<Tag>) {
         regexs.forEach { regex ->
             val pattern: Pattern = Pattern.compile(regex.toString())
@@ -48,8 +50,12 @@ fun String.convertTextToNormalString(listTag: ArrayList<Tag>): String {
             it.matches(Regex(".*&(hellip|prime|Prime);.*")) ||
             it.matches(Regex(".*&(ndash|mdash|lsquo|rsquo|sbquo|ldquo|rdquo|bdquo|laquo|raquo);.*")) ||
             it.matches(Regex(".*&#[0-9]*;.*"))
-        } -> convertFromHtmlTextToNormalString(listTag).selectPhones()
-        else -> convertFromBaseTextToNormalString(listTag).selectPhones()
+        } -> {
+            Log.d(TAG_HTML_CONVERTER_DEBUG, "Start: convertFromHtmlTextToNormalString")
+            convertFromHtmlTextToNormalString(listTag).selectPhones()}
+        else -> {
+            Log.d(TAG_HTML_CONVERTER_DEBUG, "Start: convertFromBaseTextToNormalString")
+            convertFromBaseTextToNormalString(listTag).selectPhones()}
     }
 }
 
@@ -240,6 +246,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
     /**Хранит открывающий span тег для MarkDown разметки. Так как закрывающий
      *  тег не имеет информации о форматировании и служит лишь закрывающим тегом**/
     var lastSpanTag:String = ""
+    Log.d(TAG_HTML_CONVERTER_DEBUG, "start converting HTML -> $this")
     this.forEachIndexed { index, char ->
         if (jumpIndex != -1 && index <= jumpIndex) {
             if (index == jumpIndex) {
@@ -354,5 +361,6 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
             }
         }
     }
+    Log.d(TAG_HTML_CONVERTER_DEBUG, "finish converting HTML, result -> $result")
     return result.toString()
 }
