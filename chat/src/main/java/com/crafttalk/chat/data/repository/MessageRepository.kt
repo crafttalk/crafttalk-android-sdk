@@ -164,7 +164,7 @@ class MessageRepository
                 )
             }
 
-            val userMessagesWithContent = fullPullMessages.filter { !it.isReply &&  it.messageType == MessageType.MESSAGE.valueType && it.isContainsContent }.map { networkMessage ->
+            val userMessagesWithContent = fullPullMessages.filter { !it.isReply &&  it.messageType == MessageType.MESSAGE.valueType && it.isContainsContent && it.message != "/start" }.map { networkMessage ->
                 val statusesConcreteMessage: List<Int> = messageStatuses.filter { it.parentMessageId == networkMessage.idFromChannel }.map { it.messageType }
                 val newStatus: Int = when {
                     statusesConcreteMessage.contains(MessageType.RECEIVED_BY_OPERATOR.valueType) -> MessageType.RECEIVED_BY_OPERATOR.valueType
