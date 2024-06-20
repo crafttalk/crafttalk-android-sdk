@@ -18,8 +18,7 @@
         android:layout_height="?actionBarSize"
         android:minHeight="60dp"
         android:background="@color/com_crafttalk_chat_black_translucent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/image_navigate_back"
