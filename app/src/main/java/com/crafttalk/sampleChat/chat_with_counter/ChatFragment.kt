@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
@@ -157,6 +158,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     override fun onStop() {
         super.onStop()
         chat_view.onStop()
+        Chat.logOut(requireContext())
     }
 
     override fun onDestroyView() {
