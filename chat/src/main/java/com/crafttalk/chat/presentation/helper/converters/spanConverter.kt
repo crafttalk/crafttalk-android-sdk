@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import com.crafttalk.chat.domain.entity.tags.*
 import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SPAN_CONVERTER
 import kotlin.Exception
 
@@ -90,7 +91,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                             try {
                                 context.startActivity(intent)
                             } catch (ex: Exception) {
-                                Log.d("CTALK_LOG_CONVERTER", "Fail onClick ${it.url};")
+                                Log.d("CTALK_LOG_CONVERTER", "Fail onClick ${ ChatParams.urlChatScheme}://${ChatParams.urlChatHost}${it.url}};")
                             }
                         }
                     }, it.pointStart, it.pointEnd + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

@@ -2,6 +2,7 @@ package com.crafttalk.chat.data.api.socket
 
 import android.content.Context
 import android.util.Log
+import com.crafttalk.chat.data.helper.converters.text.MarkdownFileConverter
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -537,6 +538,28 @@ class SocketApi(
     private suspend fun updateDataInDatabase(messageSocket: NetworkMessage, currentTimestamp: Long) {
         val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
+            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.message.toString().contains("ct-markdown__file")) -> {
+                Log.d(TAG_SOCKET_EVENT, "got markdown file")
+                var files = MarkdownFileConverter(messageSocket.message.toString())
+                files.convert()
+                messageSocket.message = ""
+                for (i in 0..3){
+                    messageSocket.attachmentName = files.arrayOfNames[i]
+                    messageSocket.attachmentUrl = files.arrayOfURILinks[i]
+                    messageSocket.correctAttachmentUrl = files.arrayOfURLLinks[i]
+                    messageSocket.attachmentType = files.arrayOfMimeType[i]
+                    messageSocket.id = UUID.randomUUID().toString()
+                    insertMessage(MessageEntity.map(
+                            uuid = visitor.uuid,
+                            networkMessage = messageSocket,
+                            arrivalTime = currentTimestamp+i,
+                            operatorPreview = operatorPreview,
+                            fileSize = getWeightFile(messageSocket.correctAttachmentUrl!!) ?: getWeightMediaFile(context,
+                                messageSocket.correctAttachmentUrl!!
+                            )
+                        ))
+                }
+            }
             (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
                 messageSocket.correctAttachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
@@ -562,6 +585,24 @@ class SocketApi(
                         operatorPreview = operatorPreview,
                         fileSize = getWeightFile(url) ?: getWeightMediaFile(context, url)
                     ))
+                }
+            }
+            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isMarkdownImage || messageSocket.isMarkdownGif) -> {
+                Log.d(TAG_SOCKET_EVENT, "got markdown photo or gif")
+                messageSocket.attachmentName = UUID.randomUUID().toString()
+                messageSocket.correctAttachmentUrl?.let { url ->
+                    getSizeMediaFile(context, url) { height, width ->
+                        viewModelScope.launch {
+                            insertMessage(MessageEntity.map(
+                                uuid = visitor.uuid,
+                                networkMessage = messageSocket,
+                                arrivalTime = currentTimestamp,
+                                operatorPreview = operatorPreview,
+                                mediaFileHeight = height,
+                                mediaFileWidth = width
+                            ))
+                        }
+                    }
                 }
             }
             (messageSocket.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType)) && messageSocket.isText -> {
