@@ -150,4 +150,9 @@ class AuthInteractor
         visitorInteractor.clearDataVisitor()
     }
 
+    fun clearDialog(){
+        conditionInteractor.clearDataChatState()
+        conditionInteractor.dropChat()
+    }
+
 }

@@ -139,4 +139,28 @@ object Chat {
             actionIOAfterLogOut()
         }
     }
+    /** Clear database with user messages, after reload Activity all messages will be load
+     * from server.
+     *
+     * Use this method then you change user data and want clear dialog.
+     *
+     * for example use then you have authorization zone and none authorization zone in your app
+     *
+     * Using this method after
+     *
+     *     Chat.init()
+     *     Chat.createSession()
+     *
+     * when you create activity
+     *
+     *      override fun onCreate(savedInstanceState: Bundle?) {}
+     *
+     *
+     *
+     * **/
+    fun clearDBDialogHistory(context: Context){
+        scopeIO.launch {
+            authInteractor?.clearDialog()
+        }
+    }
 }

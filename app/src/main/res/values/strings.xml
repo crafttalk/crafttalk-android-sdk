@@ -16,12 +16,12 @@
     <string name="chat_bottom_sheet_file_viewer_document_from_gallery">Документ</string>
 
     <string name="urlChatScheme">https</string>
-    <string name="urlChatHost">virtual-assistant.magnit.ru</string>
-    <string name="urlChatNameSpace">webchat_pdn</string>
+    <string name="urlChatHost">cloud-stage.craft-talk.com</string>
+    <string name="urlChatNameSpace">channel_296596d</string>
 
     <string name="webUrlChatScheme">https</string>
-    <string name="webUrlChatHost">virtual-assistant.magnit.ru</string>
-    <string name="webUrlChatNameSpace">webchat_pdn</string>
+    <string name="webUrlChatHost">cloud-stage.craft-talk.com</string>
+    <string name="webUrlChatNameSpace">channel_296596d</string>
 
     <string name="salt">C~kW]cq76(a?m[UbJ)drw+Wh6>W[3Wsj</string>
     <string name="default_notification_channel_id">0</string>
