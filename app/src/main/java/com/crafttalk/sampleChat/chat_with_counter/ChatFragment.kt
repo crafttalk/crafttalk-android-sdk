@@ -158,7 +158,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     override fun onStop() {
         super.onStop()
         chat_view.onStop()
-        Chat.logOut(requireContext())
     }
 
     override fun onDestroyView() {
