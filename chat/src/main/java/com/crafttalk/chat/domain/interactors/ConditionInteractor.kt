@@ -88,6 +88,7 @@ class ConditionInteractor
     fun clearDataChatState() {
         conditionRepository.deleteFlagAllHistoryLoaded()
         conditionRepository.deleteCurrentReadMessageTime()
+        conditionRepository.deleteAllMessage()
     }
 
 }

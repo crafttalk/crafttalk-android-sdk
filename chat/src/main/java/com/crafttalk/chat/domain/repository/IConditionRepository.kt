@@ -27,4 +27,5 @@ interface IConditionRepository {
     // провека наличия сообщения в бд
     suspend fun getStatusExistenceMessages(): Boolean
 
+    fun deleteAllMessage()
 }

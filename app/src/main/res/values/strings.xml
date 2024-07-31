@@ -30,4 +30,6 @@
 
     <string name="chat_file_provider_authorities">com.crafttalk.chat.fileprovider</string>
 
+    <string name="versionSDK" translatable="false">1.2.51</string>
+
 </resources>

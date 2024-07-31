@@ -93,6 +93,10 @@ class ConditionRepository
         return messagesDao.isNotEmpty()
     }
 
+    override fun deleteAllMessage() {
+        messagesDao.deleteAllMessages()
+    }
+
     companion object {
         private const val FIELD_IS_ALL_HISTORY_LOADED = "isAllHistoryLoaded"
         private const val FIELD_CURRENT_READ_MESSAGE_TIME = "currentReadMessageTime"

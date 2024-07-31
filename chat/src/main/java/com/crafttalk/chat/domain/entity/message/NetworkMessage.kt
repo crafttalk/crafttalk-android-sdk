@@ -45,7 +45,7 @@ data class NetworkMessage (
     var attachmentUrl: String? = null,
 
     @SerializedName (value = "attachment_type")
-    val attachmentType: String? = null,
+    var attachmentType: String? = null,
 
     @SerializedName (value = "attachment_name")
     var attachmentName: String? = null,
@@ -71,14 +71,13 @@ data class NetworkMessage (
     get() = !attachmentUrl.isNullOrEmpty() &&
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
-            (attachmentType == "IMAGE" || attachmentType.toLowerCase(
+            (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
                 ChatParams.locale!!).startsWith("image"))
-
     val isGif: Boolean
     get() = !attachmentUrl.isNullOrEmpty() &&
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
-            (attachmentType == "IMAGE" || attachmentType.toLowerCase(
+            (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
                 ChatParams.locale!!).startsWith("image")) &&
             attachmentName!!.contains(".GIF", true)
 
@@ -87,6 +86,23 @@ data class NetworkMessage (
             !attachmentName.isNullOrEmpty() &&
             !attachmentType.isNullOrEmpty() &&
             attachmentType == "FILE"
+
+    val isMarkdownFile: Boolean
+        get() = message!!.contains("ct-markdown__file")
+
+    /**Отличие от обычного IsImage -- тут нет проверки attachmentName
+     * **/
+    val isMarkdownImage: Boolean
+        get() = !attachmentUrl.isNullOrEmpty() &&
+                !attachmentType.isNullOrEmpty() &&
+                (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
+                    ChatParams.locale!!).startsWith("image"))
+    val isMarkdownGif: Boolean
+        get() = !attachmentUrl.isNullOrEmpty() &&
+                !attachmentType.isNullOrEmpty() &&
+                (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
+                    ChatParams.locale!!).startsWith("image")) &&
+                attachmentName!!.contains(".GIF", true)
 
     val isUnknownType: Boolean
         get() = !attachmentUrl.isNullOrEmpty() &&
@@ -105,7 +121,7 @@ data class NetworkMessage (
         else -> null
     }
 
-    val correctAttachmentUrl: String?
+    var correctAttachmentUrl: String? = ""
     get() = if (attachmentUrl?.startsWith("/webchat/file/") == true) {
         "${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}${attachmentUrl}"
     } else {
