@@ -3,10 +3,10 @@
 
     <color name="com_crafttalk_chat_default_color_title">#000</color>
 
-    <color name="com_crafttalk_chat_default_color_main">#2e7d32</color>
+    <color name="com_crafttalk_chat_default_color_main">#FF8800</color>
 
     <color name="com_crafttalk_chat_default_color_bg_user_message">@color/com_crafttalk_chat_default_color_main</color>
-    <color name="com_crafttalk_chat_default_color_bg_server_message">#EBEBEB</color>
+    <color name="com_crafttalk_chat_default_color_bg_server_message">#FFF9F0</color>
     <color name="com_crafttalk_chat_default_color_borders_server_action">#ddd</color>
     <color name="com_crafttalk_chat_default_color_bg_server_action">#fff</color>
     <color name="com_crafttalk_chat_default_color_bg_server_button">#fff</color>
@@ -34,10 +34,10 @@
     <color name="com_crafttalk_chat_gray_707070">#707070</color>
     <color name="com_crafttalk_chat_black">#000</color>
     <color name="com_crafttalk_chat_black_translucent">#7F000000</color>
-    <color name="com_crafttalk_chat_success">#2e7d32</color>
-    <color name="com_crafttalk_chat_error">#ef5350</color>
+    <color name="com_crafttalk_chat_success">#77FF00</color>
+    <color name="com_crafttalk_chat_error">#FF0800</color>
 
-    <color name="com_crafttalk_chat_blue_005cb2">#005cb2</color>
-    <color name="com_crafttalk_chat_yellow_ffeb3b">#ffeb3b</color>
-    <color name="com_crafttalk_chat_orange_ffb300">#ffb300</color>
+    <color name="com_crafttalk_chat_blue_005cb2">#0077FF</color>
+    <color name="com_crafttalk_chat_yellow_ffeb3b">#F6FF00</color>
+    <color name="com_crafttalk_chat_orange_ffb300">#EA4B04</color>
 </resources>
