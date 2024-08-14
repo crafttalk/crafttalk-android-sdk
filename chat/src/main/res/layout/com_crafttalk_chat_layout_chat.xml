@@ -12,12 +12,37 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/list_with_message"
+        app:layout_constraintBottom_toTopOf="@id/pined_place"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         tools:visibility="visible" />
+
+
+    <include
+        android:id="@+id/pined_place"
+        layout="@layout/com_crafttalk_chat_iclude_pinned_message"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        app:layout_constraintTop_toBottomOf="@id/search_switch_place"
+        app:layout_constraintBottom_toTopOf="@id/list_with_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        tools:visibility="gone"
+        />
+
+    <View
+        android:id="@+id/higher_limit"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        app:layout_constraintBottom_toTopOf="@id/list_with_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pined_place"
+        android:background="@color/com_crafttalk_chat_default_color_main"
+        tools:background="@color/com_crafttalk_chat_default_color_main" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_with_message"
@@ -31,7 +56,7 @@
         android:paddingBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_switch_place"
+        app:layout_constraintTop_toBottomOf="@id/higher_limit"
         app:layout_constraintBottom_toTopOf="@id/state_action_operator"
         tools:listitem="@layout/com_crafttalk_chat_item_server_text_message"
         tools:itemCount="1" />
@@ -164,6 +189,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/entry_field"
+        android:background="@color/com_crafttalk_chat_default_color_main"
         tools:background="@color/com_crafttalk_chat_default_color_main" />
 
     <ImageView

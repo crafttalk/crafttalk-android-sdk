@@ -56,6 +56,8 @@ class ChatViewModel
     var chatIsClosed:Boolean = false
     var chatClosedMessage:String = ""
     var dialogID1:String? = null
+    var pinedOperatorName:String = ""
+    var pinnedMessage:String = ""
 
     var searchText: String? = null
     val showSearchNavigate: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -192,6 +194,15 @@ class ChatViewModel
             chatIsClosed = boolean
             chatClosedMessage = string
             displayableUIObject.postValue(DisplayableUIObject.CHATCLOSED)
+        }
+        override fun operatorPinnedMessage(name: String, text: String) {
+            pinedOperatorName = name
+            pinnedMessage = text
+            displayableUIObject.postValue(
+            DisplayableUIObject.OPERATOR_PINNED_MESSAGE
+        )}
+        override fun pinnedMessageDisplay(){
+            displayableUIObject.postValue(DisplayableUIObject.PINNED_MESSAGE_DISPLAY)
         }
     }
     var uploadFileListener: UploadFileListener? = null

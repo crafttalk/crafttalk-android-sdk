@@ -76,6 +76,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.ceil
 import com.crafttalk.chat.di.modules.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_iclude_pinned_message.view.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -554,6 +555,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         viewModel.displayableUIObject.observe(lifecycleOwner) {
             Log.d("CTALK_CHAT_VIEW", "displayableUIObject - ${it};")
             when (it) {
+
                 DisplayableUIObject.CHATCLOSED -> {
                     chatOffMessage.visibility = View.VISIBLE
                     try {
@@ -657,6 +659,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER -> {
                     viewModel.feedbackContainerVisible.value = false
+                }
+                DisplayableUIObject.OPERATOR_PINNED_MESSAGE -> {
+                    pined_place.visibility = View.VISIBLE
+                    pinned_operator_name.text = viewModel.pinedOperatorName
+                    pinned_message_text.text = viewModel.pinnedMessage
+                }
+                DisplayableUIObject.PINNED_MESSAGE_DISPLAY -> {
+                    pined_place.visibility = View.GONE
                 }
             }
         }

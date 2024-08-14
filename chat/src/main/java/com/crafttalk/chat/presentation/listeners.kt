@@ -52,6 +52,8 @@ interface ChatEventListener {
     fun setUserTypingInterval(int: Int)
     fun setUserTyping(boolean: Boolean)
     fun setChatStateClosed(boolean: Boolean, string: String)
+    fun operatorPinnedMessage(name:String, text:String)
+    fun pinnedMessageDisplay()
     fun showUploadHistoryBtn()
     fun synchronized()
 }

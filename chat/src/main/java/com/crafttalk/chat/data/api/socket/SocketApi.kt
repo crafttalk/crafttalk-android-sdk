@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import okhttp3.OkHttpClient
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
@@ -275,7 +276,51 @@ class SocketApi(
                 )
             }
         }
-
+        socket.on("pinned-messages-updated"){
+            viewModelScope.launch {
+                //Log.d("Pgilip","Got pin!))))))))))))))))))))))))))")
+                if (it[0] != null) {
+                    val messageJson = it[0] as JSONArray
+                    val currentTimestamp = System.currentTimeMillis()
+                    val gson = GsonBuilder()
+                        .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
+                        .create()
+                    var messageSocket =
+                        NetworkMessage(UUID.randomUUID().toString(), null, -1, false, null, 0)
+                    try {
+                        //messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java) ?: return@launch //philip, понятия не имею для чего это было сделано
+                        messageSocket =
+                            gson.fromJson(messageJson[0].toString(), NetworkMessage::class.java)
+                                ?: return@launch
+                    } catch (e: Exception) {
+                        Log.e(
+                            TAG_SOCKET,
+                            "An error occurred while getting message from server. Info: " + e.message
+                        )
+                    }
+                    if (messageSocket.attachmentName == null) {
+                        messageSocket.attachmentName = UUID.randomUUID().toString()
+                    }
+                    chatEventListener?.operatorPinnedMessage(messageSocket.operatorName?:"no name", messageSocket.message?:"no message")
+                    try {
+                        Log.d(
+                            TAG_DATABASE_INSERT,
+                            "Insert in database message: " + messageSocket.id.toString() + messageSocket.message.toString()
+                        )
+                        updateDataInDatabase(messageSocket, currentTimestamp)
+                    } catch (e: Exception) {
+                        Log.e(
+                            TAG_DATABASE_INSERT,
+                            "An error occurred while adding to the database. Info: " + e.message
+                        )
+                    }
+                }
+                else{
+                    chatEventListener?.pinnedMessageDisplay()
+                    //TODO прячем плэйс с закрепом
+                }
+            }
+        }
         socket.on("message") {
             viewModelScope.launch {
                 Log.d(TAG_SOCKET, "message, size event= ${it.size}; it = $it")
