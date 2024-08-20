@@ -1,7 +1,7 @@
 package com.crafttalk.chat.data.repository
 
 import android.content.Context
-import android.util.Log
+import com.crafttalk.chat.R
 import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.helper.network.toData
@@ -197,10 +197,26 @@ class MessageRepository
                 )
             }
 
+            val serverMessageFinishDialog = fullPullMessages.filter { it.messageType == MessageType.FINISH_DIALOG.valueType }.map {
+                networkMessage ->
+                networkMessage.messageType = MessageType.MESSAGE.valueType
+                networkMessage.message = context.getString(R.string.finish_dialog)
+                MessageEntity.mapOperatorMessage(
+                    uuid = uuid,
+                    networkMessage = networkMessage,
+                    arrivalTime = System.currentTimeMillis(),
+                    actionsSelected = actionSelectionMessages,
+                    buttonsSelected = listOf(),
+                    operatorPreview = networkMessage.operatorId?.let { getPersonPreview(it) }
+                )
+            }
+
             val resultMessages = mutableListOf<MessageEntity>().apply {
+
                 addAll(operatorMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
                 addAll(userMessagesWithContent.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
                 addAll(messagesAboutJoin.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
+                addAll(serverMessageFinishDialog.distinctBy { it.id }.filter { !messagesDao.hasThisMessage(it.id) })
             }
 
             val maxTimestampUserMessage = userMessagesWithContent.maxByOrNull { it.timestamp }?.timestamp
