@@ -24,6 +24,7 @@ import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -76,6 +77,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.ceil
 import com.crafttalk.chat.di.modules.*
+import com.crafttalk.chat.presentation.feature.pined_message_viewer.PinedMessage
 import kotlinx.android.synthetic.main.com_crafttalk_chat_iclude_pinned_message.view.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -346,6 +348,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             addTextChangedListener(maskedListener)
             onFocusChangeListener = maskedListener
         }
+        pined_place.setOnClickListener(this)
         sign_in.setOnClickListener(this)
         send_message.setOnClickListener(this)
         voice_input.setOnTouchListener { view, motionEvent ->
@@ -1026,6 +1029,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     override fun onClick(view: View) {
         when(view.id) {
+            R.id.pined_place -> {
+                val intent = Intent(context, PinedMessage::class.java)
+                startActivity(context,intent,null)
+            }
             R.id.upload_history_btn -> {
                 mergeHistory()
             }

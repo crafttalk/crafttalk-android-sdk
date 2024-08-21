@@ -7,6 +7,9 @@
 
     <application>
         <activity
+            android:name=".presentation.feature.pined_message_viewer.PinedMessage"
+            android:exported="false" />
+        <activity
             android:name=".presentation.feature.view_picture.ShowMediaDialog2"
             android:exported="false" />
     </application>
