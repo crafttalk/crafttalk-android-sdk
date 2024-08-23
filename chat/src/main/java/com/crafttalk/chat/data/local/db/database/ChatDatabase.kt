@@ -13,7 +13,7 @@ import com.crafttalk.chat.data.local.db.entity.converters.*
 
 @Database(
     entities = [MessageEntity::class, PersonEntity::class, FileEntity::class],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(
