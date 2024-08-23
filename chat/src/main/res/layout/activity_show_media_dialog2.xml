@@ -18,6 +18,8 @@
         android:layout_height="56dp"
         android:background="@color/com_crafttalk_chat_black_translucent"
         android:minHeight="56dp"
+        app:titleTextColor="#fff"
+        app:subtitleTextColor="#fff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
