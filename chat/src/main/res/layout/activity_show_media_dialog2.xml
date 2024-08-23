@@ -15,7 +15,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
+        android:layout_height="56dp"
         android:background="@color/com_crafttalk_chat_black_translucent"
         android:minHeight="56dp"
         app:layout_constraintEnd_toEndOf="parent"
