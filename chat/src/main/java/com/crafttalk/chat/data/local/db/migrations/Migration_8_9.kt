@@ -7,6 +7,7 @@ import com.crafttalk.chat.data.local.db.entity.MessageEntity
 
 object Migration_8_9:Migration(8,9) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("DELETE FROM " +  MessageEntity.TABLE_NAME);
+        database.execSQL("DROP TABLE " +  MessageEntity.TABLE_NAME);
+        database.execSQL("DROP TABLE " +  MessageEntity.TABLE_NAME_BACKUP);
     }
 }
