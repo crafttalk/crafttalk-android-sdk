@@ -31,9 +31,13 @@ class DBModule {
             Migration_4_5,
             Migration_5_6,
             Migration_6_7,
-            Migration_7_8,
-            Migration_8_9
+            Migration_9_10,
         )
+        /**
+         * Из-за расхождения в версиях и неверной миграции между v7 - v8,
+         * любая миграция на v8 или с v8, будет проходить через fallbackToDestructiveMigration
+         */
+        .fallbackToDestructiveMigrationFrom(8)
         .build()
 
     @Provides
