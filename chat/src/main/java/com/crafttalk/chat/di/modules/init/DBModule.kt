@@ -31,6 +31,7 @@ class DBModule {
             Migration_4_5,
             Migration_5_6,
             Migration_6_7,
+            Migration_7_10,
             Migration_9_10,
         )
         /**
