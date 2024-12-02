@@ -77,11 +77,8 @@ fun downloadResource(
         ) { downloadFile(context, fileName, fileUrl, fileType, downloadListener, updateDownloadID) }
     } else
     {
-        //для версий старше или равных андроид 13
-        val permissions = arrayOf(
-            @Suppress ("all")
-            Manifest.permission.READ_MEDIA_IMAGES
-        )
+        //для версий старше или равных андроид 13 переехали на использование нового api
+        val permissions = emptyArray<String>()
         checkPermission(
             permissions,
             context,

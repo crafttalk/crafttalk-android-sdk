@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Build.VERSION_CODES.TIRAMISU
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.R
@@ -22,6 +23,27 @@ import java.util.*
 
 class FileViewerHelper {
 
+    fun pickImages(
+        pickImage: ActivityResultLauncher<PickVisualMediaRequest>?,
+        pickSettings: PickVisualMediaRequest,
+        noPermission: (permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit) -> Unit,
+        fragment: Fragment
+    ) {
+        fun pickFile() {
+            pickImage?.launch(pickSettings)
+        }
+        val permissions = if (Build.VERSION.SDK_INT >= TIRAMISU) {
+            arrayOf()
+        } else {
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        checkPermission(
+            permissions,
+            fragment.requireContext(),
+            { noPermission(permissions) { pickFile() } }
+        ) { pickFile() }
+    }
+
     fun pickFiles(
         pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>?,
         pickSettings: Pair<TypeFile, TypeMultiple>,
@@ -32,7 +54,7 @@ class FileViewerHelper {
             pickFile?.launch(pickSettings)
         }
         val permissions = if (Build.VERSION.SDK_INT >= TIRAMISU) {
-            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            arrayOf()
         } else {
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }

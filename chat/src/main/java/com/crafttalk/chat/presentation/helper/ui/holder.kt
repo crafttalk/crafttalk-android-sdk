@@ -104,6 +104,7 @@ fun bindRepliedMessage(
                         )
                     }
                 }
+                else -> Unit
             }
         }
     }

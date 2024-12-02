@@ -23,6 +23,9 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickMultipleVisualMedia
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
@@ -189,7 +192,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
     }
     private var takePicture: ActivityResultLauncher<Uri>? = null
-    private var pickImage: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
+    private var pickImage: ActivityResultLauncher<PickVisualMediaRequest>? = null
     private var pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
 
     private var methodGetWidgetView: (widgetId: String) -> View? = { null }
@@ -504,12 +507,17 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
             uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
         }
-        pickImage = fragment.registerForActivityResult(PickFileContract()) { listUri ->
+
+        // Регистрация ActivityResultContracts.PickMultipleVisualMedia для множественного выбора изображений
+        pickImage = fragment.registerForActivityResult(PickMultipleVisualMedia()) { listUri ->
             if (listUri.size > FileViewerHelper.PHOTOS_LIMIT) {
                 viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.IMAGE) })
                 FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.PHOTOS_LIMIT_EXCEEDED)
-            } else viewModel.sendFiles(listUri.map { File(it, TypeFile.IMAGE) })
+            } else {
+                viewModel.sendFiles(listUri.map { File(it, TypeFile.IMAGE) })
+            }
         }
+
         pickFile = fragment.registerForActivityResult(PickFileContract()) { listUri ->
             if (listUri.size > FileViewerHelper.DOCUMENTS_LIMIT) {
                 viewModel.sendFiles(listUri.slice(0 until FileViewerHelper.DOCUMENTS_LIMIT).map { File(it, TypeFile.FILE) })
@@ -877,6 +885,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         sizeTextFileSize = ChatAttr.getInstance().sizeUserRepliedFileSize
                     )
                 }
+                else -> Unit
             }
         }
         viewModel.replyMessagePosition.observe(lifecycleOwner) {
@@ -1209,9 +1218,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 )
             }
             R.id.image -> {
-                fileViewerHelper.pickFiles(
+                fileViewerHelper.pickImages(
                     pickImage,
-                    Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
                     { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
                         permissionListener.requestedPermissions(
                             permissions,
