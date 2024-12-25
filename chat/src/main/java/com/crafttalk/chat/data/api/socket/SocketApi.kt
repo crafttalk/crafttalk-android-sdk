@@ -26,7 +26,7 @@ import com.google.gson.GsonBuilder
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
-import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
+//import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import okhttp3.OkHttpClient

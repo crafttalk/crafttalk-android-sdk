@@ -25,7 +25,7 @@ import java.util.*
 import android.net.Uri
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_web_view.*
+//import kotlinx.android.synthetic.main.activity_web_view.*
 
 class JavaScriptInterface(private val context: Context, private val activity:Activity) {
     @JavascriptInterface

@@ -8,6 +8,9 @@ import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
+import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetShowGifBinding
+import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetShowImageBinding
+import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.file.TypeFile.GIF
 import com.crafttalk.chat.domain.entity.file.TypeFile.IMAGE
@@ -15,14 +18,18 @@ import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnack
 import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.MediaFileDownloadMode
-import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_gif.*
-import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_image.*
+//import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_gif.*
+//import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_image.*
 
 class ShowImageDialog(
     context: Context,
     style: Int
 ): Dialog(context, style), View.OnClickListener {
+    private var _bindingGif: ComCrafttalkChatBottomSheetShowGifBinding? = null
+    private val bindingGif get() = _bindingGif!!
 
+    private val _bindingImage: ComCrafttalkChatBottomSheetShowImageBinding? = null
+    private val bindingImage get() = _bindingImage!!
     override fun onClick(view: View) {
         when(view.id) {
             R.id.image_download, R.id.gif_download -> {
@@ -61,7 +68,7 @@ class ShowImageDialog(
             dialog?.let {
                 if (isSuccess) {
                     WarningSnackbar.make(
-                        view = it.image_show ?: it.gif_show,
+                        view = it.bindingImage.imageShow?: it.bindingGif.gifShow,
                         title = ChatAttr.getInstance().titleSuccessDownloadFileWarning,
                         iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                         textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
@@ -69,7 +76,7 @@ class ShowImageDialog(
                     )?.show()
                 } else {
                     WarningSnackbar.make(
-                        view = it.image_show ?: it.gif_show,
+                        view = it.bindingImage.imageShow ?: it.bindingGif.gifShow,
                         title = ChatAttr.getInstance().titleFailDownloadFileWarning,
                     )?.show()
                 }
@@ -129,22 +136,22 @@ class ShowImageDialog(
         when (type) {
             IMAGE -> {
                 setContentView(R.layout.com_crafttalk_chat_bottom_sheet_show_image)
-                image_navigate_back.setOnClickListener(this)
-                settingFileDownload(image_download)
+                bindingImage.imageNavigateBack.setOnClickListener(this)
+                settingFileDownload(bindingImage.imageDownload)
                 Glide.with(context)
                     .load(createCorrectGlideUrl(url))
                     .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
-                    .into(image_show)
+                    .into(bindingImage.imageShow)
             }
             GIF -> {
                 setContentView(R.layout.com_crafttalk_chat_bottom_sheet_show_gif)
-                gif_navigate_back.setOnClickListener(this)
-                settingFileDownload(gif_download)
+                bindingGif.gifNavigateBack.setOnClickListener(this)
+                settingFileDownload(bindingGif.gifDownload)
                 Glide.with(context)
                     .asGif()
                     .load(createCorrectGlideUrl(url))
                     .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
-                    .into(gif_show)
+                    .into(bindingGif.gifShow)
             }
             else -> {}
         }

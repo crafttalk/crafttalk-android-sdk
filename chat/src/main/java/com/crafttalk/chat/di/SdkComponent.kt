@@ -34,4 +34,6 @@ interface SdkComponent {
     fun getNotificationRepository(): INotificationRepository
 
     fun createChatComponent(): ChatComponent.Builder
+
+    fun createPinedMessageComponent(): PinedMessageComponent.Builder
 }

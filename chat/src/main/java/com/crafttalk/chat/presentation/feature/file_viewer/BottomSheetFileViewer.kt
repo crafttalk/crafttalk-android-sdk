@@ -11,12 +11,15 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.view.iterator
 import androidx.fragment.app.FragmentManager
 import com.crafttalk.chat.R
+import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetFileViewerBinding
+import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_file_viewer.*
+//import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_file_viewer.*
 
 @SuppressLint("RestrictedApi")
 class BottomSheetFileViewer : BottomSheetDialogFragment() {
-
+    private var _binding: ComCrafttalkChatBottomSheetFileViewerBinding? = null
+    private val binding get() = _binding!!
     companion object {
         private const val KEY_MENU = "menu"
 
@@ -52,7 +55,7 @@ class BottomSheetFileViewer : BottomSheetDialogFragment() {
             listener?.onModalOptionSelected(this@BottomSheetFileViewer.tag, it)
             dismissAllowingStateLoss()
         }
-        list.adapter = adapter
+        binding.list.adapter = adapter
 
         adapter.setData(options)
         listener = bindHost()

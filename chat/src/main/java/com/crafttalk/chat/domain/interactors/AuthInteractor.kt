@@ -81,6 +81,8 @@ class AuthInteractor
                         conditionInteractor.saveCurrentReadMessageTime(lastTime)
                     }
                 }
+
+                else -> {}
             }
         }
 
@@ -135,6 +137,9 @@ class AuthInteractor
                     updatePersonName = personInteractor::updatePersonName,
                     chatEventListener = chatEventListener
                 )
+            }
+            else -> {
+
             }
         }
     }

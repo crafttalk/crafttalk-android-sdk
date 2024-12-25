@@ -83,8 +83,8 @@ class FileViewerHelper {
     companion object {
         const val PHOTOS_LIMIT_EXCEEDED = 1
         const val DOCUMENTS_LIMIT_EXCEEDED = 1
-        const val PHOTOS_LIMIT = 5
-        const val DOCUMENTS_LIMIT = 5
+        const val PHOTOS_LIMIT = 99
+        const val DOCUMENTS_LIMIT = 99
         private const val IMAGE_JPG_FORMAT = ".jpg"
 
         fun showFileLimitExceededMessage(fragment: Fragment, limit: Int) {

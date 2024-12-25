@@ -13,10 +13,11 @@ import com.crafttalk.sampleChat.chat.ChatActivity
 import com.crafttalk.sampleChat.chat_with_counter.ChatActivity as ChatWithCounterActivity
 import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.web_view.WebViewActivity
-import kotlinx.android.synthetic.main.fragment_auth.*
 import java.util.*
+import com.crafttalk.sampleChat.databinding.FragmentAuthBinding
 
 class AuthFragment: Fragment(R.layout.fragment_auth) {
+    private var fragmentAuthBinding: FragmentAuthBinding? = null
 
     private val textListener = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
@@ -27,13 +28,22 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
     }
 
     private fun enableSignInWithAuth() {
-        sign_in_with_auth.isEnabled = switch_auth_with_form.isChecked ||
-                (uuid_user.text.isNotBlank() || first_name_user.text.isNotBlank() || last_name_user.text.isNotBlank() || salt_user.text.isNotBlank())
+        val binding = FragmentAuthBinding.bind(requireView())
+        fragmentAuthBinding = binding
+
+        binding.signInWithAuth.isEnabled = binding.switchAuthWithForm.isChecked ||
+                (binding.uuidUser.text.isNotBlank() || binding.firstNameUser.text.isNotBlank() ||
+                        binding.lastNameUser.text.isNotBlank() ||
+                        binding.saltUser.text.isNotBlank()
+                        )
     }
 
     private fun generateVisitor(isAnonymously: Boolean): Visitor? {
-        if (switch_auth_with_form.isChecked) return null
-        val uuid = uuid_user.text.toString().ifEmpty { UUID.randomUUID().toString() }
+        val binding = FragmentAuthBinding.bind(requireView())
+        fragmentAuthBinding = binding
+
+        if (binding.switchAuthWithForm.isChecked) return null
+        val uuid = binding.uuidUser.text.toString().ifEmpty { UUID.randomUUID().toString() }
         if (isAnonymously) {
             return Visitor(
                 uuid = uuid,
@@ -47,9 +57,9 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
                 hash = null
             )
         } else {
-            val firstName = first_name_user.text.toString()
-            val lastName = last_name_user.text.toString()
-            val salt = salt_user.text.toString()
+            val firstName = binding.firstNameUser.text.toString()
+            val lastName = binding.lastNameUser.text.toString()
+            val salt = binding.saltUser.text.toString()
             val source = "${uuid}${firstName}${lastName}${null}${null}${null}${null}"
             return Visitor(
                 uuid = uuid,
@@ -73,9 +83,11 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
     }
 
     private fun openChat(isAnonymously: Boolean) {
+        val binding = FragmentAuthBinding.bind(requireView())
+        fragmentAuthBinding = binding
         startActivity(
             Intent(requireContext(), ChatActivity::class.java).apply {
-                putExtra("key_is_auth_with_form", switch_auth_with_form.isChecked)
+                putExtra("key_is_auth_with_form", binding.switchAuthWithForm.isChecked)
                 putExtra("key_visitor", generateVisitor(isAnonymously))
             }
         )
@@ -85,14 +97,18 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        uuid_user.addTextChangedListener(textListener)
-        first_name_user.addTextChangedListener(textListener)
-        last_name_user.addTextChangedListener(textListener)
-        salt_user.addTextChangedListener(textListener)
-        switch_auth_with_form.setOnClickListener {
+        val binding = FragmentAuthBinding.bind(view)
+        fragmentAuthBinding = binding
+
+        binding.uuidUser.addTextChangedListener(textListener)
+        binding.firstNameUser.addTextChangedListener(textListener)
+        binding.lastNameUser.addTextChangedListener(textListener)
+        binding.saltUser.addTextChangedListener(textListener)
+        binding.switchAuthWithForm.setOnClickListener {
             enableSignInWithAuth()
         }
-        sign_in_with_auth.setOnClickListener {
+
+        binding.signInWithAuth.setOnClickListener {
             if (lastTypeAuth != TypeAuth.CHAT_SIMPLE) {
                 Chat.logOutWithUIActionAfter(requireContext()) {
                     lastTypeAuth = TypeAuth.CHAT_SIMPLE
@@ -102,7 +118,7 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
                 openChat(false)
             }
         }
-        sign_in_anonymously.setOnClickListener {
+        binding.signInAnonymously.setOnClickListener {
             if (lastTypeAuth != TypeAuth.CHAT_ANONYMOUSLY) {
                 Chat.logOutWithUIActionAfter(requireContext()) {
                     lastTypeAuth = TypeAuth.CHAT_ANONYMOUSLY
@@ -112,7 +128,7 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
                 openChat(true)
             }
         }
-        sign_in_chat_with_counter.setOnClickListener {
+        binding.signInChatWithCounter.setOnClickListener {
             if (lastTypeAuth != TypeAuth.CHAT_WITH_COUNTER) {
                 Chat.logOutWithUIActionAfter(requireContext()) {
                     lastTypeAuth = TypeAuth.CHAT_WITH_COUNTER
@@ -122,7 +138,7 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
                 startActivity(Intent(requireContext(), ChatWithCounterActivity::class.java))
             }
         }
-        sign_in_web_view.setOnClickListener {
+        binding.signInWebView.setOnClickListener {
             startActivity(Intent(requireContext(), WebViewActivity::class.java))
         }
     }

@@ -12,6 +12,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
+import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetShowImageBinding
+import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.chat.presentation.DownloadFileListener
@@ -20,11 +22,13 @@ import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.MediaFileDownloadMode
 import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
-import kotlinx.android.synthetic.main.activity_show_media_dialog2.*
-import kotlinx.android.synthetic.main.activity_show_media_dialog2.image_navigate_back
-import kotlinx.android.synthetic.main.activity_show_media_dialog2.image_show
+//import kotlinx.android.synthetic.main.activity_show_media_dialog2.*
+//import kotlinx.android.synthetic.main.activity_show_media_dialog2.image_navigate_back
+//import kotlinx.android.synthetic.main.activity_show_media_dialog2.image_show
 
 class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
+    private var _binding: ComCrafttalkChatBottomSheetShowImageBinding? = null
+    private val binding get() = _binding!!
     private fun settingFileDownload(fileDownload: ImageView) {
         if (ChatAttr.getInstance().mediaFileDownloadMode in listOf(
                 MediaFileDownloadMode.ONLY_IN_VIEWER,
@@ -43,12 +47,12 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
         setContentView(R.layout.activity_show_media_dialog2)
         val filepath: String? = intent.getStringExtra("url")
         setContentView(R.layout.activity_show_media_dialog2)
-        image_navigate_back.setOnClickListener(this)
-        settingFileDownload(image_download)
+        binding.imageNavigateBack.setOnClickListener(this)
+        settingFileDownload(binding.imageDownload)
         Glide.with(this.applicationContext)
             .load(createCorrectGlideUrl(filepath))
             .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
-            .into(image_show)
+            .into(binding.imageShow)
     }
 
     override fun onClick(v: View) {
@@ -109,7 +113,7 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
         ) {
             permissions.forEachIndexed { index, permission ->
                 WarningSnackbar.make(
-                    view = image_show,
+                    view = binding.imageShow,
                     title = messages[index]
                 )?.show()
             }
@@ -123,7 +127,7 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
                 ShowImageDialog.showWarning(true)
             } else {
                 WarningSnackbar.make(
-                    view = image_show,
+                    view = binding.imageShow,
                     title = ChatAttr.getInstance().titleSuccessDownloadFileWarning,
                     iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                     textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
@@ -137,7 +141,7 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
                 ShowImageDialog.showWarning(false)
             } else {
                 WarningSnackbar.make(
-                    view = image_show,
+                    view = binding.imageShow,
                     title = ChatAttr.getInstance().titleFailDownloadFileWarning
                 )?.show()
             }
