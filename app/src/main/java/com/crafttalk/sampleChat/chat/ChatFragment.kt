@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -33,6 +34,10 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
             callbackResult(isGranted)
         }
 
+
+
+
+
         Log.d("CTALK_TEST_DALO", "data 2: ${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false)}; " +
                 "${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true}" +
                 "${activity?.intent?.getSerializableExtra("key_visitor")};")
@@ -56,6 +61,22 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentChatBinding.bind(requireView())
         fragmentChatBinding = binding
+
+        binding.chatView.visibility = View.VISIBLE
+
+
+        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri != null) {
+                Log.d("PhotoPicker", "Selected URI: $uri")
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
+
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+
 
         binding.chatView.setMethodGetPayloadTypeWidget { widgetId ->
             when (widgetId) {
@@ -171,14 +192,14 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 //                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 //            })
 //        }
+        binding.chatView.visibility = View.VISIBLE
     }
 
     override fun onResume() {
         super.onResume()
-//        Log.d("TEST_DALO", "")
         val binding = FragmentChatBinding.bind(requireView())
         fragmentChatBinding = binding
-
+        binding.chatView.visibility = View.VISIBLE
         Chat.wakeUp(
             (if (activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true)
                 null

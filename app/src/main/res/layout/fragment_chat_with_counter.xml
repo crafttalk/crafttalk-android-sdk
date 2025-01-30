@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -78,20 +79,22 @@
 
     <com.crafttalk.chat.presentation.ChatView
         android:id="@+id/chat_view"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        app:color_main="@color/color_main"
+        android:layout_height="match_parent"
+        android:visibility="visible"
         app:color_bg_user_message="@color/color_main"
+        app:color_main="@color/color_main"
         app:color_text_operator_action="@color/color_main"
         app:color_user_message_status="#000"
         app:drawable_progress_indeterminate="@drawable/spinner"
-        app:show_internet_connection_state="true"
-        app:show_chat_state="true"
-        app:enable_search="true"
         app:enable_auto_search="true"
-        app:show_upper_limiter="false"
+        app:enable_search="true"
         app:reply_enable="true"
+        app:show_chat_state="true"
+        app:show_internet_connection_state="true"
+        app:show_upper_limiter="false"
         app:show_voice_input="true"
-        app:timeDelayed="1000" />
+        app:timeDelayed="1000"
+        tools:visibility="visible" />
 
 </LinearLayout>

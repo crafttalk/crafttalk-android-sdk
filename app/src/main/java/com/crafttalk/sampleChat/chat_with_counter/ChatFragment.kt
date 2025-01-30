@@ -1,6 +1,9 @@
 package com.crafttalk.sampleChat.chat_with_counter
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ContentResolver
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +11,8 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.crafttalk.chat.domain.entity.file.File
+import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.sampleChat.R
@@ -48,6 +53,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 
         val binding = FragmentChatBinding.bind(view)
         fragmentChatBinding = binding
+        binding.chatView.visibility = View.VISIBLE
 
         binding.chatView.setMethodGetPayloadTypeWidget { widgetId ->
             when (widgetId) {
@@ -164,12 +170,14 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 //                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 //            })
 //        }
+        binding.chatView.visibility = View.VISIBLE
     }
 
     override fun onResume() {
         super.onResume()
         val binding = FragmentChatBinding.bind(requireView())
         fragmentChatBinding = binding
+        binding.chatView.visibility = View.VISIBLE
         binding.chatView.onResume()
     }
 
@@ -194,5 +202,40 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         fragmentChatBinding = binding
 
         Snackbar.make(binding.chatView, warningText, Snackbar.LENGTH_LONG).show()
+    }
+    private val OPEN_DOCUMENT_REQUEST_CODE = 0x33
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, resultData)
+        val binding = FragmentChatBinding.bind(requireView())
+        if (requestCode == OPEN_DOCUMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            resultData?.data?.also { documentUri ->
+
+                /**
+                 * Upon getting a document uri returned, we can use
+                 * [ContentResolver.takePersistableUriPermission] in order to persist the
+                 * permission across restarts.
+                 *
+                 * This may not be necessary for your app. If the permission is not
+                 * persisted, access to the uri is granted until the receiving Activity is
+                 * finished. You can extend the lifetime of the permission grant by passing
+                 * it along to another Android component. This is done by including the uri
+                 * in the data field or the ClipData object of the Intent used to launch that
+                 * component. Additionally, you need to add FLAG_GRANT_READ_URI_PERMISSION
+                 * and/or FLAG_GRANT_WRITE_URI_PERMISSION to the Intent.
+                 *
+                 * This app takes the persistable URI permission grant to demonstrate how, and
+                 * to allow us to reopen the last opened document when the app starts.
+                 */
+                context?.contentResolver?.takePersistableUriPermission(
+                    documentUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+                documentUri?.let {
+                    binding.chatView.viewModel.sendFile(File(it, TypeFile.FILE ))
+                }
+
+
+            }
+        }
     }
 }

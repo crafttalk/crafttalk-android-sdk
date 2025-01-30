@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
+import com.crafttalk.chat.databinding.ActivityShowMediaDialog2Binding
 import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetShowImageBinding
 import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -22,13 +23,9 @@ import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.MediaFileDownloadMode
 import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
-//import kotlinx.android.synthetic.main.activity_show_media_dialog2.*
-//import kotlinx.android.synthetic.main.activity_show_media_dialog2.image_navigate_back
-//import kotlinx.android.synthetic.main.activity_show_media_dialog2.image_show
 
 class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
-    private var _binding: ComCrafttalkChatBottomSheetShowImageBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityShowMediaDialog2Binding
     private fun settingFileDownload(fileDownload: ImageView) {
         if (ChatAttr.getInstance().mediaFileDownloadMode in listOf(
                 MediaFileDownloadMode.ONLY_IN_VIEWER,
@@ -44,9 +41,9 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_show_media_dialog2)
+        binding = ActivityShowMediaDialog2Binding.inflate(layoutInflater)
+        setContentView(binding.root)
         val filepath: String? = intent.getStringExtra("url")
-        setContentView(R.layout.activity_show_media_dialog2)
         binding.imageNavigateBack.setOnClickListener(this)
         settingFileDownload(binding.imageDownload)
         Glide.with(this.applicationContext)

@@ -2,27 +2,56 @@ package com.crafttalk.chat.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DownloadManager
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.ContentResolver
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.speech.SpeechRecognizer.*
+import android.speech.SpeechRecognizer.ERROR_AUDIO
+import android.speech.SpeechRecognizer.ERROR_CLIENT
+import android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS
+import android.speech.SpeechRecognizer.ERROR_NETWORK
+import android.speech.SpeechRecognizer.ERROR_NETWORK_TIMEOUT
+import android.speech.SpeechRecognizer.ERROR_NO_MATCH
+import android.speech.SpeechRecognizer.ERROR_RECOGNIZER_BUSY
+import android.speech.SpeechRecognizer.ERROR_SERVER
+import android.speech.SpeechRecognizer.ERROR_SPEECH_TIMEOUT
+import android.speech.SpeechRecognizer.RESULTS_RECOGNITION
+import android.speech.SpeechRecognizer.createSpeechRecognizer
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
-import android.widget.*
+import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
@@ -51,35 +80,39 @@ import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
-import com.crafttalk.chat.presentation.helper.extensions.*
+import com.crafttalk.chat.presentation.helper.extensions.delayOnLifecycle
+import com.crafttalk.chat.presentation.helper.extensions.loadMediaFile
+import com.crafttalk.chat.presentation.helper.extensions.setFileIcon
+import com.crafttalk.chat.presentation.helper.extensions.setFileName
+import com.crafttalk.chat.presentation.helper.extensions.setFileSize
+import com.crafttalk.chat.presentation.helper.extensions.setMessageText
+import com.crafttalk.chat.presentation.helper.extensions.settingMediaFile
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFileContract
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.TakePicture
 import com.crafttalk.chat.presentation.helper.permission.requestPermissionWithAction
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
-import com.crafttalk.chat.presentation.model.*
+import com.crafttalk.chat.presentation.model.DefaultMessageItem
+import com.crafttalk.chat.presentation.model.FileMessageItem
+import com.crafttalk.chat.presentation.model.GifMessageItem
+import com.crafttalk.chat.presentation.model.ImageMessageItem
+import com.crafttalk.chat.presentation.model.InfoMessageItem
+import com.crafttalk.chat.presentation.model.MessageModel
+import com.crafttalk.chat.presentation.model.TextMessageItem
+import com.crafttalk.chat.presentation.model.TransferMessageItem
+import com.crafttalk.chat.presentation.model.TypeMultiple
+import com.crafttalk.chat.presentation.model.UnionMessageItem
+import com.crafttalk.chat.presentation.model.WidgetMessageItem
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_include_replied_message.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_include_reply_preview.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_include_search.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_include_search_switch.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_auth.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.upload_history_btn
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_user_feedback.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_binding.warning.root.view.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
 import java.util.*
-import javax.inject.Inject
-import kotlin.math.ceil
-import com.crafttalk.chat.di.modules.*
-import com.crafttalk.chat.presentation.helper.ui.bindRepliedMessage
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-
+import javax.inject.Inject
+import kotlin.math.ceil
+import android.content.*
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
     @Inject
@@ -174,7 +207,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
     private var downloadID: Long? = null
     private val defaultUploadFileListener: UploadFileListener by lazy {
-        //_binding = ComCrafttalkChatViewHostBinding.inflate(inflater)
         object : UploadFileListener {
             override fun successUpload() {}
             override fun failUpload(message: String, type: TypeFailUpload) {
@@ -196,6 +228,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var takePicture: ActivityResultLauncher<Uri>? = null
     private var pickImage: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
     private var pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
+
+    private var pickPictureSafe: ActivityResultLauncher<PickVisualMediaRequest>? = null
+    private var pickFileSafe: ActivityResultLauncher<Array<String>>? = null
 
     private var methodGetWidgetView: (widgetId: String) -> View? = { null }
     private var methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit = { _,_,_ -> }
@@ -261,9 +296,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         this.stateStartingProgressListener = listener
     }
 
+    init {
+        val inflater = LayoutInflater.from(context)
+        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
+    }
+
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater)
-        inflater.inflate(R.layout.com_crafttalk_chat_view_host, this, true)
 
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
         customizationChat(attrArr)
@@ -275,7 +313,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     @SuppressLint("ResourceType")
     private fun customizationChat(attrArr: TypedArray) {
 
-        //_binding = ComCrafttalkChatViewHostBinding.inflate(inflater)
         val chatAttr = ChatAttr.getInstance(attrArr, context)
 
         // set color
@@ -450,7 +487,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     private fun setListMessages() {
-        //_binding = ComCrafttalkChatViewHostBinding.inflate(inflater)
         adapterListMessages = AdapterListMessages(
             downloadOrOpenDocument = viewModel::downloadOrOpenDocument,
             openImage = viewModel::openImage,
@@ -493,9 +529,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         fragment: Fragment,
         lifecycleOwner: LifecycleOwner
     ):View {
-        //_binding = ComCrafttalkChatViewHostBinding.inflate(inflater)
         val view = binding.root
-
+        binding.root.visibility = View.VISIBLE
         Chat.getSdkComponent().createChatComponent()
             .parentFragment(fragment)
             .build()
@@ -512,6 +547,28 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         settingVoiceInput()
+
+        pickPictureSafe = fragment.registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri != null) {
+                Log.d("PhotoPicker", "Selected URI: $uri")
+                uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE))}
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
+
+        pickFileSafe = fragment.registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) {
+                Log.d("DocumentPicker", "Selected URI: $uri")
+                uri?.let { viewModel.sendFile(File(it, TypeFile.FILE))}
+            } else {
+                Log.d("DocumentPicker", "No document selected")
+            }
+
+        }
+
 
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
             uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
@@ -1215,32 +1272,36 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     override fun onModalOptionSelected(tag: String?, option: Option) {
         when (option.id) {
             R.id.document -> {
-                fileViewerHelper.pickFiles(
-                    pickFile,
-                    Pair(TypeFile.FILE, TypeMultiple.SINGLE),
-                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
-                        permissionListener.requestedPermissions(
-                            permissions,
-                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
-                            actionsAfterObtainingPermission
-                        )
-                    },
-                    parentFragment
-                )
+                pickFileSafe?.launch(arrayOf(TypeFile.FILE.value))
+                //context.contentResolver
+//                fileViewerHelper.pickFiles(
+//                    pickFile,
+//                    Pair(TypeFile.FILE, TypeMultiple.SINGLE),
+//                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
+//                        permissionListener.requestedPermissions(
+//                            permissions,
+//                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
+//                            actionsAfterObtainingPermission
+//                        )
+//                    },
+//                    parentFragment
+//                )
+                Log.d("","")
             }
             R.id.image -> {
-                fileViewerHelper.pickFiles(
-                    pickImage,
-                    Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
-                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
-                        permissionListener.requestedPermissions(
-                            permissions,
-                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
-                            actionsAfterObtainingPermission
-                        )
-                    },
-                    parentFragment
-                )
+                pickPictureSafe?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//                fileViewerHelper.pickFiles(
+//                    pickImage,
+//                    Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
+//                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
+//                        permissionListener.requestedPermissions(
+//                            permissions,
+//                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
+//                            actionsAfterObtainingPermission
+//                        )
+//                    },
+//                    parentFragment
+//                )
             }
             R.id.camera -> {
                 fileViewerHelper.pickImageFromCamera(

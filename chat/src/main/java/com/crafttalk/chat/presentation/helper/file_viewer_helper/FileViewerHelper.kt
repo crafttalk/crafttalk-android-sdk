@@ -3,12 +3,14 @@ package com.crafttalk.chat.presentation.helper.file_viewer_helper
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES.TIRAMISU
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.R
@@ -99,4 +101,10 @@ class FileViewerHelper {
         }
 
     }
+}
+
+/** Требуется для загрузки документов
+ * **/
+interface OnActivityResultListener {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
 }
