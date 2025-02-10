@@ -22,9 +22,10 @@
 
     <include
         android:id="@+id/pined_place"
-        layout="@layout/com_crafttalk_chat_iclude_pinned_message"
+        layout="@layout/com_crafttalk_chat_include_pinned_message"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
+        android:minHeight="0dp"
         app:layout_constraintTop_toBottomOf="@id/search_switch_place"
         app:layout_constraintBottom_toTopOf="@id/list_with_message"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,8 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pined_place"
-        android:background="@color/com_crafttalk_chat_default_color_main"
-        tools:background="@color/com_crafttalk_chat_default_color_main" />
+        android:background="@color/com_crafttalk_chat_default_color_main" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_with_message"

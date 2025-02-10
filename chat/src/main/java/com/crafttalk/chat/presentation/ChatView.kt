@@ -78,7 +78,7 @@ import javax.inject.Inject
 import kotlin.math.ceil
 import com.crafttalk.chat.di.modules.*
 import com.crafttalk.chat.presentation.feature.pined_message_viewer.PinedMessage
-import kotlinx.android.synthetic.main.com_crafttalk_chat_iclude_pinned_message.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_pinned_message.view.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
