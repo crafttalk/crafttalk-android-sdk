@@ -106,7 +106,7 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
             selectUrl(this, "wss")
         }
         else -> {
-            Log.e("CTALK_FAIL_PARSE","Undefined behavior detected, please investigate the issue")
+            Log.e("CTALK_FAIL_PARSE","Undefined behavior detected, convert from base to string was incorrect")
         }
     }
 //    selectUrl(this, "www")
@@ -349,7 +349,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                         }
                     }
                     else -> {
-                        Log.e("CTALK_FAIL_PARSE","Undefined behavior detected, please investigate the issue")
+                        Log.e("CTALK_FAIL_PARSE","Undefined behavior detected, convert from html text to android string incorrect")
                     }
                 }
                 isSelectTag = false

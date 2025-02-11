@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -28,7 +27,7 @@ import kotlinx.coroutines.delay
 import java.io.File
 import javax.inject.Inject
 
-class PinedMessageModel
+class PinnedMessageModel
 @Inject constructor(
     private val authChatInteractor: AuthInteractor,
     private val messageInteractor: MessageInteractor,
@@ -81,7 +80,7 @@ class PinedMessageModel
                     delay(ChatAttr.getInstance().delayDownloadDocument)
                     openDocument.postValue(Pair(documentFile, true))
                 },
-                downloadedFail = {
+                downloadedFailed = {
                     openDocument.postValue(Pair(null, false))
                 }
             )

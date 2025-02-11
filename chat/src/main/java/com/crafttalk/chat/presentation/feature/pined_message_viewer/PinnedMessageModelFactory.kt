@@ -11,8 +11,8 @@ import com.crafttalk.chat.domain.interactors.FileInteractor
 import com.crafttalk.chat.domain.interactors.MessageInteractor
 import com.crafttalk.chat.domain.interactors.SearchInteractor
 
-@Suppress("UNCHECKED_CAST")
-class PinedMessageModelFactory (
+
+class PinnedMessageModelFactory (
     private val authChatInteractor: AuthInteractor,
     private val messageInteractor: MessageInteractor,
     private val searchInteractor: SearchInteractor,
@@ -23,7 +23,7 @@ class PinedMessageModelFactory (
     private val context: Context
 ):ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return PinedMessageModel(
+        return PinnedMessageModel(
             authChatInteractor,
             messageInteractor,
             searchInteractor,

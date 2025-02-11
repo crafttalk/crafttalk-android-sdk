@@ -30,7 +30,8 @@ class PersonRepository
                 messagesDao.updatePersonName(personId, currentPersonName)
             }
             else -> {
-                Log.e("CTALK_FAIL_REQUEST","Undefined behavior detected, please investigate the issue")
+                Log.e("CTALK_FAIL_REQUEST","Undefined behavior detected, update person name was incorrect")
+                Unit
             }
         }
     }

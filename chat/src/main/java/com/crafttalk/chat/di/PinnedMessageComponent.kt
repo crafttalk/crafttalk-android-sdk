@@ -15,10 +15,10 @@ import dagger.Subcomponent
         ViewModelModule::class
     ]
 )
-interface PinedMessageComponent {
+interface PinnedMessageComponent {
     @Subcomponent.Builder
     interface Builder {
-        fun build(): PinedMessageComponent
+        fun build(): PinnedMessageComponent
     }
     //fun inject(pinedMessage: PinedMessage)
 }

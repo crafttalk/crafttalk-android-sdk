@@ -35,5 +35,5 @@ interface SdkComponent {
 
     fun createChatComponent(): ChatComponent.Builder
 
-    fun createPinedMessageComponent(): PinedMessageComponent.Builder
+    fun createPinedMessageComponent(): PinnedMessageComponent.Builder
 }

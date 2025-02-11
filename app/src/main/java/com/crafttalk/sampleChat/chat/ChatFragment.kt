@@ -34,10 +34,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
             callbackResult(isGranted)
         }
 
-
-
-
-
         Log.d("CTALK_TEST_DALO", "data 2: ${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false)}; " +
                 "${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true}" +
                 "${activity?.intent?.getSerializableExtra("key_visitor")};")

@@ -129,8 +129,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
             settings.domStorageEnabled = true
             settings.defaultTextEncodingName = "utf-8"
 
-            loadUrl("")
-            test0()
+            loadUrl("${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}")
             setWebContentsDebuggingEnabled(true)
             addJavascriptInterface(JavaScriptInterface(this@WebViewActivity, this@WebViewActivity), "Android")
             setDownloadListener { url, _, _, mimeType, _ ->
@@ -184,16 +183,18 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
                     return true
                 }
             }
-            //test()
         }
     }
+
+    private val chatLink:String = "${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}"
+
     private fun WebView.test0() {
         val script:String = """
             <script>
             !function(t,e){const a="channel_296596d",n="webchat-js-container:".concat(a);function s(){const e=t.createElement("iframe");e.id=n,e.className=n;const s=t.createElement("script");s.type="text/javascript",s.async=!0,s.src="//cloud-stage.craft-talk.com/assets/js/"+a,e.addEventListener("load",(()=>{e.contentDocument.head.appendChild(s)})),t.head.appendChild(e);const c=t.createElement("link");c.setAttribute("rel","stylesheet"),c.setAttribute("type","text/css"),c.setAttribute("href","//cloud-stage.craft-talk.com/assets/css/"+a),t.getElementsByTagName("head")[0].appendChild(c)}"complete"===t.readyState?s():e.attachEvent?e.attachEvent("onload",s):e.addEventListener("load",s,!1)}(document,window);
             </script>
         """.trimIndent()
-        loadDataWithBaseURL("${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}",script,"text/html","UTF-8", null)
+        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
 
     }
 
@@ -204,7 +205,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
             element[0].remove();
             </script>
         """.trimIndent()
-        loadDataWithBaseURL("${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}",script,"text/html","UTF-8", null)
+        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
     }
     private fun WebView.getVisitorUuid() {
         if (visitorUuid == null) {
