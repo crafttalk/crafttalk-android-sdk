@@ -3,7 +3,6 @@ package com.crafttalk.chat.presentation.helper.file_viewer_helper
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
@@ -34,7 +33,7 @@ class FileViewerHelper {
             pickFile?.launch(pickSettings)
         }
         val permissions = if (Build.VERSION.SDK_INT >= TIRAMISU) {
-            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            arrayOf()
         } else {
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
@@ -101,10 +100,4 @@ class FileViewerHelper {
         }
 
     }
-}
-
-/** Требуется для загрузки документов
- * **/
-interface OnActivityResultListener {
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
 }

@@ -73,7 +73,7 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
                 if(Build.VERSION.SDK_INT < 32) {
                     storagePermission = ContextCompat.checkSelfPermission(baseContext, WRITE_EXTERNAL_STORAGE)}
                 else{
-                    storagePermission = ContextCompat.checkSelfPermission(baseContext, READ_MEDIA_IMAGES)
+                    storagePermission = PackageManager.PERMISSION_GRANTED
                 }
 
                 if (storagePermission == PackageManager.PERMISSION_GRANTED) {
@@ -94,9 +94,6 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
                     val code:Int = 1
                     if (Build.VERSION.SDK_INT < 32) {
                     ActivityCompat.requestPermissions(this, arrayOf(WRITE_EXTERNAL_STORAGE),code)}
-                    else{
-                        ActivityCompat.requestPermissions(this, arrayOf(READ_MEDIA_IMAGES),code)
-                    }
                 }
             }
         }

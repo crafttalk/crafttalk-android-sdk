@@ -112,7 +112,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.ceil
-import android.content.*
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
     @Inject
@@ -548,14 +547,14 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         settingVoiceInput()
 
-        pickPictureSafe = fragment.registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        pickPictureSafe = fragment.registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uri ->
             // Callback is invoked after the user selects a media item or closes the
             // photo picker.
-            if (uri != null) {
-                Log.d("PhotoPicker", "Selected URI: $uri")
-                uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE))}
+            if (uri.size > FileViewerHelper.PHOTOS_LIMIT) {
+                viewModel.sendFiles(uri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.IMAGE) })
+                FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.PHOTOS_LIMIT_EXCEEDED)
             } else {
-                Log.d("PhotoPicker", "No media selected")
+                viewModel.sendFiles(uri.map { File(it, TypeFile.IMAGE)})
             }
         }
 
