@@ -50,6 +50,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
             fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
         )
         Chat.createSession()
+        Chat.clearDBDialogHistory(requireContext())
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -59,21 +60,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         fragmentChatBinding = binding
 
         binding.chatView.visibility = View.VISIBLE
-
-
-        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            // Callback is invoked after the user selects a media item or closes the
-            // photo picker.
-            if (uri != null) {
-                Log.d("PhotoPicker", "Selected URI: $uri")
-            } else {
-                Log.d("PhotoPicker", "No media selected")
-            }
-        }
-
-        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
-
-
         binding.chatView.setMethodGetPayloadTypeWidget { widgetId ->
             when (widgetId) {
                 "carousel" -> CarouselWidget::class.java

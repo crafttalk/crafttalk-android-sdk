@@ -654,7 +654,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     binding.warning.root.visibility = View.GONE
                     binding.searchPlace.root.visibility = View.GONE
                     binding.chatPlace.root.visibility = View.VISIBLE
-                    binding.search.rootView.visibility
                     binding.search.rootView.visibility = when {
                         binding.search.rootView.visibility == View.GONE -> View.GONE
                         ChatParams.enableSearch == true -> View.VISIBLE
