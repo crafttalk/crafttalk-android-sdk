@@ -1,4 +1,4 @@
-package com.crafttalk.chat.presentation.feature.pined_message_viewer
+package com.crafttalk.chat.presentation.feature.pinned_message_viewer
 
 import android.content.Context
 import android.content.Intent
@@ -80,7 +80,7 @@ class PinnedMessageModel
                     delay(ChatAttr.getInstance().delayDownloadDocument)
                     openDocument.postValue(Pair(documentFile, true))
                 },
-                downloadedFailed = {
+                downloadFailed = {
                     openDocument.postValue(Pair(null, false))
                 }
             )

@@ -1,4 +1,4 @@
-package com.crafttalk.chat.presentation.feature.pined_message_viewer
+package com.crafttalk.chat.presentation.feature.pinned_message_viewer
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

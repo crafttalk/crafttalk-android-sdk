@@ -186,27 +186,27 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
         }
     }
 
-    private val chatLink:String = "${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}"
-
-    private fun WebView.test0() {
-        val script:String = """
-            <script>
-            !function(t,e){const a="channel_296596d",n="webchat-js-container:".concat(a);function s(){const e=t.createElement("iframe");e.id=n,e.className=n;const s=t.createElement("script");s.type="text/javascript",s.async=!0,s.src="//cloud-stage.craft-talk.com/assets/js/"+a,e.addEventListener("load",(()=>{e.contentDocument.head.appendChild(s)})),t.head.appendChild(e);const c=t.createElement("link");c.setAttribute("rel","stylesheet"),c.setAttribute("type","text/css"),c.setAttribute("href","//cloud-stage.craft-talk.com/assets/css/"+a),t.getElementsByTagName("head")[0].appendChild(c)}"complete"===t.readyState?s():e.attachEvent?e.attachEvent("onload",s):e.addEventListener("load",s,!1)}(document,window);
-            </script>
-        """.trimIndent()
-        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
-
-    }
-
-    private fun WebView.test() {
-        val script:String = """
-            <script>
-            var element = document.getElementsByClassName('webchat-file-upload-icon');
-            element[0].remove();
-            </script>
-        """.trimIndent()
-        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
-    }
+    val chatLink:String = "${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}"
+//
+//    private fun WebView.test0() {
+//        val script:String = """
+//            <script>
+//            !function(t,e){const a="channel_296596d",n="webchat-js-container:".concat(a);function s(){const e=t.createElement("iframe");e.id=n,e.className=n;const s=t.createElement("script");s.type="text/javascript",s.async=!0,s.src="//cloud-stage.craft-talk.com/assets/js/"+a,e.addEventListener("load",(()=>{e.contentDocument.head.appendChild(s)})),t.head.appendChild(e);const c=t.createElement("link");c.setAttribute("rel","stylesheet"),c.setAttribute("type","text/css"),c.setAttribute("href","//cloud-stage.craft-talk.com/assets/css/"+a),t.getElementsByTagName("head")[0].appendChild(c)}"complete"===t.readyState?s():e.attachEvent?e.attachEvent("onload",s):e.addEventListener("load",s,!1)}(document,window);
+//            </script>
+//        """.trimIndent()
+//        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
+//
+//    }
+//
+//    private fun WebView.test() {
+//        val script:String = """
+//            <script>
+//            var element = document.getElementsByClassName('webchat-file-upload-icon');
+//            element[0].remove();
+//            </script>
+//        """.trimIndent()
+//        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
+//    }
     private fun WebView.getVisitorUuid() {
         if (visitorUuid == null) {
             val key = "webchat-${getString(R.string.webUrlChatNameSpace)}-uuid"

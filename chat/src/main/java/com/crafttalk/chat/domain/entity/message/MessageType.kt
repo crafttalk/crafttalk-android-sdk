@@ -64,6 +64,8 @@ enum class MessageType(val valueType: Int) {
 
     INITIAL_MESSAGE(30), //сообщение, которое регулируется полем showInitialMessage
 
+    SCORE_REQUEST(400), //Служебное сообщение, принудительная оценка диалога
+
 
     DEFAULT(-1),
     INFO_MESSAGE(-2);

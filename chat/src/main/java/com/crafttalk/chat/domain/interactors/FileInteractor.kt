@@ -38,7 +38,7 @@ class FileInteractor
         documentUrl: String,
         directory: IOFile,
         openDocument: suspend (file: IOFile) -> Unit,
-        downloadedFailed: () -> Unit
+        downloadFailed: () -> Unit
     ) {
         val documentFile = IOFile(directory, "${id}_${documentName}")
         val alternativeFile = IOFile(directory, "${id}.${documentName.split(".").last()}")
@@ -58,7 +58,7 @@ class FileInteractor
                     },
                     downloadedFail = {
                         messageRepository.updateTypeDownloadProgressOfMessageWithAttachment(id, TypeDownloadProgress.NOT_DOWNLOADED)
-                        downloadedFailed()
+                        downloadFailed()
                     }
                 )
             }

@@ -292,7 +292,7 @@ class ChatViewModel
                     delay(ChatAttr.getInstance().delayDownloadDocument)
                     openDocument.postValue(Pair(documentFile, true))
                 },
-                downloadedFailed = {
+                downloadFailed = {
                     openDocument.postValue(Pair(null, false))
                 }
             )

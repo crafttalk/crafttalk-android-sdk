@@ -54,6 +54,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -168,7 +169,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 ShowImageDialog.showWarning(false)
             } else {
                 WarningSnackbar.make(
-                    view = binding!!.chatPlace.root,
+                    view = binding.chatPlace.root,
                     title = ChatAttr.getInstance().titleFailDownloadFileWarning
                 )?.show()
             }
@@ -178,7 +179,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 ShowImageDialog.showWarning(false)
             } else {
                 WarningSnackbar.make(
-                    view = binding!!.chatPlace.root,
+                    view = binding.chatPlace.root,
                     title = title
                 )?.show()
             }
@@ -947,10 +948,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     )
                 }
 
-                is DefaultMessageItem -> TODO()
-                is InfoMessageItem -> TODO()
-                is TransferMessageItem -> TODO()
-                is WidgetMessageItem -> TODO()
+                is DefaultMessageItem -> {Unit}
+                is InfoMessageItem -> {Unit}
+                is TransferMessageItem -> {Unit}
+                is WidgetMessageItem -> {Unit}
             }
         }
         viewModel.replyMessagePosition.observe(lifecycleOwner) {
@@ -1203,53 +1204,75 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     @SuppressLint("ClickableViewAccessibility")
     private fun giveFeedback(countStars: Int, isLastDecision: Boolean) {
-        when (countStars) {
-            1 -> {
-                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            2 -> {
-                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            3 -> {
-                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            4 -> {
-                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            5 -> {
-                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-            }
+        val userFeedback = binding.chatPlace.userFeedback
+        val stars = listOf(
+            userFeedback.feedbackStar1,
+            userFeedback.feedbackStar2,
+            userFeedback.feedbackStar3,
+            userFeedback.feedbackStar4,
+            userFeedback.feedbackStar5
+            )
+
+        val filledStar = R.drawable.com_crafttalk_chat_ic_star
+        val outlineStar = R.drawable.com_crafttalk_chat_ic_star_outline
+
+        stars.forEachIndexed { index, imageView ->
+            imageView.setImageResource(if (index < countStars) filledStar else outlineStar)
         }
+
+//        when (countStars) {
+//            1 -> {
+//                forEach { stars ->
+//
+//                }
+//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//            }
+//            2 -> {
+//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//            }
+//            3 -> {
+//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//            }
+//            4 -> {
+//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//            }
+//            5 -> {
+//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+//            }
+//        }
         if (isLastDecision) {
             binding.chatPlace.userFeedback.root.setOnTouchListener(null)
             viewModel.giveFeedbackOnOperator(countStars,null, viewModel.dialogID1)
             binding.chatPlace.userFeedback.root.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
                 viewModel.feedbackContainerVisible.value = false
-                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                stars.forEachIndexed { index, imageView ->
+                    imageView.setImageResource(outlineStar)
+                }
+//                userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+//                userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
                 setFeedbackListener()
             }
         }

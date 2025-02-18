@@ -300,6 +300,7 @@ class SocketApi(
                 }
                 when (messageSocket.messageType) {
                     MessageType.UPDATE_DIALOG_SCORE.valueType -> chatEventListener?.updateDialogScore()
+                    MessageType.SCORE_REQUEST.valueType -> chatEventListener?.finishDialog(messageSocket.dialogId)
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()

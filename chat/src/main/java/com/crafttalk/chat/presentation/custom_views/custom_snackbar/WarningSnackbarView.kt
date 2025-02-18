@@ -3,6 +3,7 @@ package com.crafttalk.chat.presentation.custom_views.custom_snackbar
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -10,10 +11,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.crafttalk.chat.R
-import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.crafttalk.chat.databinding.ComCrafttalkChatViewWarningSnackbarBinding
 import com.google.android.material.snackbar.ContentViewCallback
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_view_warning_snackbar.view.*
 
 class WarningSnackbarView @JvmOverloads constructor(
     context: Context,
@@ -25,6 +24,7 @@ class WarningSnackbarView @JvmOverloads constructor(
     init {
         View.inflate(context, R.layout.com_crafttalk_chat_view_warning_snackbar, this)
         clipToPadding =  false
+        _binding = ComCrafttalkChatViewWarningSnackbarBinding.inflate(LayoutInflater.from(context),this)
     }
 
     @SuppressLint("ResourceAsColor")
@@ -35,7 +35,6 @@ class WarningSnackbarView @JvmOverloads constructor(
         @ColorRes textColor: Int,
         @ColorRes backgroundColor: Int
     ) {
-
         setVisibilityTextViewByContent(binding.warningSnackbarTitle, title)
         setVisibilityTextViewByContent(binding.warningSnackbarDescription, description)
         binding.warningSnackbarTitle.setTextColor(textColor)
