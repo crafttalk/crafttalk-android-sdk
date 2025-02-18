@@ -3,7 +3,6 @@ package com.crafttalk.sampleChat.web_view
 import com.crafttalk.sampleChat.R
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
 import android.net.Uri
 import android.widget.Toast
 import android.content.ActivityNotFoundException
@@ -22,9 +21,6 @@ import com.crafttalk.sampleChat.web_view.file_viewer.Option
 import com.crafttalk.sampleChat.web_view.utils.pickFiles
 import com.crafttalk.sampleChat.web_view.utils.pickImageFromCamera
 import com.google.android.material.snackbar.Snackbar
-//import kotlinx.android.synthetic.main.activity_web_view.*
-//import kotlinx.android.synthetic.main.fragment_chat.*
-import java.util.*
 import android.webkit.*
 import android.webkit.WebView.setWebContentsDebuggingEnabled
 import com.crafttalk.sampleChat.databinding.ActivityWebViewBinding
@@ -186,7 +182,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
         }
     }
 
-    val chatLink:String = "${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}"
+//    val chatLink:String = "${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}"
 //
 //    private fun WebView.test0() {
 //        val script:String = """

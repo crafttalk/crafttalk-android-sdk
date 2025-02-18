@@ -1,6 +1,6 @@
 package com.crafttalk.chat.presentation.feature.view_picture
 
-import android.Manifest.permission.READ_MEDIA_IMAGES
+
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,8 +13,6 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
 import com.crafttalk.chat.databinding.ActivityShowMediaDialog2Binding
-import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetShowImageBinding
-import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.chat.presentation.DownloadFileListener

@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentManager
 import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.databinding.BottomSheetFileViewerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-//import kotlinx.android.synthetic.main.bottom_sheet_file_viewer.*
 
 @SuppressLint("RestrictedApi")
 class BottomSheetFileViewer : BottomSheetDialogFragment() {

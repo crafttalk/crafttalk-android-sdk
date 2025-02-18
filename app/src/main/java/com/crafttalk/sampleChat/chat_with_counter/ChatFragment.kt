@@ -21,7 +21,6 @@ import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.createCarouselWidget
 import com.google.android.material.snackbar.Snackbar
-//import kotlinx.android.synthetic.main.fragment_chat.*
 
 class ChatFragment: Fragment(R.layout.fragment_chat) {
     private var fragmentChatBinding: FragmentChatBinding? = null

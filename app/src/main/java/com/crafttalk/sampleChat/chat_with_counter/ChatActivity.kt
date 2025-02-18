@@ -8,10 +8,8 @@ import androidx.fragment.app.Fragment
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.sampleChat.R
-import com.crafttalk.sampleChat.databinding.ActivityChatBinding
 import com.crafttalk.sampleChat.databinding.ActivityChatWithCounterBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-//import kotlinx.android.synthetic.main.activity_chat_with_counter.*
 
 class ChatActivity: AppCompatActivity() {
     private lateinit var binding: ActivityChatWithCounterBinding

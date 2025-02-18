@@ -1219,46 +1219,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             imageView.setImageResource(if (index < countStars) filledStar else outlineStar)
         }
 
-//        when (countStars) {
-//            1 -> {
-//                forEach { stars ->
-//
-//                }
-//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//            }
-//            2 -> {
-//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//            }
-//            3 -> {
-//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//            }
-//            4 -> {
-//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//            }
-//            5 -> {
-//                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-//            }
-//        }
         if (isLastDecision) {
             binding.chatPlace.userFeedback.root.setOnTouchListener(null)
             viewModel.giveFeedbackOnOperator(countStars,null, viewModel.dialogID1)
@@ -1267,11 +1227,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 stars.forEachIndexed { index, imageView ->
                     imageView.setImageResource(outlineStar)
                 }
-//                userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-//                userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
                 setFeedbackListener()
             }
         }
@@ -1294,35 +1249,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         when (option.id) {
             R.id.document -> {
                 pickFileSafe?.launch(arrayOf(TypeFile.FILE.value))
-                //context.contentResolver
-//                fileViewerHelper.pickFiles(
-//                    pickFile,
-//                    Pair(TypeFile.FILE, TypeMultiple.SINGLE),
-//                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
-//                        permissionListener.requestedPermissions(
-//                            permissions,
-//                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
-//                            actionsAfterObtainingPermission
-//                        )
-//                    },
-//                    parentFragment
-//                )
                 Log.d("","")
             }
             R.id.image -> {
                 pickPictureSafe?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-//                fileViewerHelper.pickFiles(
-//                    pickImage,
-//                    Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
-//                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
-//                        permissionListener.requestedPermissions(
-//                            permissions,
-//                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
-//                            actionsAfterObtainingPermission
-//                        )
-//                    },
-//                    parentFragment
-//                )
             }
             R.id.camera -> {
                 fileViewerHelper.pickImageFromCamera(

@@ -10,7 +10,6 @@ import com.bumptech.glide.Glide
 import com.crafttalk.chat.R
 import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetShowGifBinding
 import com.crafttalk.chat.databinding.ComCrafttalkChatBottomSheetShowImageBinding
-import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.file.TypeFile.GIF
 import com.crafttalk.chat.domain.entity.file.TypeFile.IMAGE
@@ -18,8 +17,6 @@ import com.crafttalk.chat.presentation.custom_views.custom_snackbar.WarningSnack
 import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.MediaFileDownloadMode
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_gif.*
-//import kotlinx.android.synthetic.main.com_crafttalk_chat_bottom_sheet_show_image.*
 
 class ShowImageDialog(
     context: Context,
