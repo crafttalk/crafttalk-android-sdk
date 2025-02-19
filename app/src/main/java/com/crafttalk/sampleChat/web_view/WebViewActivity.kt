@@ -3,7 +3,6 @@ package com.crafttalk.sampleChat.web_view
 import com.crafttalk.sampleChat.R
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
 import android.net.Uri
 import android.widget.Toast
 import android.content.ActivityNotFoundException
@@ -22,19 +21,17 @@ import com.crafttalk.sampleChat.web_view.file_viewer.Option
 import com.crafttalk.sampleChat.web_view.utils.pickFiles
 import com.crafttalk.sampleChat.web_view.utils.pickImageFromCamera
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_web_view.*
-import kotlinx.android.synthetic.main.fragment_chat.*
-import java.util.*
 import android.webkit.*
 import android.webkit.WebView.setWebContentsDebuggingEnabled
+import com.crafttalk.sampleChat.databinding.ActivityWebViewBinding
 import com.crafttalk.sampleChat.web_view.data.api.NotificationApi
 import com.crafttalk.sampleChat.web_view.data.repository.NotificationRepository
 import com.google.gson.Gson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.concurrent.thread
-
 class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomSheetFileViewer.Listener {
+    private lateinit var binding: ActivityWebViewBinding
 
     private var uploadMessage: ValueCallback<Uri?>? = null
     private var uploadMessages: ValueCallback<Array<Uri?>?>? = null
@@ -109,7 +106,8 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_web_view)
+        binding = ActivityWebViewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         notificationRepository = NotificationRepository(
             Retrofit.Builder()
@@ -121,14 +119,13 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
 
 //        attachKeyboardListeners()
 
-        web_view.apply {
+        binding.webView.apply {
             settings.javaScriptEnabled = true
             settings.allowFileAccess = true
             settings.domStorageEnabled = true
             settings.defaultTextEncodingName = "utf-8"
 
             loadUrl("${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}")
-
             setWebContentsDebuggingEnabled(true)
             addJavascriptInterface(JavaScriptInterface(this@WebViewActivity, this@WebViewActivity), "Android")
             setDownloadListener { url, _, _, mimeType, _ ->
@@ -185,6 +182,27 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
         }
     }
 
+//    val chatLink:String = "${getString(R.string.webUrlChatScheme)}://${getString(R.string.webUrlChatHost)}/webchat/${getString(R.string.webUrlChatNameSpace)}"
+//
+//    private fun WebView.test0() {
+//        val script:String = """
+//            <script>
+//            !function(t,e){const a="channel_296596d",n="webchat-js-container:".concat(a);function s(){const e=t.createElement("iframe");e.id=n,e.className=n;const s=t.createElement("script");s.type="text/javascript",s.async=!0,s.src="//cloud-stage.craft-talk.com/assets/js/"+a,e.addEventListener("load",(()=>{e.contentDocument.head.appendChild(s)})),t.head.appendChild(e);const c=t.createElement("link");c.setAttribute("rel","stylesheet"),c.setAttribute("type","text/css"),c.setAttribute("href","//cloud-stage.craft-talk.com/assets/css/"+a),t.getElementsByTagName("head")[0].appendChild(c)}"complete"===t.readyState?s():e.attachEvent?e.attachEvent("onload",s):e.addEventListener("load",s,!1)}(document,window);
+//            </script>
+//        """.trimIndent()
+//        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
+//
+//    }
+//
+//    private fun WebView.test() {
+//        val script:String = """
+//            <script>
+//            var element = document.getElementsByClassName('webchat-file-upload-icon');
+//            element[0].remove();
+//            </script>
+//        """.trimIndent()
+//        loadDataWithBaseURL(chatLink,script,"text/html","UTF-8", null)
+//    }
     private fun WebView.getVisitorUuid() {
         if (visitorUuid == null) {
             val key = "webchat-${getString(R.string.webUrlChatNameSpace)}-uuid"
@@ -231,7 +249,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
             if (isGranted) {
                 action()
             } else {
-                Snackbar.make(web_view, message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.webView, message, Snackbar.LENGTH_LONG).show()
             }
         }
         requestPermission.launch(permission)
@@ -259,7 +277,7 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
         when (option.id) {
             R.id.document -> {
                 createFileFromGallery(
-                    typeFile = "application/*"
+                    typeFile = "*/*"
                 )
             }
             R.id.image -> {
@@ -282,4 +300,16 @@ class WebViewActivity: AppCompatActivity(R.layout.activity_web_view), BottomShee
         }
     }
     */
+
+    override fun onPause() {
+        super.onPause()
+        binding.webView.pauseTimers()
+        binding.webView.setNetworkAvailable(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.webView.resumeTimers()
+        binding.webView.setNetworkAvailable(true)
+    }
 }

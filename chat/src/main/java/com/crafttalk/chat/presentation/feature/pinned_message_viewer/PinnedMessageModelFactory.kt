@@ -1,12 +1,18 @@
-package com.crafttalk.chat.presentation
+package com.crafttalk.chat.presentation.feature.pinned_message_viewer
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.crafttalk.chat.domain.interactors.*
+import com.crafttalk.chat.domain.interactors.AuthInteractor
+import com.crafttalk.chat.domain.interactors.ConditionInteractor
+import com.crafttalk.chat.domain.interactors.ConfigurationInteractor
+import com.crafttalk.chat.domain.interactors.FeedbackInteractor
+import com.crafttalk.chat.domain.interactors.FileInteractor
+import com.crafttalk.chat.domain.interactors.MessageInteractor
+import com.crafttalk.chat.domain.interactors.SearchInteractor
 
-@Suppress("UNCHECKED_CAST")
-class ChatViewModelFactory constructor(
+
+class PinnedMessageModelFactory (
     private val authChatInteractor: AuthInteractor,
     private val messageInteractor: MessageInteractor,
     private val searchInteractor: SearchInteractor,
@@ -15,10 +21,9 @@ class ChatViewModelFactory constructor(
     private val feedbackInteractor: FeedbackInteractor,
     private val configurationInteractor: ConfigurationInteractor,
     private val context: Context
-): ViewModelProvider.Factory {
-
+):ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChatViewModel(
+        return PinnedMessageModel(
             authChatInteractor,
             messageInteractor,
             searchInteractor,
@@ -29,4 +34,5 @@ class ChatViewModelFactory constructor(
             context
         ) as T
     }
+
 }

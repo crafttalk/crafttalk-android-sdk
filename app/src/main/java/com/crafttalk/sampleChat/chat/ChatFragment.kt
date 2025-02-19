@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -14,13 +15,14 @@ import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.sampleChat.R
+import com.crafttalk.sampleChat.databinding.FragmentChatBinding
 import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.createCarouselWidget
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_chat.*
 
 class ChatFragment: Fragment(R.layout.fragment_chat) {
+    private var fragmentChatBinding: FragmentChatBinding? = null
 
     private var requestPermission: ActivityResultLauncher<String>? = null
     private var callbackResult: (isGranted: Boolean) -> Unit = {}
@@ -36,7 +38,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 "${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true}" +
                 "${activity?.intent?.getSerializableExtra("key_visitor")};")
 
-
         Chat.init(
             requireContext(),
             getString(R.string.urlChatScheme),
@@ -49,42 +50,46 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
             fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
         )
         Chat.createSession()
+        Chat.clearDBDialogHistory(requireContext())
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentChatBinding.bind(requireView())
+        fragmentChatBinding = binding
 
-        chat_view.setMethodGetPayloadTypeWidget { widgetId ->
+        binding.chatView.visibility = View.VISIBLE
+        binding.chatView.setMethodGetPayloadTypeWidget { widgetId ->
             when (widgetId) {
                 "carousel" -> CarouselWidget::class.java
                 else -> null
             }
         }
-        chat_view.setMethodGetWidgetView { widgetId ->
+        binding.chatView.setMethodGetWidgetView { widgetId ->
             when (widgetId) {
                 "carousel" -> createCarouselWidget(inflater)
                 else -> null
             }
         }
-        chat_view.setMethodFindItemsViewOnWidget { widgetId, widgetView, mapView ->
+        binding.chatView.setMethodFindItemsViewOnWidget { widgetId, widgetView, mapView ->
             when (widgetId) {
                 "carousel" -> {
                     mapView["list_carousel"] = widgetView.findViewById<ViewGroup>(R.id.list_carousel)
                 }
             }
         }
-        chat_view.setMethodBindWidget { widgetId, message, mapView, payload ->
+        binding.chatView.setMethodBindWidget { widgetId, message, mapView, payload ->
             when (widgetId) {
                 "carousel" -> {
                     val data = (payload as? CarouselWidget) ?: return@setMethodBindWidget
                     val listView = (mapView["list_carousel"] as? ViewGroup) ?: return@setMethodBindWidget
-                    bindCarouselWidget(inflater, listView, data, chat_view::clickButtonInWidget)
+                    bindCarouselWidget(inflater, listView, data, binding.chatView::clickButtonInWidget)
                 }
             }
         }
 
-        chat_view.onViewCreated(this, viewLifecycleOwner)
+        binding.chatView.onViewCreated(this, viewLifecycleOwner)
 //        chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
 //            override fun connect() { status_connection.visibility = View.GONE }
 //            override fun failConnect() { status_connection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
@@ -117,7 +122,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 //                }
 //            }
 //        })
-        chat_view.setOnPermissionListener(object : ChatPermissionListener {
+        binding.chatView.setOnPermissionListener(object : ChatPermissionListener {
             override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
                 callbackResult = { isGranted ->
                     if (isGranted) {
@@ -169,12 +174,14 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 //                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 //            })
 //        }
+        binding.chatView.visibility = View.VISIBLE
     }
 
     override fun onResume() {
         super.onResume()
-//        Log.d("TEST_DALO", "")
-
+        val binding = FragmentChatBinding.bind(requireView())
+        fragmentChatBinding = binding
+        binding.chatView.visibility = View.VISIBLE
         Chat.wakeUp(
             (if (activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true)
                 null
@@ -183,18 +190,26 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 Log.d("CTALK_TEST_DALO", "getVisitor: ${this};")
             }
         )
-        chat_view.onResume()
+        binding.chatView.onResume()
     }
 
     override fun onStop() {
         super.onStop()
-        chat_view.onStop()
+        val binding = FragmentChatBinding.bind(requireView())
+        fragmentChatBinding = binding
+
+        binding.chatView.onStop()
         Chat.drop()
+        fragmentChatBinding = null
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        chat_view.onDestroyView()
+        val binding = FragmentChatBinding.bind(requireView())
+        fragmentChatBinding = binding
+
+        binding.chatView.onDestroyView()
+        fragmentChatBinding = null
     }
 
     override fun onDestroy() {
@@ -203,7 +218,10 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     }
 
     private fun showWarning(warningText: String) {
-        Snackbar.make(chat_view, warningText, Snackbar.LENGTH_LONG).show()
+        val binding = FragmentChatBinding.bind(requireView())
+        fragmentChatBinding = binding
+        Snackbar.make(binding.chatView, warningText, Snackbar.LENGTH_LONG).show()
+        fragmentChatBinding = null
     }
 
 }

@@ -44,6 +44,7 @@ fun ImageView.setStatusMessage(message: MessageModel) {
             is GifMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserGifMessageStatus)
             is FileMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserFileMessageStatus)
             is UnionMessageItem -> setColorFilter(ChatAttr.getInstance().colorUserTextMessageStatus)
+            else ->{}
         }
     } else {
         visibility = View.GONE

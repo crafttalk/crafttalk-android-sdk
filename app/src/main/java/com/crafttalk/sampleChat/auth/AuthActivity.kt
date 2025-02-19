@@ -3,6 +3,7 @@ package com.crafttalk.sampleChat.auth
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.crafttalk.sampleChat.R
+import com.crafttalk.chat.databinding.ComCrafttalkChatLayoutAuthBinding
 
 class AuthActivity: AppCompatActivity() {
 

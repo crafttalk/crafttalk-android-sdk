@@ -8,14 +8,15 @@ import androidx.fragment.app.Fragment
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.sampleChat.R
+import com.crafttalk.sampleChat.databinding.ActivityChatWithCounterBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_chat_with_counter.*
 
 class ChatActivity: AppCompatActivity() {
+    private lateinit var binding: ActivityChatWithCounterBinding
 
     private val mOnNavigationItemSelectedListener = object: BottomNavigationView.OnNavigationItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
-            val fragmentNow = supportFragmentManager.findFragmentById(R.id.fl_content)
+            val fragmentNow = supportFragmentManager.findFragmentById(binding.flContent.id)
 
             when (item.itemId) {
                 R.id.navigation_home -> {
@@ -43,14 +44,15 @@ class ChatActivity: AppCompatActivity() {
 
     private fun loadFragment(fragment: Fragment) {
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fl_content, fragment)
+        ft.replace(binding.flContent.id, fragment)
         ft.commit()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat_with_counter)
-        bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        binding = ActivityChatWithCounterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if (savedInstanceState == null) {
             loadFragment(HomeFragment())
         }
