@@ -36,7 +36,4 @@
             android:src="@drawable/com_crafttalk_chat_ic_file_download" />
 
     </androidx.appcompat.widget.Toolbar>
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
