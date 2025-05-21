@@ -2,63 +2,34 @@ package com.crafttalk.chat.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DownloadManager
-import android.content.ActivityNotFoundException
-import android.content.BroadcastReceiver
-import android.content.ContentResolver
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.speech.SpeechRecognizer.ERROR_AUDIO
-import android.speech.SpeechRecognizer.ERROR_CLIENT
-import android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS
-import android.speech.SpeechRecognizer.ERROR_NETWORK
-import android.speech.SpeechRecognizer.ERROR_NETWORK_TIMEOUT
-import android.speech.SpeechRecognizer.ERROR_NO_MATCH
-import android.speech.SpeechRecognizer.ERROR_RECOGNIZER_BUSY
-import android.speech.SpeechRecognizer.ERROR_SERVER
-import android.speech.SpeechRecognizer.ERROR_SPEECH_TIMEOUT
-import android.speech.SpeechRecognizer.RESULTS_RECOGNITION
-import android.speech.SpeechRecognizer.createSpeechRecognizer
+import android.speech.SpeechRecognizer.*
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
-import android.view.HapticFeedbackConstants
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.observe
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,7 +37,6 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.crafttalk.chat.R
-import com.crafttalk.chat.databinding.ComCrafttalkChatViewHostBinding
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
@@ -81,45 +51,38 @@ import com.crafttalk.chat.presentation.feature.file_viewer.BottomSheetFileViewer
 import com.crafttalk.chat.presentation.feature.file_viewer.Option
 import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.helper.downloaders.downloadResource
-import com.crafttalk.chat.presentation.helper.extensions.delayOnLifecycle
-import com.crafttalk.chat.presentation.helper.extensions.loadMediaFile
-import com.crafttalk.chat.presentation.helper.extensions.setFileIcon
-import com.crafttalk.chat.presentation.helper.extensions.setFileName
-import com.crafttalk.chat.presentation.helper.extensions.setFileSize
-import com.crafttalk.chat.presentation.helper.extensions.setMessageText
-import com.crafttalk.chat.presentation.helper.extensions.settingMediaFile
+import com.crafttalk.chat.presentation.helper.extensions.*
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.FileViewerHelper
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.PickFileContract
 import com.crafttalk.chat.presentation.helper.file_viewer_helper.gellery.TakePicture
 import com.crafttalk.chat.presentation.helper.permission.requestPermissionWithAction
 import com.crafttalk.chat.presentation.helper.ui.hideSoftKeyboard
-import com.crafttalk.chat.presentation.model.DefaultMessageItem
-import com.crafttalk.chat.presentation.model.FileMessageItem
-import com.crafttalk.chat.presentation.model.GifMessageItem
-import com.crafttalk.chat.presentation.model.ImageMessageItem
-import com.crafttalk.chat.presentation.model.InfoMessageItem
-import com.crafttalk.chat.presentation.model.MessageModel
-import com.crafttalk.chat.presentation.model.TextMessageItem
-import com.crafttalk.chat.presentation.model.TransferMessageItem
-import com.crafttalk.chat.presentation.model.TypeMultiple
-import com.crafttalk.chat.presentation.model.UnionMessageItem
-import com.crafttalk.chat.presentation.model.WidgetMessageItem
+import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_replied_message.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_reply_preview.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_search.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_include_search_switch.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_auth.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.upload_history_btn
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_user_feedback.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_warning.view.*
+import kotlinx.android.synthetic.main.com_crafttalk_chat_view_host.view.*
 import java.util.*
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.ceil
+import com.crafttalk.chat.di.modules.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
     @Inject
     lateinit var viewModel: ChatViewModel
-    lateinit var _binding: ComCrafttalkChatViewHostBinding
-
-    private val binding get() = _binding
     private var liveDataMessages: LiveData<PagedList<MessageModel>>? = null
     private var searchLiveDataMessages: LiveData<PagedList<MessageModel>>? = null
     private var searchItemLast: SearchItem? = null
@@ -144,7 +107,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
             permissions.forEachIndexed { index, permission ->
                 WarningSnackbar.make(
-                    view = binding.chatPlace.root,
+                    view = chat_place,
                     title = messages[index]
                 )?.show()
             }
@@ -156,7 +119,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 ShowImageDialog.showWarning(true)
             } else {
                 WarningSnackbar.make(
-                    view = binding.chatPlace.root,
+                    view = chat_place,
                     title = ChatAttr.getInstance().titleSuccessDownloadFileWarning,
                     iconRes = R.drawable.com_crafttalk_chat_ic_file_download_done,
                     textColor = ChatAttr.getInstance().colorSuccessDownloadFileWarning,
@@ -169,7 +132,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 ShowImageDialog.showWarning(false)
             } else {
                 WarningSnackbar.make(
-                    view = binding.chatPlace.root,
+                    view = chat_place,
                     title = ChatAttr.getInstance().titleFailDownloadFileWarning
                 )?.show()
             }
@@ -179,7 +142,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 ShowImageDialog.showWarning(false)
             } else {
                 WarningSnackbar.make(
-                    view = binding.chatPlace.root,
+                    view = chat_place,
                     title = title
                 )?.show()
             }
@@ -188,20 +151,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var stateStartingProgressListener: StateStartingProgressListener? = null
     private var searchListener: SearchListener = object : SearchListener {
         override fun start() {
-            binding.searchPlace.searchInput.setCompoundDrawablesWithIntrinsicBounds(
+            search_input.setCompoundDrawablesWithIntrinsicBounds(
                 ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_hourglass),
-                binding.searchPlace.searchInput.compoundDrawables[1],
-                binding.searchPlace.searchInput.compoundDrawables[2],
-                binding.searchPlace.searchInput.compoundDrawables[3]
+                search_input.compoundDrawables[1],
+                search_input.compoundDrawables[2],
+                search_input.compoundDrawables[3]
             )
         }
         override fun stop() {
-            binding.searchPlace.searchInput.compoundDrawables
-            binding.searchPlace.searchInput.setCompoundDrawablesWithIntrinsicBounds(
+            search_input.compoundDrawables
+            search_input.setCompoundDrawablesWithIntrinsicBounds(
                 ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_ic_search),
-                binding.searchPlace.searchInput.compoundDrawables[1],
-                binding.searchPlace.searchInput.compoundDrawables[2],
-                binding.searchPlace.searchInput.compoundDrawables[3]
+                search_input.compoundDrawables[1],
+                search_input.compoundDrawables[2],
+                search_input.compoundDrawables[3]
             )
         }
     }
@@ -211,7 +174,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             override fun successUpload() {}
             override fun failUpload(message: String, type: TypeFailUpload) {
                 WarningSnackbar.make(
-                    view = binding.chatPlace.root,
+                    view = chat_place,
                     typeFailUpload = type
                 )?.show()
             }
@@ -228,9 +191,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var takePicture: ActivityResultLauncher<Uri>? = null
     private var pickImage: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
     private var pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
-
-    private var pickPictureSafe: ActivityResultLauncher<PickVisualMediaRequest>? = null
-    private var pickFileSafe: ActivityResultLauncher<Array<String>>? = null
 
     private var methodGetWidgetView: (widgetId: String) -> View? = { null }
     private var methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit = { _,_,_ -> }
@@ -296,12 +256,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         this.stateStartingProgressListener = listener
     }
 
-    init {
-        val inflater = LayoutInflater.from(context)
-        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
-    }
-
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        inflater.inflate(R.layout.com_crafttalk_chat_view_host, this, true)
 
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
         customizationChat(attrArr)
@@ -312,67 +268,66 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     @SuppressLint("ResourceType")
     private fun customizationChat(attrArr: TypedArray) {
-
         val chatAttr = ChatAttr.getInstance(attrArr, context)
-
         // set color
-        binding.chatPlace.sendMessage.setColorFilter(chatAttr.colorMain, PorterDuff.Mode.SRC_IN)
-        binding.authForm.signIn.setBackgroundDrawable(chatAttr.drawableBackgroundSignInButton)
-        binding.warningConnection.setTextColor(chatAttr.colorTextInternetConnectionWarning)
-        binding.chatPlace.stateActionOperator.setTextColor(chatAttr.colorTextInfo)
-        binding.chatPlace.companyName.setTextColor(chatAttr.colorTextInfo)
-        binding.chatPlace.searchSwitchPlace.searchCoincidence.setTextColor(chatAttr.colorTextSearchCoincidence)
+        send_message.setColorFilter(chatAttr.colorMain, PorterDuff.Mode.SRC_IN)
+        sign_in.setBackgroundDrawable(chatAttr.drawableBackgroundSignInButton)
+
+        warningConnection.setTextColor(chatAttr.colorTextInternetConnectionWarning)
+        state_action_operator.setTextColor(chatAttr.colorTextInfo)
+        company_name.setTextColor(chatAttr.colorTextInfo)
+        search_coincidence.setTextColor(chatAttr.colorTextSearchCoincidence)
         // set dimension
-        binding.warningConnection.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInternetConnectionWarning)
-        binding.chatPlace.stateActionOperator.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
-        binding.chatPlace.companyName.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
-        binding.chatPlace.searchSwitchPlace.searchCoincidence.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextSearchCoincidenceText)
+        warningConnection.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInternetConnectionWarning)
+        state_action_operator.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
+        company_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextInfoText)
+        search_coincidence.setTextSize(TypedValue.COMPLEX_UNIT_PX, chatAttr.sizeTextSearchCoincidenceText)
         // set bg
-        binding.upperLimiter.setBackgroundColor(chatAttr.colorMain)
-        binding.chatPlace.lowerLimit.setBackgroundColor(chatAttr.colorMain)
+        upper_limiter.setBackgroundColor(chatAttr.colorMain)
+        lower_limit.setBackgroundColor(chatAttr.colorMain)
         ContextCompat.getDrawable(context, R.drawable.com_crafttalk_chat_background_count_unread_message)?.let { unwrappedDrawable ->
             val wrappedDrawable: Drawable = DrawableCompat.wrap(unwrappedDrawable)
             DrawableCompat.setTint(wrappedDrawable, chatAttr.colorMain)
-            binding.chatPlace.countUnreadMessage.background = wrappedDrawable
+            count_unread_message.background = wrappedDrawable
         }
-        binding.chatPlace.searchSwitchPlace.root.setBackgroundColor(chatAttr.backgroundSearchSwitch)
+        search_switch_place.setBackgroundColor(chatAttr.backgroundSearchSwitch)
         // set company name
-        binding.chatPlace.companyName.text = chatAttr.companyName
-        binding.chatPlace.companyName.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
-        binding.warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
-        binding.infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
-        binding.upperLimiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
+        company_name.text = chatAttr.companyName
+        company_name.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
+        warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
+        infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
+        upper_limiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
         ChatParams.enableSearch = chatAttr.enableSearch
-        binding.search.rootView.visibility = when {
+        search.visibility = when {
             chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.INVISIBLE
             else -> View.GONE
         }
-        binding.chatPlace.voiceInput.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.VISIBLE
-        binding.chatPlace.userFeedback.feedbackTitle.apply {
+        voice_input.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
+        feedback_title.apply {
             setTextColor(ChatAttr.getInstance().colorFeedbackTitle)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeFeedbackTitle)
         }
-        binding.chatPlace.userFeedback.feedbackStar1.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
-        binding.chatPlace.userFeedback.feedbackStar2.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
-        binding.chatPlace.userFeedback.feedbackStar3.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
-        binding.chatPlace.userFeedback.feedbackStar4.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
-        binding.chatPlace.userFeedback.feedbackStar5.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
-        binding.chatPlace.searchSwitchPlace.searchTop.setColorFilter(ChatAttr.getInstance().colorSearchTop)
-        binding.chatPlace.searchSwitchPlace.searchBottom.setColorFilter(ChatAttr.getInstance().colorSearchBottom)
+        feedback_star_1.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_2.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_3.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_4.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        feedback_star_5.setColorFilter(ChatAttr.getInstance().colorFeedbackStar)
+        search_top.setColorFilter(ChatAttr.getInstance().colorSearchTop)
+        search_bottom.setColorFilter(ChatAttr.getInstance().colorSearchBottom)
 
         chatAttr.drawableProgressIndeterminate?.let {
-            binding.loading.indeterminateDrawable = it
-            binding.warning.warningLoading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
+            loading.indeterminateDrawable = it
+            warning_loading.indeterminateDrawable = it.constantState?.newDrawable()?.mutate()
         }
-        binding.chatPlace.sendMessage.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
-        binding.chatPlace.voiceInput.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
+        send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
+        voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
     }
     val executorService = Executors.newSingleThreadScheduledExecutor()
     val sendServiceMessageUserIsTypingTextTask = Runnable {
             val deltaTime = viewModel.userTypingInterval
         if (!dontSendPreviewToOperator) {
             if (System.currentTimeMillis() >= currentTimestamp + deltaTime) {
-                viewModel.sendServiceMessageUserIsTypingText(binding.chatPlace.entryField.text.toString())
+                viewModel.sendServiceMessageUserIsTypingText(entry_field.text.toString())
                 currentTimestamp = System.currentTimeMillis()
             }
         }
@@ -385,35 +340,35 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var currentTimestamp = System.currentTimeMillis()
     @SuppressLint("ClickableViewAccessibility")
     private fun setAllListeners() {
-        binding.authForm.phoneUser.apply {
+        phone_user.apply {
             val maskedListener = MaskedTextChangedListener(context.getString(R.string.com_crafttalk_chat_russian_phone_format), this)
             addTextChangedListener(maskedListener)
             onFocusChangeListener = maskedListener
         }
-        binding.authForm.signIn.setOnClickListener(this)
-        binding.chatPlace.sendMessage.setOnClickListener(this)
-        binding.chatPlace.voiceInput.setOnTouchListener { view, motionEvent ->
+        sign_in.setOnClickListener(this)
+        send_message.setOnClickListener(this)
+        voice_input.setOnTouchListener { view, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_UP) {
                 delayOnLifecycle(ChatAttr.getInstance().delayVoiceInputPostRecording) {
                     speechRecognizer?.stopListening()
                 }
             }
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                binding.chatPlace.voiceInput.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOn)
+                voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOn)
                 speechRecognizerIntent?.let { intent ->
                     speechRecognizer?.startListening(intent)
                 }
             }
             true
         }
-        binding.warning.warningRefresh.setOnClickListener(this)
-        binding.chatPlace.scrollToDown.setOnClickListener(this)
-        binding.chatPlace.entryField.addTextChangedListener(object : TextWatcher {
+        warning_refresh.setOnClickListener(this)
+        scroll_to_down.setOnClickListener(this)
+        entry_field.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if ((s ?: "").isEmpty()) {
-                    binding.chatPlace.sendMessage.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
+                    send_message.setImageDrawable(ChatAttr.getInstance().drawableAttachFile)
                 } else {
-                    binding.chatPlace.sendMessage.setImageDrawable(ChatAttr.getInstance().drawableSendMessage)
+                    send_message.setImageDrawable(ChatAttr.getInstance().drawableSendMessage)
                 }
                 if (viewModel.userTyping == true) {
                     dontSendPreviewToOperator = false
@@ -423,11 +378,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
-        binding.chatPlace.listWithMessage.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        list_with_message.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                binding.chatPlace.listWithMessage.delayOnLifecycle(DELAY_RENDERING_SCROLL_BTN) {
-                    val indexLastVisible = (binding.chatPlace.listWithMessage.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return@delayOnLifecycle
+                list_with_message.delayOnLifecycle(DELAY_RENDERING_SCROLL_BTN) {
+                    val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return@delayOnLifecycle
 
                     if (indexLastVisible == -1) {
                         viewModel.scrollToDownVisible.value = false
@@ -440,42 +395,42 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
             }
         })
-        binding.chatPlace.userFeedback.closeFeedback.setOnClickListener(this)
-        binding.search.rootView.setOnClickListener(this)
-        binding.searchPlace.searchCancel.setOnClickListener(this)
-        binding.searchPlace.searchInput.setOnTouchListener { view, motionEvent ->
+        close_feedback.setOnClickListener(this)
+        search.setOnClickListener(this)
+        search_cancel.setOnClickListener(this)
+        search_input.setOnTouchListener { view, motionEvent ->
             val drawableLeft = 0
             val drawableRight = 2
 
             if(motionEvent.action == MotionEvent.ACTION_UP) {
-                if(motionEvent.x + left >= (binding.searchPlace.searchInput.right - binding.searchPlace.searchInput.compoundDrawables[drawableRight].bounds.width() - binding.searchPlace.searchInput.compoundDrawablePadding)) {
-                    binding.searchPlace.searchInput.text.clear()
-                } else if (motionEvent.x < (binding.searchPlace.searchInput.paddingLeft + binding.searchPlace.searchInput.compoundDrawables[drawableLeft].bounds.width())) {
-                    searchText(binding.searchPlace.searchInput.text.toString())
+                if(motionEvent.x + left >= (search_input.right - search_input.compoundDrawables[drawableRight].bounds.width() - search_input.compoundDrawablePadding)) {
+                    search_input.text.clear()
+                } else if (motionEvent.x < (search_input.paddingLeft + search_input.compoundDrawables[drawableLeft].bounds.width())) {
+                    searchText(search_input.text.toString())
                 }
             }
             false
         }
         if (ChatAttr.getInstance().enableAutoSearch) {
-            binding.searchPlace.searchInput.addTextChangedListener(object : TextWatcher {
+            search_input.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    searchText(binding.searchPlace.searchInput.text.toString())
+                    searchText(search_input.text.toString())
                 }
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
         }
-        binding.chatPlace.searchSwitchPlace.searchTop.setOnClickListener(this)
-        binding.chatPlace.searchSwitchPlace.searchBottom.setOnClickListener(this)
-        binding.chatPlace.uploadHistoryBtn.setOnClickListener(this)
-        binding.chatPlace.replyPreview.replyPreviewClose.setOnClickListener(this)
+        search_top.setOnClickListener(this)
+        search_bottom.setOnClickListener(this)
+        upload_history_btn.setOnClickListener(this)
+        reply_preview_close.setOnClickListener(this)
         setFeedbackListener()
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setFeedbackListener() {
-        binding.chatPlace.userFeedback.root.setOnTouchListener { view, motionEvent ->
-            var countStars = ceil((motionEvent.rawX - binding.chatPlace.userFeedback.feedbackStar1.left) / (binding.chatPlace.userFeedback.feedbackStar2.left - binding.chatPlace.userFeedback.feedbackStar1.left).toDouble()).toInt()
+        user_feedback.setOnTouchListener { view, motionEvent ->
+            var countStars = ceil((motionEvent.rawX - feedback_star_1.left) / (feedback_star_2.left - feedback_star_1.left).toDouble()).toInt()
             if (countStars < 1) countStars = 1
             if (countStars > 5) countStars = 5
             when {
@@ -516,11 +471,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             bindWidget = methodBindWidget,
             updateData = viewModel::updateData
         ).apply {
-            binding.chatPlace.listWithMessage.adapter = this
+            list_with_message.adapter = this
             if (ChatAttr.getInstance().replyEnable) {
                 ItemTouchHelper(MessageSwipeController {
                     viewModel.replyMessage.value = it
-                }).attachToRecyclerView(binding.chatPlace.listWithMessage)
+                }).attachToRecyclerView(list_with_message)
             }
         }
     }
@@ -528,9 +483,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     fun onViewCreated(
         fragment: Fragment,
         lifecycleOwner: LifecycleOwner
-    ):View {
-        val view = binding.root
-        binding.root.visibility = View.VISIBLE
+    ) {
         Chat.getSdkComponent().createChatComponent()
             .parentFragment(fragment)
             .build()
@@ -547,28 +500,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
         settingVoiceInput()
-
-        pickPictureSafe = fragment.registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uri ->
-            // Callback is invoked after the user selects a media item or closes the
-            // photo picker.
-            if (uri.size > FileViewerHelper.PHOTOS_LIMIT) {
-                viewModel.sendFiles(uri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.IMAGE) })
-                FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.PHOTOS_LIMIT_EXCEEDED)
-            } else {
-                viewModel.sendFiles(uri.map { File(it, TypeFile.IMAGE)})
-            }
-        }
-
-        pickFileSafe = fragment.registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            if (uri != null) {
-                Log.d("DocumentPicker", "Selected URI: $uri")
-                uri?.let { viewModel.sendFile(File(it, TypeFile.FILE))}
-            } else {
-                Log.d("DocumentPicker", "No document selected")
-            }
-
-        }
-
 
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
             uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
@@ -588,15 +519,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         //сомнительный код, условие всегда ложно
         if (viewModel.chatIsClosed)
         {
-            binding.chatOffMessage.visibility = View.VISIBLE
+            chatOffMessage.visibility = View.VISIBLE
             try {
-                binding.chatOffMessage.text = viewModel.chatClosedMessage
+                chatOffMessage.text = viewModel.chatClosedMessage
             }
             catch (e: Exception){
                 Log.e("",e.toString())
             }
-            binding.chatPlace.entryField.inputType = 0
-            binding.chatPlace.entryField.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint_chat_off)
+            entry_field.inputType = 0
+            entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint_chat_off)
         }
 
         setAllListeners()
@@ -606,16 +537,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             when (state) {
                 InternetConnectionState.NO_INTERNET -> {
                     if (ChatAttr.getInstance().showChatState) {
-                        binding.infoChatState.visibility = View.INVISIBLE
+                        infoChatState.visibility = View.INVISIBLE
                     }
                     if (ChatAttr.getInstance().showInternetConnectionState) {
-                        binding.warningConnection.visibility = if (binding.search.isVisible) View.GONE else View.VISIBLE //TODO может вызывать проблемы с работой поиска
+                        warningConnection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE
                     }
-                    binding.authForm.signIn.isClickable = true
+                    sign_in.isClickable = true
                 }
                 InternetConnectionState.HAS_INTERNET, InternetConnectionState.RECONNECT -> {
                     if (ChatAttr.getInstance().showInternetConnectionState) {
-                        binding.warningConnection.visibility = View.INVISIBLE
+                        warningConnection.visibility = View.INVISIBLE
                     }
                 }
             }
@@ -624,105 +555,105 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             Log.d("CTALK_CHAT_VIEW", "displayableUIObject - ${it};")
             when (it) {
                 DisplayableUIObject.CHATCLOSED -> {
-                    binding.chatOffMessage.visibility = View.VISIBLE
+                    chatOffMessage.visibility = View.VISIBLE
                     try {
-                        binding.chatOffMessage.text = viewModel.chatClosedMessage
+                        chatOffMessage.text = viewModel.chatClosedMessage
                     }
                     catch (e: Exception){
                         Log.e("",e.toString())
                     }
-                    binding.chatPlace.entryField.inputType = 0
-                    binding.chatPlace.entryField.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint_chat_off)
+                    entry_field.inputType = 0
+                    entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint_chat_off)
                 }
 
                 DisplayableUIObject.NOTHING -> {
-                    binding.chatPlace.root.visibility = View.GONE
-                    binding.searchPlace.root.visibility = View.GONE
-                    binding.search.visibility = when (binding.search.visibility) {
+                    chat_place.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    search.visibility = when (search.visibility) {
                         View.GONE -> View.GONE
                         else -> View.INVISIBLE
                     }
-                    binding.authForm.root.visibility = View.GONE
-                    binding.warning.root.visibility = View.GONE
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.GONE
                     if (ChatAttr.getInstance().showStartingProgress) {
-                        startProgressBar(binding.loading)
+                        startProgressBar(loading)
                     }
                     stateStartingProgressListener?.start()
                 }
                 DisplayableUIObject.SYNCHRONIZATION -> {
-                    binding.authForm.root.visibility = View.GONE
-                    binding.warning.root.visibility = View.GONE
-                    binding.searchPlace.root.visibility = View.GONE
-                    binding.chatPlace.root.visibility = View.VISIBLE
-                    binding.search.rootView.visibility = when {
-                        binding.search.rootView.visibility == View.GONE -> View.GONE
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    chat_place.visibility = View.VISIBLE
+                    search.visibility = when {
+                        search.visibility == View.GONE -> View.GONE
                         ChatParams.enableSearch == true -> View.VISIBLE
                         else -> View.INVISIBLE
                     }
                     if (ChatAttr.getInstance().showStartingProgress) {
-                        stopProgressBar(binding.loading)
+                        stopProgressBar(loading)
                     }
                     stateStartingProgressListener?.stop()
                     if (ChatAttr.getInstance().showChatState) {
-                        binding.infoChatState.visibility = if (binding.searchPlace.root.isVisible) View.GONE else View.VISIBLE
+                        infoChatState.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE
                     }
                 }
                 DisplayableUIObject.CHAT -> {
-                    binding.authForm.root.visibility = View.GONE
-                    binding.warning.root.visibility = View.GONE
-                    binding.searchPlace.root.visibility = View.GONE
-                    binding.chatPlace.root.visibility = View.VISIBLE
-                    binding.search.rootView.visibility = when {
-                        binding.search.rootView.visibility == View.GONE -> View.GONE
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    chat_place.visibility = View.VISIBLE
+                    search.visibility = when {
+                        search.visibility == View.GONE -> View.GONE
                         ChatParams.enableSearch == true -> View.VISIBLE
                         else -> View.INVISIBLE
                     }
                     if (ChatAttr.getInstance().showStartingProgress) {
-                        stopProgressBar(binding.loading)
+                        stopProgressBar(loading)
                     }
                     stateStartingProgressListener?.stop()
                     if (ChatAttr.getInstance().showChatState) {
-                        binding.infoChatState.visibility = View.INVISIBLE
+                        infoChatState.visibility = View.INVISIBLE
                     }
                 }
                 DisplayableUIObject.FORM_AUTH -> {
-                    binding.chatPlace.root.visibility = View.GONE
-                    binding.searchPlace.root.visibility = View.GONE
-                    binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
+                    chat_place.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    search.visibility = when (search.visibility) {
                         View.GONE -> View.GONE
                         else -> View.INVISIBLE
                     }
-                    binding.warning.root.visibility = View.GONE
-                    binding.authForm.root.visibility = View.VISIBLE
+                    warning.visibility = View.GONE
+                    auth_form.visibility = View.VISIBLE
                     if (ChatAttr.getInstance().showStartingProgress) {
-                        stopProgressBar(binding.loading)
+                        stopProgressBar(loading)
                     }
                     stateStartingProgressListener?.stop()
                 }
                 DisplayableUIObject.WARNING -> {
-                    binding.chatPlace.root.visibility = View.GONE
-                    binding.searchPlace.root.visibility = View.GONE
-                    binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
+                    chat_place.visibility = View.GONE
+                    search_place.visibility = View.GONE
+                    search.visibility = when (search.visibility) {
                         View.GONE -> View.GONE
                         else -> View.INVISIBLE
                     }
-                    binding.authForm.root.visibility = View.GONE
-                    binding.warning.root.visibility = View.VISIBLE
-                    binding.warning.warningRefresh.visibility = View.VISIBLE
-                    stopProgressBar(binding.warning.warningLoading)
+                    auth_form.visibility = View.GONE
+                    warning.visibility = View.VISIBLE
+                    warning_refresh.visibility = View.VISIBLE
+                    stopProgressBar(warning_loading)
                     if (ChatAttr.getInstance().showStartingProgress) {
-                        stopProgressBar(binding.loading)
+                        stopProgressBar(loading)
                     }
                     stateStartingProgressListener?.stop()
                     if (ChatAttr.getInstance().showChatState) {
-                        binding.infoChatState.visibility = View.INVISIBLE
+                        infoChatState.visibility = View.INVISIBLE
                     }
                 }
                 DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE -> {
-                    binding.chatPlace.stateActionOperator.visibility = View.VISIBLE
+                    state_action_operator.visibility = View.VISIBLE
                 }
                 DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE -> {
-                    binding.chatPlace.stateActionOperator.visibility = View.GONE
+                    state_action_operator.visibility = View.GONE
                 }
                 DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER -> {
                     viewModel.feedbackContainerVisible.value = false
@@ -732,48 +663,48 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
         viewModel.countUnreadMessages.observe(lifecycleOwner) {
             if (it <= 0) {
-                binding.chatPlace.countUnreadMessage.visibility = View.GONE
+                count_unread_message.visibility = View.GONE
             } else {
-                binding.chatPlace.countUnreadMessage.text = if (it < 10) it.toString() else "9+"
-                binding.chatPlace.countUnreadMessage.visibility = if (binding.chatPlace.scrollToDown.visibility == View.GONE) View.GONE else View.VISIBLE
+                count_unread_message.text = if (it < 10) it.toString() else "9+"
+                count_unread_message.visibility = if (scroll_to_down.visibility == View.GONE) View.GONE else View.VISIBLE
             }
         }
         viewModel.scrollToDownVisible.observe(lifecycleOwner) {
             if (it) {
-                binding.chatPlace.scrollToDown.visibility = View.VISIBLE
+                scroll_to_down.visibility = View.VISIBLE
                 if (viewModel.countUnreadMessages.value != null && viewModel.countUnreadMessages.value != 0) {
-                    binding.chatPlace.countUnreadMessage.visibility = View.VISIBLE
+                    count_unread_message.visibility = View.VISIBLE
                 } else {
-                    binding.chatPlace.countUnreadMessage.visibility = View.GONE
+                    count_unread_message.visibility = View.GONE
                 }
             } else {
-                binding.chatPlace.countUnreadMessage.visibility = View.GONE
-                binding.chatPlace.scrollToDown.visibility = View.GONE
+                count_unread_message.visibility = View.GONE
+                scroll_to_down.visibility = View.GONE
             }
         }
         viewModel.showSearchNavigate.observe(lifecycleOwner) {
-            binding.chatPlace.searchSwitchPlace.searchTop.visibility = if (it) View.VISIBLE else View.GONE
-            binding.chatPlace.searchSwitchPlace.searchBottom.visibility = if (it) View.VISIBLE else View.GONE
+            search_top.visibility = if (it) View.VISIBLE else View.GONE
+            search_bottom.visibility = if (it) View.VISIBLE else View.GONE
         }
         viewModel.enabledSearchTop.observe(lifecycleOwner) {
-            binding.chatPlace.searchSwitchPlace.searchTop.isEnabled = it
+            search_top.isEnabled = it
             if (it) {
-                binding.chatPlace.searchSwitchPlace.searchTop.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
+                search_top.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
             } else {
-                binding.chatPlace.searchSwitchPlace.searchTop.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
+                search_top.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
             }
         }
         viewModel.enabledSearchBottom.observe(lifecycleOwner) {
-            binding.chatPlace.searchSwitchPlace.searchBottom.isEnabled = it
+            search_bottom.isEnabled = it
             if (it) {
-                binding.chatPlace.searchSwitchPlace.searchBottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
+                search_bottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_black))
             } else {
-                binding.chatPlace.searchSwitchPlace.searchBottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
+                search_bottom.setColorFilter(ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_bdbdbd))
             }
         }
         viewModel.searchCoincidenceText.observe(lifecycleOwner) {
-            binding.chatPlace.searchSwitchPlace.root.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.chatPlace.searchSwitchPlace.searchCoincidence.text = it
+            search_switch_place.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+            search_coincidence.text = it
             searchListener.stop()
         }
         viewModel.searchScrollToPosition.observe(lifecycleOwner) { searchItem ->
@@ -794,7 +725,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             })
         }
         viewModel.feedbackContainerVisible.observe(lifecycleOwner) {
-            binding.chatPlace.userFeedback.root.visibility = if (it) {
+            user_feedback.visibility = if (it) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -825,16 +756,16 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         viewModel.mergeHistoryBtnVisible.observe(lifecycleOwner) {
             if (it) {
-                binding.chatPlace.uploadHistoryBtn.visibility = View.VISIBLE
+                upload_history_btn.visibility = View.VISIBLE
             } else {
-                binding.chatPlace.uploadHistoryBtn.visibility = View.GONE
+                upload_history_btn.visibility = View.GONE
             }
         }
         viewModel.mergeHistoryProgressVisible.observe(lifecycleOwner) {
             if (it) {
-                startProgressBar(binding.chatPlace.uploadHistoryLoading)
+                startProgressBar(upload_history_loading)
             } else {
-                stopProgressBar(binding.chatPlace.uploadHistoryLoading)
+                stopProgressBar(upload_history_loading)
             }
         }
 
@@ -850,10 +781,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 val countItemsLastVersion = adapterListMessages.itemCount
                 adapterListMessages.submitList(pagedList) {
                     if (isFirstUploadMessages) {
-                        viewModel.initialLoadKey.run(binding.chatPlace.listWithMessage::scrollToPosition)
+                        viewModel.initialLoadKey.run(list_with_message::scrollToPosition)
                         viewModel.updateCountUnreadMessages()
                     } else {
-                        val indexLastVisible = (binding.chatPlace.listWithMessage.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+                        val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
                         if (
                             indexLastVisible != null &&
                             indexLastVisible != -1 &&
@@ -877,20 +808,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         }
         viewModel.replyMessage.observe(lifecycleOwner) {
             if (it == null) {
-                binding.chatPlace.replyPreview.root.visibility = View.GONE
+                reply_preview.visibility = View.GONE
                 return@observe
             }
-            binding.chatPlace.replyPreview.root.visibility = View.VISIBLE
+            reply_preview.visibility = View.VISIBLE
 
-            val replyPreviewBarrier = binding.chatPlace.replyPreview.root.findViewById<View>(R.id.replied_barrier)
-            val replyPreviewMessage = binding.chatPlace.replyPreview.root.findViewById<TextView>(R.id.replied_message)
-            val replyPreviewFileInfo = binding.chatPlace.replyPreview.root.findViewById<ViewGroup>(R.id.replied_file_info)
-            val replyPreviewFileIcon = binding.chatPlace.replyPreview.root.findViewById<ImageView>(R.id.file_icon)
-            val replyPreviewProgressDownload = binding.chatPlace.replyPreview.root.findViewById<ProgressBar>(R.id.progress_download)
-            val replyPreviewFileName = binding.chatPlace.replyPreview.root.findViewById<TextView>(R.id.file_name)
-            val replyPreviewFileSize = binding.chatPlace.replyPreview.root.findViewById<TextView>(R.id.file_size)
-            val replyPreviewMediaFile = binding.chatPlace.replyPreview.root.findViewById<ImageView>(R.id.replied_media_file)
-            val replyPreviewMediaFileWarning = binding.chatPlace.replyPreview.root.findViewById<ViewGroup>(R.id.replied_media_file_warning)
+            val replyPreviewBarrier = reply_preview.findViewById<View>(R.id.replied_barrier)
+            val replyPreviewMessage = reply_preview.findViewById<TextView>(R.id.replied_message)
+            val replyPreviewFileInfo = reply_preview.findViewById<ViewGroup>(R.id.replied_file_info)
+            val replyPreviewFileIcon = reply_preview.findViewById<ImageView>(R.id.file_icon)
+            val replyPreviewProgressDownload = reply_preview.findViewById<ProgressBar>(R.id.progress_download)
+            val replyPreviewFileName = reply_preview.findViewById<TextView>(R.id.file_name)
+            val replyPreviewFileSize = reply_preview.findViewById<TextView>(R.id.file_size)
+            val replyPreviewMediaFile = reply_preview.findViewById<ImageView>(R.id.replied_media_file)
+            val replyPreviewMediaFileWarning = reply_preview.findViewById<ViewGroup>(R.id.replied_media_file_warning)
 
             replyPreviewBarrier?.setBackgroundColor(ChatAttr.getInstance().colorMain)
             when (it) {
@@ -908,10 +839,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     )
                 }
                 is ImageMessageItem, is GifMessageItem -> {
-                    replyPreviewMessage.visibility = GONE
-                    replyPreviewFileInfo.visibility = GONE
+                    replyPreviewMessage.visibility = View.GONE
+                    replyPreviewFileInfo.visibility = View.GONE
                     replyPreviewMediaFile.apply {
-                        visibility = VISIBLE
+                        visibility = View.VISIBLE
                         settingMediaFile(true)
                         loadMediaFile(
                             id = it.id,
@@ -946,19 +877,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         sizeTextFileSize = ChatAttr.getInstance().sizeUserRepliedFileSize
                     )
                 }
-
-                is DefaultMessageItem -> {Unit}
-                is InfoMessageItem -> {Unit}
-                is TransferMessageItem -> {Unit}
-                is WidgetMessageItem -> {Unit}
             }
         }
         viewModel.replyMessagePosition.observe(lifecycleOwner) {
             it ?: return@observe
             smoothScroller.targetPosition = adapterListMessages.itemCount - it
-            binding.chatPlace.listWithMessage.layoutManager?.startSmoothScroll(smoothScroller)
+            list_with_message.layoutManager?.startSmoothScroll(smoothScroller)
         }
-        return view
     }
 
     private fun settingVoiceInput() {
@@ -974,9 +899,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             var timestampLastWarning: Long? = null
 
             override fun onReadyForSpeech(bundle: Bundle) {
-                binding.chatPlace.entryField.text.clear()
-                binding.chatPlace.entryField.hint = resources.getString(R.string.com_crafttalk_chat_voice_input_entry_field_hint)
-                binding.chatPlace.entryField.performHapticFeedback(
+                entry_field.text.clear()
+                entry_field.hint = resources.getString(R.string.com_crafttalk_chat_voice_input_entry_field_hint)
+                entry_field.performHapticFeedback(
                     HapticFeedbackConstants.KEYBOARD_TAP,
                     HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
                 )
@@ -1029,25 +954,25 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
                     warningTitle?.let { title ->
                         WarningSnackbar.make(
-                            view = binding.chatPlace.entryField,
-                            parentViewGroup = binding.chatPlace.warningInputContainerCl,
+                            view = entry_field,
+                            parentViewGroup = warning_input_container_cl,
                             title = title
                         )?.show()
                     }
                 }
-                binding.chatPlace.entryField.text.clear()
-                binding.chatPlace.entryField.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint)
-                binding.chatPlace.voiceInput.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
+                entry_field.text.clear()
+                entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint)
+                voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
             }
             override fun onResults(bundle: Bundle) {
                 idLastWarning = null
 
                 bundle.getStringArrayList(RESULTS_RECOGNITION)?.get(0)?.let { data ->
-                    binding.chatPlace.entryField.setText(data)
-                    binding.chatPlace.entryField.setSelection(data.length)
+                    entry_field.setText(data)
+                    entry_field.setSelection(data.length)
                 }
-                binding.chatPlace.entryField.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint)
-                binding.chatPlace.voiceInput.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
+                entry_field.hint = resources.getString(R.string.com_crafttalk_chat_entry_field_hint)
+                voice_input.setImageDrawable(ChatAttr.getInstance().drawableVoiceInputMicOff)
             }
 
             override fun onPartialResults(bundle: Bundle) {}
@@ -1095,33 +1020,33 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 mergeHistory()
             }
             R.id.sign_in -> {
-                if (checkerObligatoryFields(listOf(binding.authForm.firstNameUser, binding.authForm.lastNameUser, binding.authForm.phoneUser))) {
+                if (checkerObligatoryFields(listOf(first_name_user, last_name_user, phone_user))) {
                     hideSoftKeyboard(this)
                     if (ChatAttr.getInstance().showStartingProgress) {
-                        startProgressBar(binding.loading)
+                        startProgressBar(loading)
                     }
                     stateStartingProgressListener?.start()
-                    val firstName = binding.authForm.firstNameUser.text.toString()
-                    val lastName = binding.authForm.lastNameUser.text.toString()
-                    val phone = binding.authForm.phoneUser.text.toString()
+                    val firstName = first_name_user.text.toString()
+                    val lastName = last_name_user.text.toString()
+                    val phone = phone_user.text.toString()
                     viewModel.registration(firstName, lastName, phone)
-                    binding.authForm.signIn.isClickable = false
+                    sign_in.isClickable = false
                 }
             }
             R.id.send_message -> {
-                val message = binding.chatPlace.entryField.text.toString()
+                val message = entry_field.text.toString()
                 when {
                     message.trim().isNotEmpty() -> {
                         hideSoftKeyboard(this)
                         if (viewModel.searchText == null) scroll(0)
                         viewModel.sendMessage(message, viewModel.replyMessage.value?.id)
                         viewModel.replyMessage.value = null
-                        binding.chatPlace.entryField.text.clear()
+                        entry_field.text.clear()
                         executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
                         dontSendPreviewToOperator = true
                     }
                     message.isEmpty() -> {
-                        binding.chatPlace.sendMessage.isClickable = false
+                        send_message.isClickable = false
                         BottomSheetFileViewer.Builder()
                             .add(R.menu.com_crafttalk_chat_options)
                             .setListener(this)
@@ -1130,7 +1055,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     else -> {
                         viewModel.replyMessage.value = null
                         hideSoftKeyboard(this)
-                        binding.chatPlace.entryField.text.clear()
+                        entry_field.text.clear()
                         executorService.schedule(userStopTypingTask, 200, TimeUnit.MILLISECONDS)
                         dontSendPreviewToOperator = true
                     }
@@ -1140,8 +1065,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 viewModel.replyMessage.value = null
             }
             R.id.warning_refresh -> {
-                startProgressBar(binding.warning.warningLoading)
-                binding.warning.warningRefresh.visibility = View.INVISIBLE
+                startProgressBar(warning_loading)
+                warning_refresh.visibility = View.INVISIBLE
                 viewModel.reload()
             }
             R.id.scroll_to_down -> {
@@ -1150,26 +1075,26 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.close_feedback -> {
                 viewModel.feedbackContainerVisible.value = false
-                binding.chatPlace.userFeedback.feedbackStar1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                binding.chatPlace.userFeedback.feedbackStar5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
             }
             R.id.search -> {
-                binding.chatOffMessage.visibility = View.GONE
-                binding.warningConnection.visibility = View.GONE
-                binding.infoChatState.visibility = View.GONE
-                binding.search.rootView.visibility = View.GONE
-                binding.searchPlace.root.visibility = View.VISIBLE
+                chatOffMessage.visibility = View.GONE
+                warningConnection.visibility = View.GONE
+                infoChatState.visibility = View.GONE
+                search.visibility = View.GONE
+                search_place.visibility = View.VISIBLE
                 hideSoftKeyboard(this)
             }
             R.id.search_cancel -> {
-                if (viewModel.chatIsClosed) {binding.chatOffMessage.visibility = View.VISIBLE}
-                binding.searchPlace.root.visibility = View.GONE
-                binding.warningConnection.visibility = View.GONE
-                binding.infoChatState.visibility = View.INVISIBLE
-                binding.search.rootView.visibility = View.VISIBLE
+                if (viewModel.chatIsClosed) {chatOffMessage.visibility = View.VISIBLE}
+                search_place.visibility = View.GONE
+                warningConnection.visibility = View.GONE
+                infoChatState.visibility = View.INVISIBLE
+                search.visibility = View.VISIBLE
                 onSearchCancelClick()
             }
             R.id.search_top -> viewModel.onSearchTopClick()
@@ -1181,7 +1106,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         Log.d("CTALK_SEARCH_LOG", "scroll countUnreadMessages: ${countUnreadMessages}; isSearchScroll: $isSearchScroll;")
         fun scrollToDesiredPosition(position: Int, actionScroll: (position: Int) -> Unit) {
             if (adapterListMessages.currentList?.getOrNull(position) == null) {
-                binding.chatPlace.listWithMessage.smoothScrollToPosition(position)
+                list_with_message.smoothScrollToPosition(position)
             } else {
                 actionScroll(position)
             }
@@ -1191,42 +1116,64 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             countUnreadMessages <= 0 -> 0
             else -> countUnreadMessages - 1
         }
-        val indexLastVisible = (binding.chatPlace.listWithMessage.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
+        val indexLastVisible = (list_with_message.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return
 
         when {
-            isSearchScroll -> scrollToDesiredPosition(position, binding.chatPlace.listWithMessage::scrollToPosition)
-            isExist && indexLastVisible >= 20 -> scrollToDesiredPosition(position, binding.chatPlace.listWithMessage::scrollToPosition)
-            isExist && indexLastVisible < 20 -> scrollToDesiredPosition(position, binding.chatPlace.listWithMessage::smoothScrollToPosition)
-            !isExist -> scrollToDesiredPosition(position, binding.chatPlace.listWithMessage::scrollToPosition)
+            isSearchScroll -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
+            isExist && indexLastVisible >= 20 -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
+            isExist && indexLastVisible < 20 -> scrollToDesiredPosition(position, list_with_message::smoothScrollToPosition)
+            !isExist -> scrollToDesiredPosition(position, list_with_message::scrollToPosition)
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun giveFeedback(countStars: Int, isLastDecision: Boolean) {
-        val userFeedback = binding.chatPlace.userFeedback
-        val stars = listOf(
-            userFeedback.feedbackStar1,
-            userFeedback.feedbackStar2,
-            userFeedback.feedbackStar3,
-            userFeedback.feedbackStar4,
-            userFeedback.feedbackStar5
-            )
-
-        val filledStar = R.drawable.com_crafttalk_chat_ic_star
-        val outlineStar = R.drawable.com_crafttalk_chat_ic_star_outline
-
-        stars.forEachIndexed { index, imageView ->
-            imageView.setImageResource(if (index < countStars) filledStar else outlineStar)
+        when (countStars) {
+            1 -> {
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            }
+            2 -> {
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            }
+            3 -> {
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            }
+            4 -> {
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+            }
+            5 -> {
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
+            }
         }
-
         if (isLastDecision) {
-            binding.chatPlace.userFeedback.root.setOnTouchListener(null)
+            user_feedback.setOnTouchListener(null)
             viewModel.giveFeedbackOnOperator(countStars,null, viewModel.dialogID1)
-            binding.chatPlace.userFeedback.root.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
+            user_feedback.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
                 viewModel.feedbackContainerVisible.value = false
-                stars.forEachIndexed { index, imageView ->
-                    imageView.setImageResource(outlineStar)
-                }
+                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
                 setFeedbackListener()
             }
         }
@@ -1237,8 +1184,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     fun onSearchCancelClick() {
-        binding.chatPlace.searchSwitchPlace.root.visibility = View.GONE
-        binding.searchPlace.searchInput.text.clear()
+        search_switch_place.visibility = View.GONE
+        search_input.text.clear()
         scroll(0)
         hideSoftKeyboard(this)
         searchItemLast = null
@@ -1248,11 +1195,32 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     override fun onModalOptionSelected(tag: String?, option: Option) {
         when (option.id) {
             R.id.document -> {
-                pickFileSafe?.launch(arrayOf(TypeFile.FILE.value))
-                Log.d("","")
+                fileViewerHelper.pickFiles(
+                    pickFile,
+                    Pair(TypeFile.FILE, TypeMultiple.SINGLE),
+                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
+                        permissionListener.requestedPermissions(
+                            permissions,
+                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
+                            actionsAfterObtainingPermission
+                        )
+                    },
+                    parentFragment
+                )
             }
             R.id.image -> {
-                pickPictureSafe?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                fileViewerHelper.pickFiles(
+                    pickImage,
+                    Pair(TypeFile.IMAGE, TypeMultiple.SINGLE),
+                    { permissions: Array<String>, actionsAfterObtainingPermission: () -> Unit ->
+                        permissionListener.requestedPermissions(
+                            permissions,
+                            arrayOf(context.getString(R.string.com_crafttalk_chat_requested_permission_storage)),
+                            actionsAfterObtainingPermission
+                        )
+                    },
+                    parentFragment
+                )
             }
             R.id.camera -> {
                 fileViewerHelper.pickImageFromCamera(
@@ -1271,6 +1239,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     override fun onCloseBottomSheet() {
-        binding.chatPlace.sendMessage.isClickable = true
+        send_message.isClickable = true
     }
 }

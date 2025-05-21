@@ -51,9 +51,6 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                         }
                     }
                 }
-                else -> {
-                    Log.e("CTALK_ERROR_INCONVERTER","uncertain behaviour")
-                }
             }
         }
         catch (e:Exception){

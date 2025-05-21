@@ -13,7 +13,7 @@ import com.crafttalk.chat.presentation.model.MessageModel
 import com.crafttalk.chat.utils.ChatAttr
 import java.lang.IndexOutOfBoundsException
 
-open class AdapterListMessages(
+class AdapterListMessages(
     private val downloadOrOpenDocument: (id: String, documentName: String, documentUrl: String) -> Unit,
     private val openImage: (imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
     private val openGif: (gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) -> Unit,
@@ -64,7 +64,7 @@ open class AdapterListMessages(
         return getItemOrNull(position) ?: getItemOrNull(position - 1)
     }
 
-    open fun getItemOrNull(position: Int): MessageModel? {
+    private fun getItemOrNull(position: Int): MessageModel? {
         return try {
             getItem(position)
         } catch (ex: IndexOutOfBoundsException) {

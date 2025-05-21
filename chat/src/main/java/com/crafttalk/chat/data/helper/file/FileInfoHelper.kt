@@ -20,20 +20,10 @@ class FileInfoHelper
     }
 
     fun getFileName(uri: Uri): String? {
-        return context.contentResolver.query(uri, null, null, null, null)?.let { cursor ->
-            if (cursor.moveToFirst()) {
-                val columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (columnIndex != -1) {
-                    cursor.getString(columnIndex).apply {
-                        cursor.close()
-                    }
-                } else {
-                    // Handle the case where the column does not exist
-                    null
-                }
-            } else {
-                // Handle the case where no rows were returned
-                null
+        return context.contentResolver.query(uri, null, null, null, null, null)?.let { cursor ->
+            cursor.moveToFirst()
+            cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)).apply {
+                cursor.close()
             }
         }
     }

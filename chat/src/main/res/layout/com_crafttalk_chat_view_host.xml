@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    android:id="@+id/chat_layout"
-    >
+    android:id="@+id/chat_layout">
 
     <TextView
         android:id="@+id/chatOffMessage"
@@ -37,20 +36,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/search"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/infoChatState"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/com_crafttalk_chat_ubuntu_regular"
         android:paddingHorizontal="20dp"
         android:paddingVertical="15dp"
         android:text="@string/com_crafttalk_chat_stete_synchronization"
+        android:fontFamily="@font/com_crafttalk_chat_ubuntu_regular"
         android:textFontWeight="400"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
