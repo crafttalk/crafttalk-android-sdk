@@ -105,9 +105,6 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
             selectUrl(this, "https")
             selectUrl(this, "wss")
         }
-        else -> {
-            Log.e("CTALK_FAIL_PARSE","Undefined behavior detected, convert from base to string was incorrect")
-        }
     }
 //    selectUrl(this, "www")
     return this
@@ -329,12 +326,12 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
             }
             '>' -> {
                 when (true) {
-                    (isSingleTag) -> {
+                    isSingleTag -> {
                         replyOrExecuteTag(tagName.toString(), true, result) {
                             addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex, result.lastIndex)
                         }
                     }
-                    (!isSingleTag && isCloseTag) -> {
+                    !isSingleTag && isCloseTag -> {
                         replyOrExecuteTag(tagName.toString().trim(), false, result) {
                             if (tagName.toString() == "span"){
                                 updateStateTag(lastSpanTag.trim(), result.lastIndex)
@@ -343,13 +340,10 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                             }
                         }
                     }
-                   (!isSingleTag && !isCloseTag) -> {
+                   !isSingleTag && !isCloseTag -> {
                         replyOrExecuteTag(tagName.toString().trim(), true, result) {
                                 addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex)
                         }
-                    }
-                    else -> {
-                        Log.e("CTALK_FAIL_PARSE","Undefined behavior detected, convert from html text to android string incorrect")
                     }
                 }
                 isSelectTag = false
