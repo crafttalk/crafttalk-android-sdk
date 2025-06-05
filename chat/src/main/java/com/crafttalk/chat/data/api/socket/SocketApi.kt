@@ -2,9 +2,9 @@ package com.crafttalk.chat.data.api.socket
 
 import android.content.Context
 import android.util.Log
-import com.crafttalk.chat.data.helper.converters.text.MarkdownFileConverter
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.data.local.db.entity.settings.SettingFromServerJSON
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
@@ -45,7 +45,6 @@ class SocketApi(
     private val gson: Gson,
     private val context: Context
 ) {
-
     private var socket: Socket? = null
     private lateinit var visitor: Visitor
     private var successAuthUiFun: () -> Unit = {}
@@ -80,53 +79,23 @@ class SocketApi(
      */
     private val getSettingsFromServerTask = Runnable {
         try {
-            val apiResponse:String = URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
-            //var i = JSONObject(apiResponse)
+            val apiResponse: String = URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
+            val settingFromServerJSON = gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
 
-            //var testModel = gson.fromJson(i.toString(),SettingFromServerJSON::class.java)
-            // var testModel = gson.fromJson(,SettingFromServerJSON::class.java)
-            //settingJSON = SettingFromServerJSON()
-
-            //settingJSON = gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
-            //val settingFromServerJSON = Gson().fromJson(apiResponse, configuration::class.java)
-
-            /**
-             *  устанваливает интревал отправки печатемого пользователем сообщения
-             */
-            if (apiResponse.contains("\"sendUserIsTyping\":true")){
-                val str = apiResponse
-                // Находим индекс начала числа
-                val startIndex = str.indexOf("\"userTypingInterval\":") + "\"userTypingInterval\":".length
-                // Находим индекс конца числа
-                val endIndex = str.indexOf(',',startIndex)
-                // Извлекаем строку с числом
-                val numberStr = str.substring(startIndex, endIndex)
-                // Преобразуем строку в число
-                val number = numberStr.toInt()
-                // Выводим число
-                chatEventListener?.setUserTypingInterval(number)
-            }
-            else {
+            if (settingFromServerJSON.sendUserIsTyping == true) {
+                settingFromServerJSON.userTypingInterval?.let { interval ->
+                    chatEventListener?.setUserTypingInterval(interval)
+                }
+            } else {
                 chatEventListener?.setUserTyping(false)
             }
 
-            /**
-             * Проверяет доступен ли чат для общения
-             */
-            if (apiResponse.contains("\"block\":false")){
-                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat not closed")
-            }
-            else {
-                val str = apiResponse
-
-                val startIndex = str.indexOf("\"blockMessage\":\"") + "\"blockMessage\":\"".length
-
-                val endIndex = str.indexOf("\",\"",startIndex)
-
-                val blockMessageStr = str.substring(startIndex, endIndex)
-
-                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat closed")
-                chatEventListener?.setChatStateClosed(true,  blockMessageStr)
+            if (settingFromServerJSON.block == false) {
+                Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat not closed")
+            } else {
+                val blockMessageStr = settingFromServerJSON.blockMessage ?: ""
+                Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat closed")
+                chatEventListener?.setChatStateClosed(true, blockMessageStr)
             }
         }
         catch (e:Exception){
@@ -538,28 +507,6 @@ class SocketApi(
     private suspend fun updateDataInDatabase(messageSocket: NetworkMessage, currentTimestamp: Long) {
         val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
-            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.message.toString().contains("ct-markdown__file")) -> {
-                Log.d(TAG_SOCKET_EVENT, "got markdown file")
-                var files = MarkdownFileConverter(messageSocket.message.toString())
-                files.convert()
-                messageSocket.message = ""
-                for (i in 0..3){
-                    messageSocket.attachmentName = files.arrayOfNames[i]
-                    messageSocket.attachmentUrl = files.arrayOfURILinks[i]
-                    messageSocket.correctAttachmentUrl = files.arrayOfURLLinks[i]
-                    messageSocket.attachmentType = files.arrayOfMimeType[i]
-                    messageSocket.id = UUID.randomUUID().toString()
-                    insertMessage(MessageEntity.map(
-                            uuid = visitor.uuid,
-                            networkMessage = messageSocket,
-                            arrivalTime = currentTimestamp+i,
-                            operatorPreview = operatorPreview,
-                            fileSize = getWeightFile(messageSocket.correctAttachmentUrl!!) ?: getWeightMediaFile(context,
-                                messageSocket.correctAttachmentUrl!!
-                            )
-                        ))
-                }
-            }
             (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
                 messageSocket.correctAttachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
@@ -585,24 +532,6 @@ class SocketApi(
                         operatorPreview = operatorPreview,
                         fileSize = getWeightFile(url) ?: getWeightMediaFile(context, url)
                     ))
-                }
-            }
-            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isMarkdownImage || messageSocket.isMarkdownGif) -> {
-                Log.d(TAG_SOCKET_EVENT, "got markdown photo or gif")
-                messageSocket.attachmentName = UUID.randomUUID().toString()
-                messageSocket.correctAttachmentUrl?.let { url ->
-                    getSizeMediaFile(context, url) { height, width ->
-                        viewModelScope.launch {
-                            insertMessage(MessageEntity.map(
-                                uuid = visitor.uuid,
-                                networkMessage = messageSocket,
-                                arrivalTime = currentTimestamp,
-                                operatorPreview = operatorPreview,
-                                mediaFileHeight = height,
-                                mediaFileWidth = width
-                            ))
-                        }
-                    }
                 }
             }
             (messageSocket.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType)) && messageSocket.isText -> {
