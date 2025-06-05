@@ -28,7 +28,7 @@ android {
 
 ext {
     retrofitVersion = '2.9.0'
-    kotlin_version = '1.5.30'
+    kotlin_version = '1.7.10'
     firebaseMessagingServiceVersion = '23.0.8'
     firebaseAnalyticsVersion = '21.1.1'
 }

@@ -42,13 +42,14 @@ ext {
     androidXRecyclerViewVersion = '1.2.1'
     materialVersion = '1.4.0'
     fragmentKtxVersion = '1.3.4'
+    activityKtxVersion = '1.7.0'
     socketVersion = '2.1.0'
     retrofitVersion = '2.9.0'
     coroutinesVersion = '1.6.4'
     glideVersion = '4.13.2'
     roomVersion = '2.2.4'
     okHttpVersion = '4.10.0'
-    kotlin_version = '1.5.30'
+    kotlin_version = '1.7.10'
     daggerVersion = '2.43.2'
     firebaseMessagingServiceVersion = '23.0.8'
     firebaseAnalyticsVersion = '21.1.1'
@@ -72,6 +73,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$androidXRecyclerViewVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+    implementation "androidx.activity:activity-ktx:$activityKtxVersion"
 
     // DI
     implementation "com.google.dagger:dagger:$daggerVersion"
