@@ -22,7 +22,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
-import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
@@ -78,6 +77,10 @@ import kotlin.math.ceil
 import com.crafttalk.chat.di.modules.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.activity.result.ActivityResultLauncher
 
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
@@ -191,6 +194,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var takePicture: ActivityResultLauncher<Uri>? = null
     private var pickImage: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
     private var pickFile: ActivityResultLauncher<Pair<TypeFile, TypeMultiple>>? = null
+
+    private var pickPictureSafe: ActivityResultLauncher<PickVisualMediaRequest>? = null
+    private var pickFileSafe: ActivityResultLauncher<Array<String>>? = null
+
 
     private var methodGetWidgetView: (widgetId: String) -> View? = { null }
     private var methodFindItemsViewOnWidget: (widgetId: String, widget: View, mapView: MutableMap<String, View>) -> Unit = { _,_,_ -> }
@@ -516,6 +523,28 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.DOCUMENTS_LIMIT_EXCEEDED)
             } else viewModel.sendFiles(listUri.map { File(it, TypeFile.FILE) })
         }
+
+        pickPictureSafe = fragment.registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri.size > FileViewerHelper.PHOTOS_LIMIT) {
+                viewModel.sendFiles(uri.slice(0 until FileViewerHelper.PHOTOS_LIMIT).map { File(it, TypeFile.IMAGE) })
+                FileViewerHelper.showFileLimitExceededMessage(fragment, FileViewerHelper.PHOTOS_LIMIT_EXCEEDED)
+            } else {
+                viewModel.sendFiles(uri.map { File(it, TypeFile.IMAGE)})
+            }
+        }
+
+        pickFileSafe = fragment.registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) {
+                Log.d("DocumentPicker", "Selected URI: $uri")
+                uri?.let { viewModel.sendFile(File(it, TypeFile.FILE))}
+            } else {
+                Log.d("DocumentPicker", "No document selected")
+            }
+
+        }
+
         //сомнительный код, условие всегда ложно
         if (viewModel.chatIsClosed)
         {
@@ -877,6 +906,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         sizeTextFileSize = ChatAttr.getInstance().sizeUserRepliedFileSize
                     )
                 }
+                else -> Unit
             }
         }
         viewModel.replyMessagePosition.observe(lifecycleOwner) {
@@ -1127,53 +1157,29 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
 
     private fun giveFeedback(countStars: Int, isLastDecision: Boolean) {
-        when (countStars) {
-            1 -> {
-                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            2 -> {
-                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            3 -> {
-                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            4 -> {
-                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-            }
-            5 -> {
-                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star)
-            }
+        val stars = listOf(
+            feedback_star_1,
+            feedback_star_2,
+            feedback_star_3,
+            feedback_star_4,
+            feedback_star_5
+        )
+
+        val filledStar = R.drawable.com_crafttalk_chat_ic_star
+        val outlineStar = R.drawable.com_crafttalk_chat_ic_star_outline
+
+        stars.forEachIndexed { index, imageView ->
+            imageView.setImageResource(if (index < countStars) filledStar else outlineStar)
         }
+
         if (isLastDecision) {
             user_feedback.setOnTouchListener(null)
             viewModel.giveFeedbackOnOperator(countStars,null, viewModel.dialogID1)
             user_feedback.delayOnLifecycle(ChatAttr.getInstance().delayFeedbackScreenAppears) {
                 viewModel.feedbackContainerVisible.value = false
-                feedback_star_1.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_2.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_3.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_4.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
-                feedback_star_5.setImageResource(R.drawable.com_crafttalk_chat_ic_star_outline)
+                stars.forEachIndexed { index, imageView ->
+                    imageView.setImageResource(outlineStar)
+                }
                 setFeedbackListener()
             }
         }

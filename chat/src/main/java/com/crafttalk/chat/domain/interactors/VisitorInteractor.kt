@@ -29,6 +29,7 @@ class VisitorInteractor
         when (ChatParams.authMode) {
             AuthType.AUTH_WITH_FORM -> visitorRepository.deleteVisitor()
             AuthType.AUTH_WITHOUT_FORM -> visitorRepository.setVisitorFromClient(null)
+            else -> Unit
         }
     }
 

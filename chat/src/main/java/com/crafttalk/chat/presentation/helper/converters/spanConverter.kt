@@ -51,6 +51,7 @@ fun String.convertToSpannableString(authorIsUser: Boolean, spanStructureList: Li
                         }
                     }
                 }
+                else -> Unit
             }
         }
         catch (e:Exception){

@@ -27,55 +27,55 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
-        android:tint="@color/com_crafttalk_chat_black"
         android:layout_marginBottom="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_2"
-        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+        app:layout_constraintBottom_toTopOf="@id/close_feedback"
+        app:tint="@color/com_crafttalk_chat_black" />
 
     <ImageView
         android:id="@+id/feedback_star_2"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
-        android:tint="@color/com_crafttalk_chat_black"
         android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_1"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_3"
-        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+        app:layout_constraintBottom_toTopOf="@id/close_feedback"
+        app:tint="@color/com_crafttalk_chat_black" />
 
     <ImageView
         android:id="@+id/feedback_star_3"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
-        android:tint="@color/com_crafttalk_chat_black"
         android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_2"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_4"
-        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+        app:layout_constraintBottom_toTopOf="@id/close_feedback"
+        app:tint="@color/com_crafttalk_chat_black" />
 
     <ImageView
         android:id="@+id/feedback_star_4"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
-        android:tint="@color/com_crafttalk_chat_black"
         android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_3"
         app:layout_constraintEnd_toStartOf="@+id/feedback_star_5"
-        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+        app:layout_constraintBottom_toTopOf="@id/close_feedback"
+        app:tint="@color/com_crafttalk_chat_black" />
 
     <ImageView
         android:id="@+id/feedback_star_5"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/com_crafttalk_chat_ic_star_outline"
-        android:tint="@color/com_crafttalk_chat_black"
         android:layout_marginBottom="12dp"
         app:layout_constraintStart_toEndOf="@id/feedback_star_4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/close_feedback" />
+        app:layout_constraintBottom_toTopOf="@id/close_feedback"
+        app:tint="@color/com_crafttalk_chat_black" />
 
     <ImageView
         android:id="@+id/close_feedback"
@@ -83,9 +83,9 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:src="@drawable/com_crafttalk_chat_ic_arrow_down"
-        android:tint="@color/com_crafttalk_chat_gray_8d8d8d"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="@color/com_crafttalk_chat_gray_8d8d8d" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

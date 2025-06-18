@@ -105,6 +105,7 @@ fun String.convertFromBaseTextToNormalString(listTag: ArrayList<Tag>): String {
             selectUrl(this, "https")
             selectUrl(this, "wss")
         }
+        else -> Unit
     }
 //    selectUrl(this, "www")
     return this
@@ -331,7 +332,7 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                             addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex, result.lastIndex)
                         }
                     }
-                    !isSingleTag && isCloseTag -> {
+                    (!isSingleTag && isCloseTag) -> {
                         replyOrExecuteTag(tagName.toString().trim(), false, result) {
                             if (tagName.toString() == "span"){
                                 updateStateTag(lastSpanTag.trim(), result.lastIndex)
@@ -340,11 +341,12 @@ fun String.convertFromHtmlTextToNormalString(listTag: ArrayList<Tag>): String {
                             }
                         }
                     }
-                   !isSingleTag && !isCloseTag -> {
+                   (!isSingleTag && !isCloseTag) -> {
                         replyOrExecuteTag(tagName.toString().trim(), true, result) {
                                 addTag(tagName.toString().trim(), listAttrsTag, result.lastIndex)
                         }
                     }
+                    else -> Unit
                 }
                 isSelectTag = false
                 isSingleTag = false

@@ -29,6 +29,9 @@ class PersonRepository
             OperatorNameMode.ACTUAL -> {
                 messagesDao.updatePersonName(personId, currentPersonName)
             }
+            else -> {
+                Unit
+            }
         }
     }
 
