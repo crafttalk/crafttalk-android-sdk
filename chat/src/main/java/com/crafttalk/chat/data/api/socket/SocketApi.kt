@@ -517,7 +517,7 @@ class SocketApi(
                 channel.send(listMessages.toList())
             }
         }
-        socket?.emit("history-messages-requested", timestamp, visitor.token, ChatParams.urlChatHost) ?: channel.send(null)
+        socket?.emit("history-messages-requested", 0, timestamp) ?: channel.send(null)
 
         return viewModelScope.async {
             channel.receive()
