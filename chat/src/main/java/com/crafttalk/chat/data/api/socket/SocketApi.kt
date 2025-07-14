@@ -26,6 +26,7 @@ import com.google.gson.GsonBuilder
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
+import kotlinx.android.synthetic.main.com_crafttalk_chat_layout_chat.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import okhttp3.OkHttpClient
@@ -299,7 +300,6 @@ class SocketApi(
                 }
                 when (messageSocket.messageType) {
                     MessageType.UPDATE_DIALOG_SCORE.valueType -> chatEventListener?.updateDialogScore()
-                    MessageType.SCORE_REQUEST.valueType -> chatEventListener?.finishDialog(messageSocket.dialogId)
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
