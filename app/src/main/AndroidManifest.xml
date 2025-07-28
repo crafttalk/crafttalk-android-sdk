@@ -43,7 +43,7 @@
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
             android:screenOrientation="portrait"
-            android:name=".chat_with_counter.ChatActivity"
+            android:name=".chat_with_counter.ChatActivityWithCounter"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
             android:screenOrientation="portrait"
