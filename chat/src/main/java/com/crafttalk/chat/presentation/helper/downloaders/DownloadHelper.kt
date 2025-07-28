@@ -78,10 +78,7 @@ fun downloadResource(
     } else
     {
         //для версий старше или равных андроид 13
-        val permissions = arrayOf(
-            @Suppress ("all")
-            Manifest.permission.READ_MEDIA_IMAGES
-        )
+        val permissions = emptyArray<String>()
         checkPermission(
             permissions,
             context,

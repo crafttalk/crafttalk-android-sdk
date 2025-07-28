@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -11,7 +11,7 @@
         android:layout_height="36dp"
         android:src="@drawable/com_crafttalk_chat_ic_circle_warning"
         android:rotation="180"
-        android:tint="@color/com_crafttalk_chat_default_color_info"
+        app:tint="@color/com_crafttalk_chat_default_color_info"
         android:layout_gravity="center_horizontal" />
 
     <TextView

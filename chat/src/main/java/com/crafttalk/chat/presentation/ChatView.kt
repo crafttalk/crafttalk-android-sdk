@@ -135,14 +135,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var dontSendPreviewToOperator: Boolean = false
     private var speechRecognizer: SpeechRecognizer? = null
     private var speechRecognizerIntent: Intent? = null
-
-
-    init {
-        val inflater = LayoutInflater.from(context)
-        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
-    }
-
-
     private val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
         override fun getVerticalSnapPreference(): Int {
             return SNAP_TO_START
@@ -302,6 +294,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     fun setOnStateStartingProgressListener(listener: StateStartingProgressListener) {
         this.stateStartingProgressListener = listener
+    }
+
+    init {
+        val inflater = LayoutInflater.from(context)
+        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {

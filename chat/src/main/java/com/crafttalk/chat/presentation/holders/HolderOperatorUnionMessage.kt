@@ -76,6 +76,7 @@ class HolderOperatorUnionMessage(
                     when (fileType) {
                         TypeFile.IMAGE -> clickImageHandler(name, url)
                         TypeFile.GIF -> clickGifHandler(name, url)
+                        else -> {}
                     }
                 }
             }
@@ -180,6 +181,7 @@ class HolderOperatorUnionMessage(
                     loadMediaFile(item.id, item.file, updateData, false, true, warningContainer, true)
                 }
             }
+            else -> {}
         }
     }
 

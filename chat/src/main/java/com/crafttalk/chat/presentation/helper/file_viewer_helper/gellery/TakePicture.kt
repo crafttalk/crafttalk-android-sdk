@@ -7,7 +7,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.CallSuper
-
 internal class TakePicture : ActivityResultContract<Uri, Uri?>() {
 
     private var uri: Uri? = null

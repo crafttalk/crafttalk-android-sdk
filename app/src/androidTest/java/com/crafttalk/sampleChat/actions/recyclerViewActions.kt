@@ -78,19 +78,19 @@ class ClickTextMessageViewAction : ViewAction {
     }
 
     override fun perform(uiController: UiController?, view: View?) {
-        val recyclerView = view as RecyclerView
-        val adapter = recyclerView.adapter as AdapterListMessages
-        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
-            val item = adapter.getItem(index)
-            when (item) {
-                is ImageMessageItem -> {
-                    recyclerView.scrollToPosition(index)
-                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
-                    uiController?.loopMainThreadUntilIdle()
-                    return
-                }
-            }
-        }
+//        val recyclerView = view as RecyclerView
+//        val adapter = recyclerView.adapter as AdapterListMessages
+//        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
+//            val item = adapter.getItem(index)
+//            when (item) {
+//                is ImageMessageItem -> {
+//                    recyclerView.scrollToPosition(index)
+//                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
+//                    uiController?.loopMainThreadUntilIdle()
+//                    return
+//                }
+//            }
+//        }
     }
 
 }
@@ -106,20 +106,21 @@ class ClickImageMessageViewAction : ViewAction {
     }
 
     override fun perform(uiController: UiController?, view: View?) {
-        val recyclerView = view as RecyclerView
-        val adapter = recyclerView.adapter as AdapterListMessages
-        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
-            val item = adapter.getItem(index)
-            when (item) {
-                is ImageMessageItem -> {
-                    recyclerView.scrollToPosition(index)
-                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
-                    uiController?.loopMainThreadUntilIdle()
-                    return
-                }
-            }
-        }
-    }
+//        val recyclerView = view as RecyclerView
+//        val adapter = recyclerView.adapter as AdapterListMessages
+//        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
+//            val item = adapter.getItem(index)
+//            when (item) {
+//                is ImageMessageItem -> {
+//                    recyclerView.scrollToPosition(index)
+//                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
+//                    uiController?.loopMainThreadUntilIdle()
+//                    return
+//                }
+//                else -> {}
+//            }
+//        }
+//    }
 
 }
 
@@ -134,20 +135,21 @@ class ClickGifMessageViewAction : ViewAction {
     }
 
     override fun perform(uiController: UiController?, view: View?) {
-        val recyclerView = view as RecyclerView
-        val adapter = recyclerView.adapter as AdapterListMessages
-        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
-            val item = adapter.getItem(index)
-            when (item) {
-                is GifMessageItem -> {
-                    recyclerView.scrollToPosition(index)
-                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
-                    uiController?.loopMainThreadUntilIdle()
-                    return
-                }
-            }
-        }
-    }
+//        val recyclerView = view as RecyclerView
+//        val adapter = recyclerView.adapter as AdapterListMessages
+//        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
+//            val item = adapter.getItem(index)
+//            when (item) {
+//                is GifMessageItem -> {
+//                    recyclerView.scrollToPosition(index)
+//                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
+//                    uiController?.loopMainThreadUntilIdle()
+//                    return
+//                }
+//                else -> {}
+//            }
+//        }
+//    }
 
 }
 
@@ -162,19 +164,20 @@ class ClickFileMessageViewAction : ViewAction {
     }
 
     override fun perform(uiController: UiController?, view: View?) {
-        val recyclerView = view as RecyclerView
-        val adapter = recyclerView.adapter as AdapterListMessages
-        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
-            val item = adapter.getItem(index)
-            when (item) {
-                is FileMessageItem -> {
-                    recyclerView.scrollToPosition(index)
-                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
-                    uiController?.loopMainThreadUntilIdle()
-                    return
-                }
-            }
-        }
-    }
-
-}
+//        val recyclerView = view as RecyclerView
+//        val adapter = recyclerView.adapter as AdapterListMessages
+//        for(index in 0 until (recyclerView.adapter?.itemCount ?: 0)) {
+//            val item = adapter.getItemOrNull(index)
+//            when (item) {
+//                is FileMessageItem -> {
+//                    recyclerView.scrollToPosition(index)
+//                    click().perform(uiController, recyclerView.findViewHolderForAdapterPosition(index)!!.itemView)
+//                    uiController?.loopMainThreadUntilIdle()
+//                    return
+//                }
+//                else ->{}
+//            }
+//        }
+//    }
+        return
+    }}}}
