@@ -2,13 +2,10 @@ package com.crafttalk.chat.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DownloadManager
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
-import android.content.ContentResolver
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.TypedArray
@@ -17,7 +14,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -51,10 +47,8 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -113,13 +107,15 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.ceil
+
 class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.Listener {
 
     @Inject
     lateinit var viewModel: ChatViewModel
-    lateinit var _binding: ComCrafttalkChatViewHostBinding
 
-    private val binding get() = _binding
+    private var _binding: ComCrafttalkChatViewHostBinding? = null
+    private val binding get() = _binding!!
+
     private var liveDataMessages: LiveData<PagedList<MessageModel>>? = null
     private var searchLiveDataMessages: LiveData<PagedList<MessageModel>>? = null
     private var searchItemLast: SearchItem? = null
@@ -127,14 +123,15 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private lateinit var adapterListMessages: AdapterListMessages
     private val fileViewerHelper = FileViewerHelper()
     private lateinit var parentFragment: Fragment
-    private val inflater: LayoutInflater by lazy {
-        context.getSystemService(
-            Context.LAYOUT_INFLATER_SERVICE
-        ) as LayoutInflater
-    }
     private var dontSendPreviewToOperator: Boolean = false
     private var speechRecognizer: SpeechRecognizer? = null
     private var speechRecognizerIntent: Intent? = null
+
+    init {
+        val inflater = LayoutInflater.from(context)
+        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
+    }
+
     private val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
         override fun getVerticalSnapPreference(): Int {
             return SNAP_TO_START
@@ -296,11 +293,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         this.stateStartingProgressListener = listener
     }
 
-    init {
-        val inflater = LayoutInflater.from(context)
-        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
-    }
-
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
 
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
@@ -339,12 +331,12 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         // set company name
         binding.chatPlace.companyName.text = chatAttr.companyName
         binding.chatPlace.companyName.visibility = if (chatAttr.showCompanyName) View.VISIBLE else View.GONE
-        binding.warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.INVISIBLE else View.GONE
-        binding.infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
+        binding.warningConnection.visibility = if (chatAttr.showInternetConnectionState) View.VISIBLE else View.GONE
+        binding.infoChatState.visibility = if (chatAttr.showChatState) View.GONE else View.GONE
         binding.upperLimiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
         ChatParams.enableSearch = chatAttr.enableSearch
         binding.search.rootView.visibility = when {
-            chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.INVISIBLE
+            chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.GONE
             else -> View.GONE
         }
         binding.chatPlace.voiceInput.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.VISIBLE
@@ -428,7 +420,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 super.onScrolled(recyclerView, dx, dy)
                 binding.chatPlace.listWithMessage.delayOnLifecycle(DELAY_RENDERING_SCROLL_BTN) {
                     val indexLastVisible = (binding.chatPlace.listWithMessage.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: return@delayOnLifecycle
-
                     if (indexLastVisible == -1) {
                         viewModel.scrollToDownVisible.value = false
                         return@delayOnLifecycle
@@ -569,7 +560,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
         }
 
-
         takePicture = fragment.registerForActivityResult(TakePicture()) { uri ->
             uri?.let { viewModel.sendFile(File(it, TypeFile.IMAGE)) }
         }
@@ -606,7 +596,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             when (state) {
                 InternetConnectionState.NO_INTERNET -> {
                     if (ChatAttr.getInstance().showChatState) {
-                        binding.infoChatState.visibility = View.INVISIBLE
+                        binding.infoChatState.visibility = View.GONE
                     }
                     if (ChatAttr.getInstance().showInternetConnectionState) {
                         binding.warningConnection.visibility = if (binding.search.isVisible) View.GONE else View.VISIBLE //TODO может вызывать проблемы с работой поиска
@@ -615,7 +605,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 InternetConnectionState.HAS_INTERNET, InternetConnectionState.RECONNECT -> {
                     if (ChatAttr.getInstance().showInternetConnectionState) {
-                        binding.warningConnection.visibility = View.INVISIBLE
+                        binding.warningConnection.visibility = View.GONE
                     }
                 }
             }
@@ -640,7 +630,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     binding.searchPlace.root.visibility = View.GONE
                     binding.search.visibility = when (binding.search.visibility) {
                         View.GONE -> View.GONE
-                        else -> View.INVISIBLE
+                        else -> View.GONE
                     }
                     binding.authForm.root.visibility = View.GONE
                     binding.warning.root.visibility = View.GONE
@@ -657,7 +647,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     binding.search.rootView.visibility = when {
                         binding.search.rootView.visibility == View.GONE -> View.GONE
                         ChatParams.enableSearch == true -> View.VISIBLE
-                        else -> View.INVISIBLE
+                        else -> View.GONE
                     }
                     if (ChatAttr.getInstance().showStartingProgress) {
                         stopProgressBar(binding.loading)
@@ -675,28 +665,28 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     binding.search.rootView.visibility = when {
                         binding.search.rootView.visibility == View.GONE -> View.GONE
                         ChatParams.enableSearch == true -> View.VISIBLE
-                        else -> View.INVISIBLE
+                        else -> View.GONE
                     }
                     if (ChatAttr.getInstance().showStartingProgress) {
                         stopProgressBar(binding.loading)
                     }
                     stateStartingProgressListener?.stop()
                     if (ChatAttr.getInstance().showChatState) {
-                        binding.infoChatState.visibility = View.INVISIBLE
+                        binding.infoChatState.visibility = View.GONE
                     }
                 }
                 DisplayableUIObject.FORM_AUTH -> {
+                    if (ChatAttr.getInstance().showStartingProgress) {
+                        stopProgressBar(binding.loading)
+                    }
                     binding.chatPlace.root.visibility = View.GONE
                     binding.searchPlace.root.visibility = View.GONE
                     binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
                         View.GONE -> View.GONE
-                        else -> View.INVISIBLE
+                        else -> View.GONE
                     }
                     binding.warning.root.visibility = View.GONE
                     binding.authForm.root.visibility = View.VISIBLE
-                    if (ChatAttr.getInstance().showStartingProgress) {
-                        stopProgressBar(binding.loading)
-                    }
                     stateStartingProgressListener?.stop()
                 }
                 DisplayableUIObject.WARNING -> {
@@ -704,7 +694,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     binding.searchPlace.root.visibility = View.GONE
                     binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
                         View.GONE -> View.GONE
-                        else -> View.INVISIBLE
+                        else -> View.GONE
                     }
                     binding.authForm.root.visibility = View.GONE
                     binding.warning.root.visibility = View.VISIBLE
@@ -715,7 +705,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     }
                     stateStartingProgressListener?.stop()
                     if (ChatAttr.getInstance().showChatState) {
-                        binding.infoChatState.visibility = View.INVISIBLE
+                        binding.infoChatState.visibility = View.GONE
                     }
                 }
                 DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE -> {
@@ -927,7 +917,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 }
                 is FileMessageItem -> {
                     replyPreviewMessage.visibility = View.GONE
-                    replyPreviewProgressDownload.visibility = View.INVISIBLE
+                    replyPreviewProgressDownload.visibility = View.GONE
                     replyPreviewMediaFile.visibility = View.GONE
                     replyPreviewMediaFileWarning.visibility = View.GONE
                     replyPreviewFileInfo.visibility = View.VISIBLE
@@ -1141,7 +1131,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             }
             R.id.warning_refresh -> {
                 startProgressBar(binding.warning.warningLoading)
-                binding.warning.warningRefresh.visibility = View.INVISIBLE
+                binding.warning.warningRefresh.visibility = View.GONE
                 viewModel.reload()
             }
             R.id.scroll_to_down -> {
@@ -1168,7 +1158,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 if (viewModel.chatIsClosed) {binding.chatOffMessage.visibility = View.VISIBLE}
                 binding.searchPlace.root.visibility = View.GONE
                 binding.warningConnection.visibility = View.GONE
-                binding.infoChatState.visibility = View.INVISIBLE
+                binding.infoChatState.visibility = View.GONE
                 binding.search.rootView.visibility = View.VISIBLE
                 onSearchCancelClick()
             }

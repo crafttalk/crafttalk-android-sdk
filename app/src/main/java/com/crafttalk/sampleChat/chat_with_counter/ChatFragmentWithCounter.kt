@@ -17,13 +17,16 @@ import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.databinding.FragmentChatBinding
+import com.crafttalk.sampleChat.databinding.FragmentChatWithCounterBinding
 import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.createCarouselWidget
 import com.google.android.material.snackbar.Snackbar
 
-class ChatFragment: Fragment(R.layout.fragment_chat) {
-    private var fragmentChatBinding: FragmentChatBinding? = null
+class ChatFragmentWithCounter: Fragment(R.layout.fragment_chat_with_counter) {
+
+    private var _binding: FragmentChatWithCounterBinding? = null
+    private val binding get() = _binding!!
 
     private var requestPermission: ActivityResultLauncher<String>? = null
     private var callbackResult: (isGranted: Boolean) -> Unit = {}
@@ -41,17 +44,13 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentChatBinding.inflate(inflater, container, false)
-        fragmentChatBinding = binding
+        _binding = FragmentChatWithCounterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val binding = FragmentChatBinding.bind(view)
-        fragmentChatBinding = binding
         binding.chatView.visibility = View.VISIBLE
 
         binding.chatView.setMethodGetPayloadTypeWidget { widgetId ->
@@ -174,32 +173,22 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 
     override fun onResume() {
         super.onResume()
-        val binding = FragmentChatBinding.bind(requireView())
-        fragmentChatBinding = binding
         binding.chatView.visibility = View.VISIBLE
         binding.chatView.onResume()
     }
 
     override fun onStop() {
         super.onStop()
-        val binding = FragmentChatBinding.bind(requireView())
-        fragmentChatBinding = binding
         binding.chatView.onStop()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         Chat.clearDBDialogHistory(requireContext())
-        val binding = FragmentChatBinding.bind(requireView())
-        fragmentChatBinding = binding
-
-        binding.chatView.onDestroyView()
+        _binding = null
     }
 
     private fun showWarning(warningText: String) {
-        val binding = FragmentChatBinding.bind(requireView())
-        fragmentChatBinding = binding
-
         Snackbar.make(binding.chatView, warningText, Snackbar.LENGTH_LONG).show()
     }
     private val OPEN_DOCUMENT_REQUEST_CODE = 0x33

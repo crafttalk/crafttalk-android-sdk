@@ -11,7 +11,7 @@ import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.databinding.ActivityChatWithCounterBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class ChatActivity: AppCompatActivity() {
+class ChatActivityWithCounter: AppCompatActivity() {
     private lateinit var binding: ActivityChatWithCounterBinding
 
     private val mOnNavigationItemSelectedListener = object: BottomNavigationView.OnNavigationItemSelectedListener {
@@ -26,8 +26,8 @@ class ChatActivity: AppCompatActivity() {
                     return true
                 }
                 R.id.navigation_chat -> {
-                    if (fragmentNow !is ChatFragment) {
-                        loadFragment(ChatFragment())
+                    if (fragmentNow !is ChatFragmentWithCounter) {
+                        loadFragment(ChatFragmentWithCounter())
                     }
                     return true
                 }

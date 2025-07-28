@@ -6,7 +6,7 @@ import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
 
 fun ProgressBar.setProgressDownloadFile(typeDownloadProgress: TypeDownloadProgress) {
     visibility = when (typeDownloadProgress) {
-        TypeDownloadProgress.NOT_DOWNLOADED, TypeDownloadProgress.DOWNLOADED -> View.INVISIBLE
+        TypeDownloadProgress.NOT_DOWNLOADED, TypeDownloadProgress.DOWNLOADED -> View.GONE
         TypeDownloadProgress.DOWNLOADING -> View.VISIBLE
     }
 }
