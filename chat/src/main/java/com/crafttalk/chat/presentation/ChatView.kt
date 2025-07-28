@@ -336,7 +336,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         binding.upperLimiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
         ChatParams.enableSearch = chatAttr.enableSearch
         binding.search.rootView.visibility = when {
-            chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.GONE
+            chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.VISIBLE
             else -> View.GONE
         }
         binding.chatPlace.voiceInput.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.VISIBLE
@@ -676,26 +676,20 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     }
                 }
                 DisplayableUIObject.FORM_AUTH -> {
+                    binding.chatPlace.root.visibility = View.GONE
+                    binding.searchPlace.root.visibility = View.GONE
+                    binding.search.rootView.visibility = View.GONE
+                    binding.warning.root.visibility = View.GONE
+                    binding.authForm.root.visibility = View.VISIBLE
                     if (ChatAttr.getInstance().showStartingProgress) {
                         stopProgressBar(binding.loading)
                     }
-                    binding.chatPlace.root.visibility = View.GONE
-                    binding.searchPlace.root.visibility = View.GONE
-                    binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
-                        View.GONE -> View.GONE
-                        else -> View.GONE
-                    }
-                    binding.warning.root.visibility = View.GONE
-                    binding.authForm.root.visibility = View.VISIBLE
                     stateStartingProgressListener?.stop()
                 }
                 DisplayableUIObject.WARNING -> {
                     binding.chatPlace.root.visibility = View.GONE
                     binding.searchPlace.root.visibility = View.GONE
-                    binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
-                        View.GONE -> View.GONE
-                        else -> View.GONE
-                    }
+                    binding.search.rootView.visibility = View.GONE
                     binding.authForm.root.visibility = View.GONE
                     binding.warning.root.visibility = View.VISIBLE
                     binding.warning.warningRefresh.visibility = View.VISIBLE
