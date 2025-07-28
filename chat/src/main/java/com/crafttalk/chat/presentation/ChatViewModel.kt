@@ -14,6 +14,7 @@ import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
 import com.crafttalk.chat.domain.interactors.*
 import com.crafttalk.chat.presentation.base.BaseViewModel
+import com.crafttalk.chat.presentation.feature.view_picture.ShowImageDialog
 import com.crafttalk.chat.presentation.feature.view_picture.ShowMediaDialog2
 import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
 import com.crafttalk.chat.presentation.helper.mappers.messageModelMapper
@@ -292,7 +293,7 @@ class ChatViewModel
                     delay(ChatAttr.getInstance().delayDownloadDocument)
                     openDocument.postValue(Pair(documentFile, true))
                 },
-                downloadFailed = {
+                downloadedFail = {
                     openDocument.postValue(Pair(null, false))
                 }
             )

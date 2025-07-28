@@ -81,7 +81,6 @@ class AuthInteractor
                         conditionInteractor.saveCurrentReadMessageTime(lastTime)
                     }
                 }
-                else -> {Unit}
             }
         }
 
@@ -137,7 +136,6 @@ class AuthInteractor
                     chatEventListener = chatEventListener
                 )
             }
-            else -> {Unit}
         }
     }
 
