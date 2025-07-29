@@ -106,6 +106,8 @@ import com.crafttalk.chat.presentation.model.UnionMessageItem
 import com.crafttalk.chat.presentation.model.WidgetMessageItem
 import com.crafttalk.chat.utils.ChatAttr
 import com.crafttalk.chat.utils.ChatParams
+import com.crafttalk.chat.utils.PhoneMaskUtils
+import com.crafttalk.chat.utils.PhoneNumberTextWatcher
 import com.crafttalk.chat.utils.TypeFailUpload
 import com.redmadrobot.inputmask.MaskedTextChangedListener
 import java.util.*
@@ -135,14 +137,6 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var dontSendPreviewToOperator: Boolean = false
     private var speechRecognizer: SpeechRecognizer? = null
     private var speechRecognizerIntent: Intent? = null
-
-
-    init {
-        val inflater = LayoutInflater.from(context)
-        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
-    }
-
-
     private val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
         override fun getVerticalSnapPreference(): Int {
             return SNAP_TO_START
@@ -304,6 +298,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         this.stateStartingProgressListener = listener
     }
 
+    init {
+        val inflater = LayoutInflater.from(context)
+        _binding = ComCrafttalkChatViewHostBinding.inflate(inflater, this, true)
+    }
+
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
 
         val attrArr = context.obtainStyledAttributes(attrs, R.styleable.ChatView)
@@ -346,7 +345,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
         binding.infoChatState.visibility = if (chatAttr.showChatState) View.INVISIBLE else View.GONE
         binding.upperLimiter.visibility = if (chatAttr.showUpperLimiter) View.VISIBLE else View.GONE
         ChatParams.enableSearch = chatAttr.enableSearch
-        binding.search.rootView.visibility = when {
+        binding.search.visibility = when {
             chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.INVISIBLE
             else -> View.GONE
         }
@@ -372,7 +371,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     }
     val executorService = Executors.newSingleThreadScheduledExecutor()
     val sendServiceMessageUserIsTypingTextTask = Runnable {
-            val deltaTime = viewModel.userTypingInterval
+        val deltaTime = viewModel.userTypingInterval
         if (!dontSendPreviewToOperator) {
             if (System.currentTimeMillis() >= currentTimestamp + deltaTime) {
                 viewModel.sendServiceMessageUserIsTypingText(binding.chatPlace.entryField.text.toString())
@@ -388,10 +387,10 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private var currentTimestamp = System.currentTimeMillis()
     @SuppressLint("ClickableViewAccessibility")
     private fun setAllListeners() {
+        val code = PhoneMaskUtils.getCountryCodeBySim(context)
+        val mask = PhoneMaskUtils.getPhoneMaskByCountryCode(code)
         binding.authForm.phoneUser.apply {
-            val maskedListener = MaskedTextChangedListener(context.getString(R.string.com_crafttalk_chat_russian_phone_format), this)
-            addTextChangedListener(maskedListener)
-            onFocusChangeListener = maskedListener
+            addTextChangedListener(PhoneNumberTextWatcher(mask, code))
         }
         binding.authForm.signIn.setOnClickListener(this)
         binding.chatPlace.sendMessage.setOnClickListener(this)
@@ -438,13 +437,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     }
                     viewModel.scrollToDownVisible.value = (indexLastVisible > MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL) ||
                             ((indexLastVisible == MAX_COUNT_MESSAGES_NEED_SCROLLED_BEFORE_APPEARANCE_BTN_SCROLL) &&
-                            adapterListMessages.currentList?.get(0) !is InfoMessageItem)
+                                    adapterListMessages.currentList?.get(0) !is InfoMessageItem)
                     viewModel.readMessage(adapterListMessages.getMessageByPosition(indexLastVisible))
                 }
             }
         })
         binding.chatPlace.userFeedback.closeFeedback.setOnClickListener(this)
-        binding.search.rootView.setOnClickListener(this)
+        binding.search.setOnClickListener(this)
         binding.searchPlace.searchCancel.setOnClickListener(this)
         binding.searchPlace.searchInput.setOnTouchListener { view, motionEvent ->
             val drawableLeft = 0
@@ -657,8 +656,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     binding.warning.root.visibility = View.GONE
                     binding.searchPlace.root.visibility = View.GONE
                     binding.chatPlace.root.visibility = View.VISIBLE
-                    binding.search.rootView.visibility = when {
-                        binding.search.rootView.visibility == View.GONE -> View.GONE
+                    binding.search.visibility = when {
+                        binding.search.visibility == View.GONE -> View.GONE
                         ChatParams.enableSearch == true -> View.VISIBLE
                         else -> View.INVISIBLE
                     }
@@ -675,8 +674,8 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                     binding.warning.root.visibility = View.GONE
                     binding.searchPlace.root.visibility = View.GONE
                     binding.chatPlace.root.visibility = View.VISIBLE
-                    binding.search.rootView.visibility = when {
-                        binding.search.rootView.visibility == View.GONE -> View.GONE
+                    binding.search.visibility = when {
+                        binding.search.visibility == View.GONE -> View.GONE
                         ChatParams.enableSearch == true -> View.VISIBLE
                         else -> View.INVISIBLE
                     }
@@ -691,7 +690,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 DisplayableUIObject.FORM_AUTH -> {
                     binding.chatPlace.root.visibility = View.GONE
                     binding.searchPlace.root.visibility = View.GONE
-                    binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
+                    binding.search.visibility = when (binding.search.rootView.visibility) {
                         View.GONE -> View.GONE
                         else -> View.INVISIBLE
                     }
@@ -705,7 +704,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 DisplayableUIObject.WARNING -> {
                     binding.chatPlace.root.visibility = View.GONE
                     binding.searchPlace.root.visibility = View.GONE
-                    binding.search.rootView.visibility = when (binding.search.rootView.visibility) {
+                    binding.search.visibility = when (binding.search.rootView.visibility) {
                         View.GONE -> View.GONE
                         else -> View.INVISIBLE
                     }
@@ -1163,7 +1162,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 binding.chatOffMessage.visibility = View.GONE
                 binding.warningConnection.visibility = View.GONE
                 binding.infoChatState.visibility = View.GONE
-                binding.search.rootView.visibility = View.GONE
+                binding.search.visibility = View.GONE
                 binding.searchPlace.root.visibility = View.VISIBLE
                 hideSoftKeyboard(this)
             }
@@ -1172,7 +1171,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                 binding.searchPlace.root.visibility = View.GONE
                 binding.warningConnection.visibility = View.GONE
                 binding.infoChatState.visibility = View.INVISIBLE
-                binding.search.rootView.visibility = View.VISIBLE
+                binding.search.visibility = View.VISIBLE
                 onSearchCancelClick()
             }
             R.id.search_top -> viewModel.onSearchTopClick()
@@ -1213,7 +1212,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             userFeedback.feedbackStar3,
             userFeedback.feedbackStar4,
             userFeedback.feedbackStar5
-            )
+        )
 
         val filledStar = R.drawable.com_crafttalk_chat_ic_star
         val outlineStar = R.drawable.com_crafttalk_chat_ic_star_outline

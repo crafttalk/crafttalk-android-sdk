@@ -5,6 +5,7 @@ import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.MarkdownFileConverter
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.data.local.db.entity.settings.SettingFromServerJSON
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
@@ -79,53 +80,25 @@ class SocketApi(
      */
     private val getSettingsFromServerTask = Runnable {
         try {
-            val apiResponse:String = URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
-            //var i = JSONObject(apiResponse)
+            val apiResponse: String =
+                URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
+            val settingFromServerJSON =
+                gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
 
-            //var testModel = gson.fromJson(i.toString(),SettingFromServerJSON::class.java)
-            // var testModel = gson.fromJson(,SettingFromServerJSON::class.java)
-            //settingJSON = SettingFromServerJSON()
-
-            //settingJSON = gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
-            //val settingFromServerJSON = Gson().fromJson(apiResponse, configuration::class.java)
-
-            /**
-             *  устанваливает интревал отправки печатемого пользователем сообщения
-             */
-            if (apiResponse.contains("\"sendUserIsTyping\":true")){
-                val str = apiResponse
-                // Находим индекс начала числа
-                val startIndex = str.indexOf("\"userTypingInterval\":") + "\"userTypingInterval\":".length
-                // Находим индекс конца числа
-                val endIndex = str.indexOf(',',startIndex)
-                // Извлекаем строку с числом
-                val numberStr = str.substring(startIndex, endIndex)
-                // Преобразуем строку в число
-                val number = numberStr.toInt()
-                // Выводим число
-                chatEventListener?.setUserTypingInterval(number)
-            }
-            else {
+            if (settingFromServerJSON.sendUserIsTyping == true) {
+                settingFromServerJSON.userTypingInterval?.let { interval ->
+                    chatEventListener?.setUserTypingInterval(interval)
+                }
+            } else {
                 chatEventListener?.setUserTyping(false)
             }
 
-            /**
-             * Проверяет доступен ли чат для общения
-             */
-            if (apiResponse.contains("\"block\":false")){
-                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat not closed")
-            }
-            else {
-                val str = apiResponse
-
-                val startIndex = str.indexOf("\"blockMessage\":\"") + "\"blockMessage\":\"".length
-
-                val endIndex = str.indexOf("\",\"",startIndex)
-
-                val blockMessageStr = str.substring(startIndex, endIndex)
-
-                Log.d("TAG_SOCKET_API_SETTING","get Server setting, Chat closed")
-                chatEventListener?.setChatStateClosed(true,  blockMessageStr)
+            if (settingFromServerJSON.block == false) {
+                Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat not closed")
+            } else {
+                val blockMessageStr = settingFromServerJSON.blockMessage ?: ""
+                Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat closed")
+                chatEventListener?.setChatStateClosed(true, blockMessageStr)
             }
         }
         catch (e:Exception){
