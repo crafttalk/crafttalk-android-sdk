@@ -109,7 +109,6 @@ import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.PhoneMaskUtils
 import com.crafttalk.chat.utils.PhoneNumberTextWatcher
 import com.crafttalk.chat.utils.TypeFailUpload
-import com.redmadrobot.inputmask.MaskedTextChangedListener
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

@@ -55,7 +55,6 @@ ext {
     paginationVersion = '3.1.1'
     photoViewVersion = '2.3.0'
     securityPreferencesVersion = '1.1.0-alpha03'
-    inputMaskVersion = '6.0.0'
     junitVersion = '4.13.2'
     testRulesVersion = '1.4.0'
     testRunnerVersion = '1.4.0'
@@ -118,9 +117,6 @@ dependencies {
 
     // EncryptedSharedPreferences
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
-
-    // mask
-    implementation "com.redmadrobot:input-mask-android:6.0.0"
 
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test:rules:$testRulesVersion"
