@@ -388,9 +388,9 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
     private fun setAllListeners() {
         val code = PhoneMaskUtils.getCountryCodeBySim(context)
         val mask = PhoneMaskUtils.getPhoneMaskByCountryCode(code)
-        binding.authForm.phoneUser.apply {
-            addTextChangedListener(PhoneNumberTextWatcher(mask, code))
-        }
+        binding.authForm.phoneUser.addTextChangedListener(
+            PhoneNumberTextWatcher(binding.authForm.phoneUser, mask, code)
+        )
         binding.authForm.signIn.setOnClickListener(this)
         binding.chatPlace.sendMessage.setOnClickListener(this)
         binding.chatPlace.voiceInput.setOnTouchListener { view, motionEvent ->

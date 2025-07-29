@@ -1,17 +1,8 @@
 package com.crafttalk.sampleChat
 
-import android.util.Log
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
-import com.crafttalk.sampleChat.actions.*
-import com.crafttalk.sampleChat.chat_with_counter.ChatActivity
-import org.hamcrest.CoreMatchers.anyOf
+import com.crafttalk.sampleChat.chat_with_counter.ChatWithCounterActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +11,7 @@ import org.junit.runner.RunWith
 class ChatTest {
 
     @get:Rule
-    val activityRule = ActivityTestRule(ChatActivity::class.java)
+    val activityRule = ActivityTestRule(ChatWithCounterActivity::class.java)
 
     @Test
     fun testOpenAttachSpace() {

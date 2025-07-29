@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.auth.Visitor
@@ -21,7 +20,7 @@ import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.createCarouselWidget
 import com.google.android.material.snackbar.Snackbar
 
-class ChatFragment: Fragment(R.layout.fragment_chat) {
+class ChatFragment: Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -30,36 +29,42 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
     private var callbackResult: (isGranted: Boolean) -> Unit = {}
     private val inflater: LayoutInflater by lazy { LayoutInflater.from(context) }
 
+    private var isAuthWithForm: Boolean = false
+    private var visitor: Visitor? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        arguments?.let { bundle ->
+            isAuthWithForm = bundle.getBoolean("key_is_auth_with_form", false)
+            visitor = bundle.getSerializable("key_visitor") as? Visitor
+        }
+
         requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             callbackResult(isGranted)
         }
-
-        Log.d("CTALK_TEST_DALO", "data 2: ${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false)}; " +
-                "${activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true}" +
-                "${activity?.intent?.getSerializableExtra("key_visitor")};")
 
         Chat.init(
             requireContext(),
             getString(R.string.urlChatScheme),
             getString(R.string.urlChatHost),
             getString(R.string.urlChatNameSpace),
-            authType = (if (activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true)
-                AuthType.AUTH_WITH_FORM
-            else
-                AuthType.AUTH_WITHOUT_FORM).apply { Log.d("CTALK_TEST_DALO", "type: ${this};") },
+            authType = if (isAuthWithForm) AuthType.AUTH_WITH_FORM else AuthType.AUTH_WITHOUT_FORM
+                .also { Log.d("CTALK_TEST_DALO", "type: $it;") },
             fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
         )
         Chat.createSession()
         Chat.clearDBDialogHistory(requireContext())
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentChatBinding.inflate(inflater, container, false)
+        return _binding!!.root
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentChatBinding.bind(view)
-
         binding.chatView.visibility = View.VISIBLE
         binding.chatView.setMethodGetPayloadTypeWidget { widgetId ->
             when (widgetId) {
@@ -91,38 +96,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
         }
 
         binding.chatView.onViewCreated(this, viewLifecycleOwner)
-//        chat_view.setOnInternetConnectionListener(object : ChatInternetConnectionListener {
-//            override fun connect() { status_connection.visibility = View.GONE }
-//            override fun failConnect() { status_connection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
-//            override fun lossConnection() { status_connection.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
-//            override fun reconnect() { status_connection.visibility = View.GONE }
-//        })
-//        chat_view.setOnChatStateListener(object : ChatStateListener {
-//            override fun startSynchronization() { chat_state.visibility = if (search_place.isVisible) View.GONE else View.VISIBLE }
-//            override fun endSynchronization() { chat_state.visibility = View.GONE }
-//        })
-//        chat_view.setSearchListener(object : SearchListener {
-//            override fun start() {
-//                search_place.findViewById<EditText>(R.id.search_input).apply {
-//                    setCompoundDrawablesWithIntrinsicBounds(
-//                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_hourglass),
-//                        compoundDrawables[1],
-//                        compoundDrawables[2],
-//                        compoundDrawables[3]
-//                    )
-//                }
-//            }
-//            override fun stop() {
-//                search_place.findViewById<EditText>(R.id.search_input).apply {
-//                    setCompoundDrawablesWithIntrinsicBounds(
-//                        ContextCompat.getDrawable(context, com.crafttalk.chat.R.drawable.com_crafttalk_chat_ic_search),
-//                        compoundDrawables[1],
-//                        compoundDrawables[2],
-//                        compoundDrawables[3]
-//                    )
-//                }
-//            }
-//        })
         binding.chatView.setOnPermissionListener(object : ChatPermissionListener {
             override fun requestedPermissions(permissions: Array<String>, messages: Array<String>, action: () -> Unit) {
                 callbackResult = { isGranted ->
@@ -135,61 +108,21 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
                 requestPermission?.launch(permissions[0])
             }
         })
-//        search.setOnClickListener {
-//            search.visibility = View.GONE
-//            icon.visibility = View.GONE
-//            chat_state.visibility = View.GONE
-//            status_connection.visibility = View.GONE
-//            search_place.visibility = View.VISIBLE
-//            hideSoftKeyboard(chat_view)
-//        }
-//        search_place.findViewById<TextView>(R.id.search_cancel).setOnClickListener {
-//            search_place.visibility = View.GONE
-//            chat_state.visibility = View.GONE
-//            status_connection.visibility = View.GONE
-//            search.visibility = View.VISIBLE
-//            icon.visibility = View.VISIBLE
-//            search_place.findViewById<EditText>(R.id.search_input).text.clear()
-//            chat_view.onSearchCancelClick()
-//        }
-//        search_place.findViewById<EditText>(R.id.search_input).apply {
-//            setOnTouchListener { view, motionEvent ->
-//                val drawableLeft = 0
-//                val drawableRight = 2
-//
-//                if(motionEvent.action == MotionEvent.ACTION_UP) {
-//                    if(motionEvent.x + left >= (right - compoundDrawables[drawableRight].bounds.width() - compoundDrawablePadding)) {
-//                        text.clear()
-//                    } else if (motionEvent.x < (paddingLeft + compoundDrawables[drawableLeft].bounds.width())) {
-//                        chat_view.searchText(text.toString())
-//                    }
-//                }
-//                false
-//            }
-//            auto search
-//            addTextChangedListener(object : TextWatcher {
-//                override fun afterTextChanged(s: Editable?) {
-//                    chat_view.searchText(text.toString())
-//                }
-//                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//            })
-//        }
         binding.chatView.visibility = View.VISIBLE
     }
 
     override fun onResume() {
         super.onResume()
-        binding.chatView.visibility = View.VISIBLE
-        Chat.wakeUp(
-            (if (activity?.intent?.getBooleanExtra("key_is_auth_with_form", false) == true)
-                null
-            else
-                (activity?.intent?.getSerializableExtra("key_visitor") as? Visitor)!!).apply {
-                Log.d("CTALK_TEST_DALO", "getVisitor: ${this};")
+
+        if (isAuthWithForm) {
+            Chat.wakeUp(null)
+        } else {
+            if (visitor != null) {
+                Chat.wakeUp(visitor)
             }
-        )
-        binding.chatView.onResume()
+        }
+
+        binding.chatView.onResume(visitor)
     }
 
     override fun onStop() {
@@ -200,7 +133,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.chatView.onDestroyView()
         _binding = null
     }
 

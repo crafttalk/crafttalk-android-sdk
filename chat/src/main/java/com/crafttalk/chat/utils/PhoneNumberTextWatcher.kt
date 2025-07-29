@@ -2,8 +2,10 @@ package com.crafttalk.chat.utils
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.EditText
 
 class PhoneNumberTextWatcher(
+    private val editText: EditText,
     private val mask: String,
     private val countryCode: String
 ) : TextWatcher {
@@ -12,31 +14,42 @@ class PhoneNumberTextWatcher(
     private val fullPrefix = "$countryCode "
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
     override fun afterTextChanged(s: Editable?) {
         if (isUpdating || s == null) return
-        val digits = s.toString().filter { it.isDigit() }
 
-        var result = ""
+        val currentText = s.toString()
+
+        if (!currentText.startsWith(fullPrefix)) {
+            isUpdating = true
+            editText.setText(fullPrefix)
+            editText.setSelection(fullPrefix.length)
+            isUpdating = false
+            return
+        }
+
+        val input = currentText.removePrefix(fullPrefix)
+        val digits = input.filter { it.isDigit() }
+
+        var formatted = ""
         var digitIndex = 0
-
         for (char in mask) {
             if (char == '#') {
                 if (digitIndex < digits.length) {
-                    result += digits[digitIndex]
-                    digitIndex++
+                    formatted += digits[digitIndex++]
                 } else break
             } else {
-                result += char
+                if (digitIndex < digits.length) {
+                    formatted += char
+                } else break
             }
         }
 
-        val formatted = fullPrefix + result
-
         isUpdating = true
-        s.replace(0, s.length, formatted, 0, formatted.length)
+        val finalText = fullPrefix + formatted
+        editText.setText(finalText)
+        editText.setSelection(finalText.length)
         isUpdating = false
     }
 }

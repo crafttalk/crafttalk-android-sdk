@@ -4,20 +4,33 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.utils.HashUtils
-import com.crafttalk.sampleChat.chat.ChatActivity
-import com.crafttalk.sampleChat.chat_with_counter.ChatActivity as ChatWithCounterActivity
 import com.crafttalk.sampleChat.R
+import com.crafttalk.sampleChat.chat.ChatFragment
+import com.crafttalk.sampleChat.chat_with_counter.ChatWithCounterActivity
+import com.crafttalk.sampleChat.databinding.FragmentAuthBinding
 import com.crafttalk.sampleChat.web_view.WebViewActivity
 import java.util.*
-import com.crafttalk.sampleChat.databinding.FragmentAuthBinding
 
-class AuthFragment: Fragment(R.layout.fragment_auth) {
-    private var fragmentAuthBinding: FragmentAuthBinding? = null
+class AuthFragment: Fragment() {
+
+    private var _binding: FragmentAuthBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAuthBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     private val textListener = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
@@ -28,9 +41,6 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
     }
 
     private fun enableSignInWithAuth() {
-        val binding = FragmentAuthBinding.bind(requireView())
-        fragmentAuthBinding = binding
-
         binding.signInWithAuth.isEnabled = binding.switchAuthWithForm.isChecked ||
                 (binding.uuidUser.text.isNotBlank() || binding.firstNameUser.text.isNotBlank() ||
                         binding.lastNameUser.text.isNotBlank() ||
@@ -39,9 +49,6 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
     }
 
     private fun generateVisitor(isAnonymously: Boolean): Visitor? {
-        val binding = FragmentAuthBinding.bind(requireView())
-        fragmentAuthBinding = binding
-
         if (binding.switchAuthWithForm.isChecked) return null
         val uuid = binding.uuidUser.text.toString().ifEmpty { UUID.randomUUID().toString() }
         if (isAnonymously) {
@@ -83,23 +90,26 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
     }
 
     private fun openChat(isAnonymously: Boolean) {
-        val binding = FragmentAuthBinding.bind(requireView())
-        fragmentAuthBinding = binding
-        startActivity(
-            Intent(requireContext(), ChatActivity::class.java).apply {
-                putExtra("key_is_auth_with_form", binding.switchAuthWithForm.isChecked)
-                putExtra("key_visitor", generateVisitor(isAnonymously))
+        val isAuthWithForm = binding.switchAuthWithForm.isChecked
+        val visitor = if (!isAuthWithForm) generateVisitor(isAnonymously) else null
+        val chatFragment = ChatFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean("key_is_auth_with_form", isAuthWithForm)
+                putSerializable("key_visitor", visitor)
             }
-        )
+        }
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_view, chatFragment)
+            .addToBackStack(null)
+            .commit()
     }
+
 
     private var lastTypeAuth: TypeAuth? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentAuthBinding.bind(view)
-        fragmentAuthBinding = binding
-
         binding.uuidUser.addTextChangedListener(textListener)
         binding.firstNameUser.addTextChangedListener(textListener)
         binding.lastNameUser.addTextChangedListener(textListener)
@@ -141,5 +151,10 @@ class AuthFragment: Fragment(R.layout.fragment_auth) {
         binding.signInWebView.setOnClickListener {
             startActivity(Intent(requireContext(), WebViewActivity::class.java))
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
