@@ -140,12 +140,15 @@ class JavaScriptInterface(private val context: Context, private val activity:Act
                     })
                     .then(async response => {
                         const blob = await response.blob();
-                        console.log(blob);
                         var reader = new FileReader();
                         reader.readAsDataURL(blob);
                         reader.onloadend = function() {
+                        
+                            const link = document.querySelector(`a[href="${blobUrl}"]`);
+                            const filename = link ? link.getAttribute('download') : 'file';
+                            
                             base64data = reader.result;
-                            Android.getBase64FromBlobData(base64data);
+                            Android.getBase64FromBlobData(base64data, filename);
                         }
                     })
                     .catch(error => {
