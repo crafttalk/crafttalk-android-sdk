@@ -12,7 +12,7 @@
     <string name="com_crafttalk_chat_stete_synchronization">Synchronization</string>
     <string name="com_crafttalk_chat_internet_connection_warning">Waiting for network…</string>
     <string name="com_crafttalk_chat_name_company">by CraftTalk</string>
-    <string name="com_crafttalk_chat_state_action_operator">Operator write message…</string>
+    <string name="com_crafttalk_chat_state_action_operator">The agent is typing a message…</string>
     <string name="com_crafttalk_chat_entry_field_hint">Enter your message…</string>
     <string name="com_crafttalk_chat_entry_field_hint_chat_off">Сhat unavailable</string>
 
