@@ -12,7 +12,14 @@ import com.crafttalk.chat.R
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.internet.InternetConnectionState
-import com.crafttalk.chat.domain.interactors.*
+import com.crafttalk.chat.domain.interactors.AuthInteractor
+import com.crafttalk.chat.domain.interactors.ConditionInteractor
+import com.crafttalk.chat.domain.interactors.ConfigurationInteractor
+import com.crafttalk.chat.domain.interactors.FeedbackInteractor
+import com.crafttalk.chat.domain.interactors.FileInteractor
+import com.crafttalk.chat.domain.interactors.MessageInteractor
+import com.crafttalk.chat.domain.interactors.SearchInteractor
+import com.crafttalk.chat.domain.interactors.SearchItem
 import com.crafttalk.chat.presentation.base.BaseViewModel
 import com.crafttalk.chat.presentation.feature.view_picture.ShowMediaDialog2
 import com.crafttalk.chat.presentation.helper.groupers.groupPageByDate
@@ -50,11 +57,11 @@ class ChatViewModel
     val openDocument = MutableLiveData<Pair<IOFile?, Boolean>?>()
     val mergeHistoryBtnVisible = MutableLiveData(false)
     val mergeHistoryProgressVisible = MutableLiveData(false)
-    var userTypingInterval:Int = 1000
-    var userTyping:Boolean = true
-    var chatIsClosed:Boolean = false
-    var chatClosedMessage:String = ""
-    var dialogID1:String? = null
+    var userTypingInterval: Int = 1000
+    var userTyping: Boolean = true
+    var chatIsClosed: Boolean = false
+    var chatClosedMessage: String = ""
+    var dialogID1: String? = null
 
     var searchText: String? = null
     val showSearchNavigate: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -63,7 +70,8 @@ class ChatViewModel
     val searchCoincidenceText: MutableLiveData<String> = MutableLiveData()
     val searchScrollToPosition: MutableLiveData<SearchItem?> = MutableLiveData()
 
-    val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> = MutableLiveData()
+    val uploadMessagesForUser: MutableLiveData<LiveData<PagedList<MessageModel>>> =
+        MutableLiveData()
     val replyMessage: MutableLiveData<MessageModel?> = MutableLiveData(null)
     val replyMessagePosition: MutableLiveData<Int?> = MutableLiveData(null)
 
@@ -74,7 +82,7 @@ class ChatViewModel
         val dataSource = messageInteractor.getAllMessages()
             .map { (messageModelMapper(it, context)) }
             .mapByPage { groupPageByDate(it) }
-        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder(
+        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel> = LivePagedListBuilder(
             dataSource,
             config
         ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
@@ -87,15 +95,18 @@ class ChatViewModel
         }).setInitialLoadKey(initialLoadKey)
         uploadMessagesForUser.postValue(pagedListBuilder.build())
     }
+
     private fun syncMessagesAcrossDevices(indexFirstUnreadMessage: Int) {
         initialLoadKey = indexFirstUnreadMessage
         uploadMessages()
     }
+
     private fun deliverMessagesToUser() {
         if (uploadMessagesForUser.value == null) {
             uploadMessages()
         }
     }
+
     private val eventStateHistoryLoaded: (isAllHistoryLoaded: Boolean) -> Unit = {
         isAllHistoryLoaded = it
     }
@@ -110,31 +121,32 @@ class ChatViewModel
             updateSearchMessagePosition = searchInteractor::updateMessagePosition
         )
     }
-    private val updateCurrentReadMessageTime: (List<Pair<String, Long>>) -> Boolean = { newTimeMarks ->
-        //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 1 newTimeMark - $newTimeMarks; currentReadMessageTime - ${currentReadMessageTime}")
-        newTimeMarks.forEach { pair ->
-            val id = pair.first
-            val time = pair.second
-            if (time > currentReadMessageTime) {
-                launchIO {
-                    //Log.d("CTALK_TEST_DATA_LOP", "readMessage id - ${id}; time - ${time};")
-                    messageInteractor.readMessage(
-                        messageId = id
-                    )
+    private val updateCurrentReadMessageTime: (List<Pair<String, Long>>) -> Boolean =
+        { newTimeMarks ->
+            //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 1 newTimeMark - $newTimeMarks; currentReadMessageTime - ${currentReadMessageTime}")
+            newTimeMarks.forEach { pair ->
+                val id = pair.first
+                val time = pair.second
+                if (time > currentReadMessageTime) {
+                    launchIO {
+                        //Log.d("CTALK_TEST_DATA_LOP", "readMessage id - ${id}; time - ${time};")
+                        messageInteractor.readMessage(
+                            messageId = id
+                        )
+                    }
                 }
             }
+            val maxTime = newTimeMarks.maxByOrNull { it.second }?.second
+            //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 2 currentReadMessageTime - $currentReadMessageTime; maxTime - $maxTime;")
+            if (maxTime != null && maxTime > currentReadMessageTime) {
+                currentReadMessageTime = maxTime
+                //.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 3 true;")
+                true
+            } else {
+                //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 4 false;")
+                false
+            }
         }
-        val maxTime = newTimeMarks.maxByOrNull { it.second }?.second
-        //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 2 currentReadMessageTime - $currentReadMessageTime; maxTime - $maxTime;")
-        if (maxTime != null && maxTime > currentReadMessageTime) {
-            currentReadMessageTime = maxTime
-            //.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 3 true;")
-            true
-        } else {
-            //Log.d("CTALK_TEST_DATA_LOP", "updateCurrentReadMessageTime 4 false;")
-            false
-        }
-    }
 
     val internetConnectionState: MutableLiveData<InternetConnectionState> = MutableLiveData()
     val displayableUIObject = MutableLiveData(DisplayableUIObject.NOTHING)
@@ -144,10 +156,12 @@ class ChatViewModel
             mergeHistoryProgressVisible.postValue(false)
             mergeHistoryBtnVisible.postValue(true)
         }
+
         override fun startMerge() {
             mergeHistoryBtnVisible.postValue(false)
             mergeHistoryProgressVisible.postValue(true)
         }
+
         override fun endMerge() {
             mergeHistoryProgressVisible.postValue(false)
             mergeHistoryBtnVisible.postValue(false)
@@ -159,34 +173,57 @@ class ChatViewModel
             launchUI { clientInternetConnectionListener?.connect() }
             internetConnectionState.postValue(InternetConnectionState.HAS_INTERNET)
         }
+
         override fun failConnect() {
             launchUI { clientInternetConnectionListener?.failConnect() }
             internetConnectionState.postValue(InternetConnectionState.NO_INTERNET)
         }
+
         override fun lossConnection() {
             launchUI { clientInternetConnectionListener?.lossConnection() }
             internetConnectionState.postValue(InternetConnectionState.NO_INTERNET)
         }
+
         override fun reconnect() {
             launchUI { clientInternetConnectionListener?.reconnect() }
             internetConnectionState.postValue(InternetConnectionState.RECONNECT)
         }
     }
     private val chatEventListener = object : ChatEventListener {
-        override fun operatorStartWriteMessage() { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE) }
-        override fun operatorStopWriteMessage()  { displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE) }
-        override fun finishDialog(dialogId:String?) {
+        override fun operatorStartWriteMessage() {
+            displayableUIObject.postValue(DisplayableUIObject.OPERATOR_START_WRITE_MESSAGE)
+        }
+
+        override fun operatorStopWriteMessage() {
+            displayableUIObject.postValue(DisplayableUIObject.OPERATOR_STOP_WRITE_MESSAGE)
+        }
+
+        override fun finishDialog(dialogId: String?) {
             feedbackContainerVisible.postValue(true)
             dialogID1 = dialogId
         }
-        override fun showUploadHistoryBtn() { mergeHistoryListener.showDialog() }
+
+        override fun showUploadHistoryBtn() {
+            mergeHistoryListener.showDialog()
+        }
+
         override fun synchronized() {
             launchUI { chatStateListener?.endSynchronization() }
             displayableUIObject.postValue(DisplayableUIObject.CHAT)
         }
-        override fun updateDialogScore(){displayableUIObject.postValue(DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER)}
-        override fun setUserTypingInterval(int: Int) {userTypingInterval = int}
-        override fun setUserTyping(boolean: Boolean) {userTyping = boolean }
+
+        override fun updateDialogScore() {
+            displayableUIObject.postValue(DisplayableUIObject.CLOSE_FEEDBACK_CONTAINER)
+        }
+
+        override fun setUserTypingInterval(int: Int) {
+            userTypingInterval = int
+        }
+
+        override fun setUserTyping(boolean: Boolean) {
+            userTyping = boolean
+        }
+
         override fun setChatStateClosed(boolean: Boolean, string: String) {
             chatIsClosed = boolean
             chatClosedMessage = string
@@ -214,7 +251,9 @@ class ChatViewModel
                     successAuthUi = ::deliverMessagesToUser,
                     sync = sync,
                     failAuthUi = { displayableUIObject.postValue(DisplayableUIObject.WARNING) },
-                    firstLogInWithForm = { displayableUIObject.value = DisplayableUIObject.FORM_AUTH },
+                    firstLogInWithForm = {
+                        displayableUIObject.value = DisplayableUIObject.FORM_AUTH
+                    },
                     updateCurrentReadMessageTime = updateCurrentReadMessageTime,
                     chatEventListener = chatEventListener
                 )
@@ -299,20 +338,30 @@ class ChatViewModel
         }
     }
 
-    fun openImage(imageName: String, imageUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
+    fun openImage(
+        imageName: String,
+        imageUrl: String,
+        downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit
+    ) {
         val intent = Intent(context, ShowMediaDialog2::class.java)
-        intent.putExtra("url",imageUrl)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("url", imageUrl)
         intent.putExtra("imageName", imageName)
-        intent.putExtra("typeFile",TypeFile.IMAGE.toString())
-        startActivity(context,intent,null)
+        intent.putExtra("typeFile", TypeFile.IMAGE.toString())
+        startActivity(context, intent, null)
     }
 
-    fun openGif(gifName: String, gifUrl: String, downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit) {
+    fun openGif(
+        gifName: String,
+        gifUrl: String,
+        downloadFun: (fileName: String, fileUrl: String, fileType: TypeFile) -> Unit
+    ) {
         val intent = Intent(context, ShowMediaDialog2::class.java)
-        intent.putExtra("url",gifUrl)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("url", gifUrl)
         intent.putExtra("imageName", gifName)
-        intent.putExtra("typeFile",TypeFile.GIF.toString())
-        startActivity(context,intent,null)
+        intent.putExtra("typeFile", TypeFile.GIF.toString())
+        startActivity(context, intent, null)
 
     }
 
@@ -336,9 +385,14 @@ class ChatViewModel
 
     fun selectReplyMessage(messageId: String) {
         launchIO {
-            replyMessagePosition.postValue(messageInteractor.getCountMessagesInclusiveTimestampById(messageId))
+            replyMessagePosition.postValue(
+                messageInteractor.getCountMessagesInclusiveTimestampById(
+                    messageId
+                )
+            )
         }
     }
+
     /**Отправляет системное сообщение с оценкой диалога
      * Вызывается когда пользоватль нажимает на звездочки
      *
@@ -347,7 +401,7 @@ class ChatViewModel
      *      Если клиент закрывает чат не оценивая диалог то нужно отправить "CLOSED_BY_CLIENT".
      *      dialogID:String -- ID диалога который нужно оценить, если null то оценивается самый последний диалог
      */
-    fun giveFeedbackOnOperator(countStars: Int?, finishReason:String?, dialogID:String?) {
+    fun giveFeedbackOnOperator(countStars: Int?, finishReason: String?, dialogID: String?) {
         launchIO {
             feedbackInteractor.giveFeedbackOnOperator(countStars, finishReason, dialogID)
         }
@@ -368,40 +422,66 @@ class ChatViewModel
         }
     }
 
-    fun sendServiceMessageUserIsTypingText(message: String){
+    fun sendServiceMessageUserIsTypingText(message: String) {
         launchIO {
             messageInteractor.sendServiceMessageUserIsTypingText(message)
         }
 
     }
 
-    fun sendServiceMessageUserStopTypingText(){
+    fun sendServiceMessageUserStopTypingText() {
         launchIO {
             messageInteractor.sendServiceMessageUserStopTypingText()
         }
     }
 
     fun sendFile(file: DomainFile) {
-        launchIO { fileInteractor.uploadFile(file) { responseCode, responseMessage ->
-            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
-        }}
+        launchIO {
+            fileInteractor.uploadFile(file) { responseCode, responseMessage ->
+                uploadFileListener?.let { listener ->
+                    handleUploadFile(
+                        listener,
+                        responseCode,
+                        responseMessage
+                    )
+                }
+            }
+        }
     }
 
     fun sendFiles(fileList: List<DomainFile>) {
-        launchIO { fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
-            uploadFileListener?.let { listener -> handleUploadFile(listener, responseCode, responseMessage) }
-        }}
+        launchIO {
+            fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
+                uploadFileListener?.let { listener ->
+                    handleUploadFile(
+                        listener,
+                        responseCode,
+                        responseMessage
+                    )
+                }
+            }
+        }
     }
 
-    fun uploadSearchMessages(searchText: String, currentSearchItem: SearchItem?): LiveData<PagedList<MessageModel>> {
+    fun uploadSearchMessages(
+        searchText: String,
+        currentSearchItem: SearchItem?
+    ): LiveData<PagedList<MessageModel>> {
         val config = PagedList.Config.Builder()
             .setPageSize(ChatParams.pageSize)
             .build()
         val dataSource = messageInteractor.getAllMessages()
             .map { (messageModelMapper(it, context)) }
-            .map { messageSearchMapper(it, searchText.trim(), currentSearchItem, searchInteractor.getAllSearchedItems()) }
+            .map {
+                messageSearchMapper(
+                    it,
+                    searchText.trim(),
+                    currentSearchItem,
+                    searchInteractor.getAllSearchedItems()
+                )
+            }
             .mapByPage { groupPageByDate(it) }
-        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel>  = LivePagedListBuilder(
+        val pagedListBuilder: LivePagedListBuilder<Int, MessageModel> = LivePagedListBuilder(
             dataSource,
             config
         ).setBoundaryCallback(object : PagedList.BoundaryCallback<MessageModel>() {
@@ -539,9 +619,15 @@ class ChatViewModel
         }
     }
 
-    fun updateCountUnreadMessages(timestampLastMessage: Long? = null, actionUiAfter: (Int) -> Unit = {}) {
+    fun updateCountUnreadMessages(
+        timestampLastMessage: Long? = null,
+        actionUiAfter: (Int) -> Unit = {}
+    ) {
         launchIO {
-            val unreadMessagesCount = messageInteractor.getCountUnreadMessages(currentReadMessageTime, timestampLastMessage)
+            val unreadMessagesCount = messageInteractor.getCountUnreadMessages(
+                currentReadMessageTime,
+                timestampLastMessage
+            )
             unreadMessagesCount?.run(countUnreadMessages::postValue)
             launchUI {
                 unreadMessagesCount?.run(actionUiAfter)
