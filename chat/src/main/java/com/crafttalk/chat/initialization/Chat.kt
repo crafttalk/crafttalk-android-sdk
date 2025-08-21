@@ -1,6 +1,12 @@
 package com.crafttalk.chat.initialization
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.crafttalk.chat.R
 import com.crafttalk.chat.di.DaggerSdkComponent
 import com.crafttalk.chat.di.SdkComponent
@@ -10,6 +16,8 @@ import com.crafttalk.chat.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -25,6 +33,8 @@ object Chat {
     private var notificationInteractor: NotificationInteractor? = null
     private var personInteractor: PersonInteractor? = null
     private var sdkComponent: SdkComponent? = null
+
+    private val Context.dataStore by preferencesDataStore(name = "user_UUID")
 
     internal fun getSdkComponent(): SdkComponent = sdkComponent ?: throw IllegalStateException("You must call the init method before going to the chat.")
 
@@ -102,7 +112,29 @@ object Chat {
         conditionInteractor?.destroySessionChat()
     }
 
-    fun wakeUp(visitor: Visitor?) {
+    fun wakeUp(context: Context, visitor: Visitor?) {
+        val usernameKey = stringPreferencesKey("userUUID")
+        scopeIO.launch {
+            val uuid = context.dataStore.data
+                .map { preferences ->
+                    preferences[usernameKey] ?: "cant read"
+                }
+                .first()
+            if (uuid != visitor?.uuid) {
+                Log.d("CTALK_Chat.kt","new UUID detected")
+                context.dataStore.edit { preferences ->
+                    preferences[usernameKey] = visitor?.uuid.toString()
+                }
+                clearDBDialogHistory(context)
+            }
+        }
+        conditionInteractor?.openApp()
+        authInteractor?.logIn(
+            visitor = visitor
+        )
+    }
+
+    fun wakeUp(visitor: Visitor?){
         conditionInteractor?.openApp()
         authInteractor?.logIn(
             visitor = visitor

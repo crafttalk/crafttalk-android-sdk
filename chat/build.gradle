@@ -71,6 +71,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.3.2"
     implementation "androidx.fragment:fragment-ktx:1.8.0"
     implementation "androidx.activity:activity-ktx:1.9.0"
+    implementation "androidx.datastore:datastore-preferences:1.1.7"
     implementation "com.google.android.material:material:1.12.0"
     implementation "com.google.dagger:dagger:2.52"
     kapt "com.google.dagger:dagger-compiler:2.52"
