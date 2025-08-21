@@ -33,6 +33,7 @@ object Chat {
     private var notificationInteractor: NotificationInteractor? = null
     private var personInteractor: PersonInteractor? = null
     private var sdkComponent: SdkComponent? = null
+    private lateinit var appContext: Context
 
     private val Context.dataStore by preferencesDataStore(name = "user_UUID")
 
@@ -93,6 +94,7 @@ object Chat {
         ChatParams.fileReadTimeout = fileReadTimeout
         ChatParams.fileWriteTimeout = fileWriteTimeout
         ChatParams.fileCallTimeout = fileCallTimeout
+        appContext = context.applicationContext
         initDI(context)
     }
 
@@ -112,29 +114,23 @@ object Chat {
         conditionInteractor?.destroySessionChat()
     }
 
-    fun wakeUp(context: Context, visitor: Visitor?) {
+
+    fun wakeUp(visitor: Visitor?) {
         val usernameKey = stringPreferencesKey("userUUID")
         scopeIO.launch {
-            val uuid = context.dataStore.data
+            val uuid = appContext.dataStore.data
                 .map { preferences ->
                     preferences[usernameKey] ?: "cant read"
                 }
                 .first()
             if (uuid != visitor?.uuid) {
                 Log.d("CTALK_Chat.kt","new UUID detected")
-                context.dataStore.edit { preferences ->
+                appContext.dataStore.edit { preferences ->
                     preferences[usernameKey] = visitor?.uuid.toString()
                 }
-                clearDBDialogHistory(context)
+                clearDBDialogHistory(appContext)
             }
         }
-        conditionInteractor?.openApp()
-        authInteractor?.logIn(
-            visitor = visitor
-        )
-    }
-
-    fun wakeUp(visitor: Visitor?){
         conditionInteractor?.openApp()
         authInteractor?.logIn(
             visitor = visitor

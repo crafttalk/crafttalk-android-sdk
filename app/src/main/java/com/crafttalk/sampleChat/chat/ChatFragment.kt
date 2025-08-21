@@ -115,10 +115,10 @@ class ChatFragment: Fragment() {
         super.onResume()
 
         if (isAuthWithForm) {
-            Chat.wakeUp(requireContext(),null)
+            Chat.wakeUp(null)
         } else {
             if (visitor != null) {
-                Chat.wakeUp(requireContext() ,visitor)
+                Chat.wakeUp(visitor)
             }
         }
 
