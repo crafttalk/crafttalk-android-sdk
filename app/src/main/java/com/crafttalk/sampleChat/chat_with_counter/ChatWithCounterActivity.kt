@@ -74,7 +74,7 @@ class ChatWithCounterActivity: AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Chat.wakeUp(this.baseContext,getVisitor(this))
+        Chat.wakeUp(getVisitor(this))
     }
 
     override fun onStop() {

@@ -120,7 +120,7 @@ object Chat {
         scopeIO.launch {
             val uuid = appContext.dataStore.data
                 .map { preferences ->
-                    preferences[usernameKey] ?: "cant read"
+                    preferences[usernameKey] ?: "cant read" //ошибка чтения
                 }
                 .first()
             if (uuid != visitor?.uuid) {
