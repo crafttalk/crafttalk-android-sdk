@@ -30,6 +30,7 @@ import io.socket.client.Socket
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import okhttp3.OkHttpClient
+import org.checkerframework.checker.regex.qual.Regex
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
@@ -534,6 +535,19 @@ class SocketApi(
                 }
             }
             (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
+//                if (messageSocket.attachmentType == "IMAGE/STICKER") {
+//                    messageSocket.attachmentType = "IMAGE"
+//                    //attachmentName must contain type .jpeg or .png
+//                    if (!messageSocket.attachmentName!!.contains(Regex(".+\\.(jpeg|jpg|png)$"))) {
+//                        val regex = Regex("\\.(\\w+)$")
+//                        val dataType =
+//                            regex.find(messageSocket.attachmentUrl ?: "")
+//                        if (dataType != null) {
+//                            messageSocket.attachmentName =
+//                                "${messageSocket.attachmentName}.${dataType?.groups?.get(1)?.value}"
+//                        }
+//                    }
+//                }
                 messageSocket.correctAttachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
