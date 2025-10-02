@@ -311,10 +311,11 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
+    lateinit var chatAttr: ChatAttr
     @SuppressLint("ResourceType")
     private fun customizationChat(attrArr: TypedArray) {
 
-        val chatAttr = ChatAttr.getInstance(attrArr, context)
+        chatAttr = ChatAttr.getInstance(attrArr, context)
 
         // set color
         binding.chatPlace.sendMessage.setColorFilter(chatAttr.colorMain, PorterDuff.Mode.SRC_IN)
@@ -348,7 +349,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             chatAttr.showInternetConnectionState || chatAttr.showChatState -> View.INVISIBLE
             else -> View.GONE
         }
-        binding.chatPlace.voiceInput.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.VISIBLE
+        binding.chatPlace.voiceInput.visibility = if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
         binding.chatPlace.userFeedback.feedbackTitle.apply {
             setTextColor(ChatAttr.getInstance().colorFeedbackTitle)
             setTextSize(TypedValue.COMPLEX_UNIT_PX, ChatAttr.getInstance().sizeFeedbackTitle)
@@ -795,6 +796,7 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             })
         }
         viewModel.feedbackContainerVisible.observe(lifecycleOwner) {
+            binding.chatPlace.voiceInput.visibility = if (it) View.GONE else if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
             binding.chatPlace.userFeedback.root.visibility = if (it) {
                 View.VISIBLE
             } else {
