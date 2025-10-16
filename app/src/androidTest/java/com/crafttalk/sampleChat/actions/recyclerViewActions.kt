@@ -7,11 +7,7 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import com.crafttalk.chat.presentation.adapters.AdapterListMessages
 import com.crafttalk.chat.presentation.holders.HolderAction
-import com.crafttalk.chat.presentation.model.FileMessageItem
-import com.crafttalk.chat.presentation.model.GifMessageItem
-import com.crafttalk.chat.presentation.model.ImageMessageItem
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 

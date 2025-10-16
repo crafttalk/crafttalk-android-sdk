@@ -87,4 +87,8 @@ interface IMessageRepository {
     fun removeAllMessages()
 
     fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit)
+
+    fun extractLinksFromHtmlMarkdown (networkMessages:MutableList<NetworkMessage>?): MutableList<NetworkMessage>
+
+    fun checkCorrectImageName (networkMessages:MutableList<NetworkMessage>?): MutableList<NetworkMessage>
 }

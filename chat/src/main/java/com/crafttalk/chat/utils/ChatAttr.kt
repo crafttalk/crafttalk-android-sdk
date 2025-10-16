@@ -210,6 +210,7 @@ private constructor(
     val layoutItemOperatorTextMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_text_message)
     val layoutItemOperatorImageMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_image_message)
     val layoutItemOperatorGifMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_gif_message)
+    val layoutItemOperatorStickerMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_sticker_message)
     val layoutItemOperatorFileMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_file_message)
     val layoutItemOperatorUnionMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_operator_union_message)
     val layoutItemTransferMessage: Int? = attrArr.getResourceIdOrNull(R.styleable.ChatView_layout_item_transfer_message)
@@ -238,6 +239,7 @@ private constructor(
     val colorFeedbackTitle = attrArr.getColor(R.styleable.ChatView_color_feedback_title, ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_707070))
     val sizeFeedbackTitle = attrArr.getDimensionPixelSize(R.styleable.ChatView_size_feedback_title, context.resources.getDimensionPixelSize(R.dimen.com_crafttalk_chat_default_size_feedback_title)).toFloat()
     val colorFeedbackStar = attrArr.getColor(R.styleable.ChatView_color_feedback_star, colorMain)
+    val feedbackTitleBlockEnteringMessage = attrArr.getBoolean(R.styleable.ChatView_feedback_title_block_entering_message, false)
 
 //    voice input
     val showVoiceInput = attrArr.getBoolean(R.styleable.ChatView_show_voice_input, false)

@@ -57,6 +57,7 @@ fun TextView.setTime(message: MessageModel) {
         message is TextMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorTextMessageTime)
         message is ImageMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorImageMessageTime)
         message is GifMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorGifMessageTime)
+        message is StickerMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorGifMessageTime)
         message is FileMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorFileMessageTime)
         message is UnionMessageItem && message.role == Role.OPERATOR -> setTextColor(ChatAttr.getInstance().colorOperatorTextMessageTime)
         message is WidgetMessageItem -> setTextColor(ChatAttr.getInstance().colorOperatorWidgetMessageTime)

@@ -61,7 +61,10 @@ class FileRepository
     }
 
     private fun uploadFile(uuid: String, fileName: String, fileRequestBody: RequestBody, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
-        val body: MultipartBody.Part = MultipartBody.Part.createFormData(ApiParams.FILE_FIELD_NAME, fileName, fileRequestBody)
+        val body: MultipartBody.Part = MultipartBody.Part.createFormData(
+            ApiParams.FILE_FIELD_NAME,
+            fileName,
+            fileRequestBody)
         val fileNameRequestBody = RequestBody.create(
             ContentTypeValue.TEXT_PLAIN.value.toMediaTypeOrNull(),
             fileName
@@ -100,7 +103,7 @@ class FileRepository
                 uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
             TypeUpload.MULTIPART -> {
-                val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(file.uri) ?: return
+                val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(file.uri, fileName) ?: return
                 uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
             }
         }

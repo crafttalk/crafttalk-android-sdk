@@ -63,7 +63,6 @@ data class NetworkMessage (
     val dialogId: String? = null
 
 ) : Serializable {
-
     val isText: Boolean
     get() = !message.isNullOrBlank()
 
@@ -94,6 +93,7 @@ data class NetworkMessage (
      * **/
     val isMarkdownImage: Boolean
         get() = !attachmentUrl.isNullOrEmpty() &&
+                attachmentTypeFile != TypeFile.STICKER &&
                 !attachmentType.isNullOrEmpty() &&
                 (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
                     ChatParams.locale!!).startsWith("image"))
@@ -109,14 +109,20 @@ data class NetworkMessage (
                 !attachmentName.isNullOrEmpty() &&
                 !attachmentType.isNullOrEmpty()
 
+    val isSticker: Boolean
+        get() = !attachmentUrl.isNullOrEmpty() &&
+                !attachmentType.isNullOrEmpty() &&
+                attachmentType!!.contains("IMAGE/STICKER", ignoreCase = true)
+
     val isContainsContent: Boolean
-    get() = isText || isImage || isGif || isFile
+    get() = isText || isImage || isGif || isFile || isSticker
 
     val attachmentTypeFile: TypeFile?
     get() = when {
         isFile -> TypeFile.FILE
         isImage -> TypeFile.IMAGE
         isGif -> TypeFile.GIF
+        isSticker -> TypeFile.STICKER
         isUnknownType -> TypeFile.FILE
         else -> null
     }

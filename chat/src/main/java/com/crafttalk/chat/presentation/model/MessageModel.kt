@@ -20,6 +20,24 @@ sealed class MessageModel(
     }
 }
 
+data class StickerMessageItem(
+    override val id: String,
+    override val role: Role,
+    val sticker: FileModel,
+    override val timestamp: Long,
+    override val authorName: String,
+    override val authorPreview: String?,
+    override val stateCheck: StateMessage
+) : MessageModel(id, role, timestamp, authorName, authorPreview, stateCheck) {
+    override fun getLayout(): Int {
+        return when(role) {
+            USER -> R.layout.com_crafttalk_chat_item_user_sticker_message
+            OPERATOR -> R.layout.com_crafttalk_chat_item_server_sticker_message
+            NEUTRAL -> R.layout.com_crafttalk_chat_item_default_message
+        }
+    }
+}
+
 data class DefaultMessageItem(
     override val id: String,
     override val timestamp: Long

@@ -8,6 +8,8 @@ import com.crafttalk.chat.data.ContentTypeValue
 import com.crafttalk.chat.data.helper.converters.file.convertToBase64
 import com.crafttalk.chat.data.helper.converters.file.convertToFile
 import com.crafttalk.chat.domain.entity.file.TypeFile
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,19 +21,34 @@ class RequestHelper
     private val context: Context
 ) {
 
-    fun generateMultipartRequestBody(uri: Uri): RequestBody? {
+    fun getMimeType(fileName: String): MediaType {
+        val ext = fileName.substringAfterLast('.').lowercase()
+        val mime = when (ext) {
+            "jpg", "jpeg" -> "image/jpeg"
+            "png" -> "image/png"
+            "pdf" -> "application/pdf"
+            "doc" -> "application/msword"
+            "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            else -> "application/octet-stream"
+        }
+        return mime.toMediaType()
+    }
+
+    fun generateMultipartRequestBody(uri: Uri, filename: String): RequestBody? {
+        val mimeType: MediaType =  getMimeType(filename)
         return context.contentResolver.openInputStream(uri)?.readBytes()?.let { bytes ->
             RequestBody.create(
-                MultipartBody.FORM,
+                mimeType,
                 bytes
             )
         }
     }
 
-    fun generateMultipartRequestBody(file: File): RequestBody {
+    fun generateMultipartRequestBody(file: File, filename: String): RequestBody {
+        val mimeType: MediaType =  getMimeType(filename)
         return file.readBytes().let { bytes ->
             RequestBody.create(
-                MultipartBody.FORM,
+                mimeType,
                 bytes
             )
         }

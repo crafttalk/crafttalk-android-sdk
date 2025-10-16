@@ -63,6 +63,7 @@ class ShowMediaDialog2 : AppCompatActivity(),View.OnClickListener {
                 when (fileTypeData){
                     "IMAGE" -> {fileType = TypeFile.IMAGE}
                     "GIF" -> {fileType = TypeFile.GIF}
+                    "STICKER" -> {fileType = TypeFile.STICKER}
                     else -> {fileType = TypeFile.FILE}
                 }
                 downloadFile?.invoke(fileName, fileUrl, fileType)

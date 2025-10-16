@@ -43,6 +43,10 @@ open class AdapterListMessages(
             { gifName, gifUrl -> openGif(gifName, gifUrl, downloadFile) }
             R.layout.com_crafttalk_chat_item_server_gif_message -> HolderOperatorGifMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorGifMessage ?: viewType), downloadFile, updateData)
             { gifName, gifUrl -> openGif(gifName, gifUrl, downloadFile) }
+
+            R.layout.com_crafttalk_chat_item_server_sticker_message -> HolderOperatorStickerMessage(parent.inflate(ChatAttr.getInstance().layoutItemOperatorStickerMessage ?: viewType), downloadFile, updateData)
+            { gifName, stickerUrl -> openImage(gifName, stickerUrl, downloadFile) }
+
             R.layout.com_crafttalk_chat_item_user_union_message -> HolderUserUnionMessage(parent.inflate(ChatAttr.getInstance().layoutItemUserUnionMessage ?: viewType), downloadFile, updateData,
                 { gifName, gifUrl -> openGif(gifName, gifUrl, downloadFile) },
                 { imageName, imageUrl -> openImage(imageName, imageUrl, downloadFile) },
