@@ -13,7 +13,7 @@ class VisitorInteractor
     fun getVisitor() : Visitor? {
         return when (ChatParams.authMode) {
             AuthType.AUTH_WITH_FORM -> {
-                visitorRepository.getVisitorFromSharedPreferences()
+                visitorRepository.getVisitorFromDataStore()
             }
             AuthType.AUTH_WITHOUT_FORM -> {
                 val visitor = visitorRepository.getVisitorFromClient() ?: throw Exception("Visitor must not be null!")
