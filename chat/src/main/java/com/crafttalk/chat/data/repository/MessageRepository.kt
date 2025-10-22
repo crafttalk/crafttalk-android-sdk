@@ -396,7 +396,7 @@ class MessageRepository
                 msg.message = ""
                 for (i in 0 until links.size){
                     var copy = msg.copy()
-                    copy.id += "_$i"
+                    copy.id = UUID.randomUUID().toString()
                     copy.attachmentUrl = links[i]
                     copy.attachmentName = names[i]
                     copy.attachmentType = "FILE"
