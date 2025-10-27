@@ -99,6 +99,7 @@ import com.crafttalk.chat.presentation.model.GifMessageItem
 import com.crafttalk.chat.presentation.model.ImageMessageItem
 import com.crafttalk.chat.presentation.model.InfoMessageItem
 import com.crafttalk.chat.presentation.model.MessageModel
+import com.crafttalk.chat.presentation.model.StickerMessageItem
 import com.crafttalk.chat.presentation.model.TextMessageItem
 import com.crafttalk.chat.presentation.model.TransferMessageItem
 import com.crafttalk.chat.presentation.model.TypeMultiple
@@ -796,11 +797,23 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             })
         }
         viewModel.feedbackContainerVisible.observe(lifecycleOwner) {
-            binding.chatPlace.voiceInput.visibility = if (it) View.GONE else if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
-            binding.chatPlace.userFeedback.root.visibility = if (it) {
-                View.VISIBLE
+            if (chatAttr.feedbackTitleBlockEnteringMessage) {
+                binding.chatPlace.entryField.visibility = if (it) View.GONE else View.VISIBLE
+                binding.chatPlace.lowerLimit.visibility = if (it) View.GONE else View.VISIBLE
+                binding.chatPlace.voiceInput.visibility =
+                    if (it) View.GONE else if (chatAttr.showVoiceInput) View.VISIBLE else View.GONE
+                binding.chatPlace.sendMessage.visibility = if (it) View.GONE else View.VISIBLE
+                binding.chatPlace.userFeedback.root.visibility = if (it) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
             } else {
-                View.GONE
+                binding.chatPlace.userFeedback.root.visibility = if (it) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
             }
         }
         viewModel.openDocument.observe(lifecycleOwner) {
@@ -948,6 +961,23 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
                         colorTextFileSize = ContextCompat.getColor(context, R.color.com_crafttalk_chat_gray_707070),
                         sizeTextFileSize = ChatAttr.getInstance().sizeUserRepliedFileSize
                     )
+                }
+
+                is StickerMessageItem -> {
+                    replyPreviewMediaFile.apply {
+                        visibility = VISIBLE
+                        settingMediaFile(true)
+                        loadMediaFile(
+                            id = it.id,
+                            mediaFile = (it as? StickerMessageItem)?.sticker,
+                            updateData = viewModel::updateData,
+                            isUserMessage = false,
+                            isUnionMessage = true,
+                            warningContainer = replyPreviewMediaFileWarning,
+                            maxHeight = 200,
+                            maxWidth = 200
+                        )
+                    }
                 }
 
                 is DefaultMessageItem -> {Unit}

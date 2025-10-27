@@ -17,7 +17,10 @@ import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.presentation.helper.ui.getSizeMediaFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightFile
 import com.crafttalk.chat.presentation.helper.ui.getWeightMediaFile
-import com.crafttalk.chat.utils.*
+import com.crafttalk.chat.utils.AuthType
+import com.crafttalk.chat.utils.ChatAttr
+import com.crafttalk.chat.utils.ChatParams
+import com.crafttalk.chat.utils.ChatStatus
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_DATABASE_INSERT
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_SOCKET_API_SETTING
@@ -27,10 +30,13 @@ import com.google.gson.GsonBuilder
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
-import org.checkerframework.checker.regex.qual.Regex
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
@@ -55,10 +61,13 @@ class SocketApi(
     private var failAuthUxFun: suspend () -> Unit = {}
     private var syncMessages: suspend () -> Unit = {}
     private var updateCurrentReadMessageTime: (newReadPoints: List<Pair<String, Long>>) -> Unit = {}
-    private var updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit = { _,_ -> }
-    private var updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit = {}
+    private var updateCountUnreadMessages: (countNewMessages: Int, hasUserMessage: Boolean) -> Unit =
+        { _, _ -> }
+    private var updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit =
+        {}
     private var getPersonPreview: suspend (personId: String) -> String? = { null }
-    private var updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit = { _,_ -> }
+    private var updatePersonName: suspend (personId: String?, currentPersonName: String?) -> Unit =
+        { _, _ -> }
     private var isAuthorized: Boolean = false
     private var isSynchronized: Boolean = false
     private val bufferNewMessages = mutableListOf<MessageEntity>()
@@ -101,9 +110,8 @@ class SocketApi(
                 Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat closed")
                 chatEventListener?.setChatStateClosed(true, blockMessageStr)
             }
-        }
-        catch (e:Exception){
-            Log.e(TAG_SOCKET_API_SETTING,e.message.toString())
+        } catch (e: Exception) {
+            Log.e(TAG_SOCKET_API_SETTING, e.message.toString())
         }
     }
 
@@ -128,7 +136,10 @@ class SocketApi(
                 }
                 isAuthorized = false
                 isSynchronized = false
-                Log.e(TAG_SOCKET,"Can't create socket. Incorrect URI, maybe: " + "${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}")
+                Log.e(
+                    TAG_SOCKET,
+                    "Can't create socket. Incorrect URI, maybe: " + "${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}"
+                )
                 null
             }
         }
@@ -148,12 +159,12 @@ class SocketApi(
 
     fun setInternetConnectionListener(listener: ChatInternetConnectionListener) {
         this.chatInternetConnectionListener = listener
-        Log.d(TAG_SOCKET_EVENT,"setInternetConnectionListener")
+        Log.d(TAG_SOCKET_EVENT, "setInternetConnectionListener")
     }
 
     fun setMessageListener(listener: ChatMessageListener) {
         this.chatMessageListener = listener
-        Log.d(TAG_SOCKET_EVENT,"setMessageListener")
+        Log.d(TAG_SOCKET_EVENT, "setMessageListener")
     }
 
     fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {
@@ -189,7 +200,7 @@ class SocketApi(
         chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
         socket?.run(::connectUser)
-        executorService.schedule(getSettingsFromServerTask,0,TimeUnit.MILLISECONDS)
+        executorService.schedule(getSettingsFromServerTask, 0, TimeUnit.MILLISECONDS)
     }
 
     private fun setAllListeners(socket: Socket) {
@@ -260,31 +271,50 @@ class SocketApi(
                 val gson = GsonBuilder()
                     .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
                     .create()
-                var messageSocket = NetworkMessage(UUID.randomUUID().toString(),null,-1,false,null,0)
+                var messageSocket =
+                    NetworkMessage(UUID.randomUUID().toString(), null, -1, false, null, 0)
                 try {
                     //messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java) ?: return@launch //philip, понятия не имею для чего это было сделано
-                    messageSocket = gson.fromJson(messageJson.toString(), NetworkMessage::class.java) ?: return@launch
+                    messageSocket =
+                        gson.fromJson(messageJson.toString(), NetworkMessage::class.java)
+                            ?: return@launch
+                } catch (e: Exception) {
+                    Log.e(
+                        TAG_SOCKET,
+                        "An error occurred while getting message from server. Info: " + e.message
+                    )
                 }
-                catch (e: Exception){
-                    Log.e(TAG_SOCKET, "An error occurred while getting message from server. Info: " + e.message)
-                }
-                if (messageSocket.attachmentName == null){
+                if (messageSocket.attachmentName == null) {
                     messageSocket.attachmentName = UUID.randomUUID().toString()
                 }
+//                if ((messageSocket.attachmentType != "FILE" && messageSocket.attachmentType != "GIF" && messageSocket.attachmentType != "STICKER" && messageSocket.attachmentType != "IMAGE" && messageSocket.attachmentType != null)) {
+//                    messageSocket.attachmentName = "FILE"
+//                }
                 when (messageSocket.messageType) {
                     MessageType.UPDATE_DIALOG_SCORE.valueType -> chatEventListener?.updateDialogScore()
-                    MessageType.SCORE_REQUEST.valueType -> chatEventListener?.finishDialog(messageSocket.dialogId)
+                    MessageType.SCORE_REQUEST.valueType -> chatEventListener?.finishDialog(
+                        messageSocket.dialogId
+                    )
+
                     MessageType.OPERATOR_IS_TYPING.valueType -> chatEventListener?.operatorStartWriteMessage()
                     MessageType.OPERATOR_STOPPED_TYPING.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
                     MessageType.INITIAL_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
 
-                    MessageType.FINISH_DIALOG.valueType -> {chatEventListener?.finishDialog(messageSocket.dialogId); messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"; updateDataInDatabase(messageSocket, currentTimestamp)}
+                    MessageType.FINISH_DIALOG.valueType -> {
+                        Log.d("PHILIP_TEST", messageSocket.toString())
+                        chatEventListener?.finishDialog(messageSocket.dialogId)
+                        messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"
+                        updateDataInDatabase(messageSocket, currentTimestamp)
+                    }
 
                     MessageType.USER_WAS_MERGED.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
                 if (
-                    (!messageSocket.toString().contains(""""message":"\/start"""") && !messageSocket.toString().contains(""""message":"/start"""") && !messageSocket.toString().contains("/start") && !messageSocket.toString().contains("""\/start""")) &&
+                    (!messageSocket.toString()
+                        .contains(""""message":"\/start"""") && !messageSocket.toString()
+                        .contains(""""message":"/start"""") && !messageSocket.toString()
+                        .contains("/start") && !messageSocket.toString().contains("""\/start""")) &&
                     (messageSocket.id != null || !messageDao.isNotEmpty())
                 ) {
                     when {
@@ -302,11 +332,16 @@ class SocketApi(
                     }
 
                     try {
-                        Log.d(TAG_DATABASE_INSERT, "Insert in database message: " + messageSocket.id.toString() + messageSocket.message.toString())
+                        Log.d(
+                            TAG_DATABASE_INSERT,
+                            "Insert in database message: " + messageSocket.id.toString() + messageSocket.message.toString()
+                        )
                         updateDataInDatabase(messageSocket, currentTimestamp)
-                    }
-                    catch (e: Exception){
-                        Log.e(TAG_DATABASE_INSERT,"An error occurred while adding to the database. Info: " + e.message)
+                    } catch (e: Exception) {
+                        Log.e(
+                            TAG_DATABASE_INSERT,
+                            "An error occurred while adding to the database. Info: " + e.message
+                        )
                     }
 
                 }
@@ -378,8 +413,20 @@ class SocketApi(
 
     private fun greet() {
         if (socket != null && socket!!.connected() && !isSendGreet) {
+            Log.d(TAG_SOCKET, "sending greeting message")
             isSendGreet = true
-            socket?.emit("visitor-message", "/start", MessageType.MESSAGE.valueType, null, 0, null, null, null)
+            socket?.emit(
+                "visitor-message",
+                "/start",
+                MessageType.MESSAGE.valueType,
+                null,
+                0,
+                null,
+                null,
+                null
+            )
+        } else {
+            Log.d(TAG_SOCKET, "Socket is not connected or is already sending a greet message.")
         }
     }
 
@@ -388,12 +435,28 @@ class SocketApi(
      *
      * @param message текст который в данные момент находится у пользователя в поле для ввода
      */
-    fun sendServiceMessageUserIsTypingText(message: String){
-        socket?.emit("visitor-message", message, MessageType.USER_MESSAGE_SENT.valueType, null, 0, null, null)
+    fun sendServiceMessageUserIsTypingText(message: String) {
+        socket?.emit(
+            "visitor-message",
+            message,
+            MessageType.USER_MESSAGE_SENT.valueType,
+            null,
+            0,
+            null,
+            null
+        )
     }
 
-    fun sendServiceMessageUserStopTypingText(){
-        socket?.emit("visitor-message", "", MessageType.USER_STOPPED_TYPING.valueType, null, 0, null, null)
+    fun sendServiceMessageUserStopTypingText() {
+        socket?.emit(
+            "visitor-message",
+            "",
+            MessageType.USER_STOPPED_TYPING.valueType,
+            null,
+            0,
+            null,
+            null
+        )
     }
 
 
@@ -453,26 +516,43 @@ class SocketApi(
      *      Если клиент закрывает чат не оценивая диалог то нужно отправить "CLOSED_BY_CLIENT".
      *      dialogID:String -- ID диалога который нужно оценить, если null то оценивается самый последний диалог
      */
-    fun giveFeedbackOnOperator(countStars: Int?, finishReason:String?, dialogID:String?) {
+    fun giveFeedbackOnOperator(countStars: Int?, finishReason: String?, dialogID: String?) {
         Log.i("TAG_SOCKET_EVENT", dialogID ?: "Ошибка: Шальное null исключение")
-        socket?.emit("visitor-message", "", MessageType.UPDATE_DIALOG_SCORE.valueType, null, countStars, finishReason, null, null, null, dialogID, "finish_dialog")
+        socket?.emit(
+            "visitor-message",
+            "",
+            MessageType.UPDATE_DIALOG_SCORE.valueType,
+            null,
+            countStars,
+            finishReason,
+            null,
+            null,
+            null,
+            dialogID,
+            "finish_dialog"
+        )
     }
 
     fun mergeNewMessages() {
         isSynchronized = true
-        val maxUserTimestamp = bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp
+        val maxUserTimestamp =
+            bufferNewMessages.filter { !it.isReply }.maxByOrNull { it.timestamp }?.timestamp
         if (maxUserTimestamp != null) {
-            val messagesForUpdateReadPoint = bufferNewMessages.filter { it.timestamp <= maxUserTimestamp }
-                .map { Pair(it.id, it.timestamp) }
+            val messagesForUpdateReadPoint =
+                bufferNewMessages.filter { it.timestamp <= maxUserTimestamp }
+                    .map { Pair(it.id, it.timestamp) }
             updateCurrentReadMessageTime(messagesForUpdateReadPoint)
         }
-        updateCountUnreadMessages(bufferNewMessages.filter { it.timestamp > (maxUserTimestamp ?: 0) }.size, maxUserTimestamp != null)
-        bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(it.id) }.let { messages ->
-            viewModelScope.launch {
-                updateSearchMessagePosition(messages)
+        updateCountUnreadMessages(bufferNewMessages.filter {
+            it.timestamp > (maxUserTimestamp ?: 0)
+        }.size, maxUserTimestamp != null)
+        bufferNewMessages.distinctBy { it.id }.filter { !messageDao.hasThisMessage(it.id) }
+            .let { messages ->
+                viewModelScope.launch {
+                    updateSearchMessagePosition(messages)
+                }
+                messageDao.insertMessages(messages)
             }
-            messageDao.insertMessages(messages)
-        }
         bufferNewMessages.clear()
         chatEventListener?.synchronized()
     }
@@ -489,9 +569,11 @@ class SocketApi(
                     Array<NetworkMessage>::class.java
                 ) ?: arrayOf()
                 channel.send(listMessages.toList())
+
             }
         }
-        socket?.emit("history-messages-requested", timestamp, visitor.token, ChatParams.urlChatHost) ?: channel.send(null)
+        socket?.emit("history-messages-requested", timestamp, visitor.token, ChatParams.urlChatHost)
+            ?: channel.send(null)
 
         return viewModelScope.async {
             channel.receive()
@@ -504,142 +586,164 @@ class SocketApi(
 
     private fun syncChat(actionAfter: () -> Unit) {
         viewModelScope.launch {
+            Log.d(TAG_SOCKET, "syncChat called")
             syncMessages()
             actionAfter()
         }
     }
 
-    private suspend fun updateDataInDatabase(messageSocket: NetworkMessage, currentTimestamp: Long) {
+    private suspend fun updateDataInDatabase(
+        messageSocket: NetworkMessage,
+        currentTimestamp: Long
+    ) {
         val operatorPreview = messageSocket.operatorId?.let { getPersonPreview(it) }
         when {
-            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.message.toString().contains("ct-markdown__file")) -> {
+            (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.message.toString()
+                .contains("ct-markdown__file")) -> {
                 Log.d(TAG_SOCKET_EVENT, "got markdown file")
                 var files = MarkdownFileConverter(messageSocket.message.toString())
                 files.convert()
                 messageSocket.message = ""
-                for (i in 0..3){
+                for (i in 0..3) {
                     messageSocket.attachmentName = files.arrayOfNames[i]
                     messageSocket.attachmentUrl = files.arrayOfURILinks[i]
                     messageSocket.correctAttachmentUrl = files.arrayOfURLLinks[i]
                     messageSocket.attachmentType = files.arrayOfMimeType[i]
                     messageSocket.id = UUID.randomUUID().toString()
-                    insertMessage(MessageEntity.map(
+                    insertMessage(
+                        MessageEntity.map(
                             uuid = visitor.uuid,
                             networkMessage = messageSocket,
-                            arrivalTime = currentTimestamp+i,
+                            arrivalTime = currentTimestamp + i,
                             operatorPreview = operatorPreview,
-                            fileSize = getWeightFile(messageSocket.correctAttachmentUrl!!) ?: getWeightMediaFile(context,
-                                messageSocket.correctAttachmentUrl!!
-                            )
-                        ))
+                            fileSize = getWeightFile(messageSocket.correctAttachmentUrl!!)
+                                ?: getWeightMediaFile(
+                                    context,
+                                    messageSocket.correctAttachmentUrl!!
+                                )
+                        )
+                    )
                 }
             }
+
             (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isImage || messageSocket.isGif) -> {
-//                if (messageSocket.attachmentType == "IMAGE/STICKER") {
-//                    messageSocket.attachmentType = "IMAGE"
-//                    //attachmentName must contain type .jpeg or .png
-//                    if (!messageSocket.attachmentName!!.contains(Regex(".+\\.(jpeg|jpg|png)$"))) {
-//                        val regex = Regex("\\.(\\w+)$")
-//                        val dataType =
-//                            regex.find(messageSocket.attachmentUrl ?: "")
-//                        if (dataType != null) {
-//                            messageSocket.attachmentName =
-//                                "${messageSocket.attachmentName}.${dataType?.groups?.get(1)?.value}"
-//                        }
-//                    }
-//                }
                 messageSocket.correctAttachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
-                            insertMessage(MessageEntity.map(
-                                uuid = visitor.uuid,
-                                networkMessage = messageSocket,
-                                arrivalTime = currentTimestamp,
-                                operatorPreview = operatorPreview,
-                                mediaFileHeight = height,
-                                mediaFileWidth = width
-                            ))
+                            insertMessage(
+                                MessageEntity.map(
+                                    uuid = visitor.uuid,
+                                    networkMessage = messageSocket,
+                                    arrivalTime = currentTimestamp,
+                                    operatorPreview = operatorPreview,
+                                    mediaFileHeight = height,
+                                    mediaFileWidth = width
+                                )
+                            )
                         }
                     }
                 }
             }
+
             (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isFile || messageSocket.isUnknownType) -> {
                 messageSocket.correctAttachmentUrl?.let { url ->
-                    insertMessage(MessageEntity.map(
-                        uuid = visitor.uuid,
-                        networkMessage = messageSocket,
-                        arrivalTime = currentTimestamp,
-                        operatorPreview = operatorPreview,
-                        fileSize = getWeightFile(url) ?: getWeightMediaFile(context, url)
-                    ))
+                    insertMessage(
+                        MessageEntity.map(
+                            uuid = visitor.uuid,
+                            networkMessage = messageSocket,
+                            arrivalTime = currentTimestamp,
+                            operatorPreview = operatorPreview,
+                            fileSize = getWeightFile(url) ?: getWeightMediaFile(context, url)
+                        )
+                    )
                 }
             }
+
             (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.isMarkdownImage || messageSocket.isMarkdownGif) -> {
                 Log.d(TAG_SOCKET_EVENT, "got markdown photo or gif")
                 messageSocket.attachmentName = UUID.randomUUID().toString()
                 messageSocket.correctAttachmentUrl?.let { url ->
                     getSizeMediaFile(context, url) { height, width ->
                         viewModelScope.launch {
-                            insertMessage(MessageEntity.map(
-                                uuid = visitor.uuid,
-                                networkMessage = messageSocket,
-                                arrivalTime = currentTimestamp,
-                                operatorPreview = operatorPreview,
-                                mediaFileHeight = height,
-                                mediaFileWidth = width
-                            ))
-                        }
-                    }
-                }
-            }
-            (messageSocket.messageType in listOf(MessageType.MESSAGE.valueType, MessageType.INITIAL_MESSAGE.valueType)) && messageSocket.isText -> {
-                val repliedMessageUrl = messageSocket.replyToMessage?.correctAttachmentUrl
-                when {
-                    repliedMessageUrl != null && messageSocket.replyToMessage.isFile -> {
-                        insertMessage(MessageEntity.map(
-                            uuid = visitor.uuid,
-                            networkMessage = messageSocket,
-                            arrivalTime = currentTimestamp,
-                            operatorPreview = operatorPreview,
-                            repliedMessageFileSize = getWeightFile(repliedMessageUrl) ?: getWeightMediaFile(context, repliedMessageUrl)
-                        ))
-                    }
-                    repliedMessageUrl != null && (messageSocket.replyToMessage.isImage || messageSocket.replyToMessage.isGif) -> {
-                        getSizeMediaFile(context, repliedMessageUrl) { height, width ->
-                            viewModelScope.launch {
-                                insertMessage(MessageEntity.map(
+                            insertMessage(
+                                MessageEntity.map(
                                     uuid = visitor.uuid,
                                     networkMessage = messageSocket,
                                     arrivalTime = currentTimestamp,
                                     operatorPreview = operatorPreview,
-                                    repliedMessageMediaFileHeight = height,
-                                    repliedMessageMediaFileWidth = width
-                                ))
-                            }
+                                    mediaFileHeight = height,
+                                    mediaFileWidth = width
+                                )
+                            )
                         }
-                    }
-                    else -> {
-                        insertMessage(MessageEntity.map(
-                            uuid = visitor.uuid,
-                            networkMessage = messageSocket,
-                            arrivalTime = currentTimestamp,
-                            operatorPreview = operatorPreview
-                        ))
                     }
                 }
             }
+
+            (messageSocket.messageType in listOf(
+                MessageType.MESSAGE.valueType,
+                MessageType.INITIAL_MESSAGE.valueType
+            )) && messageSocket.isText -> {
+                val repliedMessageUrl = messageSocket.replyToMessage?.correctAttachmentUrl
+                when {
+                    repliedMessageUrl != null && messageSocket.replyToMessage.isFile -> {
+                        insertMessage(
+                            MessageEntity.map(
+                                uuid = visitor.uuid,
+                                networkMessage = messageSocket,
+                                arrivalTime = currentTimestamp,
+                                operatorPreview = operatorPreview,
+                                repliedMessageFileSize = getWeightFile(repliedMessageUrl)
+                                    ?: getWeightMediaFile(context, repliedMessageUrl)
+                            )
+                        )
+                    }
+
+                    repliedMessageUrl != null && (messageSocket.replyToMessage.isImage || messageSocket.replyToMessage.isGif) -> {
+                        getSizeMediaFile(context, repliedMessageUrl) { height, width ->
+                            viewModelScope.launch {
+                                insertMessage(
+                                    MessageEntity.map(
+                                        uuid = visitor.uuid,
+                                        networkMessage = messageSocket,
+                                        arrivalTime = currentTimestamp,
+                                        operatorPreview = operatorPreview,
+                                        repliedMessageMediaFileHeight = height,
+                                        repliedMessageMediaFileWidth = width
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    else -> {
+                        insertMessage(
+                            MessageEntity.map(
+                                uuid = visitor.uuid,
+                                networkMessage = messageSocket,
+                                arrivalTime = currentTimestamp,
+                                operatorPreview = operatorPreview
+                            )
+                        )
+                    }
+                }
+            }
+
             (MessageType.RECEIVED_BY_MEDIATOR.valueType == messageSocket.messageType) || (MessageType.RECEIVED_BY_OPERATOR.valueType == messageSocket.messageType) -> {
                 messageSocket.parentMessageId?.let { parentId ->
                     messageDao.updateMessage(parentId, messageSocket.messageType)
                 }
             }
+
             (MessageType.CONNECTED_OPERATOR.valueType == messageSocket.messageType) -> {
-                insertMessage(MessageEntity.mapOperatorJoinMessage(
-                    uuid = visitor.uuid,
-                    networkMessage = messageSocket,
-                    arrivalTime = currentTimestamp,
-                    operatorPreview = operatorPreview
-                ))
+                insertMessage(
+                    MessageEntity.mapOperatorJoinMessage(
+                        uuid = visitor.uuid,
+                        networkMessage = messageSocket,
+                        arrivalTime = currentTimestamp,
+                        operatorPreview = operatorPreview
+                    )
+                )
             }
         }
         updatePersonName(messageSocket.operatorId, messageSocket.operatorName)

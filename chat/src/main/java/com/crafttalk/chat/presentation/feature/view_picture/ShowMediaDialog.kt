@@ -150,6 +150,15 @@ class ShowImageDialog(
                     .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
                     .into(bindingGif.gifShow)
             }
+            TypeFile.STICKER -> {
+                setContentView(R.layout.com_crafttalk_chat_bottom_sheet_show_image)
+                bindingImage.imageNavigateBack.setOnClickListener(this)
+                settingFileDownload(bindingImage.imageDownload)
+                Glide.with(context)
+                    .load(createCorrectGlideUrl(url))
+                    .error(R.drawable.com_crafttalk_chat_background_item_media_message_placeholder)
+                    .into(bindingImage.imageShow)
+            }
             else -> {}
         }
 

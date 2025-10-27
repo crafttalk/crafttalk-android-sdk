@@ -202,6 +202,7 @@
         <attr name="layout_item_operator_text_message" format="reference"/>
         <attr name="layout_item_operator_image_message" format="reference"/>
         <attr name="layout_item_operator_gif_message" format="reference"/>
+        <attr name="layout_item_operator_sticker_message" format="reference"/>
         <attr name="layout_item_operator_file_message" format="reference"/>
         <attr name="layout_item_operator_union_message" format="reference"/>
         <attr name="layout_item_transfer_message" format="reference"/>
@@ -213,6 +214,7 @@
         <attr name="color_feedback_title" format="color"/>
         <attr name="size_feedback_title" format="dimension"/>
         <attr name="color_feedback_star" format="color"/>
+        <attr name="feedback_title_block_entering_message" format="boolean"/>
 
         <!--voice input-->
         <attr name="show_voice_input" format="boolean"/>

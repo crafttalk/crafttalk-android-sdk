@@ -94,6 +94,7 @@
         app:show_internet_connection_state="true"
         app:show_upper_limiter="false"
         app:show_voice_input="true"
+        app:feedback_title_block_entering_message="false"
         app:timeDelayed="1000"
         tools:visibility="visible" />
 

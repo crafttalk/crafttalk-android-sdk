@@ -52,6 +52,25 @@ fun messageModelMapper(localMessage: MessageEntity, context: Context): MessageMo
             authorPreview = if (localMessage.isReply) localMessage.operatorPreview else null,
             stateCheck = getMessageTypeByValueType(localMessage.messageType)
         )
+
+        (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.STICKER -> StickerMessageItem(
+            id = localMessage.id,
+            role = if (localMessage.isReply) Role.OPERATOR else Role.USER,
+            sticker = FileModel(
+                url = localMessage.attachmentUrl!!,
+                name = SpannableString(localMessage.attachmentName ?: ""),
+                size = localMessage.attachmentSize,
+                height = localMessage.height,
+                width = localMessage.width,
+                failLoading = localMessage.height == null || localMessage.height == 0 || localMessage.width == null || localMessage.width == 0,
+                type = localMessage.attachmentType
+            ),
+            timestamp = localMessage.timestamp,
+            authorName = if (localMessage.isReply) localMessage.operatorName ?: "Бот" else "Вы",
+            authorPreview = if (localMessage.isReply) localMessage.operatorPreview else null,
+            stateCheck = getMessageTypeByValueType(localMessage.messageType)
+        )
+
         (localMessage.message == null || localMessage.message.isEmpty()) && localMessage.attachmentType == TypeFile.GIF -> GifMessageItem(
             localMessage.id,
             if (localMessage.isReply) Role.OPERATOR else Role.USER,

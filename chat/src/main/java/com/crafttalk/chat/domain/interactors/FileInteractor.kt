@@ -18,12 +18,12 @@ class FileInteractor
 
     fun uploadFile(file: DomainFile, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val visitor = visitorInteractor.getVisitor() ?: return
-        fileRepository.uploadFile(visitor, file, TypeUpload.MULTIPART, handleUploadFile)
+        fileRepository.uploadFile(visitor, file, TypeUpload.JSON, handleUploadFile)
     }
 
     fun uploadImage(bitmap: Bitmap, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
         val visitor = visitorInteractor.getVisitor() ?: return
-        fileRepository.uploadMediaFile(visitor, bitmap, TypeUpload.MULTIPART, handleUploadFile)
+        fileRepository.uploadMediaFile(visitor, bitmap, TypeUpload.JSON, handleUploadFile)
     }
 
     fun uploadFiles(listFile: List<DomainFile>, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {

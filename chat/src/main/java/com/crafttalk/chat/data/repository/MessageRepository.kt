@@ -13,6 +13,7 @@ import com.crafttalk.chat.domain.repository.IMessageRepository
 import javax.inject.Inject
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
 import com.crafttalk.chat.domain.entity.file.TypeDownloadProgress
+import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.domain.entity.message.MessageType
 import com.crafttalk.chat.domain.entity.message.NetworkBodySearch
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
@@ -24,6 +25,7 @@ import com.crafttalk.chat.presentation.helper.ui.getWeightMediaFile
 import com.crafttalk.chat.utils.ChatParams
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.UUID
 
 class MessageRepository
 @Inject constructor(
@@ -93,7 +95,7 @@ class MessageRepository
     ): List<MessageEntity> {
 
         try {
-            val fullPullMessages= mutableListOf<NetworkMessage>()
+            var fullPullMessages= mutableListOf<NetworkMessage>()
 
             var lastTimestamp = endTime
             while (true) {
@@ -145,6 +147,10 @@ class MessageRepository
             if (fullPullMessages.find { it.messageType == MessageType.INITIAL_MESSAGE.valueType } != null) {
                 messagesDao.deleteAllMessageByType(MessageType.INITIAL_MESSAGE.valueType)
             }
+
+            fullPullMessages = checkCorrectImageName( fullPullMessages)
+
+            fullPullMessages = extractLinksFromHtmlMarkdown(fullPullMessages)
 
             val actionSelectionMessages = fullPullMessages.filter { !it.selectedAction.isNullOrBlank() && it.messageType == MessageType.MESSAGE.valueType }.map { it.selectedAction ?: "" }
             val messageStatuses = fullPullMessages.filter { it.messageType in listOf(MessageType.RECEIVED_BY_MEDIATOR.valueType, MessageType.RECEIVED_BY_OPERATOR.valueType) }
@@ -360,5 +366,63 @@ class MessageRepository
 
     override fun setUpdateSearchMessagePosition(updateSearchMessagePosition: suspend (insertedMessages: List<MessageEntity>) -> Unit) {
         socketApi.setUpdateSearchMessagePosition(updateSearchMessagePosition)
+    }
+
+    /**
+     * Проверяет приходящие с сервера маркдаун документы и извлекает ссылки из них.
+     * По умолчанию сообщения от бота с документами приходят не в виде файлов с указанным
+     * attachmentUrl, attachmentName, attachmentType а в виде html сообщения с маркдаун стилями
+     * которые андроид не понимает
+     *  @param networkMessages Список сообщений, которые нужно обработать
+     *  @return Обновленный список сообщений
+     *
+     */
+    override fun extractLinksFromHtmlMarkdown(networkMessages: MutableList<NetworkMessage>?): MutableList<NetworkMessage> {
+        val links = mutableListOf<String>()
+        val names = mutableListOf<String>()
+
+        val regex = Regex("""href="([^"]+)">([^<]+)</a>""")
+        var index = 0
+        while (index < (networkMessages?.size ?: 0)) {
+            val msg = networkMessages!![index]
+            regex.findAll(msg.message?:"").forEach { match ->
+                val link = match.groupValues[1]
+                val fileName = match.groupValues[2]
+                links.add(link)
+                names.add(fileName)
+            }
+
+            if (links.isNotEmpty()){
+                msg.message = ""
+                for (i in 0 until links.size){
+                    var copy = msg.copy()
+                    copy.id += "_$i"
+                    copy.attachmentUrl = links[i]
+                    copy.attachmentName = names[i]
+                    copy.attachmentType = "FILE"
+                    networkMessages.add(index + i, copy)
+                }
+                index+=2
+            } else{
+                index++
+            }
+            links.clear()
+            names.clear()
+        }
+        return networkMessages!!
+    }
+/**  Проверяет что у полученных фотографий, с серверва, есть корректное имя для добавления в чат
+ *
+ *   @param networkMessages Список сообщений, которые нужно обработать
+ *   @return Обновленный список сообщений
+*
+* */
+    override  fun checkCorrectImageName(networkMessages: MutableList<NetworkMessage>?): MutableList<NetworkMessage> {
+        networkMessages?.forEach { i ->
+            if (i.isMarkdownImage){
+                i.attachmentName = UUID.randomUUID().toString()
+            }
+        }
+        return networkMessages!!
     }
 }

@@ -35,7 +35,7 @@ data class RepliedMessageModel(
                         size = localMessage.repliedMessageAttachmentSize,
                         height = localMessage.repliedMessageAttachmentHeight,
                         width = localMessage.repliedMessageAttachmentWidth,
-                        failLoading = (localMessage.repliedMessageAttachmentType in listOf( TypeFile.IMAGE, TypeFile.GIF)) && (localMessage.height == null || localMessage.height == 0 || localMessage.width == null || localMessage.width == 0),
+                        failLoading = (localMessage.repliedMessageAttachmentType in listOf( TypeFile.IMAGE, TypeFile.GIF, TypeFile.STICKER)) && (localMessage.height == null || localMessage.height == 0 || localMessage.width == null || localMessage.width == 0),
                         type = localMessage.repliedMessageAttachmentType,
                         typeDownloadProgress = localMessage.repliedMessageAttachmentDownloadProgressType ?: TypeDownloadProgress.NOT_DOWNLOADED
                     )

@@ -20,6 +20,7 @@ class PickFileContract : ActivityResultContract<Pair<TypeFile, TypeMultiple>, Li
                 TypeFile.FILE -> putExtra(Intent.EXTRA_LOCAL_ONLY, true)
                 TypeFile.IMAGE -> {}
                 TypeFile.GIF -> {}
+                TypeFile.STICKER -> {}
             }
             type = input.first.value
         }
