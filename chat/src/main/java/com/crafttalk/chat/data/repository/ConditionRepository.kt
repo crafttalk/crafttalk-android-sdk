@@ -1,20 +1,20 @@
 package com.crafttalk.chat.data.repository
 
-import android.content.SharedPreferences
-import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.*
 import com.crafttalk.chat.data.api.socket.SocketApi
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.domain.repository.IConditionRepository
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.chat.presentation.ChatInternetConnectionListener
 import com.crafttalk.chat.utils.ChatStatus
-import com.crafttalk.chat.utils.ConstantsUtils.TAG_CONDITION_STATUS
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class ConditionRepository
-@Inject constructor(
+class ConditionRepository @Inject constructor(
     private val messagesDao: MessagesDao,
-    private val pref: SharedPreferences,
+    private val pref: DataStore<Preferences>,
     private val socketApi: SocketApi
 ) : IConditionRepository {
 
@@ -47,46 +47,53 @@ class ConditionRepository
         socketApi.dropChat()
     }
 
-    override fun getFlagAllHistoryLoaded(): Boolean {
-        return pref.getBoolean(FIELD_IS_ALL_HISTORY_LOADED, false)
+    /**
+     * Получение флага "вся история загружена"
+     * runBlocking используется для синхронного вызова (если нужно в UI — лучше сделать suspend)
+     */
+    override fun getFlagAllHistoryLoaded(): Boolean = runBlocking {
+        val prefs = pref.data.first()
+        return@runBlocking prefs[IS_ALL_HISTORY_LOADED_KEY] ?: false
     }
 
-    override fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean) {
-        val prefEditor = pref.edit()
-        prefEditor.putBoolean(FIELD_IS_ALL_HISTORY_LOADED, isAllHistoryLoaded)
-        prefEditor.apply()
+    override fun saveFlagAllHistoryLoaded(isAllHistoryLoaded: Boolean): Unit = runBlocking {
+        pref.edit { prefs ->
+            prefs[IS_ALL_HISTORY_LOADED_KEY] = isAllHistoryLoaded
+        }
     }
 
-    override fun deleteFlagAllHistoryLoaded() {
-        val prefEditor = pref.edit()
-        prefEditor.remove(FIELD_IS_ALL_HISTORY_LOADED)
-        prefEditor.apply()
+    override fun deleteFlagAllHistoryLoaded():Unit = runBlocking {
+        pref.edit { prefs ->
+            prefs.remove(IS_ALL_HISTORY_LOADED_KEY)
+        }
     }
 
-    override fun getCurrentReadMessageTime(): Long {
-        return pref.getLong(FIELD_CURRENT_READ_MESSAGE_TIME, 0)
+    override fun getCurrentReadMessageTime(): Long = runBlocking {
+        val prefs = pref.data.first()
+        return@runBlocking prefs[CURRENT_READ_MESSAGE_TIME_KEY] ?: 0L
     }
 
-    override fun getCountUnreadMessages(): Int {
-        return pref.getInt(FIELD_COUNT_UNREAD_MESSAGES, 0)
+    override fun getCountUnreadMessages(): Int = runBlocking{
+        val prefs = pref.data.first()
+        return@runBlocking prefs[COUNT_UNREAD_MESSAGES_KEY] ?: 0
     }
 
-    override fun saveCurrentReadMessageTime(currentReadMessageTime: Long) {
-        val prefEditor = pref.edit()
-        prefEditor.putLong(FIELD_CURRENT_READ_MESSAGE_TIME, currentReadMessageTime)
-        prefEditor.apply()
+    override fun saveCurrentReadMessageTime(currentReadMessageTime: Long):Unit = runBlocking {
+        pref.edit { prefs ->
+            prefs[CURRENT_READ_MESSAGE_TIME_KEY] = currentReadMessageTime
+        }
     }
 
-    override fun saveCountUnreadMessages(countUnreadMessages: Int) {
-        val prefEditor = pref.edit()
-        prefEditor.putInt(FIELD_COUNT_UNREAD_MESSAGES, countUnreadMessages)
-        prefEditor.apply()
+    override fun saveCountUnreadMessages(countUnreadMessages: Int):Unit = runBlocking {
+        pref.edit { prefs ->
+            prefs[COUNT_UNREAD_MESSAGES_KEY] = countUnreadMessages
+        }
     }
 
-    override fun deleteCurrentReadMessageTime() {
-        val prefEditor = pref.edit()
-        prefEditor.remove(FIELD_CURRENT_READ_MESSAGE_TIME)
-        prefEditor.apply()
+    override fun deleteCurrentReadMessageTime():Unit = runBlocking {
+        pref.edit { prefs ->
+            prefs.remove(CURRENT_READ_MESSAGE_TIME_KEY)
+        }
     }
 
     override suspend fun getStatusExistenceMessages(): Boolean {
@@ -98,9 +105,8 @@ class ConditionRepository
     }
 
     companion object {
-        private const val FIELD_IS_ALL_HISTORY_LOADED = "isAllHistoryLoaded"
-        private const val FIELD_CURRENT_READ_MESSAGE_TIME = "currentReadMessageTime"
-        private const val FIELD_COUNT_UNREAD_MESSAGES = "countUnreadMessages"
+        private val IS_ALL_HISTORY_LOADED_KEY = booleanPreferencesKey("isAllHistoryLoaded")
+        private val CURRENT_READ_MESSAGE_TIME_KEY = longPreferencesKey("currentReadMessageTime")
+        private val COUNT_UNREAD_MESSAGES_KEY = intPreferencesKey("countUnreadMessages")
     }
-
 }

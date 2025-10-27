@@ -1,13 +1,21 @@
 package com.crafttalk.chat.data.repository
 
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.repository.IVisitorRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class VisitorRepository
 @Inject constructor(
-    private val pref: SharedPreferences
+    private val pref: DataStore<Preferences>
 ) : IVisitorRepository {
 
     private var visitor: Visitor? = null
@@ -18,32 +26,43 @@ class VisitorRepository
         this.visitor = visitor
     }
 
-    override fun getVisitorFromSharedPreferences(): Visitor? {
-        return if (pref.getBoolean(FIELD_IS_VISITOR, false)) {
-            val json = pref.getString(FIELD_VISITOR, "")
-            Visitor.getVisitorFromJson(json)
+
+    // Flow для наблюдения за Visitor
+    override val visitorFlow: Flow<Visitor?> = pref.data.map { preferences ->
+        if (preferences[FIELD_IS_VISITOR] == true) {
+            preferences[FIELD_VISITOR]?.let { Visitor.getVisitorFromJson(it) }
         } else {
             null
         }
     }
 
-    override fun saveVisitor(visitor: Visitor) {
-        val prefEditor = pref.edit()
-        prefEditor.putString(FIELD_VISITOR, visitor.getJsonObject().toString())
-        prefEditor.putBoolean(FIELD_IS_VISITOR, true)
-        prefEditor.apply()
+    // Получить Visitor один раз (suspend)
+    override fun getVisitorFromDataStore(): Visitor? = runBlocking {
+        val preferences = pref.data.first()
+        return@runBlocking if (preferences[FIELD_IS_VISITOR] == true) {
+            preferences[FIELD_VISITOR]?.let { Visitor.getVisitorFromJson(it) }
+        } else {
+            null
+        }
     }
 
-    override fun deleteVisitor() {
-        val prefEditor = pref.edit()
-        prefEditor.remove(FIELD_VISITOR)
-        prefEditor.putBoolean(FIELD_IS_VISITOR, false)
-        prefEditor.apply()
+    override fun saveVisitor(visitor: Visitor): Unit = runBlocking {
+        pref.edit { preferences ->
+            preferences[FIELD_VISITOR] = visitor.getJsonObject().toString()
+            preferences[FIELD_IS_VISITOR] = true
+        }
+    }
+
+    override fun deleteVisitor(): Unit = runBlocking {
+        pref.edit { preferences ->
+            preferences.remove(FIELD_VISITOR)
+            preferences[FIELD_IS_VISITOR] = false
+        }
     }
 
     companion object {
-        private const val FIELD_VISITOR = "visitor"
-        private const val FIELD_IS_VISITOR = "isVisitor"
+        private val FIELD_VISITOR = stringPreferencesKey( "visitor")
+        private val FIELD_IS_VISITOR = booleanPreferencesKey( "isVisitor")
     }
 
 }

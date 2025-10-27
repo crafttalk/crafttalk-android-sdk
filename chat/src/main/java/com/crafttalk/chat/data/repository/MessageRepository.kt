@@ -378,36 +378,51 @@ class MessageRepository
      *
      */
     override fun extractLinksFromHtmlMarkdown(networkMessages: MutableList<NetworkMessage>?): MutableList<NetworkMessage> {
-        val links = mutableListOf<String>()
-        val names = mutableListOf<String>()
+
+        //Этот список нужен чтобы отделить файловые ссылки от гиппер ссылок
+        val fileExtensions = listOf(
+            "pdf", "doc", "docx", "xls", "xlsx", "csv",
+            "ppt", "pptx", "txt", "zip", "rar",
+            "jpg", "jpeg", "png", "gif", "mp4", "mov", "avi"
+        )
 
         val regex = Regex("""href="([^"]+)">([^<]+)</a>""")
         var index = 0
+
         while (index < (networkMessages?.size ?: 0)) {
             val msg = networkMessages!![index]
-            regex.findAll(msg.message?:"").forEach { match ->
+            val links = mutableListOf<String>()
+            val names = mutableListOf<String>()
+
+            regex.findAll(msg.message ?: "").forEach { match ->
                 val link = match.groupValues[1]
                 val fileName = match.groupValues[2]
-                links.add(link)
-                names.add(fileName)
+
+                // фильтруем только файлы
+                val isFile = fileExtensions.any { ext ->
+                    link.lowercase().contains(".$ext")
+                }
+
+                if (isFile) {
+                    links.add(link)
+                    names.add(fileName)
+                }
             }
 
-            if (links.isNotEmpty()){
+            if (links.isNotEmpty()) {
                 msg.message = ""
-                for (i in 0 until links.size){
-                    var copy = msg.copy()
-                    copy.id += "_$i"
+                for (i in links.indices) {
+                    val copy = msg.copy()
+                    copy.id = UUID.randomUUID().toString()
                     copy.attachmentUrl = links[i]
                     copy.attachmentName = names[i]
                     copy.attachmentType = "FILE"
                     networkMessages.add(index + i, copy)
                 }
-                index+=2
-            } else{
+                index += links.size
+            } else {
                 index++
             }
-            links.clear()
-            names.clear()
         }
         return networkMessages!!
     }
@@ -420,7 +435,8 @@ class MessageRepository
     override  fun checkCorrectImageName(networkMessages: MutableList<NetworkMessage>?): MutableList<NetworkMessage> {
         networkMessages?.forEach { i ->
             if (i.isMarkdownImage){
-                i.attachmentName = UUID.randomUUID().toString()
+
+                i.attachmentName = i.attachmentUrl?.substringAfterLast("/")
             }
         }
         return networkMessages!!
