@@ -221,248 +221,249 @@ override fun onDestroyView() {
 Для кастомизации используются атрибуты. Атрибуты делятся на две группы. Одни задают поведение чата, другие определяют визуальную составляющую.
 
 
-Атрибуты, настраивающие поведение:
-- timeDelayed - выставляет минимальное время отображения троббера
-- delay_download_document - минимальное время, отображения иконки, установленной через атрибут drawable_document_downloading_icon
+### Атрибуты, настраивающие поведение:
+- `timeDelayed` - выставляет минимальное время отображения троббера
+- `delay_download_document` - минимальное время, отображения иконки, установленной через атрибут drawable_document_downloading_icon
 
 
-Атрибуты, настраивающие внешний вид:
+### Атрибуты, настраивающие внешний вид:
 
-Цвета:
-- color_main - устанавливает главный цвет чата
-- color_bg_user_message - устанавливает цвет фона пользовательского сообщения
-- color_bg_user_media_file_message - устанавливает цвет фона пользовательского сообщения с фото или гифкой
-- color_bg_operator_message - устанавливает цвет фона сообщения бота/оператора
-- color_bg_operator_media_file_message - устанавливает цвет фона сообщения бота/оператора с фото или гифкой
-- color_text_user_message - устанавливает цвет текста пользовательского сообщения
-- color_text_operator_message - устанавливает цвет текста сообщения бота/оператора
-- color_text_operator_action - устанавливает цвет текста подсказки бота
-- color_bg_operator_selected_action - устанавливает цвет фона выбранной подсказки бота
-- color_text_operator_selected_action - устанавливает цвет текста выбранной подсказки бота
-- color_text_operator_button - устанавливает дефолтный цвет текста кнопки-подсказки бота
-- color_primary_text_operator_button - устанавливает цвет текста для кнопки-подсказки бота со стилем primary
-- color_secondary_text_operator_button - устанавливает цвет текста для кнопки-подсказки бота со стилем secondary
-- color_negative_text_operator_button - устанавливает цвет текста для кнопки-подсказки бота со стилем negative
-- color_text_operator_selected_button - устанавливает дефолтный цвет текста выбранной кнопки-подсказки бота
-- color_primary_text_operator_selected_button - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем primary
-- color_secondary_text_operator_selected_button - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем secondary
-- color_negative_text_operator_selected_button - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем negative
-- color_file_name - устанавливает цвет имени файла для всех сообщений
-- color_user_file_name - устанавливает цвет имени файла для пользовательского сообщения
-- color_operator_file_name - устанавливает цвет имени файла для сообщения бота/оператора
-- color_file_size - устанавливает цвет размера файла для всех сообщений
-- color_user_file_size - устанавливает цвет размера файла для пользовательского сообщения
-- color_operator_file_size - устанавливает цвет размера файла для сообщения бота/оператора
-- color_text_user_message_author -  устанавливает цвет текста имени пользователя
-- color_text_operator_message_author -  устанавливает цвет текста имени бота/оператора
-- color_user_message_time - устанавливает цвет времени сообщения для всех типов от пользователя
-- color_user_file_message_time - устанавливает цвет времени сообщения с файлом от пользователя, если атрибут не указан, то используется значение из color_user_message_time
-- color_user_gif_message_time - устанавливает цвет времени сообщения с гифкой от пользователя, если атрибут не указан, то используется значение из color_user_message_time
-- color_user_image_message_time - устанавливает цвет времени сообщения с фото от пользователя, если атрибут не указан, то используется значение из color_user_message_time
-- color_user_text_message_time - устанавливает цвет времени сообщения с текстом и для смешанного сообщения (текст + фото/гифка/файл) от пользователя, если атрибут не указан, то используется значение из color_user_message_time
-- color_operator_message_time - устанавливает цвет времени сообщения для всех типов от бота/оператора
-- color_operator_file_message_time - устанавливает цвет времени сообщения с файлом от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
-- color_operator_gif_message_time - устанавливает цвет времени сообщения с гифкой от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
-- color_operator_image_message_time - устанавливает цвет времени сообщения с фото от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
-- color_operator_text_message_time - устанавливает цвет времени сообщения с текстом и для смешанного сообщения (текст + фото/гифка/файл) от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
-- color_operator_widget_message_time - устанавливает цвет времени сообщения для виджета от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
-- color_user_message_status - устанавливает цвет иконок статуса для всех типов сообщений
-- color_user_file_message_status - устанавливает цвет иконок статуса для сообщения с файлом, если не указано, то используется значение из color_user_message_status
-- color_user_gif_message_status - устанавливает цвет иконок статуса для сообщения с гифкой, если не указано, то используется значение из color_user_message_status
-- color_user_image_message_status - устанавливает цвет иконок статуса для сообщения с фото, если не указано, то используется значение из color_user_message_status
-- color_user_text_message_status - устанавливает цвет иконок статуса для сообщения с текстом и для смешанного сообщения (текст + фото/гифка/файл), если не указано, то используется значение из color_user_message_status
-- color_text_link_operator_message - устанавливает цвет текста ссылки в сообщении от бота/оператора
-- color_text_link_user_message - устанавливает цвет текста ссылки в пользовательском сообщении
-- color_text_warning - устанавливает цвет текста, сообщающего о состоянии соединения
-- color_company - устанавливает цвет текста названия компании (имеет смысл, есть атрибут show_company_name выставлен в true)
-- color_text_date_grouping - устанавливает цвет текста даты, группирующей сообщения
-- color_text_phone_operator_message - устанавливает цвет текста телефона в сообщении от бота/оператора
-- color_text_phone_user_message - устанавливает цвет текста телефона в пользовательском сообщении
+#### Цвета:
+- `color_main` - устанавливает главный цвет чата
+- `color_bg_user_message` - устанавливает цвет фона пользовательского сообщения
+- `color_bg_user_media_file_message` - устанавливает цвет фона пользовательского сообщения с фото или гифкой
+- `color_bg_operator_message` - устанавливает цвет фона сообщения бота/оператора
+- `color_bg_operator_media_file_message` - устанавливает цвет фона сообщения бота/оператора с фото или гифкой
+- `color_text_user_message` - устанавливает цвет текста пользовательского сообщения
+- `color_text_operator_message` - устанавливает цвет текста сообщения бота/оператора
+- `color_text_operator_action` - устанавливает цвет текста подсказки бота
+- `color_bg_operator_selected_action` - устанавливает цвет фона выбранной подсказки бота
+- `color_text_operator_selected_action` - устанавливает цвет текста выбранной подсказки бота
+- `color_text_operator_button` - устанавливает дефолтный цвет текста кнопки-подсказки бота
+- `color_primary_text_operator_button` - устанавливает цвет текста для кнопки-подсказки бота со стилем primary
+- `color_secondary_text_operator_button` - устанавливает цвет текста для кнопки-подсказки бота со стилем secondary
+- `color_negative_text_operator_button` - устанавливает цвет текста для кнопки-подсказки бота со стилем negative
+- `color_text_operator_selected_button` - устанавливает дефолтный цвет текста выбранной кнопки-подсказки бота
+- `color_primary_text_operator_selected_button` - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем primary
+- `color_secondary_text_operator_selected_button` - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем secondary
+- `color_negative_text_operator_selected_button` - устанавливает цвет текста для выбранной кнопки-подсказки бота со стилем negative
+- `color_file_name` - устанавливает цвет имени файла для всех сообщений
+- `color_user_file_name` - устанавливает цвет имени файла для пользовательского сообщения
+- `color_operator_file_name` - устанавливает цвет имени файла для сообщения бота/оператора
+- `color_file_size` - устанавливает цвет размера файла для всех сообщений
+- `color_user_file_size` - устанавливает цвет размера файла для пользовательского сообщения
+- `color_operator_file_size` - устанавливает цвет размера файла для сообщения бота/оператора
+- `color_text_user_message_author` -  устанавливает цвет текста имени пользователя
+- `color_text_operator_message_author` -  устанавливает цвет текста имени бота/оператора
+- `color_user_message_time` - устанавливает цвет времени сообщения для всех типов от пользователя
+- `color_user_file_message_time` - устанавливает цвет времени сообщения с файлом от пользователя, если атрибут не указан, то используется значение из color_user_message_time
+- `color_user_gif_message_time` - устанавливает цвет времени сообщения с гифкой от пользователя, если атрибут не указан, то используется значение из color_user_message_time
+- `color_user_image_message_time` - устанавливает цвет времени сообщения с фото от пользователя, если атрибут не указан, то используется значение из color_user_message_time
+- `color_user_text_message_time` - устанавливает цвет времени сообщения с текстом и для смешанного сообщения (текст + фото/гифка/файл) от пользователя, если атрибут не указан, то используется значение из color_user_message_time
+- `color_operator_message_time` - устанавливает цвет времени сообщения для всех типов от бота/оператора
+- `color_operator_file_message_time` - устанавливает цвет времени сообщения с файлом от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
+- `color_operator_gif_message_time` - устанавливает цвет времени сообщения с гифкой от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
+- `color_operator_image_message_time` - устанавливает цвет времени сообщения с фото от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
+- `color_operator_text_message_time` - устанавливает цвет времени сообщения с текстом и для смешанного сообщения (текст + фото/гифка/файл) от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
+- `color_operator_widget_message_time` - устанавливает цвет времени сообщения для виджета от бота/оператора, если атрибут не указан, то используется значение из color_operator_message_time
+- `color_user_message_status` - устанавливает цвет иконок статуса для всех типов сообщений
+- `color_user_file_message_status` - устанавливает цвет иконок статуса для сообщения с файлом, если не указано, то используется значение из color_user_message_status
+- `color_user_gif_message_status` - устанавливает цвет иконок статуса для сообщения с гифкой, если не указано, то используется значение из color_user_message_status
+- `color_user_image_message_status` - устанавливает цвет иконок статуса для сообщения с фото, если не указано, то используется значение из color_user_message_status
+- `color_user_text_message_status` - устанавливает цвет иконок статуса для сообщения с текстом и для смешанного сообщения (текст + фото/гифка/файл), если не указано, то используется значение из color_user_message_status
+- `color_text_link_operator_message` - устанавливает цвет текста ссылки в сообщении от бота/оператора
+- `color_text_link_user_message` - устанавливает цвет текста ссылки в пользовательском сообщении
+- `color_text_warning` - устанавливает цвет текста, сообщающего о состоянии соединения
+- `color_company` - устанавливает цвет текста названия компании (имеет смысл, есть атрибут show_company_name выставлен в true)
+- `color_text_date_grouping` - устанавливает цвет текста даты, группирующей сообщения
+- `color_text_phone_operator_message` - устанавливает цвет текста телефона в сообщении от бота/оператора
+- `color_text_phone_user_message` - устанавливает цвет текста телефона в пользовательском сообщении
 
-Ссылки на ресурсы:
-- resource_bg_user_message - устанавливает background для сообщений пользователя
-- resource_bg_operator_message - устанавливает background для сообщений бота/оператора
-- resource_bg_operator_button - устанавливает дефолтный background для кнопки-подсказки бота
-- resource_primary_bg_operator_button - устанавливает background для кнопки-подсказки бота со стилем primary
-- resource_secondary_bg_operator_button - устанавливает background для кнопки-подсказки бота со стилем secondary
-- resource_negative_bg_operator_button - устанавливает background для кнопки-подсказки бота со стилем negative
-- resource_bg_operator_selected_button - устанавливает дефолтный background для выбранной кнопки-подсказки бота
-- resource_primary_bg_operator_selected_button - устанавливает background для выбранной кнопки-подсказки бота со стилем primary
-- resource_secondary_bg_operator_selected_button - устанавливает background для выбранной кнопки-подсказки бота со стилем secondary
-- resource_negative_bg_operator_selected_button - устанавливает background для выбранной кнопки-подсказки бота со стилем negative
+#### Ссылки на ресурсы:
+- `resource_bg_user_message` - устанавливает background для сообщений пользователя
+- `resource_bg_operator_message` - устанавливает background для сообщений бота/оператора
+- `resource_bg_operator_button` - устанавливает дефолтный background для кнопки-подсказки бота
+- `resource_primary_bg_operator_button` - устанавливает background для кнопки-подсказки бота со стилем primary
+- `resource_secondary_bg_operator_button` - устанавливает background для кнопки-подсказки бота со стилем secondary
+- `resource_negative_bg_operator_button` - устанавливает background для кнопки-подсказки бота со стилем negative
+- `resource_bg_operator_selected_button` - устанавливает дефолтный background для выбранной кнопки-подсказки бота
+- `resource_primary_bg_operator_selected_button` - устанавливает background для выбранной кнопки-подсказки бота со стилем primary
+- `resource_secondary_bg_operator_selected_button` - устанавливает background для выбранной кнопки-подсказки бота со стилем secondary
+- `resource_negative_bg_operator_selected_button` - устанавливает background для выбранной кнопки-подсказки бота со стилем negative
 
-Drawable:
-- drawable_progress_indeterminate - устанавливает цвет всех тробберов в чате
-- drawable_attach_file - устанавливает иконку элемента, предназначенного для прикрепления файлов
-- drawable_send_message - устанавливает иконку элемента, предназначенного для отправки сообщений
-- drawable_document_not_downloaded_icon - устанавливает иконку для файла, который еще не был скачан, в сообщении, содержащем файл
-- drawable_document_downloading_icon - устанавливает иконку для файла, который скачивается, в сообщении, содержащем файл
-- drawable_document_downloaded_icon - устанавливает иконку для файла, который уже скачан, в сообщении, содержащем файл
-        
-Размеры текста:
-- size_user_message - устанавливает размер текста пользовательского сообщения
-- size_operator_message - устанавливает размер текста сообщения бота/оператора
-- size_operator_action - устанавливает размер текста подсказки бота
-- size_operator_button - устанавливает размер текста кнопки-подсказки бота
-- size_file_name - устанавливает размер текста имени файла для всех сообщений
-- size_user_file_name - устанавливает размер текста имени файла пользовательского сообщения
-- size_operator_file_name - устанавливает размер текста имени файла сообщения бота/оператора
-- size_file_size - устанавливает размер текста размера файла для всех сообщений
-- size_user_file_size - устанавливает размер текста размера файла пользовательского сообщения
-- size_operator_file_size - устанавливает размер текста размера файла сообщения бота/оператора
-- size_user_message_author - устанавливает размер имени пользователя в сообщении
-- size_operator_message_author - устанавливает размер имени бота/оператора в сообщении
-- size_user_message_time - устанавливает размер текста времени в сообщении пользователя
-- size_operator_message_time - устанавливает размер текста времени в сообщении бота/оператора
-- size_warning - устанавливает размер текста, сообщающего о состоянии соединения
-- size_info - устанавливает размер текста информационного сообщения (название компании/сообщение, сообщающие о том, что оператор набирает сообщение)
-- size_text_date_grouping - устанавливает размер текста даты, группирующей сообщения
+#### Drawable:
+- `drawable_progress_indeterminate` - устанавливает цвет всех тробберов в чате
+- `drawable_attach_file` - устанавливает иконку элемента, предназначенного для прикрепления файлов
+- `drawable_send_message` - устанавливает иконку элемента, предназначенного для отправки сообщений
+- `drawable_document_not_downloaded_icon` - устанавливает иконку для файла, который еще не был скачан, в сообщении, содержащем файл
+- `drawable_document_downloading_icon` - устанавливает иконку для файла, который скачивается, в сообщении, содержащем файл
+- `drawable_document_downloaded_icon` - устанавливает иконку для файла, который уже скачан, в сообщении, содержащем файл
 
-Размеры элементов:
-- size_operator_message_author_preview - устанавливает размер иконки бота/оператора в сообщении
-- width_item_user_text_message - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от пользователя
-- width_item_operator_text_message - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от бота/оператора
-- width_item_user_file_icon_message - устанавливает размер (ширину/высоту) иконки файла в сообщении от пользователя
-- width_item_operator_file_icon_message - устанавливает размер (ширину/высоту) иконки файла в сообщении от бота/оператора
-- width_item_user_file_preview_warning_message - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от пользователя
-- width_item_operator_file_preview_warning_message - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от бота/оператора
-- width_elongated_item_user_file_preview_message - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от пользователя
-- width_elongated_item_operator_file_preview_message - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от бота/оператора
-- height_elongated_item_user_file_preview_message - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от пользователя
-- height_elongated_item_operator_file_preview_message - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от бота/оператора
-- width_item_user_text_message_in_percent - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от пользователя в процентном соотношении
-- width_item_operator_text_message_in_percent - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от бота/оператора в процентном соотношении
-- width_item_user_file_icon_message_in_percent - устанавливает размер (ширину/высоту) иконки файла в сообщении от пользователя в процентном соотношении
-- width_item_operator_file_icon_message_in_percent - устанавливает размер (ширину/высоту) иконки файла в сообщении от бота/оператора в процентном соотношении
-- width_item_user_file_preview_warning_message_in_percent - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от пользователя в процентном соотношении
-- width_item_operator_file_preview_warning_message_in_percent - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от бота/оператора в процентном соотношении
-- width_elongated_item_user_file_preview_message_in_percent - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от пользователя в процентном соотношении
-- width_elongated_item_operator_file_preview_message_in_percent - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от бота/оператора в процентном соотношении
-- height_elongated_item_user_file_preview_message_in_percent - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от пользователя в процентном соотношении
-- height_elongated_item_operator_file_preview_message_in_percent - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от бота/оператора в процентном соотношении
-- horizontal_spacing_operator_button - устанавливает горизонтальное расстояние между соседними кнопками-подсказками бота 
-- vertical_spacing_operator_button - устанавливает вертикальное расстояние между соседними кнопками-подсказками бота 
+#### Размеры текста:
+- `size_user_message` - устанавливает размер текста пользовательского сообщения
+- `size_operator_message` - устанавливает размер текста сообщения бота/оператора
+- `size_operator_action` - устанавливает размер текста подсказки бота
+- `size_operator_button` - устанавливает размер текста кнопки-подсказки бота
+- `size_file_name` - устанавливает размер текста имени файла для всех сообщений
+- `size_user_file_name` - устанавливает размер текста имени файла пользовательского сообщения
+- `size_operator_file_name` - устанавливает размер текста имени файла сообщения бота/оператора
+- `size_file_size` - устанавливает размер текста размера файла для всех сообщений
+- `size_user_file_size` - устанавливает размер текста размера файла пользовательского сообщения
+- `size_operator_file_size` - устанавливает размер текста размера файла сообщения бота/оператора
+- `size_user_message_author` - устанавливает размер имени пользователя в сообщении
+- `size_operator_message_author` - устанавливает размер имени бота/оператора в сообщении
+- `size_user_message_time` - устанавливает размер текста времени в сообщении пользователя
+- `size_operator_message_time` - устанавливает размер текста времени в сообщении бота/оператора
+- `size_warning` - устанавливает размер текста, сообщающего о состоянии соединения
+- `size_info` - устанавливает размер текста информационного сообщения (название компании/сообщение, сообщающие о том, что оператор набирает сообщение)
+- `size_text_date_grouping` - устанавливает размер текста даты, группирующей сообщения
 
-Скругления:
-- rounded_media_file_preview_message - устанавливает значения скругления углов для медиафайла
-- rounded_gif_file_preview_message - устанавливает значения скругления углов для gif'ок
-- rounded_top_left_user_media_file_preview_message - устанавливает значение скругления верхнего левого угла для медиафайла от пользователя
-- rounded_top_right_user_media_file_preview_message - устанавливает значение скругления верхнего правого угла для медиафайла от пользователя
-- rounded_bottom_left_user_media_file_preview_message - устанавливает значение скругления нижнего левого угла для медиафайла от пользователя
-- rounded_bottom_right_user_media_file_preview_message - устанавливает значение скругления нижнего правого угла для медиафайла от пользователя
-- rounded_top_left_user_gif_file_preview_message - устанавливает значение скругления верхнего левого угла для gif'ок пользователя
-- rounded_top_right_user_gif_file_preview_message - устанавливает значение скругления верхнего правого угла для gif'ок пользователя
-- rounded_bottom_left_user_gif_file_preview_message - устанавливает значение скругления нижнего левого угла для gif'ок пользователя
-- rounded_bottom_right_user_gif_file_preview_message - устанавливает значение скругления нижнего правого угла для gif'ок пользователя
-- rounded_top_left_operator_media_file_preview_message - устанавливает значение скругления верхнего левого угла для медиафайла от бота/оператора
-- rounded_top_right_operator_media_file_preview_message - устанавливает значение скругления верхнего правого угла для медиафайла от бота/оператора
-- rounded_bottom_left_operator_media_file_preview_message - устанавливает значение скругления нижнего левого угла для медиафайла от бота/оператора
-- rounded_bottom_right_operator_media_file_preview_message - устанавливает значение скругления нижнего правого угла для медиафайла от бота/оператора
-- rounded_top_left_operator_gif_file_preview_message - устанавливает значение скругления верхнего левого угла для gif'ок бота/оператора
-- rounded_top_right_operator_gif_file_preview_message - устанавливает значение скругления верхнего правого угла для gif'ок бота/оператора
-- rounded_bottom_left_operator_gif_file_preview_message - устанавливает значение скругления нижнего левого угла для gif'ок бота/оператора
-- rounded_bottom_right_operator_gif_file_preview_message - устанавливает значение скругления нижнего правого угла для gif'ок бота/оператора
+#### Размеры элементов:
+- `size_operator_message_author_preview` - устанавливает размер иконки бота/оператора в сообщении
+- `width_item_user_text_message` - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от пользователя
+- `width_item_operator_text_message` - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от бота/оператора
+- `width_item_user_file_icon_message` - устанавливает размер (ширину/высоту) иконки файла в сообщении от пользователя
+- `width_item_operator_file_icon_message` - устанавливает размер (ширину/высоту) иконки файла в сообщении от бота/оператора
+- `width_item_user_file_preview_warning_message` - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от пользователя
+- `width_item_operator_file_preview_warning_message` - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от бота/оператора
+- `width_elongated_item_user_file_preview_message` - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от пользователя
+- `width_elongated_item_operator_file_preview_message` - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от бота/оператора
+- `height_elongated_item_user_file_preview_message` - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от пользователя
+- `height_elongated_item_operator_file_preview_message` - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от бота/оператора
+- `width_item_user_text_message_in_percent` - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от пользователя в процентном соотношении
+- `width_item_operator_text_message_in_percent` - устанавливает максимальную ширину бабла сообщения с текстом и смешанного сообщения (текст + фото/гифка/файл) от бота/оператора в процентном соотношении
+- `width_item_user_file_icon_message_in_percent` - устанавливает размер (ширину/высоту) иконки файла в сообщении от пользователя в процентном соотношении
+- `width_item_operator_file_icon_message_in_percent` - устанавливает размер (ширину/высоту) иконки файла в сообщении от бота/оператора в процентном соотношении
+- `width_item_user_file_preview_warning_message_in_percent` - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от пользователя в процентном соотношении
+- `width_item_operator_file_preview_warning_message_in_percent` - устанавливает размер (ширину/высоту) в сообщении с фото/гифкой (если оно не грузится) от бота/оператора в процентном соотношении
+- `width_elongated_item_user_file_preview_message_in_percent` - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от пользователя в процентном соотношении
+- `width_elongated_item_operator_file_preview_message_in_percent` - устанавливает ширину фото/гифки (если ширина ресурса больше высоты) в сообщении от бота/оператора в процентном соотношении
+- `height_elongated_item_user_file_preview_message_in_percent` - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от пользователя в процентном соотношении
+- `height_elongated_item_operator_file_preview_message_in_percent` - устанавливает высоту фото/гифки (если высота ресурса больше ширины) в сообщении от бота/оператора в процентном соотношении
+- `horizontal_spacing_operator_button` - устанавливает горизонтальное расстояние между соседними кнопками-подсказками бота 
+- `vertical_spacing_operator_button` - устанавливает вертикальное расстояние между соседними кнопками-подсказками бота 
 
-Шрифты:
-- resource_font_family_all_text - шрифт для всех сообщений, если указан этот атрибут, то остальные игнорируются
-- resource_font_family_user_message
-- resource_font_family_operator_message
-- resource_font_family_operator_action
-- resource_font_family_operator_button
-- resource_font_family_file_info
-- resource_font_family_message_author
-- resource_font_family_message_time
-- resource_font_family_message_date
+#### Скругления:
+- `rounded_media_file_preview_message` - устанавливает значения скругления углов для медиафайла
+- `rounded_gif_file_preview_message` - устанавливает значения скругления углов для gif'ок
+- `rounded_top_left_user_media_file_preview_message` - устанавливает значение скругления верхнего левого угла для медиафайла от пользователя
+- `rounded_top_right_user_media_file_preview_message` - устанавливает значение скругления верхнего правого угла для медиафайла от пользователя
+- `rounded_bottom_left_user_media_file_preview_message` - устанавливает значение скругления нижнего левого угла для медиафайла от пользователя
+- `rounded_bottom_right_user_media_file_preview_message` - устанавливает значение скругления нижнего правого угла для медиафайла от пользователя
+- `rounded_top_left_user_gif_file_preview_message` - устанавливает значение скругления верхнего левого угла для gif'ок пользователя
+- `rounded_top_right_user_gif_file_preview_message` - устанавливает значение скругления верхнего правого угла для gif'ок пользователя
+- `rounded_bottom_left_user_gif_file_preview_message` - устанавливает значение скругления нижнего левого угла для gif'ок пользователя
+- `rounded_bottom_right_user_gif_file_preview_message` - устанавливает значение скругления нижнего правого угла для gif'ок пользователя
+- `rounded_top_left_operator_media_file_preview_message` - устанавливает значение скругления верхнего левого угла для медиафайла от бота/оператора
+- `rounded_top_right_operator_media_file_preview_message` - устанавливает значение скругления верхнего правого угла для медиафайла от бота/оператора
+- `rounded_bottom_left_operator_media_file_preview_message` - устанавливает значение скругления нижнего левого угла для медиафайла от бота/оператора
+- `rounded_bottom_right_operator_media_file_preview_message` - устанавливает значение скругления нижнего правого угла для медиафайла от бота/оператора
+- `rounded_top_left_operator_gif_file_preview_message` - устанавливает значение скругления верхнего левого угла для gif'ок бота/оператора
+- `rounded_top_right_operator_gif_file_preview_message` - устанавливает значение скругления верхнего правого угла для gif'ок бота/оператора
+- `rounded_bottom_left_operator_gif_file_preview_message` - устанавливает значение скругления нижнего левого угла для gif'ок бота/оператора
+- `rounded_bottom_right_operator_gif_file_preview_message` - устанавливает значение скругления нижнего правого угла для gif'ок бота/оператора
 
-Отступы:
-- margin_start_media_file - устанавливает margin слева от медиа файла
-- margin_end_media_file - устанавливает margin справа от медиа файла
-- margin_top_media_file - устанавливает margin сверху от медиа файла
-- margin_bottom_media_file - устанавливает margin снизу от медиа файла
+#### Шрифты:
+- `resource_font_family_all_text` - шрифт для всех сообщений, если указан этот атрибут, то остальные игнорируются
+- `resource_font_family_user_message`
+- `resource_font_family_operator_message`
+- `resource_font_family_operator_action`
+- `resource_font_family_operator_button`
+- `resource_font_family_file_info`
+- `resource_font_family_message_author`
+- `resource_font_family_message_time`
+- `resource_font_family_message_date`
 
-Элементы UI:
-- company_name - указывает название компании (имеет смысл, есть атрибут show_company_name выставлен в true)
-- show_company_name - указывает о необходимости отобразить название компании
-- show_internet_connection_state - указывает о необходимости отобразить дефолтную панель с состоянием сети
-- show_upper_limiter - указывает о необходимости отобразить верхний разграничитель
-- show_starting_progress - указывает о необходимости отобразить троббер при загрузки чата (значение по умолчанию true)
-- show_user_message_author - указывает о необходимости отобразить имя автора пользователя
-- show_user_message_status - указывает о необходимости отобразить статус пользовательского сообщения
-- show_chat_state - указывает о необходимости отобразить дефолтную панель с состоянием синхронизации
+#### Отступы:
+- `margin_start_media_file` - устанавливает margin слева от медиа файла
+- `margin_end_media_file` - устанавливает margin справа от медиа файла
+- `margin_top_media_file` - устанавливает margin сверху от медиа файла
+- `margin_bottom_media_file` - устанавливает margin снизу от медиа файла
 
-Кнопка для скачивания файлов:
-- media_file_download_mode - указывает о необходимости отобразить кнопку для скачивания файлов (дефолтное значение ONLY_IN_VIEWER). ONLY_IN_VIEWER - предоставляет возможность скачать фото только при просмотре этого фото, ONLY_IN_CHAT - предоставляет возможность скачать фото из чата, All_PLACES -  предоставляет возможность скачать фото из любого места.
-- color_user_file_message_download - устанавливает цвет текста кнопки для пользовательского сообщения
-- color_operator_file_message_download - устанавливает цвет текста кнопки для сообщения от бота/оператора
-- size_user_file_message_download - устанавливает размер текста кнопки для пользовательского сообщения
-- size_operator_file_message_download - устанавливает размер текста кнопки для сообщения от бота/оператора
-- background_user_file_message_download - устанавливает фон кнопки для пользовательского сообщения
-- background_operator_file_message_download - устанавливает фон кнопки для сообщения от бота/оператора
+#### Элементы UI:
+- `company_name` - указывает название компании (имеет смысл, есть атрибут show_company_name выставлен в true)
+- `show_company_name` - указывает о необходимости отобразить название компании
+- `show_internet_connection_state` - указывает о необходимости отобразить дефолтную панель с состоянием сети
+- `show_upper_limiter` - указывает о необходимости отобразить верхний разграничитель
+- `show_starting_progress` - указывает о необходимости отобразить троббер при загрузки чата (значение по умолчанию true)
+- `show_user_message_author` - указывает о необходимости отобразить имя автора пользователя
+- `show_user_message_status` - указывает о необходимости отобразить статус пользовательского сообщения
+- `show_chat_state` - указывает о необходимости отобразить дефолтную панель с состоянием синхронизации
 
-Цитирование:
-- reply_enable - включает (true) или отключает (false) цитирование
-- drawable_reply_message - устанавливает иконку "процесса цитирования", при свайпе влево
-- color_barrier_user_replied_message - устанавливает цвет барьера для процитированного блока в сообщении пользователя
-- color_barrier_operator_replied_message - устанавливает цвет барьера для процитированного блока в сообщении оператора
-- color_text_user_replied_message - устанавливает цвет текста процитированного сообщения пользователем
-- color_text_operator_replied_message - устанавливает цвет текста процитированного сообщения оператором
-- color_user_replied_file_name - устанавливает цвет текста имени файла процитированного сообщения пользователем
-- color_operator_replied_file_name - устанавливает цвет текста имени файла процитированного сообщения оператором
-- color_user_replied_file_size - устанавливает цвет текста размера файла процитированного сообщения пользователем
-- color_operator_replied_file_size - устанавливает цвет текста размера файла процитированного сообщения оператором
-- size_user_replied_message - устанавливает размер текста процитированного сообщения пользователем
-- size_operator_replied_message - устанавливает размер текста процитированного сообщения оператором
-- size_user_replied_file_name - устанавливает размер текста имени файла процитированного сообщения пользователем
-- size_operator_replied_file_name - устанавливает размер текста имени файла процитированного сообщения оператором
-- size_user_replied_file_size - устанавливает размер текста размера файла процитированного сообщения пользователем
-- size_operator_replied_file_size - устанавливает размер текста размера файла процитированного сообщения оператором
+#### Кнопка для скачивания файлов:
+- `media_file_download_mode` - указывает о необходимости отобразить кнопку для скачивания файлов (дефолтное значение ONLY_IN_VIEWER). ONLY_IN_VIEWER - предоставляет возможность скачать фото только при просмотре этого фото, ONLY_IN_CHAT - предоставляет возможность скачать фото из чата, All_PLACES -  предоставляет возможность скачать фото из любого места.
+- `color_user_file_message_download` - устанавливает цвет текста кнопки для пользовательского сообщения
+- `color_operator_file_message_download` - устанавливает цвет текста кнопки для сообщения от бота/оператора
+- `size_user_file_message_download` - устанавливает размер текста кнопки для пользовательского сообщения
+- `size_operator_file_message_download` - устанавливает размер текста кнопки для сообщения от бота/оператора
+- `background_user_file_message_download` - устанавливает фон кнопки для пользовательского сообщения
+- `background_operator_file_message_download` - устанавливает фон кнопки для сообщения от бота/оператора
 
-Голосовой ввод
-- show_voice_input - включает (true) или отключает (false) голосовой ввод 
-- delay_voice_input_post_recording - устанавливает задержку для дозаписи
-- delay_voice_input_between_recurring_warnings - устанавливает задержку между двумя предупреждениями при использовании голосового ввода
-- drawable_voice_input_mic_on - устанавливает иконку для включенного микрофона
-- drawable_voice_input_mic_off - устанавливает иконку для выключенного микрофона
+#### Цитирование:
+- `reply_enable` - включает (true) или отключает (false) цитирование
+- `drawable_reply_message` - устанавливает иконку "процесса цитирования", при свайпе влево
+- `color_barrier_user_replied_message` - устанавливает цвет барьера для процитированного блока в сообщении пользователя
+- `color_barrier_operator_replied_message` - устанавливает цвет барьера для процитированного блока в сообщении оператора
+- `color_text_user_replied_message` - устанавливает цвет текста процитированного сообщения пользователем
+- `color_text_operator_replied_message` - устанавливает цвет текста процитированного сообщения оператором
+- `color_user_replied_file_name` - устанавливает цвет текста имени файла процитированного сообщения пользователем
+- `color_operator_replied_file_name` - устанавливает цвет текста имени файла процитированного сообщения оператором
+- `color_user_replied_file_size` - устанавливает цвет текста размера файла процитированного сообщения пользователем
+- `color_operator_replied_file_size` - устанавливает цвет текста размера файла процитированного сообщения оператором
+- `size_user_replied_message` - устанавливает размер текста процитированного сообщения пользователем
+- `size_operator_replied_message` - устанавливает размер текста процитированного сообщения оператором
+- `size_user_replied_file_name` - устанавливает размер текста имени файла процитированного сообщения пользователем
+- `size_operator_replied_file_name` - устанавливает размер текста имени файла процитированного сообщения оператором
+- `size_user_replied_file_size` - устанавливает размер текста размера файла процитированного сообщения пользователем
+- `size_operator_replied_file_size` - устанавливает размер текста размера файла процитированного сообщения оператором
 
-Оценка работы оператора:
-- delay_feedback_screen_appears - выставляет время в мс (при выставлении оценки), по истечении которого сворачивается плашка оценки работы оператора (по умолчанию 1000 мс)
-- color_feedback_title - устанавливает цвет заголовка на плашке оценки работы оператора
-- size_feedback_title - устанавливает размер заголовка на плашке оценки работы оператора
-- color_feedback_star - устанавливает цвет звезд
+#### Голосовой ввод
+- `show_voice_input` - включает (true) или отключает (false) голосовой ввод 
+- `delay_voice_input_post_recording` - устанавливает задержку для дозаписи
+- `delay_voice_input_between_recurring_warnings` - устанавливает задержку между двумя предупреждениями при использовании голосового ввода
+- `drawable_voice_input_mic_on` - устанавливает иконку для включенного микрофона
+- `drawable_voice_input_mic_off` - устанавливает иконку для выключенного микрофона
 
-Поиск по чату:
-- enable_search - включает поиск (дефолтное значение - false)
-- enable_auto_search - включает автопоиск (дефолтное значение - false)
-- color_select_search_text - устанавливает цвет выделения текста, подходящего под шаблон 
-- color_current_select_search_text - устанавливает цвет выделения текущего текста
-- color_search_coincidence_text - устанавливает цвет текста сообщения о совпадениях
-- background_search_switch - устанавливает цвет фона блока навигации по совпадениям поиска
-- color_search_top - устанавливает цвет иконки навигации по поиску вверх
-- color_search_bottom - устанавливает цвет иконки навигации по поиску вниз
-- size_text_search_coincidence - устанавливает размер текста сообщения о совпадениях
+#### Оценка работы оператора:
+- `delay_feedback_screen_appears` - выставляет время в мс (при выставлении оценки), по истечении которого сворачивается плашка оценки работы оператора (по умолчанию 1000 мс)
+- `color_feedback_title` - устанавливает цвет заголовка на плашке оценки работы оператора
+- `size_feedback_title` - устанавливает размер заголовка на плашке оценки работы оператора
+- `color_feedback_star` - устанавливает цвет звезд
+- `feedback_title_block_entering_message` - позволяет выбрать, должна ли оценка диалога перекрывать поле для ввода сообщения. По умолчанию не перекрывает
 
-Предупреждение:
-- title_success_download_file_warning - устанавливает сообщение которое отображается при успешном скачивании файла (дефолтное значение - "Файл успешно скачан")
-- color_success_download_file_warning - устанавливает цвет текста информационного сообщения при успешном скачивании файла
-- background_success_download_file_warning -  устанавливает цвет фона информационного сообщения при успешном скачивании файла
-- title_fail_download_file_warning - устанавливает сообщение которое отображается при неудачном скачивании файла (дефолтное значение - "Файл не удалось скачать")
-- color_fail_download_file_warning - устанавливает цвет текста информационного сообщения при неудачном скачивании файла
-- background_fail_download_file_warning - устанавливает цвет фона информационного сообщения при неудачном скачивании файла
+#### Поиск по чату:
+- `enable_search` - включает поиск (дефолтное значение - false)
+- `enable_auto_search` - включает автопоиск (дефолтное значение - false)
+- `color_select_search_text` - устанавливает цвет выделения текста, подходящего под шаблон 
+- `color_current_select_search_text` - устанавливает цвет выделения текущего текста
+- `color_search_coincidence_text` - устанавливает цвет текста сообщения о совпадениях
+- `background_search_switch` - устанавливает цвет фона блока навигации по совпадениям поиска
+- `color_search_top` - устанавливает цвет иконки навигации по поиску вверх
+- `color_search_bottom` - устанавливает цвет иконки навигации по поиску вниз
+- `size_text_search_coincidence` - устанавливает размер текста сообщения о совпадениях
 
-Собственные layouts:
-- layout_item_user_text_message - задает layout для текстового сообщения пользователя
-- layout_item_user_image_message - задает layout для сообщения с фото от пользователя
-- layout_item_user_gif_message - задает layout для сообщения с гифкой от пользователя
-- layout_item_user_file_message - задает layout для сообщения с файлом от пользователя
-- layout_item_user_union_message - задает layout для смешанного(текст + фото/гифка/файл) сообщения от пользователя
-- layout_item_operator_text_message - задает layout для текстового сообщения бота/оператора
-- layout_item_operator_image_message - задает layout для сообщения с фото от бота/оператора
-- layout_item_operator_gif_message - задает layout для сообщения с гифкой от бота/оператора
-- layout_item_operator_file_message - задает layout для сообщения с файлом от бота/оператора
-- layout_item_operator_union_message - задает layout для смешанного(текст + фото/гифка/файл) сообщения от бота/оператора
-- layout_item_transfer_message - задает layout для сообщения от бота о переводе на оператора
-- layout_item_info_message - задает layout для сообщения склейки от бота
-- layout_item_widget_message - задает layout для виджетов
+#### Предупреждение:
+- `title_success_download_file_warning` - устанавливает сообщение которое отображается при успешном скачивании файла (дефолтное значение - "Файл успешно скачан")
+- `color_success_download_file_warning` - устанавливает цвет текста информационного сообщения при успешном скачивании файла
+- `background_success_download_file_warning` -  устанавливает цвет фона информационного сообщения при успешном скачивании файла
+- `title_fail_download_file_warning` - устанавливает сообщение которое отображается при неудачном скачивании файла (дефолтное значение - "Файл не удалось скачать")
+- `color_fail_download_file_warning` - устанавливает цвет текста информационного сообщения при неудачном скачивании файла
+- `background_fail_download_file_warning` - устанавливает цвет фона информационного сообщения при неудачном скачивании файла
+
+#### Собственные layouts:
+- `layout_item_user_text_message` - задает layout для текстового сообщения пользователя
+- `layout_item_user_image_message` - задает layout для сообщения с фото от пользователя
+- `layout_item_user_gif_message` - задает layout для сообщения с гифкой от пользователя
+- `layout_item_user_file_message` - задает layout для сообщения с файлом от пользователя
+- `layout_item_user_union_message` - задает layout для смешанного(текст + фото/гифка/файл) сообщения от пользователя
+- `layout_item_operator_text_message` - задает layout для текстового сообщения бота/оператора
+- `layout_item_operator_image_message` - задает layout для сообщения с фото от бота/оператора
+- `layout_item_operator_gif_message` - задает layout для сообщения с гифкой от бота/оператора
+- `layout_item_operator_file_message` - задает layout для сообщения с файлом от бота/оператора
+- `layout_item_operator_union_message` - задает layout для смешанного(текст + фото/гифка/файл) сообщения от бота/оператора
+- `layout_item_transfer_message` - задает layout для сообщения от бота о переводе на оператора
+- `layout_item_info_message` - задает layout для сообщения склейки от бота
+- `layout_item_widget_message` - задает layout для виджетов
 
 ## Listeners
 
