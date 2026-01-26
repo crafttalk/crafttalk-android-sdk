@@ -5,6 +5,8 @@ import android.util.Log
 import com.crafttalk.chat.data.helper.converters.text.MarkdownFileConverter
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
+import com.crafttalk.chat.data.local.db.entity.settings.InitialMessageText
+import com.crafttalk.chat.data.local.db.entity.settings.InitialMessageTextDeserializer
 import com.crafttalk.chat.data.local.db.entity.settings.SettingFromServerJSON
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.message.MessageType
@@ -92,6 +94,11 @@ class SocketApi(
         try {
             val apiResponse: String =
                 URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
+            val gson = GsonBuilder()
+                .registerTypeAdapter(InitialMessageText::class.java,
+                    InitialMessageTextDeserializer()
+                )
+                .create()
             val settingFromServerJSON =
                 gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
 
@@ -284,6 +291,10 @@ class SocketApi(
                         "An error occurred while getting message from server. Info: " + e.message
                     )
                 }
+                if (messageSocket.messageType == MessageType.FINISH_DIALOG.valueType) {
+                    Log.d("42342","4324234")
+                    messageSocket.meta?.skipScore
+                }
                 if (messageSocket.attachmentName == null) {
                     messageSocket.attachmentName = UUID.randomUUID().toString()
                 }
@@ -291,7 +302,11 @@ class SocketApi(
 //                    messageSocket.attachmentName = "FILE"
 //                }
                 when (messageSocket.messageType) {
-                    MessageType.UPDATE_DIALOG_SCORE.valueType -> chatEventListener?.updateDialogScore()
+                    MessageType.UPDATE_DIALOG_SCORE.valueType -> {
+                        if (!messageSocket.meta?.skipScore.toBoolean()){
+                            chatEventListener?.updateDialogScore()
+                        }
+                    }
                     MessageType.SCORE_REQUEST.valueType -> chatEventListener?.finishDialog(
                         messageSocket.dialogId
                     )
@@ -303,7 +318,9 @@ class SocketApi(
 
                     MessageType.FINISH_DIALOG.valueType -> {
                         Log.d("PHILIP_TEST", messageSocket.toString())
-                        chatEventListener?.finishDialog(messageSocket.dialogId)
+                        if (!messageSocket.meta?.skipScore.toBoolean()) {
+                            chatEventListener?.finishDialog(messageSocket.dialogId)
+                        }
                         messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"
                         updateDataInDatabase(messageSocket, currentTimestamp)
                     }

@@ -2,6 +2,7 @@ package com.crafttalk.chat.data.local.db.entity
 
 import android.util.Log
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.crafttalk.chat.data.helper.converters.text.convertTextToNormalString
@@ -15,6 +16,7 @@ import kotlin.math.abs
 import com.crafttalk.chat.domain.entity.message.NetworkMessage
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_MESSAGE_ENTITY_DEBUG
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 import java.util.*
 
 @Entity(tableName = TABLE_NAME)
@@ -118,7 +120,11 @@ data class MessageEntity(
     val repliedMessageAttachmentWidth: Int? = null,
 
     @ColumnInfo(name = "dialog_id")
-    val dialogId: String? = null
+    val dialogId: String? = null,
+
+    @Embedded(prefix = "meta_")
+    var meta: MessageMetaEntity? = null
+
 ) {
 
     fun hasSelectedAction(): Boolean {
@@ -379,3 +385,8 @@ data class MessageEntity(
         }
     }
 }
+
+data class MessageMetaEntity(
+    @ColumnInfo(name = "skip_score")
+    var skipScore: String? = null
+) : Serializable

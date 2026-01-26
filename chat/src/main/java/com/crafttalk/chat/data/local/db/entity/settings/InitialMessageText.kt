@@ -6,6 +6,6 @@ import com.google.gson.annotations.SerializedName
 data class InitialMessageText (
 
     @SerializedName("text"    ) var text    : String?            = null,
-    @SerializedName("actions" ) var actions : ArrayList<Actions> = arrayListOf()
+    @SerializedName("actions" ) var actions : ArrayList<Actions>? = arrayListOf()
 
 )

@@ -60,31 +60,37 @@ data class NetworkMessage (
     val replyToMessage: NetworkMessage? = null,
 
     @SerializedName (value = "dialog_id")
-    val dialogId: String? = null
+    val dialogId: String? = null,
+
+    @SerializedName(value = "meta")
+    val meta: NetworkMessageMeta? = null
+
 
 ) : Serializable {
     val isText: Boolean
-    get() = !message.isNullOrBlank()
+        get() = !message.isNullOrBlank()
 
     val isImage: Boolean
-    get() = !attachmentUrl.isNullOrEmpty() &&
-            !attachmentName.isNullOrEmpty() &&
-            !attachmentType.isNullOrEmpty() &&
-            (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
-                ChatParams.locale!!).startsWith("image"))
+        get() = !attachmentUrl.isNullOrEmpty() &&
+                !attachmentName.isNullOrEmpty() &&
+                !attachmentType.isNullOrEmpty() &&
+                (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
+                    ChatParams.locale!!
+                ).startsWith("image"))
     val isGif: Boolean
-    get() = !attachmentUrl.isNullOrEmpty() &&
-            !attachmentName.isNullOrEmpty() &&
-            !attachmentType.isNullOrEmpty() &&
-            (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
-                ChatParams.locale!!).startsWith("image")) &&
-            attachmentName!!.contains(".GIF", true)
+        get() = !attachmentUrl.isNullOrEmpty() &&
+                !attachmentName.isNullOrEmpty() &&
+                !attachmentType.isNullOrEmpty() &&
+                (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
+                    ChatParams.locale!!
+                ).startsWith("image")) &&
+                attachmentName!!.contains(".GIF", true)
 
     val isFile: Boolean
-    get() = !attachmentUrl.isNullOrEmpty() &&
-            !attachmentName.isNullOrEmpty() &&
-            !attachmentType.isNullOrEmpty() &&
-            attachmentType == "FILE"
+        get() = !attachmentUrl.isNullOrEmpty() &&
+                !attachmentName.isNullOrEmpty() &&
+                !attachmentType.isNullOrEmpty() &&
+                attachmentType == "FILE"
 
     val isMarkdownFile: Boolean
         get() = message!!.contains("ct-markdown__file")
@@ -96,12 +102,14 @@ data class NetworkMessage (
                 attachmentTypeFile != TypeFile.STICKER &&
                 !attachmentType.isNullOrEmpty() &&
                 (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
-                    ChatParams.locale!!).startsWith("image"))
+                    ChatParams.locale!!
+                ).startsWith("image"))
     val isMarkdownGif: Boolean
         get() = !attachmentUrl.isNullOrEmpty() &&
                 !attachmentType.isNullOrEmpty() &&
                 (attachmentType == "IMAGE" || attachmentType!!.toLowerCase(
-                    ChatParams.locale!!).startsWith("image")) &&
+                    ChatParams.locale!!
+                ).startsWith("image")) &&
                 attachmentName!!.contains(".GIF", true)
 
     val isUnknownType: Boolean
@@ -115,24 +123,24 @@ data class NetworkMessage (
                 attachmentType!!.contains("IMAGE/STICKER", ignoreCase = true)
 
     val isContainsContent: Boolean
-    get() = isText || isImage || isGif || isFile || isSticker
+        get() = isText || isImage || isGif || isFile || isSticker
 
     val attachmentTypeFile: TypeFile?
-    get() = when {
-        isFile -> TypeFile.FILE
-        isImage -> TypeFile.IMAGE
-        isGif -> TypeFile.GIF
-        isSticker -> TypeFile.STICKER
-        isUnknownType -> TypeFile.FILE
-        else -> null
-    }
+        get() = when {
+            isFile -> TypeFile.FILE
+            isImage -> TypeFile.IMAGE
+            isGif -> TypeFile.GIF
+            isSticker -> TypeFile.STICKER
+            isUnknownType -> TypeFile.FILE
+            else -> null
+        }
 
     var correctAttachmentUrl: String? = ""
-    get() = if (attachmentUrl?.startsWith("/webchat/file/") == true) {
-        "${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}${attachmentUrl}"
-    } else {
-        attachmentUrl
-    }
+        get() = if (attachmentUrl?.startsWith("/webchat/file/") == true) {
+            "${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}${attachmentUrl}"
+        } else {
+            attachmentUrl
+        }
 
     companion object {
 
@@ -152,7 +160,15 @@ data class NetworkMessage (
             operatorId = messageEntity.operatorId,
             operatorName = messageEntity.operatorName,
             replyToMessage = null,
-            dialogId = messageEntity.dialogId
+            dialogId = messageEntity.dialogId,
+            meta = if (messageEntity.meta != null) NetworkMessageMeta(skipScore = messageEntity.meta!!.skipScore) else null
+
         )
     }
 }
+
+data class NetworkMessageMeta(
+    @SerializedName("skip_score")
+    var skipScore: String? = null
+) : Serializable
+

@@ -1,7 +1,11 @@
 package com.crafttalk.chat.data.local.db.entity.settings
 
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.lang.reflect.Type
 
 /**
  * Класс описывает все настройки и парметры которые получает нативный СДК
@@ -100,4 +104,27 @@ data class SettingFromServerJSON(
     @SerializedName("emojiUrl"                          ) var emojiUrl                          : String?             = null,
     @SerializedName("webchat_version"                   ) var webchatVersion                    : WebchatVersion?     = WebchatVersion()
 ) : Serializable {
+}
+
+class InitialMessageTextDeserializer : JsonDeserializer<InitialMessageText> {
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
+    ): InitialMessageText {
+        return when {
+            json.isJsonObject -> {
+                // Если объект, парсим как обычно
+                context.deserialize(json, InitialMessageText::class.java)
+            }
+            json.isJsonPrimitive && json.asJsonPrimitive.isString -> {
+                // Если строка, создаем пустой объект с text равным строке
+                InitialMessageText(text = json.asString, actions = arrayListOf<Actions>())
+            }
+            else -> {
+                // На всякий случай дефолт
+                InitialMessageText()
+            }
+        }
+    }
 }
