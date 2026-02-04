@@ -33,6 +33,7 @@ class DBModule {
             Migration_6_7,
             Migration_7_10,
             Migration_9_10,
+            Migration_10_11
         )
         /**
          * Из-за расхождения в версиях и неверной миграции между v7 - v8,
