@@ -92,6 +92,7 @@
         app:show_upper_limiter="false"
         app:reply_enable="true"
         app:show_voice_input="false"
+        app:feedback_title_block_entering_message="true"
         app:timeDelayed="1000" />
 
 </LinearLayout>
