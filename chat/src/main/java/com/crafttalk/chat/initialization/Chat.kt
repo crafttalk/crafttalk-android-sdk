@@ -1,9 +1,8 @@
 package com.crafttalk.chat.initialization
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.datastore.preferences.core.Preferences
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -46,7 +45,7 @@ object Chat {
     private fun initDI(context: Context) {
         if (sdkComponent == null) {
             sdkComponent = DaggerSdkComponent.builder()
-                .context(context)
+                .context(context.applicationContext)
                 .build()
         }
         conditionInteractor = ConditionInteractor(sdkComponent!!.getConditionRepository())
@@ -94,8 +93,7 @@ object Chat {
         ChatParams.fileReadTimeout = fileReadTimeout
         ChatParams.fileWriteTimeout = fileWriteTimeout
         ChatParams.fileCallTimeout = fileCallTimeout
-        appContext = context.applicationContext
-        initDI(context)
+        initDI(context.applicationContext)
     }
 
     fun setFirebasePushToken(firebasePushToken: String) {
@@ -118,17 +116,17 @@ object Chat {
     fun wakeUp(visitor: Visitor?) {
         val usernameKey = stringPreferencesKey("userUUID")
         scopeIO.launch {
-            val uuid = appContext.dataStore.data
+            val uuid = appContext.applicationContext.dataStore.data
                 .map { preferences ->
                     preferences[usernameKey] ?: "cant read" //ошибка чтения
                 }
                 .first()
             if (uuid != visitor?.uuid) {
                 Log.d("CTALK_Chat.kt","new UUID detected")
-                appContext.dataStore.edit { preferences ->
+                appContext.applicationContext.dataStore.edit { preferences ->
                     preferences[usernameKey] = visitor?.uuid.toString()
                 }
-                clearDBDialogHistory(appContext)
+                clearDBDialogHistory(appContext.applicationContext)
             }
         }
         conditionInteractor?.openApp()
@@ -148,13 +146,13 @@ object Chat {
 
     fun logOut(context: Context) {
         scopeIO.launch {
-            authInteractor?.logOut(context.filesDir)
+            authInteractor?.logOut(context.applicationContext.filesDir)
         }
     }
 
     fun logOutWithUIActionAfter(context: Context, actionUIAfterLogOut: () -> Unit) {
         scopeIO.launch {
-            authInteractor?.logOut(context.filesDir)
+            authInteractor?.logOut(context.applicationContext.filesDir)
             scopeUI.launch {
                 actionUIAfterLogOut()
             }
@@ -163,7 +161,7 @@ object Chat {
 
     fun logOutWithIOActionAfter(context: Context, actionIOAfterLogOut: () -> Unit) {
         scopeIO.launch {
-            authInteractor?.logOut(context.filesDir)
+            authInteractor?.logOut(context.applicationContext.filesDir)
             actionIOAfterLogOut()
         }
     }
