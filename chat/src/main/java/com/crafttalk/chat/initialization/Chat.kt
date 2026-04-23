@@ -46,7 +46,7 @@ object Chat {
     private fun initDI(context: Context) {
         if (sdkComponent == null) {
             sdkComponent = DaggerSdkComponent.builder()
-                .context(context)
+                .context(context.applicationContext)
                 .build()
         }
         conditionInteractor = ConditionInteractor(sdkComponent!!.getConditionRepository())
