@@ -93,6 +93,7 @@ object Chat {
         ChatParams.fileReadTimeout = fileReadTimeout
         ChatParams.fileWriteTimeout = fileWriteTimeout
         ChatParams.fileCallTimeout = fileCallTimeout
+        appContext = context.applicationContext
         initDI(context.applicationContext)
     }
 
