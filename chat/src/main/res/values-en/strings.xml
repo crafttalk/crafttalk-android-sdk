@@ -18,6 +18,7 @@
 
     <!--    Message-->
     <string name="com_crafttalk_chat_message_join">Operator %s joined the dialogue</string>
+    <string name="com_crafttalk_chat_dialog_finished">The dialogue is over</string>
 
     <!--    File-->
     <string name="com_crafttalk_chat_file_size_byte">byte</string>

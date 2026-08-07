@@ -2,6 +2,7 @@ package com.crafttalk.chat.data.api.socket
 
 import android.content.Context
 import android.util.Log
+import com.crafttalk.chat.R
 import com.crafttalk.chat.data.helper.converters.text.MarkdownFileConverter
 import com.crafttalk.chat.data.local.db.dao.MessagesDao
 import com.crafttalk.chat.data.local.db.entity.MessageEntity
@@ -32,6 +33,7 @@ import com.google.gson.GsonBuilder
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,13 +41,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONObject
 import java.net.URI
 import java.net.URISyntaxException
-import java.net.URL
 import java.util.*
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 
 class SocketApi(
@@ -85,40 +85,71 @@ class SocketApi(
     private val viewModelScope = CoroutineScope(Dispatchers.IO + viewModelJob)
     private var isSendGreet = false
 
-    val executorService = Executors.newSingleThreadScheduledExecutor()
+    private var settingsJob: Job? = null
+
+    private val settingsGson: Gson by lazy {
+        GsonBuilder()
+            .registerTypeAdapter(InitialMessageText::class.java, InitialMessageTextDeserializer())
+            .create()
+    }
+
+    private val messageGson: Gson by lazy {
+        GsonBuilder()
+            .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
+            .create()
+    }
 
     /**
      * Получает с сервера json файл с настройками канала, парсит полученый файл и применяет полученные настройки
      */
-    private val getSettingsFromServerTask = Runnable {
-        try {
-            val apiResponse: String =
-                URL("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}/configuration/${ChatParams.urlChatNameSpace}").readText()
-            val gson = GsonBuilder()
-                .registerTypeAdapter(InitialMessageText::class.java,
-                    InitialMessageTextDeserializer()
-                )
-                .create()
-            val settingFromServerJSON =
-                gson.fromJson(apiResponse, SettingFromServerJSON::class.java)
-
-            if (settingFromServerJSON.sendUserIsTyping == true) {
-                settingFromServerJSON.userTypingInterval?.let { interval ->
-                    chatEventListener?.setUserTypingInterval(interval)
-                }
-            } else {
-                chatEventListener?.setUserTyping(false)
+    private fun loadSettingsFromServer() {
+        settingsJob?.cancel()
+        settingsJob = viewModelScope.launch {
+            try {
+                applySettings(requestSettings())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e(TAG_SOCKET_API_SETTING, "Can't load channel settings", e)
             }
+        }
+    }
 
-            if (settingFromServerJSON.block == false) {
-                Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat not closed")
-            } else {
-                val blockMessageStr = settingFromServerJSON.blockMessage ?: ""
-                Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat closed")
-                chatEventListener?.setChatStateClosed(true, blockMessageStr)
+    private fun requestSettings(): SettingFromServerJSON {
+        val scheme = ChatParams.urlChatScheme
+        val host = ChatParams.urlChatHost
+        val nameSpace = ChatParams.urlChatNameSpace
+        check(!scheme.isNullOrEmpty() && !host.isNullOrEmpty() && !nameSpace.isNullOrEmpty()) {
+            "Chat url params are not initialized"
+        }
+
+        val request = Request.Builder()
+            .url("$scheme://$host/configuration/$nameSpace")
+            .build()
+
+        okHttpClient.newCall(request).execute().use { response ->
+            val body = response.body
+            check(response.isSuccessful && body != null) {
+                "Configuration request failed, code = ${response.code}"
             }
-        } catch (e: Exception) {
-            Log.e(TAG_SOCKET_API_SETTING, e.message.toString())
+            return settingsGson.fromJson(body.charStream(), SettingFromServerJSON::class.java)
+        }
+    }
+
+    private fun applySettings(settings: SettingFromServerJSON) {
+        val listener = chatEventListener ?: return
+
+        if (settings.sendUserIsTyping == true) {
+            settings.userTypingInterval?.let(listener::setUserTypingInterval)
+        } else {
+            listener.setUserTyping(false)
+        }
+
+        if (settings.block == true) {
+            Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat closed")
+            listener.setChatStateClosed(true, settings.blockMessage.orEmpty())
+        } else {
+            Log.d(TAG_SOCKET_API_SETTING, "get Server setting, Chat not closed")
         }
     }
 
@@ -154,6 +185,8 @@ class SocketApi(
 
     fun destroySocket() {
         isSendGreet = false
+        settingsJob?.cancel()
+        settingsJob = null
         socket?.off()
         socket = null
         Log.i(TAG_SOCKET_EVENT, "Socket destroyed")
@@ -207,7 +240,7 @@ class SocketApi(
         chatEventListener?.let { this.chatEventListener = it }
         this.visitor = visitor
         socket?.run(::connectUser)
-        executorService.schedule(getSettingsFromServerTask, 0, TimeUnit.MILLISECONDS)
+        loadSettingsFromServer()
     }
 
     private fun setAllListeners(socket: Socket) {
@@ -275,25 +308,18 @@ class SocketApi(
                 val currentTimestamp = System.currentTimeMillis()
                 Log.d(TAG_SOCKET_EVENT, "json message___ methon message - $messageJson")
 
-                val gson = GsonBuilder()
-                    .registerTypeAdapter(NetworkWidget::class.java, NetworkWidgetDeserializer())
-                    .create()
                 var messageSocket =
                     NetworkMessage(UUID.randomUUID().toString(), null, -1, false, null, 0)
                 try {
                     //messageSocket = gson.fromJson(messageJson.toString().replace("&amp;", "&"), NetworkMessage::class.java) ?: return@launch //philip, понятия не имею для чего это было сделано
                     messageSocket =
-                        gson.fromJson(messageJson.toString(), NetworkMessage::class.java)
+                        messageGson.fromJson(messageJson.toString(), NetworkMessage::class.java)
                             ?: return@launch
                 } catch (e: Exception) {
                     Log.e(
                         TAG_SOCKET,
                         "An error occurred while getting message from server. Info: " + e.message
                     )
-                }
-                if (messageSocket.messageType == MessageType.FINISH_DIALOG.valueType) {
-                    Log.d("42342","4324234")
-                    messageSocket.meta?.skipScore
                 }
                 if (messageSocket.attachmentName == null) {
                     messageSocket.attachmentName = UUID.randomUUID().toString()
@@ -317,21 +343,20 @@ class SocketApi(
                     MessageType.INITIAL_MESSAGE.valueType -> chatEventListener?.operatorStopWriteMessage()
 
                     MessageType.FINISH_DIALOG.valueType -> {
-                        Log.d("PHILIP_TEST", messageSocket.toString())
+                        Log.d(TAG_SOCKET_EVENT, "finish dialog message - $messageSocket")
                         if (!messageSocket.meta?.skipScore.toBoolean()) {
                             chatEventListener?.finishDialog(messageSocket.dialogId)
                         }
-                        messageSocket.messageType = 1; messageSocket.message = "Диалог завершён"
+                        messageSocket.messageType = MessageType.MESSAGE.valueType
+                        messageSocket.message =
+                            context.getString(R.string.com_crafttalk_chat_dialog_finished)
                         updateDataInDatabase(messageSocket, currentTimestamp)
                     }
 
                     MessageType.USER_WAS_MERGED.valueType -> chatEventListener?.showUploadHistoryBtn()
                 }
                 if (
-                    (!messageSocket.toString()
-                        .contains(""""message":"\/start"""") && !messageSocket.toString()
-                        .contains(""""message":"/start"""") && !messageSocket.toString()
-                        .contains("/start") && !messageSocket.toString().contains("""\/start""")) &&
+                    (messageSocket.message?.trim() != GREETING_MESSAGE) &&
                     (messageSocket.id != null || !messageDao.isNotEmpty())
                 ) {
                     when {
@@ -429,12 +454,12 @@ class SocketApi(
     }
 
     private fun greet() {
-        if (socket != null && socket!!.connected() && !isSendGreet) {
+        if (socket?.connected() == true && !isSendGreet) {
             Log.d(TAG_SOCKET, "sending greeting message")
             isSendGreet = true
             socket?.emit(
                 "visitor-message",
-                "/start",
+                GREETING_MESSAGE,
                 MessageType.MESSAGE.valueType,
                 null,
                 0,
@@ -618,10 +643,10 @@ class SocketApi(
             (MessageType.MESSAGE.valueType == messageSocket.messageType) && (messageSocket.message.toString()
                 .contains("ct-markdown__file")) -> {
                 Log.d(TAG_SOCKET_EVENT, "got markdown file")
-                var files = MarkdownFileConverter(messageSocket.message.toString())
+                val files = MarkdownFileConverter(messageSocket.message.toString())
                 files.convert()
                 messageSocket.message = ""
-                for (i in 0..3) {
+                for (i in 0 until files.count) {
                     messageSocket.attachmentName = files.arrayOfNames[i]
                     messageSocket.attachmentUrl = files.arrayOfURILinks[i]
                     messageSocket.correctAttachmentUrl = files.arrayOfURLLinks[i]
@@ -783,6 +808,11 @@ class SocketApi(
         } else {
             bufferNewMessages.add(message)
         }
+    }
+
+    companion object {
+        /** Стартовое сообщение, отправляемое каналом; в истории чата не отображается */
+        private const val GREETING_MESSAGE = "/start"
     }
 
 }
