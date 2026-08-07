@@ -49,6 +49,9 @@ interface MessagesDao {
     @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id LIMIT 1)")
     fun hasThisMessage(id: String): Boolean
 
+    @Query("SELECT EXISTS (SELECT * FROM ${MessageEntity.TABLE_NAME} WHERE id = :id AND (height IS NULL OR height = 0 OR width IS NULL OR width = 0) LIMIT 1)")
+    fun hasMessageWithoutMediaSize(id: String): Boolean
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessages(messages: List<MessageEntity>)
 
