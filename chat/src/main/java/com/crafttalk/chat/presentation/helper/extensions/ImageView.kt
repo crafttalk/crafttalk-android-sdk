@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.RequestListener
@@ -186,10 +187,34 @@ fun ImageView.loadMediaFile(
         }
     }
 
+    // Когда размеры неизвестны (failLoading), вьюха имеет размер плашки-предупреждения. Грузить по
+    // нему нельзя: в updateData ушли бы размеры плашки, и восстановленная картинка отрисовалась бы
+    // квадратом с потерянными пропорциями. Поэтому запрашиваем по габаритам обычного превью.
+    val requestWidth: Int
+    val requestHeight: Int
+    if (mediaFile.failLoading) {
+        requestWidth = maxWidth ?: if (isUserMessage) ChatAttr.getInstance().widthElongatedItemUserFilePreviewMessage
+            else ChatAttr.getInstance().widthElongatedItemOperatorFilePreviewMessage
+        requestHeight = maxHeight ?: if (isUserMessage) ChatAttr.getInstance().heightElongatedItemUserFilePreviewMessage
+            else ChatAttr.getInstance().heightElongatedItemOperatorFilePreviewMessage
+    } else {
+        requestWidth = layoutParams.width
+        requestHeight = layoutParams.height
+    }
+
+    var requestOptions = RequestOptions().override(requestWidth, requestHeight)
+    if (mediaFile.failLoading) {
+        // Прошлая попытка не удалась. Не читаем и не пишем кэш: иначе можно бесконечно получать
+        // сохранённый ответ-заглушку, отданный сервером, пока файл ещё не прошёл проверку.
+        requestOptions = requestOptions
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+    }
+
     Glide.with(context)
         .apply { if (isGif) asGif() }
         .load(createCorrectGlideUrl(mediaFile.url))
-        .apply(RequestOptions().override(layoutParams.width, layoutParams.height))
+        .apply(requestOptions)
         .apply(RequestOptions.bitmapTransform(GranularRoundedCorners(
             roundedTopLeft,
             roundedTopRight,

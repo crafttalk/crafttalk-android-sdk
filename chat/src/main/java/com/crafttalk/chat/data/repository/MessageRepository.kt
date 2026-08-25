@@ -231,6 +231,8 @@ class MessageRepository
             updateSearchMessagePosition(resultMessages)
             messagesDao.insertMessages(resultMessages)
 
+            restoreMediaSizeOfSavedMessages(operatorMessagesWithContent + userMessagesWithContent)
+
             maxTimestampUserMessage?.let { timestampLastUserMessage ->
                 resultMessages.filter { it.timestamp > timestampLastUserMessage }.size.run(syncMessagesAcrossDevices)
             }
@@ -238,6 +240,22 @@ class MessageRepository
             return resultMessages
         } catch (ex: Exception) {
             return listOf()
+        }
+    }
+
+    /**
+     * Если в момент получения сообщения файл был недоступен (например, ещё проходил проверку на
+     * стороне сервера), в базу записались height/width = null и сообщение навсегда осталось
+     * "битым": при синхронизации истории уже сохранённые сообщения пропускаются, поэтому размеры
+     * никогда не перезапрашивались. Здесь дописываем их, когда файл стал доступен.
+     */
+    private fun restoreMediaSizeOfSavedMessages(messages: List<MessageEntity>) {
+        messages.distinctBy { it.id }.forEach { message ->
+            val height = message.height ?: return@forEach
+            val width = message.width ?: return@forEach
+            if (height <= 0 || width <= 0) return@forEach
+            if (!messagesDao.hasMessageWithoutMediaSize(message.id)) return@forEach
+            messagesDao.updateSizeMessage(message.id, height, width)
         }
     }
 
