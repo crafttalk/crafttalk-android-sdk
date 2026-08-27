@@ -92,10 +92,12 @@ class AuthFragment: Fragment() {
     private fun openChat(isAnonymously: Boolean) {
         val isAuthWithForm = binding.switchAuthWithForm.isChecked
         val visitor = if (!isAuthWithForm) generateVisitor(isAnonymously) else null
+        val linkToChat: String =  binding.linkToChannelUser.text.toString()
         val chatFragment = ChatFragment().apply {
             arguments = Bundle().apply {
                 putBoolean("key_is_auth_with_form", isAuthWithForm)
                 putSerializable("key_visitor", visitor)
+                putString("link_to_chat", linkToChat)
             }
         }
 
@@ -114,9 +116,11 @@ class AuthFragment: Fragment() {
         binding.firstNameUser.addTextChangedListener(textListener)
         binding.lastNameUser.addTextChangedListener(textListener)
         binding.saltUser.addTextChangedListener(textListener)
+        binding.linkToChannelUser.addTextChangedListener(textListener)
         binding.switchAuthWithForm.setOnClickListener {
             enableSignInWithAuth()
         }
+
 
         binding.signInWithAuth.setOnClickListener {
             if (lastTypeAuth != TypeAuth.CHAT_SIMPLE) {
