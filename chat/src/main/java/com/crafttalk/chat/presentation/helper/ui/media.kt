@@ -5,14 +5,28 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
 import com.crafttalk.chat.utils.ChatParams
+import com.crafttalk.chat.utils.ConstantsUtils.TAG_FILE_SIZE
+import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.min
+
+private const val CONTENT_DISPOSITION_KEY = "content-disposition"
+private const val CONTENT_LENGTH_KEY = "content-length"
+private const val CONTENT_TYPE_KEY = "content-type"
+
+/**
+ * Типы ответов, которыми сервер сообщает об ошибке или о том, что файл ещё не готов.
+ * Настоящий документ с таким типом прийти не может, а json пользователь отправляет крайне редко --
+ * в этом случае просто не покажем размер.
+ */
+private val STUB_CONTENT_TYPES = listOf("text/html", "application/json")
 
 /**
  * Задержки перед повторными попытками получить медиафайл.
@@ -103,47 +117,71 @@ fun getWeightMediaFile(context: Context, url: String): Long? {
     }
 }
 
+/**
+ * Размер файла по его url.
+ *
+ * Сервер не всегда отдаёт по этому адресу сам файл: он может ответить ошибкой или короткой
+ * заглушкой, пока файл ещё проходит проверку. Размер такого ответа не имеет отношения к размеру
+ * файла, поэтому берём его только тогда, когда ответ действительно похож на файл. Иначе лучше
+ * не показать размер вовсе, чем записать в базу неверный: там он останется навсегда.
+ */
 fun getWeightFile(urlPath: String): Long? {
-    val contentDispositionKey = "content-disposition"
-    val template = "size="
-
+    var connection: HttpURLConnection? = null
     return try {
-        val url = URL(urlPath)
-        val urlConnection = url.openConnection()
-        urlConnection.setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
-        urlConnection.setRequestProperty("ct-webchat-client-id", ChatParams.visitorUuid)
-        urlConnection.connect()
-        val size = urlConnection.contentLength
+        connection = (URL(urlPath).openConnection() as? HttpURLConnection ?: return null).apply {
+            setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
+            setRequestProperty("ct-webchat-client-id", ChatParams.visitorUuid)
+            // У сжатого ответа content-length -- это размер после сжатия, а не размер файла
+            setRequestProperty("Accept-Encoding", "identity")
+            connect()
+        }
 
-        if (size == -1) {
-            val contentDisposition = urlConnection.getHeaderField(contentDispositionKey)
-            if (contentDisposition == null) {
-                null
-            } else {
-                val startIndex = contentDisposition.indexOf(template) + template.length
-                val indexEndComma = contentDisposition.indexOf(",", startIndex)
-                val indexEndBracket = contentDisposition.indexOf("]", startIndex)
-                val alternativeSize = (when {
-                    startIndex != -1 && indexEndComma != -1 && indexEndBracket != -1 -> contentDisposition.substring(startIndex, min(indexEndComma, indexEndBracket))
-                    startIndex != -1 && indexEndComma != -1 && indexEndBracket == -1 -> contentDisposition.substring(startIndex, indexEndComma)
-                    startIndex != -1 && indexEndComma == -1 && indexEndBracket != -1 -> contentDisposition.substring(startIndex, indexEndBracket)
-                    startIndex != -1 && indexEndComma == -1 && indexEndBracket == -1 -> contentDisposition.substring(startIndex)
-                    else -> null
-                })?.toLong()
-                if (alternativeSize == 0L) {
-                    null
-                } else {
-                    alternativeSize
-                }
-            }
+        // Размер, объявленный самим сервером в content-disposition, надёжнее content-length:
+        // он относится к файлу, а не к тому, что сервер отдал в этот раз.
+        val contentDisposition = connection.getHeaderField(CONTENT_DISPOSITION_KEY)
+        parseSizeFromContentDisposition(contentDisposition)?.let { return it }
+
+        val responseCode = connection.responseCode
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            Log.w(TAG_FILE_SIZE, "Response code $responseCode, url - $urlPath")
+            return null
+        }
+        val contentType = connection.getHeaderField(CONTENT_TYPE_KEY)
+        if (STUB_CONTENT_TYPES.any { contentType?.startsWith(it, ignoreCase = true) == true }) {
+            Log.w(TAG_FILE_SIZE, "Got $contentType instead of file, url - $urlPath")
+            return null
+        }
+        val size = connection.getHeaderField(CONTENT_LENGTH_KEY)?.trim()?.toLongOrNull()
+        if (size == null || size <= 0L) {
+            Log.w(TAG_FILE_SIZE, "Server has not reported size, url - $urlPath")
+            null
         } else {
-            if (size == 0) {
-                null
-            } else {
-                size.toLong()
-            }
+            size
         }
     } catch (ex: Exception) {
+        Log.w(TAG_FILE_SIZE, "Can't get file size, url - $urlPath", ex)
         null
+    } finally {
+        connection?.disconnect()
     }
+}
+
+/**
+ * Вытаскивает размер файла из content-disposition, где он приходит в виде "...size=12345...".
+ */
+private fun parseSizeFromContentDisposition(contentDisposition: String?): Long? {
+    val template = "size="
+    val startIndex = contentDisposition?.indexOf(template)
+        ?.takeIf { it != -1 }
+        ?.plus(template.length)
+        ?: return null
+    val indexEndComma = contentDisposition.indexOf(",", startIndex)
+    val indexEndBracket = contentDisposition.indexOf("]", startIndex)
+    val endIndex = when {
+        indexEndComma != -1 && indexEndBracket != -1 -> min(indexEndComma, indexEndBracket)
+        indexEndComma != -1 -> indexEndComma
+        indexEndBracket != -1 -> indexEndBracket
+        else -> contentDisposition.length
+    }
+    return contentDisposition.substring(startIndex, endIndex).trim().toLongOrNull()?.takeIf { it > 0L }
 }
