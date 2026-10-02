@@ -95,17 +95,39 @@ class FileRepository
     }
 
     override fun uploadFile(visitor: Visitor, file: FileModel, type: TypeUpload, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
-        val fileName = fileInfoHelper.getFileName(file.uri) ?: return
-        fileDao.addFile(FileEntity(visitor.uuid, fileName))
-        when (type) {
-            TypeUpload.JSON -> {
-                val fileRequestBody = fileRequestHelper.generateJsonRequestBody(file.uri, file.type) ?: return
-                uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
+        val fileName = fileInfoHelper.getFileName(file.uri)
+        if (fileName == null) {
+            Log.e(TAG_FILE_UPLOAD, "Can't get file name, uri - ${file.uri}")
+            handleUploadFile(READ_FILE_ERROR_CODE, "")
+            return
+        }
+        // Файл может не читаться по множеству причин: виртуальный документ облачного хранилища,
+        // отозванное разрешение на uri, удалённый файл. Без обработки исключение уходит
+        // из корутины и роняет приложение, поэтому сообщаем об ошибке загрузки.
+        try {
+            when (type) {
+                TypeUpload.JSON -> {
+                    val fileRequestBody = fileRequestHelper.generateJsonRequestBody(file.uri, file.type)
+                    if (fileRequestBody == null) {
+                        Log.e(TAG_FILE_UPLOAD, "Unsupported type ${file.type}, uri - ${file.uri}")
+                        handleUploadFile(READ_FILE_ERROR_CODE, "")
+                        return
+                    }
+                    fileDao.addFile(FileEntity(visitor.uuid, fileName))
+                    uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
+                }
+                TypeUpload.MULTIPART -> {
+                    val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(file.uri, fileName)
+                    fileDao.addFile(FileEntity(visitor.uuid, fileName))
+                    uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
+                }
             }
-            TypeUpload.MULTIPART -> {
-                val fileRequestBody = fileRequestHelper.generateMultipartRequestBody(file.uri, fileName) ?: return
-                uploadFile(visitor.uuid, fileName, fileRequestBody, handleUploadFile)
-            }
+        } catch (ex: Exception) {
+            Log.e(TAG_FILE_UPLOAD, "Can't read file, uri - ${file.uri}", ex)
+            handleUploadFile(READ_FILE_ERROR_CODE, "")
+        } catch (ex: OutOfMemoryError) {
+            Log.e(TAG_FILE_UPLOAD, "Not enough memory to read file, uri - ${file.uri}", ex)
+            handleUploadFile(READ_FILE_ERROR_CODE, "")
         }
     }
 
@@ -172,6 +194,8 @@ class FileRepository
         private const val TIMEOUT_CODE = 408
         private const val TIMEOUT_CONST = "timeout"
         private const val MEGABYTE = 1024 * 1024
+        /** Файл не удалось прочитать, запрос на сервер не отправлялся */
+        private const val READ_FILE_ERROR_CODE = 0
     }
 
 }

@@ -161,23 +161,26 @@ fun TextView.setFileSize(
     colorTextFileSize: Int,
     sizeTextFileSize: Float
 ) {
-    if (file.size == null) return
     val df = DecimalFormat("#.##")
     val countByteInKByte = 1000L
     val countByteInMByte = 1000L * 1000L
     val countByteInGByte = 1000L * 1000L * 1000L
-    text = when(file.size) {
-        in 0L until countByteInKByte -> "${file.size} ${resources.getString(R.string.com_crafttalk_chat_file_size_byte)}"
+    // Текст выставляется всегда, даже когда размер неизвестен: RecyclerView переиспользует
+    // holder, поэтому при выходе без записи в сообщении останется размер того документа,
+    // который показывался в этом holder'е раньше.
+    text = when(val size = file.size) {
+        null -> ""
+        in 0L until countByteInKByte -> "$size ${resources.getString(R.string.com_crafttalk_chat_file_size_byte)}"
         in countByteInKByte until countByteInMByte -> {
-            val value = file.size.toDouble() / countByteInKByte
+            val value = size.toDouble() / countByteInKByte
             "${(df.parse(df.format(value)).toDouble())} ${resources.getString(R.string.com_crafttalk_chat_file_size_Kb)}"
         }
         in countByteInMByte until countByteInGByte -> {
-            val value = file.size.toDouble() / countByteInMByte
+            val value = size.toDouble() / countByteInMByte
             "${(df.parse(df.format(value)).toDouble())} ${resources.getString(R.string.com_crafttalk_chat_file_size_Mb)}"
         }
         in countByteInGByte until countByteInGByte * 1000L -> {
-            val value = file.size.toDouble() / countByteInGByte
+            val value = size.toDouble() / countByteInGByte
             "${(df.parse(df.format(value)).toDouble())} ${resources.getString(R.string.com_crafttalk_chat_file_size_Gb)}"
         }
         else -> ""

@@ -437,28 +437,29 @@ class ChatViewModel
 
     fun sendFile(file: DomainFile) {
         launchIO {
-            fileInteractor.uploadFile(file) { responseCode, responseMessage ->
-                uploadFileListener?.let { listener ->
-                    handleUploadFile(
-                        listener,
-                        responseCode,
-                        responseMessage
-                    )
-                }
-            }
+            fileInteractor.uploadFile(file, ::handleUploadFileOnUi)
         }
     }
 
     fun sendFiles(fileList: List<DomainFile>) {
         launchIO {
-            fileInteractor.uploadFiles(fileList) { responseCode, responseMessage ->
-                uploadFileListener?.let { listener ->
-                    handleUploadFile(
-                        listener,
-                        responseCode,
-                        responseMessage
-                    )
-                }
+            fileInteractor.uploadFiles(fileList, ::handleUploadFileOnUi)
+        }
+    }
+
+    /**
+     * Результат загрузки показывается пользователю, поэтому обрабатывается на главном потоке:
+     * ошибку чтения файла репозиторий отдаёт сразу, не дожидаясь ответа сервера,
+     * то есть на том же потоке, с которого была запущена загрузка.
+     */
+    private fun handleUploadFileOnUi(responseCode: Int, responseMessage: String) {
+        launchUI {
+            uploadFileListener?.let { listener ->
+                handleUploadFile(
+                    listener,
+                    responseCode,
+                    responseMessage
+                )
             }
         }
     }

@@ -20,13 +20,11 @@ class FileInfoHelper
     }
 
     fun getFileName(uri: Uri): String? {
-        return context.contentResolver.query(uri, null, null, null, null)?.let { cursor ->
+        return context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
                 val columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                 if (columnIndex != -1) {
-                    cursor.getString(columnIndex).apply {
-                        cursor.close()
-                    }
+                    cursor.getString(columnIndex)
                 } else {
                     // Handle the case where the column does not exist
                     null
