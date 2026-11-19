@@ -39,9 +39,10 @@ class AuthInteractor
         chatEventListener: ChatEventListener? = null
     ) {
         val currentVisitor = dataPreparation(visitor)
-        if (!currentVisitor?.uuid.isNullOrBlank()) {
-            ChatParams.visitorUuid = currentVisitor?.uuid.orEmpty()
-        }
+        ChatParams.visitorHeaders = ChatParams.VisitorHeaders(
+            currentVisitor?.uuid?.takeIf { it.isNotBlank() } ?: ChatParams.visitorUuid,
+            currentVisitor?.takeIf { it.uuid.isNotBlank() }?.let { Visitor.authorizationHash(it) }
+        )
 
         val successAuthUiWrapper = {
             if (conditionInteractor.getStatusChat() == ChatStatus.ON_CHAT_SCREEN_FOREGROUND_APP) {
@@ -142,6 +143,7 @@ class AuthInteractor
     }
 
     fun logOut(filesDir: File) {
+        ChatParams.visitorHeaders = ChatParams.VisitorHeaders(ChatParams.visitorUuid, null)
         try {
             notificationInteractor.unsubscribeNotification()
             authRepository.logOut(filesDir)

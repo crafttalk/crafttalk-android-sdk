@@ -57,6 +57,10 @@ class Visitor (
 
     companion object {
 
+        // Gson may restore a Visitor without initializing addedFields.
+        internal fun authorizationHash(visitor: Visitor): String? =
+            visitor.addedFields.orEmpty()["hash"]?.toString() ?: visitor.hash
+
         private const val DEFAULT_FIRST_NAME = "user"
         private const val DEFAULT_LAST_NAME = "userovich"
         private const val DEFAULT_PHONE = "0"

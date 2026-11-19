@@ -11,6 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crafttalk.chat.presentation.helper.extensions.createCorrectGlideUrl
+import com.crafttalk.chat.data.helper.network.WebchatClientHash
 import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_FILE_SIZE
 import java.net.HttpURLConnection
@@ -46,9 +47,13 @@ private fun requestSizeMediaFile(
     attempt: Int,
     resultSize: (height: Int?, width: Int?) -> Unit
 ) {
+    val model = createCorrectGlideUrl(url) ?: run {
+        resultSize(null, null)
+        return
+    }
     Glide.with(context.applicationContext)
         .asBitmap()
-        .load(createCorrectGlideUrl(url))
+        .load(model)
         // Запрос служит только для замера размеров. Кэш не используется, чтобы не сохранить
         // ответ-заглушку, которую сервер отдаёт, пока файл ещё не прошёл проверку: такой ответ
         // Glide записал бы на диск по ключу url и потом отдавал бы его вместо картинки.
@@ -85,7 +90,7 @@ fun getSizeMediaFile(context: Context, url: String, withRetry: Boolean = false):
         try {
             val resource = Glide.with(context.applicationContext)
                 .asBitmap()
-                .load(createCorrectGlideUrl(url))
+                .load(createCorrectGlideUrl(url) ?: return null)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .submit()
@@ -129,8 +134,10 @@ fun getWeightFile(urlPath: String): Long? {
     var connection: HttpURLConnection? = null
     return try {
         connection = (URL(urlPath).openConnection() as? HttpURLConnection ?: return null).apply {
-            setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
-            setRequestProperty("ct-webchat-client-id", ChatParams.visitorUuid)
+            val visitor = ChatParams.visitorHeaders
+            setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${visitor.uuid}")
+            setRequestProperty("ct-webchat-client-id", visitor.uuid)
+            WebchatClientHash.applyToFileConnection(this, visitor)
             // У сжатого ответа content-length -- это размер после сжатия, а не размер файла
             setRequestProperty("Accept-Encoding", "identity")
             connect()

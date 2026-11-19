@@ -7,12 +7,14 @@ import com.crafttalk.chat.data.ContentTypeValue
 import com.crafttalk.chat.data.api.rest.FileApi
 import com.crafttalk.chat.data.helper.file.FileInfoHelper
 import com.crafttalk.chat.data.helper.file.RequestHelper
+import com.crafttalk.chat.data.helper.network.InvalidWebchatClientHash
 import com.crafttalk.chat.data.local.db.dao.FileDao
 import com.crafttalk.chat.data.local.db.entity.FileEntity
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.domain.entity.file.NetworkBodyStructureUploadFile
 import com.crafttalk.chat.domain.entity.file.TypeUpload
 import com.crafttalk.chat.domain.repository.IFileRepository
+import com.crafttalk.chat.data.helper.network.WebchatClientHash
 import com.crafttalk.chat.utils.ChatParams
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_FILE_UPLOAD
 import com.crafttalk.chat.utils.ConstantsUtils.TAG_FILE_UPLOAD_MEDIA
@@ -46,18 +48,7 @@ class FileRepository
             )
         )
 
-        request.enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                handleUploadFile(response.code(), response.message())
-                Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()};")
-            }
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                when (t.message) {
-                    TIMEOUT_CONST -> handleUploadFile(TIMEOUT_CODE, "")
-                }
-                Log.d(TAG_FILE_UPLOAD, "Fail upload! - ${t.message};")
-            }
-        })
+        enqueueUpload(request, handleUploadFile)
     }
 
     private fun uploadFile(uuid: String, fileName: String, fileRequestBody: RequestBody, handleUploadFile: (responseCode: Int, responseMessage: String) -> Unit) {
@@ -79,15 +70,19 @@ class FileRepository
             uuid = uuidRequestBody,
             fileB64 = body
         )
+        enqueueUpload(request, handleUploadFile)
+    }
 
+    private fun enqueueUpload(request: Call<String>, handleUploadFile: (Int, String) -> Unit) {
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 handleUploadFile(response.code(), response.message())
                 Log.d(TAG_FILE_UPLOAD, "Success upload - ${response.message()} ${response.body()}; ${response.code()};")
             }
             override fun onFailure(call: Call<String>, t: Throwable) {
-                when (t.message) {
-                    TIMEOUT_CONST -> handleUploadFile(TIMEOUT_CODE, "")
+                when {
+                    t is InvalidWebchatClientHash -> handleUploadFile(LOCAL_ERROR_CODE, "")
+                    t.message == TIMEOUT_CONST -> handleUploadFile(TIMEOUT_CODE, "")
                 }
                 Log.d(TAG_FILE_UPLOAD, "Fail upload! - ${t.message};")
             }
@@ -98,7 +93,7 @@ class FileRepository
         val fileName = fileInfoHelper.getFileName(file.uri)
         if (fileName == null) {
             Log.e(TAG_FILE_UPLOAD, "Can't get file name, uri - ${file.uri}")
-            handleUploadFile(READ_FILE_ERROR_CODE, "")
+            handleUploadFile(LOCAL_ERROR_CODE, "")
             return
         }
         // Файл может не читаться по множеству причин: виртуальный документ облачного хранилища,
@@ -110,7 +105,7 @@ class FileRepository
                     val fileRequestBody = fileRequestHelper.generateJsonRequestBody(file.uri, file.type)
                     if (fileRequestBody == null) {
                         Log.e(TAG_FILE_UPLOAD, "Unsupported type ${file.type}, uri - ${file.uri}")
-                        handleUploadFile(READ_FILE_ERROR_CODE, "")
+                        handleUploadFile(LOCAL_ERROR_CODE, "")
                         return
                     }
                     fileDao.addFile(FileEntity(visitor.uuid, fileName))
@@ -124,10 +119,10 @@ class FileRepository
             }
         } catch (ex: Exception) {
             Log.e(TAG_FILE_UPLOAD, "Can't read file, uri - ${file.uri}", ex)
-            handleUploadFile(READ_FILE_ERROR_CODE, "")
+            handleUploadFile(LOCAL_ERROR_CODE, "")
         } catch (ex: OutOfMemoryError) {
             Log.e(TAG_FILE_UPLOAD, "Not enough memory to read file, uri - ${file.uri}", ex)
-            handleUploadFile(READ_FILE_ERROR_CODE, "")
+            handleUploadFile(LOCAL_ERROR_CODE, "")
         }
     }
 
@@ -163,10 +158,16 @@ class FileRepository
         }
         try {
             val url = URL(documentUrl)
+            val visitor = ChatParams.visitorHeaders
             val urlConnection = url.openConnection() as HttpURLConnection
-            urlConnection.setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
-            urlConnection.setRequestProperty("ct-webchat-client-id", ChatParams.visitorUuid)
+            urlConnection.setRequestProperty("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${visitor.uuid}")
+            urlConnection.setRequestProperty("ct-webchat-client-id", visitor.uuid)
+            WebchatClientHash.applyToFileConnection(urlConnection, visitor)
             urlConnection.connect()
+            if (!urlConnection.instanceFollowRedirects && urlConnection.responseCode in 300..399) {
+                urlConnection.disconnect()
+                throw IOException("Expected a direct webchat file URL")
+            }
             val inputStream = urlConnection.inputStream
             val fileOutputStream = FileOutputStream(correctFile)
 
@@ -194,8 +195,8 @@ class FileRepository
         private const val TIMEOUT_CODE = 408
         private const val TIMEOUT_CONST = "timeout"
         private const val MEGABYTE = 1024 * 1024
-        /** Файл не удалось прочитать, запрос на сервер не отправлялся */
-        private const val READ_FILE_ERROR_CODE = 0
+        /** Локальная ошибка подготовки файла или HTTP-заголовка. */
+        private const val LOCAL_ERROR_CODE = 0
     }
 
 }

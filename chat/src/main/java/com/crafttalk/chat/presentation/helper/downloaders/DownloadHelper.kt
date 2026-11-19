@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.crafttalk.chat.domain.entity.file.TypeFile
 import com.crafttalk.chat.presentation.DownloadFileListener
 import com.crafttalk.chat.presentation.helper.permission.checkPermission
+import com.crafttalk.chat.data.helper.network.WebchatClientHash
 import com.crafttalk.chat.utils.ChatParams
 import java.io.File
 
@@ -33,10 +34,11 @@ fun downloadResource(
         try {
             val dm = ContextCompat.getSystemService(context, DownloadManager::class.java)
             val downloadUri: Uri = Uri.parse(fileUrl)
+            val visitor = ChatParams.visitorHeaders
             val request = DownloadManager.Request(downloadUri)
             request
-                .addRequestHeader("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}")
-                .addRequestHeader("ct-webchat-client-id", ChatParams.visitorUuid)
+                .addRequestHeader("Cookie", "webchat-${ChatParams.urlChatNameSpace}-uuid=${visitor.uuid}")
+                .addRequestHeader("ct-webchat-client-id", visitor.uuid)
                 .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
                 .setAllowedOverRoaming(false)
                 .setTitle(fileName)
@@ -46,6 +48,7 @@ fun downloadResource(
                     Environment.DIRECTORY_PICTURES,
                     File.separator.toString() + fileName
                 )
+            WebchatClientHash.forFile(fileUrl, visitor)?.let { request.addRequestHeader(WebchatClientHash.HEADER, it) }
             val downloadID = dm!!.enqueue(request)
             updateDownloadID(downloadID)
         } catch (e: Exception) {
