@@ -76,6 +76,10 @@ object Chat {
         fileWriteTimeout: Long? = null,
         fileCallTimeout: Long? = null
     ) {
+        if (ChatParams.urlChatScheme != urlChatScheme || ChatParams.urlChatHost != urlChatHost ||
+            ChatParams.urlChatNameSpace != urlChatNameSpace) {
+            ChatParams.visitorHeaders = ChatParams.VisitorHeaders(ChatParams.visitorUuid, null)
+        }
         ChatParams.authMode = authType
         ChatParams.urlChatScheme = urlChatScheme
         ChatParams.urlChatHost = urlChatHost

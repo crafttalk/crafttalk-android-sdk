@@ -6,6 +6,7 @@ import com.crafttalk.chat.data.api.rest.MessageApi
 import com.crafttalk.chat.di.Base
 import com.crafttalk.chat.di.ChatScope
 import com.crafttalk.chat.di.Upload
+import com.crafttalk.chat.data.helper.network.WebchatClientHash
 import com.crafttalk.chat.utils.ChatParams
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -23,7 +24,7 @@ class NetworkModule {
     fun provideRetrofitClientUpload(okHttpClient: OkHttpClient): Retrofit = Retrofit
         .Builder()
         .baseUrl("${ChatParams.urlChatScheme}://${ChatParams.urlChatHost}")
-        .client(okHttpClient)
+        .client(okHttpClient.newBuilder().addNetworkInterceptor(WebchatClientHash).build())
         .addConverterFactory(GsonConverterFactory.create(
             GsonBuilder()
                 .setLenient()

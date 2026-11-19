@@ -4,7 +4,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 object ChatParams {
-    internal var visitorUuid: String = ""
+    internal data class VisitorHeaders(val uuid: String, val hash: String?)
+    @Volatile internal var visitorHeaders = VisitorHeaders("", null)
+    internal val visitorUuid get() = visitorHeaders.uuid
     internal var authMode: AuthType? = null
     internal var enableSearch: Boolean? = null
     internal var pageSize = 20

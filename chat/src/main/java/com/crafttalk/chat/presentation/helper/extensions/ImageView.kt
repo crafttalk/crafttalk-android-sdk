@@ -20,6 +20,8 @@ import com.crafttalk.chat.presentation.model.*
 import com.crafttalk.chat.utils.ChatAttr
 import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.model.GlideUrl
+import com.crafttalk.chat.data.helper.network.WebchatClientHash
+import com.crafttalk.chat.data.helper.network.InvalidWebchatClientHash
 import com.crafttalk.chat.utils.ChatParams
 
 fun ImageView.setStatusMessage(message: MessageModel) {
@@ -271,18 +273,25 @@ fun ImageView.setFileIcon(typeDownloadProgress: TypeDownloadProgress) {
 
 fun createCorrectGlideUrl(url: String?): GlideUrl? {
     if (url == null) return null
-    val headers = if (ChatParams.visitorUuid.isEmpty()) {
+    val visitor = ChatParams.visitorHeaders
+    val headers = if (visitor.uuid.isEmpty()) {
         LazyHeaders.Builder().build()
     } else {
+        val hash = try {
+            WebchatClientHash.forFile(url, visitor)
+        } catch (ex: InvalidWebchatClientHash) {
+            return null
+        }
         LazyHeaders.Builder()
             .addHeader(
                 "Cookie",
-                "webchat-${ChatParams.urlChatNameSpace}-uuid=${ChatParams.visitorUuid}"
+                "webchat-${ChatParams.urlChatNameSpace}-uuid=${visitor.uuid}"
             )
             .addHeader(
                 "ct-webchat-client-id",
-                ChatParams.visitorUuid
+                visitor.uuid
             )
+            .apply { hash?.let { addHeader(WebchatClientHash.HEADER, it) } }
             .build()
     }
     return GlideUrl(url, headers)
