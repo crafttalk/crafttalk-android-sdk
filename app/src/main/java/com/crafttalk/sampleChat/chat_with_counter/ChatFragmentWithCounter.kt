@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.file.File
 import com.crafttalk.chat.domain.entity.file.TypeFile
-import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.ChatPermissionListener
 import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.databinding.FragmentChatBinding
@@ -174,7 +173,7 @@ class ChatFragmentWithCounter: Fragment(R.layout.fragment_chat) {
     override fun onResume() {
         super.onResume()
         binding.chatView.visibility = View.VISIBLE
-        binding.chatView.onResume()
+        binding.chatView.onResume((requireActivity() as ChatWithCounterActivity).visitor)
     }
 
     override fun onStop() {
@@ -183,8 +182,8 @@ class ChatFragmentWithCounter: Fragment(R.layout.fragment_chat) {
     }
 
     override fun onDestroyView() {
+        binding.chatView.onDestroyView()
         super.onDestroyView()
-        Chat.clearDBDialogHistory(requireContext())
         _binding = null
     }
 

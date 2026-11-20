@@ -6,6 +6,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.initialization.Chat
+import com.crafttalk.chat.domain.entity.auth.Visitor
+import com.crafttalk.sampleChat.chat.initializeDemoChat
 import com.crafttalk.chat.initialization.ChatMessageListener
 import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.databinding.ActivityChatWithCounterBinding
@@ -13,6 +15,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class ChatWithCounterActivity: AppCompatActivity() {
     private lateinit var binding: ActivityChatWithCounterBinding
+
+    internal val visitor: Visitor? by lazy {
+        if (intent.hasExtra("key_visitor")) intent.getSerializableExtra("key_visitor") as? Visitor
+        else getVisitor(this)
+    }
 
     private val mOnNavigationItemSelectedListener = object: BottomNavigationView.OnNavigationItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -57,14 +64,7 @@ class ChatWithCounterActivity: AppCompatActivity() {
             loadFragment(HomeFragment())
         }
 
-        Chat.init(
-            this,
-            getString(R.string.urlChatScheme),
-            getString(R.string.urlChatHost),
-            getString(R.string.urlChatNameSpace),
-            fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
-        )
-        Chat.createSession()
+        initializeDemoChat(this, intent.getStringExtra("link_to_chat"), intent.getBooleanExtra("key_is_auth_with_form", false))
         Chat.setOnChatMessageListener(object : ChatMessageListener {
             override fun getNewMessages(countMessages: Int) {
                 Log.d("CTALK_TEST_GET_MSG", "get new messages count - ${countMessages};")
@@ -74,7 +74,7 @@ class ChatWithCounterActivity: AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Chat.wakeUp(getVisitor(this))
+        Chat.wakeUp(visitor)
     }
 
     override fun onStop() {

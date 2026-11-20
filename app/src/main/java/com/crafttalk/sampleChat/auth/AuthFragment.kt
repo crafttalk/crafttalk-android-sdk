@@ -40,17 +40,18 @@ class AuthFragment: Fragment() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     }
 
+    private fun hasVisitorInput() = binding.uuidUser.text.isNotBlank() || binding.firstNameUser.text.isNotBlank() ||
+            binding.lastNameUser.text.isNotBlank() || binding.saltUser.text.isNotBlank()
+
     private fun enableSignInWithAuth() {
-        binding.signInWithAuth.isEnabled = binding.switchAuthWithForm.isChecked ||
-                (binding.uuidUser.text.isNotBlank() || binding.firstNameUser.text.isNotBlank() ||
-                        binding.lastNameUser.text.isNotBlank() ||
-                        binding.saltUser.text.isNotBlank()
-                        )
+        binding.signInWithAuth.isEnabled = binding.switchAuthWithForm.isChecked || hasVisitorInput()
     }
 
     private fun generateVisitor(isAnonymously: Boolean): Visitor? {
         if (binding.switchAuthWithForm.isChecked) return null
-        val uuid = binding.uuidUser.text.toString().ifEmpty { UUID.randomUUID().toString() }
+        val uuid = binding.uuidUser.text.toString().ifEmpty {
+            UUID.randomUUID().toString().also { if (!isAnonymously) binding.uuidUser.setText(it) }
+        }
         if (isAnonymously) {
             return Visitor(
                 uuid = uuid,
@@ -67,7 +68,7 @@ class AuthFragment: Fragment() {
             val firstName = binding.firstNameUser.text.toString()
             val lastName = binding.lastNameUser.text.toString()
             val salt = binding.saltUser.text.toString()
-            val source = "${uuid}${firstName}${lastName}${null}${null}${null}${null}"
+            val source = "$uuid$firstName$lastName"
             return Visitor(
                 uuid = uuid,
                 token = uuid,
@@ -77,11 +78,9 @@ class AuthFragment: Fragment() {
                 phone = null,
                 contract = null,
                 birthday = null,
-                hash = if (salt.isBlank()) {
-                    HashUtils.getHash(
-                        "SHA-256",
-                        "${salt}${HashUtils.getHash("SHA-256", "${salt}${source}")}"
-                    )
+                hash = if (salt.isNotBlank()) {
+                    val innerHash = HashUtils.getHash("SHA-256", salt + source)
+                    HashUtils.getHash("SHA-256", salt + innerHash)
                 } else {
                     null
                 }
@@ -89,17 +88,22 @@ class AuthFragment: Fragment() {
         }
     }
 
-    private fun openChat(isAnonymously: Boolean) {
-        val isAuthWithForm = binding.switchAuthWithForm.isChecked
-        val visitor = if (!isAuthWithForm) generateVisitor(isAnonymously) else null
-        val linkToChat: String =  binding.linkToChannelUser.text.toString()
-        val chatFragment = ChatFragment().apply {
-            arguments = Bundle().apply {
-                putBoolean("key_is_auth_with_form", isAuthWithForm)
-                putSerializable("key_visitor", visitor)
-                putString("link_to_chat", linkToChat)
-            }
+    private fun chatArguments(isAnonymously: Boolean) = Bundle().apply {
+        putBoolean("key_is_auth_with_form", binding.switchAuthWithForm.isChecked)
+        putSerializable("key_visitor", generateVisitor(isAnonymously))
+        putString("link_to_chat", binding.linkToChannelUser.text.toString())
+    }
+
+    private fun openCounterChat() {
+        val intent = Intent(requireContext(), ChatWithCounterActivity::class.java)
+        if (binding.switchAuthWithForm.isChecked || hasVisitorInput() || binding.linkToChannelUser.text.isNotBlank()) {
+            intent.putExtras(chatArguments(false))
         }
+        startActivity(intent)
+    }
+
+    private fun openChat(isAnonymously: Boolean) {
+        val chatFragment = ChatFragment().apply { arguments = chatArguments(isAnonymously) }
 
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container_view, chatFragment)
@@ -146,10 +150,10 @@ class AuthFragment: Fragment() {
             if (lastTypeAuth != TypeAuth.CHAT_WITH_COUNTER) {
                 Chat.logOutWithUIActionAfter(requireContext()) {
                     lastTypeAuth = TypeAuth.CHAT_WITH_COUNTER
-                    startActivity(Intent(requireContext(), ChatWithCounterActivity::class.java))
+                    openCounterChat()
                 }
             } else {
-                startActivity(Intent(requireContext(), ChatWithCounterActivity::class.java))
+                openCounterChat()
             }
         }
         binding.signInWebView.setOnClickListener {
