@@ -67,7 +67,7 @@ class AuthFragment: Fragment() {
             val firstName = binding.firstNameUser.text.toString()
             val lastName = binding.lastNameUser.text.toString()
             val salt = binding.saltUser.text.toString()
-            val source = "${uuid}${firstName}${lastName}${null}${null}${null}${null}"
+            val source = "$uuid$firstName$lastName"
             return Visitor(
                 uuid = uuid,
                 token = uuid,
@@ -77,11 +77,9 @@ class AuthFragment: Fragment() {
                 phone = null,
                 contract = null,
                 birthday = null,
-                hash = if (salt.isBlank()) {
-                    HashUtils.getHash(
-                        "SHA-256",
-                        "${salt}${HashUtils.getHash("SHA-256", "${salt}${source}")}"
-                    )
+                hash = if (salt.isNotBlank()) {
+                    val innerHash = HashUtils.getHash("SHA-256", salt + source)
+                    HashUtils.getHash("SHA-256", salt + innerHash)
                 } else {
                     null
                 }
