@@ -2,26 +2,21 @@ package com.crafttalk.sampleChat.chat
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.crafttalk.chat.domain.entity.auth.Visitor
 import com.crafttalk.chat.initialization.Chat
 import com.crafttalk.chat.presentation.ChatPermissionListener
-import com.crafttalk.chat.utils.AuthType
 import com.crafttalk.sampleChat.R
 import com.crafttalk.sampleChat.databinding.FragmentChatBinding
 import com.crafttalk.sampleChat.widgets.carousel.CarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.bindCarouselWidget
 import com.crafttalk.sampleChat.widgets.carousel.createCarouselWidget
 import com.google.android.material.snackbar.Snackbar
-import java.net.URI
-import java.net.URISyntaxException
 
 class ChatFragment : Fragment() {
 
@@ -34,7 +29,6 @@ class ChatFragment : Fragment() {
 
     private var isAuthWithForm: Boolean = false
     private var visitor: Visitor? = null
-    private var linkToChat: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,38 +36,6 @@ class ChatFragment : Fragment() {
         arguments?.let { bundle ->
             isAuthWithForm = bundle.getBoolean("key_is_auth_with_form", false)
             visitor = bundle.getSerializable("key_visitor") as? Visitor
-            linkToChat = bundle.getString("link_to_chat")
-        }
-
-        val defaultScheme = getString(R.string.urlChatScheme)
-        val defaultHost = getString(R.string.urlChatHost)
-        val defaultChannel = getString(R.string.urlChatNameSpace)
-
-        val link = linkToChat?.trim()
-
-        val (scheme, host, channel) = if (link.isNullOrEmpty()) {
-            Triple(defaultScheme, defaultHost, defaultChannel)
-        } else {
-            try {
-                val uri = URI(link)
-                val channel = uri.path?.substringAfterLast("/")
-
-                if (uri.scheme.isNullOrEmpty() ||
-                    uri.host.isNullOrEmpty() ||
-                    channel.isNullOrEmpty()
-                ) {
-                    Triple(defaultScheme, defaultHost, defaultChannel)
-                } else {
-                    Triple(uri.scheme, uri.host, channel)
-                }
-            } catch (e: URISyntaxException) {
-                Toast.makeText(
-                    requireContext(),
-                    "Некорректный URL",
-                    Toast.LENGTH_LONG
-                ).show()
-                Triple(defaultScheme, defaultHost, defaultChannel)
-            }
         }
 
         requestPermission =
@@ -81,16 +43,7 @@ class ChatFragment : Fragment() {
                 callbackResult(isGranted)
             }
 
-        Chat.init(
-            requireContext(),
-            scheme,
-            host,
-            channel,
-            authType = if (isAuthWithForm) AuthType.AUTH_WITH_FORM else AuthType.AUTH_WITHOUT_FORM
-                .also { Log.d("CTALK_TEST_DALO", "type: $it;") },
-            fileProviderAuthorities = getString(R.string.chat_file_provider_authorities)
-        )
-        Chat.createSession()
+        initializeDemoChat(requireContext(), arguments?.getString("link_to_chat"), isAuthWithForm)
         Chat.clearDBDialogHistory(requireContext())
     }
 
