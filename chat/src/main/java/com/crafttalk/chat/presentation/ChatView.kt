@@ -15,7 +15,6 @@ import android.content.res.TypedArray
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.speech.RecognitionListener
@@ -540,15 +539,13 @@ class ChatView: RelativeLayout, View.OnClickListener, BottomSheetFileViewer.List
             .inject(this)
         this.parentFragment = fragment
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
-            context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
-                Context.RECEIVER_EXPORTED)
-        }else {
-            if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
-            context.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        }
         if (viewModel.uploadFileListener == null) viewModel.uploadFileListener = defaultUploadFileListener
+        ContextCompat.registerReceiver(
+            context,
+            onDownloadComplete,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+            ContextCompat.RECEIVER_EXPORTED
+        )
         settingVoiceInput()
 
         pickPictureSafe = fragment.registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uri ->
