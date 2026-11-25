@@ -31,3 +31,17 @@
 [Android CI](.github/workflows/ci.yml) на PR в `master` и push в `master` запускает JVM-тесты и lint, затем собирает release AAR, debug APK демо и оба тестовых APK. Выполнение инструментальных сценариев требует отдельного запуска на Android. Отчёты JVM-тестов и lint доступны в артефакте `android-test-reports` и локально в `<модуль>/build/reports/`.
 
 Отчёт JaCoCo входит в тот же артефакт. Локально откройте `chat/build/reports/jacoco/jacocoDebugUnitTestReport/html/index.html`. Отчёт измеряет покрытие Kotlin-кода модуля `:chat` при выполнении `:chat:testDebugUnitTest`. Сгенерированные Java-классы Dagger, Room и View Binding исключены из расчёта.
+
+## Android-тесты перед push
+
+Один раз для клона подключите хук командой `git config --local core.hooksPath .githooks`. При push Gradle сам запускает выделенный эмулятор Pixel 4 с Android API 32, выполняет тесты SDK и демо и выключает тестовый эмулятор. Подключённые телефоны и личные эмуляторы в этом прогоне не участвуют. Для первого запуска нужны Android Emulator и системный образ AOSP API 32 для архитектуры компьютера. Их можно установить через SDK Manager.
+
+Хук запускает тесты SDK и демо во временной копии коммита для каждой отправляемой ветки и каждого тега, указывающего на коммит. Один коммит проверяется один раз за push. Для поиска Android SDK используется `ANDROID_HOME` либо абсолютный `sdk.dir` из локального `local.properties`. Если эмулятор не запустился или тест упал, Git прерывает push. Для каждого неудачного прогона хук создаёт отдельный каталог в `build/reports/pre-push/<коммит>/` и выводит пути к HTML-отчётам, которые Gradle успел сформировать.
+
+Чтобы проверить текущие изменения до коммита на таком же автоматически запускаемом эмуляторе, выполните из корня проекта:
+
+```sh
+./gradlew -I .githooks/android-test-device.gradle --max-workers=1 :chat:prePushApi32DebugAndroidTest --rerun :app:prePushApi32DebugAndroidTest --rerun
+```
+
+При ручном запуске `connectedDebugAndroidTest` Gradle использует подключённые устройства и удаляет демо `com.crafttalk.sampleChat` вместе с данными после тестов. Для этой команды подключайте только выделенные тестовые устройства.
