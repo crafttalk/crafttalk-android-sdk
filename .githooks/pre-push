@@ -25,8 +25,9 @@ while read -r local_ref local_oid remote_ref remote_oid; do
         fi
 
         cd "$snapshot"
-        echo "Android-тесты $local_ref ($commit). Подключайте только выделенные тестовые устройства и эмуляторы. После прогона Gradle удаляет com.crafttalk.sampleChat вместе с данными на каждом устройстве, где выполнялись тесты." >&2
-        if ./gradlew :chat:connectedDebugAndroidTest :app:connectedDebugAndroidTest </dev/null; then
+        echo "Android-тесты $local_ref ($commit). Gradle автоматически запустит тестовый эмулятор API 32." >&2
+        if ./gradlew --init-script "$root/.githooks/android-test-device.gradle" --max-workers=1 \
+            :chat:prePushApi32DebugAndroidTest --rerun :app:prePushApi32DebugAndroidTest --rerun </dev/null; then
             exit 0
         else
             status=$?
@@ -36,7 +37,7 @@ while read -r local_ref local_oid remote_ref remote_oid; do
         mkdir -p "$reports"
         attempt=$(mktemp -d "$reports/attempt.XXXXXX")
         for module in chat app; do
-            report="$module/build/reports/androidTests/connected/debug"
+            report="$module/build/reports/androidTests/managedDevice/debug/prePushApi32"
             [[ -f "$report/index.html" ]] || continue
             cp -R "$report" "$attempt/$module"
             echo "Отчёт $module: $attempt/$module/index.html" >&2

@@ -1,0 +1,14 @@
+// Configure the test runner for the archived commit without changing its build files.
+gradle.beforeProject { project ->
+    ['com.android.application', 'com.android.library'].each { pluginId ->
+        project.pluginManager.withPlugin(pluginId) {
+            project.androidComponents.finalizeDsl { android ->
+                android.testOptions.managedDevices.localDevices.create('prePushApi32') {
+                    device = 'Pixel 4'
+                    apiLevel = 32
+                    systemImageSource = 'aosp'
+                }
+            }
+        }
+    }
+}
