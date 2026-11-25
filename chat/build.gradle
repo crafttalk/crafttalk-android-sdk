@@ -4,6 +4,23 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = '0.8.13'
+}
+
+tasks.register('jacocoDebugUnitTestReport', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+    executionData.from(layout.buildDirectory.file('jacoco/testDebugUnitTest.exec'))
+    // The SDK sources are Kotlin. Dagger, Room and View Binding generate Java separately.
+    classDirectories.from(tasks.named('compileDebugKotlin').flatMap { it.destinationDirectory })
+    sourceDirectories.from(android.sourceSets.main.java.srcDirs)
+    reports {
+        html.required = true
+        xml.required = true
+    }
+}
 
 android {
     namespace "com.crafttalk.chat"

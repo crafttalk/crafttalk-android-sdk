@@ -15,6 +15,7 @@
 | Задача | Команда |
 | --- | --- |
 | JVM-тесты SDK и демо | `./gradlew :chat:testDebugUnitTest :app:testDebugUnitTest` |
+| Покрытие Kotlin-кода SDK его JVM-тестами (HTML и XML) | `./gradlew :chat:jacocoDebugUnitTestReport` |
 | Один класс JVM-тестов | `./gradlew :chat:testDebugUnitTest --tests 'com.crafttalk.chat.WebchatClientHashTest'` |
 | Android Lint | `./gradlew :chat:lintDebug :app:lintDebug` |
 | Собрать SDK и демо | `./gradlew :chat:assembleRelease :app:assembleDebug` |
@@ -25,4 +26,8 @@
 
 Для исправления ошибки бизнес-логики воспроизведите её тестом в `src/test` соответствующего модуля и проверьте его после исправления. Для сценариев, которым нужны Android UI или устройство, используйте `src/androidTest`. При изменении способа интеграции SDK соберите демо как приложение-потребитель.
 
+После изменения запросов истории или миграций Room запустите `./gradlew :chat:connectedDebugAndroidTest` на устройстве или эмуляторе. Тесты проверяют счётчик непрочитанных, порядок истории и обновление базы версии 10 с данными.
+
 [Android CI](.github/workflows/ci.yml) на PR в `master` и push в `master` запускает JVM-тесты и lint, затем собирает release AAR, debug APK демо и оба тестовых APK. Выполнение инструментальных сценариев требует отдельного запуска на Android. Отчёты JVM-тестов и lint доступны в артефакте `android-test-reports` и локально в `<модуль>/build/reports/`.
+
+Отчёт JaCoCo входит в тот же артефакт. Локально откройте `chat/build/reports/jacoco/jacocoDebugUnitTestReport/html/index.html`. Отчёт измеряет покрытие Kotlin-кода модуля `:chat` при выполнении `:chat:testDebugUnitTest`. Сгенерированные Java-классы Dagger, Room и View Binding исключены из расчёта.

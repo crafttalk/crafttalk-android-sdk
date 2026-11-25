@@ -25,7 +25,7 @@ jobs:
           java-version: '17'
           cache: gradle
       - name: Run JVM tests and Android Lint
-        run: ./gradlew --continue :chat:testDebugUnitTest :app:testDebugUnitTest :chat:lintDebug :app:lintDebug
+        run: ./gradlew --continue :chat:jacocoDebugUnitTestReport :app:testDebugUnitTest :chat:lintDebug :app:lintDebug
       - name: Upload test and lint reports
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -35,6 +35,7 @@ jobs:
             */build/test-results/testDebugUnitTest/TEST-*.xml
             */build/reports/tests/testDebugUnitTest/
             */build/reports/lint-results-debug.*
+            chat/build/reports/jacoco/jacocoDebugUnitTestReport/
           retention-days: 14
 
   build:
